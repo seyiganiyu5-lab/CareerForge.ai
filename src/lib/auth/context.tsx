@@ -8,8 +8,7 @@ interface AuthContextType extends AuthState {
   signup: (data: SignupData) => Promise<AuthResponse>;
   logout: () => Promise<void>;
   forgotPassword: (email: string) => Promise<{ success: boolean; message?: string; error?: string }>;
-  resetPassword: (token: string, password: string) => Promise<{ success: boolean; message?: string; error?: string }>;
-  verifyEmail: (token: string) => Promise<{ success: boolean; message?: string; error?: string }>;
+  resetPassword: (password: string) => Promise<{ success: boolean; message?: string; error?: string }>;
   resendVerification: (email: string) => Promise<{ success: boolean; message?: string; error?: string }>;
   completeOnboarding: (data: OnboardingData) => Promise<AuthResponse>;
   googleSignIn: () => void;
@@ -122,17 +121,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     });
   }, []);
 
-  const resetPassword = useCallback(async (token: string, password: string) => {
+  const resetPassword = useCallback(async (password: string) => {
     return fetchAPI('/api/auth/reset-password', {
       method: 'POST',
-      body: JSON.stringify({ token, password }),
-    });
-  }, []);
-
-  const verifyEmail = useCallback(async (token: string) => {
-    return fetchAPI('/api/auth/verify-email', {
-      method: 'POST',
-      body: JSON.stringify({ token }),
+      body: JSON.stringify({ password }),
     });
   }, []);
 
@@ -167,7 +159,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         logout,
         forgotPassword,
         resetPassword,
-        verifyEmail,
         resendVerification,
         completeOnboarding,
         googleSignIn,

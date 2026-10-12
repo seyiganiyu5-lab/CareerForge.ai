@@ -56,6 +56,8 @@ export interface AuthResponse {
   user?: User;
   error?: string;
   message?: string;
+  /** Set when the user must confirm their email before signing in */
+  needsVerification?: boolean;
 }
 
 export interface PasswordResetResponse {

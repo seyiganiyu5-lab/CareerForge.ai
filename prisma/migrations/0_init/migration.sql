@@ -7,7 +7,6 @@ CREATE TABLE "User" (
     "email" TEXT NOT NULL,
     "first_name" TEXT,
     "last_name" TEXT,
-    "password_hash" TEXT DEFAULT '',
     "auth_provider" TEXT NOT NULL DEFAULT 'email',
     "google_id" TEXT,
     "google_picture_url" TEXT,
@@ -19,9 +18,6 @@ CREATE TABLE "User" (
     "theme" TEXT NOT NULL DEFAULT 'system',
     "email_verified" BOOLEAN NOT NULL DEFAULT false,
     "onboarding_completed" BOOLEAN NOT NULL DEFAULT false,
-    "verification_token" TEXT,
-    "reset_token" TEXT,
-    "reset_token_expires" TIMESTAMP(3),
     "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updated_at" TIMESTAMP(3) NOT NULL,
 

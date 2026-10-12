@@ -48,11 +48,13 @@ function ResetPasswordContent() {
   const t = useTranslations('auth.resetPassword');
   const tCommon = useTranslations('auth.common');
   const tErrors = useTranslations('auth.errors');
-  const { resetPassword } = useAuth();
+  const { resetPassword, isAuthenticated, isLoading } = useAuth();
 
-  const token = searchParams.get('token');
+  // The reset link (via /auth/confirm) signs the user in before landing here
+  const linkError = searchParams.get('error');
+  const hasValidLink = !linkError && (isLoading || isAuthenticated);
   const [isSuccess, setIsSuccess] = useState(false);
-  const [formError, setFormError] = useState<string | null>(token ? null : t('errors.invalidOrExpiredToken'));
+  const [formError, setFormError] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const resetSchema = z
@@ -81,11 +83,10 @@ function ResetPasswordContent() {
   const watchedPassword = form.watch('password');
 
   async function onSubmit(values: ResetFormValues) {
-    if (!token) return;
     setFormError(null);
     setIsSubmitting(true);
     try {
-      const result = await resetPassword(token, values.password);
+      const result = await resetPassword(values.password);
       if (result.success) {
         setIsSuccess(true);
       } else {
@@ -98,8 +99,8 @@ function ResetPasswordContent() {
     }
   }
 
-  /* ─── No token error ─── */
-  if (!token) {
+  /* ─── Invalid or expired link ─── */
+  if (!hasValidLink && !isSuccess) {
     return (
       <AuthCard title={t('title')} subtitle={t('subtitle')}>
         <motion.div
@@ -115,7 +116,7 @@ function ResetPasswordContent() {
           >
             <AlertCircle className="mt-0.5 h-4 w-4 shrink-0 text-red-600 dark:text-red-400" />
             <p className="text-sm text-red-700 dark:text-red-300 font-body">
-              {formError}
+              {t('errors.invalidOrExpiredToken')}
             </p>
           </motion.div>
           <motion.div variants={staggerItem} className="text-center">

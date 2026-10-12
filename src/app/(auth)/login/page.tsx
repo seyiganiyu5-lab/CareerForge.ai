@@ -94,8 +94,12 @@ export default function LoginPage() {
       if (result.success) {
         // Use full page navigation to ensure the auth cookie is properly
         // available on the next page load (avoids soft-nav cookie issues through proxies)
-        window.location.href = '/home';
+        const redirect = searchParams.get('redirect');
+        window.location.href = redirect && redirect.startsWith('/') && !redirect.startsWith('//') && !redirect.includes('\\') ? redirect : '/home';
         return; // Don't update state — the page will fully reload
+      } else if (result.needsVerification) {
+        window.location.href = `/verify-email?email=${encodeURIComponent(values.email.trim().toLowerCase())}`;
+        return;
       } else {
         setFormError(result.error || tErrors('unknown'));
       }

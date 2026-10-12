@@ -1,7 +1,7 @@
 'use client';
 
-import { useState, useEffect, useCallback, Suspense } from 'react';
-import { useSearchParams, useRouter } from 'next/navigation';
+import { useState, useCallback, Suspense } from 'react';
+import { useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Loader2, AlertCircle, Mail, ArrowLeft, RefreshCw } from 'lucide-react';
@@ -31,49 +31,19 @@ const staggerItem = {
 
 function VerifyEmailContent() {
   const searchParams = useSearchParams();
-  const router = useRouter();
   const t = useTranslations('auth.verifyEmail');
   const tErrors = useTranslations('auth.errors');
-  const { verifyEmail, resendVerification } = useAuth();
+  const { resendVerification } = useAuth();
 
-  const token = searchParams.get('token');
+  // /auth/confirm sends users here after they click the link in their email
+  const verified = searchParams.get('verified');
+  const linkError = searchParams.get('error');
   const email = searchParams.get('email');
 
-  const [verificationState, setVerificationState] = useState<'idle' | 'loading' | 'success' | 'error'>(
-    token ? 'loading' : 'idle'
-  );
-  const [verificationError, setVerificationError] = useState<string | null>(null);
+  const verificationState: 'idle' | 'success' | 'error' = verified ? 'success' : linkError ? 'error' : 'idle';
+  const verificationError = linkError ? t('errors.invalidToken') : null;
   const [isResending, setIsResending] = useState(false);
   const [resendMessage, setResendMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
-
-  /* ─── Auto-verify when token is present ─── */
-  useEffect(() => {
-    if (!token) return;
-    let cancelled = false;
-
-    async function doVerify() {
-      try {
-        const result = await verifyEmail(token);
-        if (cancelled) return;
-        if (result.success) {
-          setVerificationState('success');
-        } else {
-          setVerificationState('error');
-          setVerificationError(result.error || tErrors('unknown'));
-        }
-      } catch {
-        if (!cancelled) {
-          setVerificationState('error');
-          setVerificationError(tErrors('network'));
-        }
-      }
-    }
-
-    doVerify();
-    return () => {
-      cancelled = true;
-    };
-  }, [token, verifyEmail, tErrors]);
 
   /* ─── Resend verification ─── */
   const handleResend = useCallback(async () => {
@@ -94,33 +64,6 @@ function VerifyEmailContent() {
       setTimeout(() => setResendMessage(null), 4000);
     }
   }, [email, resendVerification, t, tErrors]);
-
-  /* ─── Loading state (auto-verifying) ─── */
-  if (verificationState === 'loading') {
-    return (
-      <AuthCard title={t('title')} subtitle={''}>
-        <motion.div
-          className="flex flex-col items-center justify-center py-12 space-y-5"
-          initial="hidden"
-          animate="show"
-          variants={staggerContainer}
-        >
-          <motion.div
-            variants={staggerItem}
-            className="w-16 h-16 rounded-2xl bg-brand/10 flex items-center justify-center"
-          >
-            <Loader2 className="w-8 h-8 animate-spin text-brand" />
-          </motion.div>
-          <motion.p
-            variants={staggerItem}
-            className="text-sm text-muted-foreground font-body"
-          >
-            Verifying your email...
-          </motion.p>
-        </motion.div>
-      </AuthCard>
-    );
-  }
 
   /* ─── Success state ─── */
   if (verificationState === 'success') {
@@ -244,7 +187,7 @@ function VerifyEmailContent() {
     );
   }
 
-  /* ─── Idle / waiting state (no token) ─── */
+  /* ─── Idle / waiting state ─── */
   return (
     <AuthCard title={t('title')} subtitle={t('subtitle')}>
       <motion.div

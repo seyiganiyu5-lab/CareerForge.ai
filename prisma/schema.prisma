@@ -9,11 +9,10 @@ datasource db {
 }
 
 model User {
-  id                    String    @id @default(cuid())
+  id                    String    @id @default(cuid())  // Same id as the Supabase Auth user
   email                 String    @unique
   first_name            String?
   last_name             String?
-  password_hash         String?   @default("")
   auth_provider         String    @default("email")
   google_id             String?   @unique
   google_picture_url    String?
@@ -25,9 +24,6 @@ model User {
   theme                 String    @default("system")
   email_verified        Boolean   @default(false)
   onboarding_completed  Boolean   @default(false)
-  verification_token    String?
-  reset_token           String?
-  reset_token_expires   DateTime?
   created_at            DateTime  @default(now())
   updated_at            DateTime  @updatedAt
 
