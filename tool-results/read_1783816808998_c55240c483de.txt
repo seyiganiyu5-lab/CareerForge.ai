@@ -1,0 +1,687 @@
+     1→'use client';
+     2→
+     3→import { useState, useEffect, useRef, type ElementType } from 'react';
+     4→import { motion, AnimatePresence } from 'framer-motion';
+     5→import {
+     6→  Pencil,
+     7→  MoreVertical,
+     8→  PencilLine,
+     9→  Copy,
+    10→  Trash2,
+    11→  Loader2,
+    12→  CheckCircle2,
+    13→  AlertCircle,
+    14→  Eye,
+    15→  PenLine,
+    16→  Download,
+    17→  User,
+    18→  AlignLeft,
+    19→  Briefcase,
+    20→  GraduationCap,
+    21→  Wrench,
+    22→  FolderGit2,
+    23→  Award,
+    24→  Globe,
+    25→  Trophy,
+    26→  Heart,
+    27→  Users,
+    28→  FileText,
+    29→  LayoutTemplate,
+    30→  Settings2,
+    31→  Sparkles,
+    32→} from 'lucide-react';
+    33→import { useRouter } from 'next/navigation';
+    34→import { useIsMobile } from '@/hooks/use-mobile';
+    35→import { useResume } from '@/hooks/use-resume';
+    36→import { SECTIONS, type SectionKey, type AutosaveStatus } from '@/types/resume';
+    37→import { type TemplateId } from '@/types/template';
+    38→import { isTemplateFree } from '@/lib/templates/registry';
+    39→import { exportToPDF } from '@/lib/export/pdf';
+    40→import { ResumeSidebar } from './resume-sidebar';
+    41→import { SectionEditor } from './section-editor';
+    42→import { TemplateEngine } from './template-engine';
+    43→import { PreviewContainer } from './preview-container';
+    44→import { TemplateGallery } from './template-gallery';
+    45→import { CustomizationPanel } from './customization-panel';
+    46→import { ResumeEmptyState } from './resume-empty-state';
+    47→import { UpgradeModal } from '@/components/billing/upgrade-modal';
+    48→import { Skeleton } from '@/components/ui/skeleton';
+    49→import { Button } from '@/components/ui/button';
+    50→import { Input } from '@/components/ui/input';
+    51→import { Badge } from '@/components/ui/badge';
+    52→import {
+    53→  DropdownMenu,
+    54→  DropdownMenuContent,
+    55→  DropdownMenuItem,
+    56→  DropdownMenuSeparator,
+    57→  DropdownMenuTrigger,
+    58→} from '@/components/ui/dropdown-menu';
+    59→import {
+    60→  Dialog,
+    61→  DialogContent,
+    62→  DialogHeader,
+    63→  DialogTitle,
+    64→  DialogDescription,
+    65→  DialogFooter,
+    66→} from '@/components/ui/dialog';
+    67→import {
+    68→  Sheet,
+    69→  SheetContent,
+    70→  SheetHeader,
+    71→  SheetTitle,
+    72→} from '@/components/ui/sheet';
+    73→
+    74→// ─── Icon Map ─────────────────────────────────────────────────
+    75→
+    76→const SIDEBAR_ICON_MAP: Record<string, ElementType> = {
+    77→  User, AlignLeft, Briefcase, GraduationCap, Wrench, FolderGit2,
+    78→  Award, Globe, Trophy, Heart, Users, FileText,
+    79→};
+    80→
+    81→// ─── Tablet Detection ─────────────────────────────────────────
+    82→
+    83→const TABLET_BREAKPOINT = 1024;
+    84→
+    85→function useIsTablet() {
+    86→  const [isTablet, setIsTablet] = useState(false);
+    87→  useEffect(() => {
+    88→    const update = () => {
+    89→      const w = window.innerWidth;
+    90→      setIsTablet(w >= 768 && w < TABLET_BREAKPOINT);
+    91→    };
+    92→    const mql = window.matchMedia(`(min-width: 768px) and (max-width: ${TABLET_BREAKPOINT - 1}px)`);
+    93→    mql.addEventListener('change', () => update());
+    94→    update();
+    95→    return () => mql.removeEventListener('change', () => update());
+    96→  }, []);
+    97→  return isTablet;
+    98→}
+    99→
+   100→// ─── Autosave Indicator ─────────────────────────────────────────
+   101→
+   102→function AutosaveIndicator({ status }: { status: AutosaveStatus }) {
+   103→  if (status === 'idle') return null;
+   104→  return (
+   105→    <AnimatePresence mode="wait">
+   106→      <motion.span
+   107→        key={status}
+   108→        initial={{ opacity: 0, y: 4 }}
+   109→        animate={{ opacity: 1, y: 0 }}
+   110→        exit={{ opacity: 0, y: -4 }}
+   111→        transition={{ duration: 0.15 }}
+   112→        className="inline-flex items-center gap-1.5 text-xs font-[family-name:var(--font-inter)]"
+   113→      >
+   114→        {status === 'saving' && (
+   115→          <>
+   116→            <Loader2 className="size-3 animate-spin text-muted-foreground" />
+   117→            <span className="text-muted-foreground">Saving...</span>
+   118→          </>
+   119→        )}
+   120→        {status === 'saved' && (
+   121→          <>
+   122→            <CheckCircle2 className="size-3 text-emerald-500" />
+   123→            <span className="text-emerald-600 dark:text-emerald-400">Saved</span>
+   124→          </>
+   125→        )}
+   126→        {status === 'error' && (
+   127→          <>
+   128→            <AlertCircle className="size-3 text-destructive" />
+   129→            <span className="text-destructive">Save failed</span>
+   130→          </>
+   131→        )}
+   132→      </motion.span>
+   133→    </AnimatePresence>
+   134→  );
+   135→}
+   136→
+   137→// ─── Resume Header ──────────────────────────────────────────────
+   138→
+   139→interface ResumeHeaderProps {
+   140→  title: string;
+   141→  templateName: string;
+   142→  onRename: (title: string) => void;
+   143→  autosaveStatus: AutosaveStatus;
+   144→  onDuplicate: () => void;
+   145→  onDelete: () => void;
+   146→  onTogglePreview?: () => void;
+   147→  onOpenGallery: () => void;
+   148→  onOpenCustomization: () => void;
+   149→  onDownload?: () => void;
+   150→  downloading?: boolean;
+   151→  showPreviewButton?: boolean;
+   152→}
+   153→
+   154→function ResumeHeader({
+   155→  title, templateName, onRename, autosaveStatus, onDuplicate, onDelete,
+   156→  onTogglePreview, onOpenGallery, onOpenCustomization, onDownload, downloading, showPreviewButton,
+   157→}: ResumeHeaderProps) {
+   158→  const [editing, setEditing] = useState(false);
+   159→  const [editValue, setEditValue] = useState(title);
+   160→  const inputRef = useRef<HTMLInputElement>(null);
+   161→
+   162→  useEffect(() => { setEditValue(title); }, [title]);
+   163→  useEffect(() => {
+   164→    if (editing && inputRef.current) {
+   165→      inputRef.current.focus();
+   166→      inputRef.current.select();
+   167→    }
+   168→  }, [editing]);
+   169→
+   170→  const handleSave = () => {
+   171→    const trimmed = editValue.trim();
+   172→    if (trimmed && trimmed !== title) onRename(trimmed);
+   173→    else setEditValue(title);
+   174→    setEditing(false);
+   175→  };
+   176→
+   177→  return (
+   178→    <div className="flex h-12 items-center gap-2 border-b border-border/50 px-4 shrink-0">
+   179→      {/* Title */}
+   180→      <div className="flex items-center gap-2 min-w-0 flex-1">
+   181→        {editing ? (
+   182→          <Input
+   183→            ref={inputRef}
+   184→            value={editValue}
+   185→            onChange={(e) => setEditValue(e.target.value)}
+   186→            onBlur={handleSave}
+   187→            onKeyDown={(e) => {
+   188→              if (e.key === 'Enter') handleSave();
+   189→              if (e.key === 'Escape') { setEditValue(title); setEditing(false); }
+   190→            }}
+   191→            className="h-8 max-w-[260px] text-sm font-[family-name:var(--font-poppins)] font-semibold"
+   192→          />
+   193→        ) : (
+   194→          <button
+   195→            onClick={() => setEditing(true)}
+   196→            className="flex items-center gap-1.5 min-w-0 group"
+   197→            aria-label="Edit resume title"
+   198→          >
+   199→            <span className="font-[family-name:var(--font-poppins)] text-sm font-semibold text-foreground truncate">
+   200→              {title || 'Untitled Resume'}
+   201→            </span>
+   202→            <Pencil className="size-3.5 text-muted-foreground opacity-0 group-hover:opacity-100 transition-opacity shrink-0" />
+   203→          </button>
+   204→        )}
+   205→      </div>
+   206→
+   207→      {/* Template name badge */}
+   208→      <Badge variant="outline" className="hidden sm:inline-flex text-[10px] font-[family-name:var(--font-inter)] h-6 px-2 shrink-0">
+   209→        {templateName}
+   210→      </Badge>
+   211→
+   212→      <AutosaveIndicator status={autosaveStatus} />
+   213→
+   214→      {/* Template gallery button */}
+   215→      <Button
+   216→        variant="ghost"
+   217→        size="sm"
+   218→        onClick={onOpenGallery}
+   219→        className="hidden md:inline-flex items-center gap-1.5 text-muted-foreground h-8"
+   220→      >
+   221→        <LayoutTemplate className="size-3.5" />
+   222→        <span className="font-[family-name:var(--font-inter)] text-xs">Templates</span>
+   223→      </Button>
+   224→
+   225→      {/* Customize button */}
+   226→      <Button
+   227→        variant="ghost"
+   228→        size="sm"
+   229→        onClick={onOpenCustomization}
+   230→        className="hidden md:inline-flex items-center gap-1.5 text-muted-foreground h-8"
+   231→      >
+   232→        <Settings2 className="size-3.5" />
+   233→        <span className="font-[family-name:var(--font-inter)] text-xs">Customize</span>
+   234→      </Button>
+   235→
+   236→      {/* Preview button (tablet) */}
+   237→      {showPreviewButton && onTogglePreview && (
+   238→        <Button variant="ghost" size="sm" onClick={onTogglePreview} className="flex items-center gap-1.5 text-muted-foreground h-8">
+   239→          <Eye className="size-4" />
+   240→          <span className="font-[family-name:var(--font-inter)] text-xs">Preview</span>
+   241→        </Button>
+   242→      )}
+   243→
+   244→      {/* Download PDF button */}
+   245→      {onDownload && (
+   246→        <Button
+   247→          variant="ghost"
+   248→          size="sm"
+   249→          onClick={onDownload}
+   250→          disabled={downloading}
+   251→          className="hidden sm:inline-flex items-center gap-1.5 text-emerald-600 dark:text-emerald-400 hover:text-emerald-700 hover:bg-emerald-50 dark:hover:bg-emerald-950/30 h-8 font-[family-name:var(--font-inter)] text-xs"
+   252→        >
+   253→          {downloading ? (
+   254→            <Loader2 className="size-3.5 animate-spin" />
+   255→          ) : (
+   256→            <Download className="size-3.5" />
+   257→          )}
+   258→          {downloading ? 'Exporting...' : 'Download PDF'}
+   259→        </Button>
+   260→      )}
+   261→
+   262→      {/* Management menu */}
+   263→      <DropdownMenu>
+   264→        <DropdownMenuTrigger asChild>
+   265→          <Button variant="ghost" size="icon" className="size-8">
+   266→            <MoreVertical className="size-4" />
+   267→            <span className="sr-only">Resume actions</span>
+   268→          </Button>
+   269→        </DropdownMenuTrigger>
+   270→        <DropdownMenuContent align="end" className="w-52">
+   271→          <DropdownMenuItem onClick={() => setEditing(true)}>
+   272→            <PencilLine className="size-4" /> Rename
+   273→          </DropdownMenuItem>
+   274→          <DropdownMenuItem onClick={onOpenGallery}>
+   275→            <LayoutTemplate className="size-4" /> Change Template
+   276→          </DropdownMenuItem>
+   277→          <DropdownMenuItem onClick={onOpenCustomization}>
+   278→            <Settings2 className="size-4" /> Customize Design
+   279→          </DropdownMenuItem>
+   280→          {onDownload && (
+   281→            <>
+   282→              <DropdownMenuSeparator />
+   283→              <DropdownMenuItem onClick={onDownload} disabled={downloading}>
+   284→                {downloading ? <Loader2 className="size-4 animate-spin" /> : <Download className="size-4" />}
+   285→                {downloading ? 'Exporting...' : 'Download PDF'}
+   286→              </DropdownMenuItem>
+   287→            </>
+   288→          )}
+   289→          <DropdownMenuSeparator />
+   290→          <DropdownMenuItem onClick={onDuplicate}>
+   291→            <Copy className="size-4" /> Duplicate
+   292→          </DropdownMenuItem>
+   293→          <DropdownMenuSeparator />
+   294→          <DropdownMenuItem variant="destructive" onClick={onDelete}>
+   295→            <Trash2 className="size-4" /> Delete
+   296→          </DropdownMenuItem>
+   297→        </DropdownMenuContent>
+   298→      </DropdownMenu>
+   299→    </div>
+   300→  );
+   301→}
+   302→
+   303→// ─── Mobile Tab Bar ─────────────────────────────────────────────
+   304→
+   305→type MobileTab = 'editor' | 'preview' | 'templates' | 'customize';
+   306→
+   307→function MobileTabBar({ activeTab, onTabChange }: { activeTab: MobileTab; onTabChange: (tab: MobileTab) => void }) {
+   308→  const tabs: { key: MobileTab; icon: ElementType; label: string }[] = [
+   309→    { key: 'editor', icon: PenLine, label: 'Editor' },
+   310→    { key: 'preview', icon: Eye, label: 'Preview' },
+   311→    { key: 'templates', icon: LayoutTemplate, label: 'Templates' },
+   312→    { key: 'customize', icon: Settings2, label: 'Design' },
+   313→  ];
+   314→  return (
+   315→    <div className="flex h-14 shrink-0 border-t border-border/50 bg-card/80 backdrop-blur-sm">
+   316→      {tabs.map(tab => {
+   317→        const Icon = tab.icon;
+   318→        return (
+   319→          <button
+   320→            key={tab.key}
+   321→            onClick={() => onTabChange(tab.key)}
+   322→            className={`flex flex-1 flex-col items-center justify-center gap-0.5 transition-colors ${
+   323→              activeTab === tab.key ? 'text-brand' : 'text-muted-foreground'
+   324→            }`}
+   325→          >
+   326→            <Icon className="size-4.5" />
+   327→            <span className="font-[family-name:var(--font-inter)] text-[10px] font-medium">{tab.label}</span>
+   328→          </button>
+   329→        );
+   330→      })}
+   331→    </div>
+   332→  );
+   333→}
+   334→
+   335→// ─── Delete Dialog ──────────────────────────────────────────────
+   336→
+   337→function DeleteDialog({ open, onOpenChange, onConfirm }: { open: boolean; onOpenChange: (o: boolean) => void; onConfirm: () => void }) {
+   338→  return (
+   339→    <Dialog open={open} onOpenChange={onOpenChange}>
+   340→      <DialogContent className="sm:max-w-md">
+   341→        <DialogHeader>
+   342→          <DialogTitle className="font-[family-name:var(--font-poppins)]">Delete Resume</DialogTitle>
+   343→          <DialogDescription className="font-[family-name:var(--font-inter)]">
+   344→            Are you sure you want to delete this resume? This action cannot be undone.
+   345→          </DialogDescription>
+   346→        </DialogHeader>
+   347→        <DialogFooter className="gap-2 sm:gap-0">
+   348→          <Button variant="outline" onClick={() => onOpenChange(false)} className="font-[family-name:var(--font-inter)]">Cancel</Button>
+   349→          <Button variant="destructive" onClick={onConfirm} className="font-[family-name:var(--font-inter)]">Delete</Button>
+   350→        </DialogFooter>
+   351→      </DialogContent>
+   352→    </Dialog>
+   353→  );
+   354→}
+   355→
+   356→// ─── Mobile Section Nav ─────────────────────────────────────────
+   357→
+   358→function MobileSectionNav({ activeSection, onSectionChange }: { activeSection: SectionKey; onSectionChange: (s: SectionKey) => void }) {
+   359→  return (
+   360→    <div className="w-14 shrink-0 border-r border-border/50 bg-card/50 overflow-y-auto">
+   361→      <nav className="flex flex-col gap-0.5 p-1.5" aria-label="Resume sections">
+   362→        {SECTIONS.map(section => {
+   363→          const Icon = SIDEBAR_ICON_MAP[section.icon];
+   364→          return (
+   365→            <button
+   366→              key={section.key}
+   367→              onClick={() => onSectionChange(section.key)}
+   368→              className={`flex items-center justify-center rounded-lg p-2 transition-all duration-200 ${
+   369→                activeSection === section.key ? 'bg-brand/10 text-brand' : 'text-muted-foreground hover:bg-accent'
+   370→              }`}
+   371→              title={section.label}
+   372→            >
+   373→              {Icon && <Icon className="size-4" />}
+   374→            </button>
+   375→          );
+   376→        })}
+   377→      </nav>
+   378→    </div>
+   379→  );
+   380→}
+   381→
+   382→// ─── Main Workspace ─────────────────────────────────────────────
+   383→
+   384→export default function ResumeWorkspace() {
+   385→  const router = useRouter();
+   386→  const isMobile = useIsMobile();
+   387→  const isTablet = useIsTablet();
+   388→  const {
+   389→    resumeData, resumeId, resumeTitle, templateId, customization,
+   390→    setResumeData, setResumeTitle, setTemplateId, setCustomization,
+   391→    loading, error, autosaveStatus, createResume, duplicateResume, deleteResume,
+   392→  } = useResume();
+   393→
+   394→  const [activeSection, setActiveSection] = useState<SectionKey>('personalInfo');
+   395→  const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
+   396→  const [mobileTab, setMobileTab] = useState<MobileTab>('editor');
+   397→  const [previewSheetOpen, setPreviewSheetOpen] = useState(false);
+   398→  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+   399→  const [galleryOpen, setGalleryOpen] = useState(false);
+   400→  const [customizationOpen, setCustomizationOpen] = useState(false);
+   401→  const [upgradeOpen, setUpgradeOpen] = useState(false);
+   402→  const [isProUser, setIsProUser] = useState(false);
+   403→  const [downloading, setDownloading] = useState(false);
+   404→  const hiddenRenderRef = useRef<HTMLDivElement>(null);
+   405→
+   406→  // Check subscription status for template gating
+   407→  useEffect(() => {
+   408→    fetch('/api/usage/me', { credentials: 'include' })
+   409→      .then(r => r.json())
+   410→      .then(data => { if (data.success) setIsProUser(data.isPremium || false); })
+   411→      .catch(() => {});
+   412→  }, []);
+   413→
+   414→  const templateName = (() => {
+   415→    const names: Record<string, string> = {
+   416→      'ats-classic': 'ATS Classic',
+   417→      'professional-blue': 'Professional Blue',
+   418→      'executive': 'Executive',
+   419→      'modern-minimal': 'Modern Minimal',
+   420→      'contemporary': 'Contemporary',
+   421→      'chronological': 'Chronological',
+   422→      'functional': 'Functional',
+   423→      'combination': 'Combination',
+   424→      'tech-professional': 'Tech Professional',
+   425→      'graduate': 'Graduate',
+   426→    };
+   427→    return names[templateId] || templateId;
+   428→  })();
+   429→
+   430→  // Loading
+   431→  if (loading) {
+   432→    return (
+   433→      <div className="h-[calc(100vh-64px)] flex items-center justify-center">
+   434→        <div className="flex flex-col items-center gap-4">
+   435→          <Skeleton className="size-10 rounded-full" />
+   436→          <Skeleton className="h-5 w-40" />
+   437→          <p className="font-[family-name:var(--font-inter)] text-sm text-muted-foreground">Loading resume...</p>
+   438→        </div>
+   439→      </div>
+   440→    );
+   441→  }
+   442→
+   443→  // Empty state
+   444→  if (!resumeId) {
+   445→    return <ResumeEmptyState error={error} onCreateResume={createResume} />;
+   446→  }
+   447→
+   448→  // Non-limit error
+   449→  if (error && error !== 'limit_reached') {
+   450→    return (
+   451→      <div className="h-[calc(100vh-64px)] flex items-center justify-center">
+   452→        <div className="flex flex-col items-center gap-4 text-center">
+   453→          <AlertCircle className="size-10 text-destructive" />
+   454→          <p className="font-[family-name:var(--font-inter)] text-sm text-muted-foreground">{error}</p>
+   455→          <Button variant="outline" onClick={createResume}>Try Again</Button>
+   456→        </div>
+   457→      </div>
+   458→    );
+   459→  }
+   460→
+   461→  const handleTemplateSelect = (id: TemplateId) => {
+   462→    if (!isTemplateFree(id) && !isProUser) {
+   463→      setUpgradeOpen(true);
+   464→      return;
+   465→    }
+   466→    setTemplateId(id);
+   467→  };
+   468→
+   469→  const handleDownload = async () => {
+   470→    if (!resumeId || !hiddenRenderRef.current) return;
+   471→
+   472→    setDownloading(true);
+   473→    try {
+   474→      // Check feature access
+   475→      const exportRes = await fetch(`/api/resumes/${resumeId}/export`, {
+   476→        method: 'POST',
+   477→        credentials: 'include',
+   478→      });
+   479→      const exportData = await exportRes.json();
+   480→
+   481→      if (!exportRes.ok) {
+   482→        if (exportData.error === 'limit_reached') {
+   483→          setUpgradeOpen(true);
+   484→        }
+   485→        return;
+   486→      }
+   487→
+   488→      // Generate PDF from hidden render
+   489→      await exportToPDF({
+   490→        element: hiddenRenderRef.current,
+   491→        filename: exportData.filename || 'resume.pdf',
+   492→      });
+   493→    } catch (err) {
+   494→      console.error('PDF export failed:', err);
+   495→    } finally {
+   496→      setDownloading(false);
+   497→    }
+   498→  };
+   499→
+   500→  const handleDuplicate = async () => { if (resumeId) await duplicateResume(resumeId); };
+   501→  const handleDelete = async () => { if (resumeId) { await deleteResume(resumeId); setDeleteDialogOpen(false); } };
+   502→
+   503→  // Preview content (shared across layouts)
+   504→  const previewContent = (
+   505→    <TemplateEngine data={resumeData} templateId={templateId} customization={customization} />
+   506→  );
+   507→
+   508→  // ─── Mobile Layout ─────────────────────────────────────────
+   509→  if (isMobile) {
+   510→    return (
+   511→      <div className="h-[calc(100vh-64px)] flex flex-col">
+   512→        <ResumeHeader
+   513→          title={resumeTitle} templateName={templateName}
+   514→          onRename={(t) => setResumeTitle(t)}
+   515→          autosaveStatus={autosaveStatus}
+   516→          onDuplicate={handleDuplicate} onDelete={() => setDeleteDialogOpen(true)}
+   517→          onOpenGallery={() => setGalleryOpen(true)}
+   518→          onOpenCustomization={() => setCustomizationOpen(true)}
+   519→          onDownload={handleDownload} downloading={downloading}
+   520→        />
+   521→
+   522→        <div className="flex-1 overflow-hidden relative">
+   523→          <AnimatePresence mode="wait">
+   524→            {mobileTab === 'editor' && (
+   525→              <motion.div key="editor" initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }} transition={{ duration: 0.2 }} className="absolute inset-0 flex overflow-hidden">
+   526→                <MobileSectionNav activeSection={activeSection} onSectionChange={setActiveSection} />
+   527→                <div className="flex-1 overflow-hidden">
+   528→                  <SectionEditor resumeData={resumeData} setResumeData={setResumeData} activeSection={activeSection} />
+   529→                </div>
+   530→              </motion.div>
+   531→            )}
+   532→            {mobileTab === 'preview' && (
+   533→              <motion.div key="preview" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.2 }} className="absolute inset-0">
+   534→                <PreviewContainer customization={customization}>{previewContent}</PreviewContainer>
+   535→              </motion.div>
+   536→            )}
+   537→            {mobileTab === 'templates' && (
+   538→              <motion.div key="templates" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.2 }} className="absolute inset-0 overflow-y-auto bg-card">
+   539→                <div className="p-4 space-y-3">
+   540→                  <h3 className="text-base font-semibold font-[family-name:var(--font-poppins)]">Choose Template</h3>
+   541→                  <p className="text-xs text-muted-foreground font-[family-name:var(--font-inter)]">Switch templates instantly. Your data stays the same.</p>
+   542→                  <Button onClick={() => { setGalleryOpen(true); }} className="w-full font-[family-name:var(--font-inter)]">
+   543→                    <LayoutTemplate className="size-4 mr-2" /> Browse All Templates
+   544→                  </Button>
+   545→                </div>
+   546→              </motion.div>
+   547→            )}
+   548→            {mobileTab === 'customize' && (
+   549→              <motion.div key="customize" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.2 }} className="absolute inset-0">
+   550→                <CustomizationPanel customization={customization} templateId={templateId} onChange={setCustomization} />
+   551→              </motion.div>
+   552→            )}
+   553→          </AnimatePresence>
+   554→        </div>
+   555→
+   556→        <MobileTabBar activeTab={mobileTab} onTabChange={setMobileTab} />
+   557→
+   558→        <TemplateGallery
+   559→          currentTemplateId={templateId} isProUser={isProUser}
+   560→          onSelect={handleTemplateSelect} onUpgradeRequest={() => setUpgradeOpen(true)}
+   561→          open={galleryOpen} onOpenChange={setGalleryOpen}
+   562→        />
+   563→        <DeleteDialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen} onConfirm={handleDelete} />
+   564→        <UpgradeModal open={upgradeOpen} onOpenChange={setUpgradeOpen} onClose={() => setUpgradeOpen(false)} featureName="premium templates" />
+   565→
+   566→        {/* Hidden full-size render for PDF export (mobile) */}
+   567→        <div
+   568→          ref={hiddenRenderRef}
+   569→          aria-hidden="true"
+   570→          style={{
+   571→            position: 'fixed',
+   572→            left: 0,
+   573→            top: 0,
+   574→            width: '794px',
+   575→            clipPath: 'polygon(0 0, 0 0, 0 0, 0 0)',
+   576→            pointerEvents: 'none',
+   577→            zIndex: -1,
+   578→          }}
+   579→        >
+   580→          {previewContent}
+   581→        </div>
+   582→      </div>
+   583→    );
+   584→  }
+   585→
+   586→  // ─── Desktop / Tablet Layout ───────────────────────────────
+   587→  return (
+   588→    <div className="h-[calc(100vh-64px)] flex">
+   589→      {/* Left sidebar */}
+   590→      <ResumeSidebar
+   591→        activeSection={activeSection}
+   592→        onSectionChange={setActiveSection}
+   593→        collapsed={sidebarCollapsed}
+   594→        onToggleCollapse={() => setSidebarCollapsed(!sidebarCollapsed)}
+   595→        resumeTitle={resumeTitle}
+   596→        onPreviewClick={isTablet ? () => setPreviewSheetOpen(true) : undefined}
+   597→      />
+   598→
+   599→      {/* Center + Right */}
+   600→      <div className="flex-1 flex flex-col min-w-0">
+   601→        <ResumeHeader
+   602→          title={resumeTitle} templateName={templateName}
+   603→          onRename={(t) => setResumeTitle(t)}
+   604→          autosaveStatus={autosaveStatus}
+   605→          onDuplicate={handleDuplicate} onDelete={() => setDeleteDialogOpen(true)}
+   606→          onTogglePreview={() => setPreviewSheetOpen(true)}
+   607→          onOpenGallery={() => setGalleryOpen(true)}
+   608→          onOpenCustomization={() => setCustomizationOpen(true)}
+   609→          onDownload={handleDownload} downloading={downloading}
+   610→          showPreviewButton={isTablet}
+   611→        />
+   612→
+   613→        <div className="flex-1 flex overflow-hidden">
+   614→          {/* Center editor */}
+   615→          <SectionEditor
+   616→            resumeData={resumeData}
+   617→            setResumeData={setResumeData}
+   618→            activeSection={activeSection}
+   619→          />
+   620→
+   621→          {/* Right preview (desktop only) */}
+   622→          {!isTablet && (
+   623→            <div className="w-[440px] shrink-0 border-l border-border/50">
+   624→              <PreviewContainer customization={customization}>
+   625→                {previewContent}
+   626→              </PreviewContainer>
+   627→            </div>
+   628→          )}
+   629→        </div>
+   630→      </div>
+   631→
+   632→      {/* Customization Sheet (side panel) */}
+   633→      <Sheet open={customizationOpen} onOpenChange={setCustomizationOpen}>
+   634→        <SheetContent side="right" className="w-[320px] max-w-[320px] p-0 gap-0 overflow-hidden [&>button:last-child]:hidden">
+   635→          <SheetTitle className="sr-only">Customize Design</SheetTitle>
+   636→          <CustomizationPanel
+   637→            customization={customization}
+   638→            templateId={templateId}
+   639→            onChange={setCustomization}
+   640→            onClose={() => setCustomizationOpen(false)}
+   641→          />
+   642→        </SheetContent>
+   643→      </Sheet>
+   644→
+   645→      {/* Preview Sheet (tablet) */}
+   646→      <Sheet open={previewSheetOpen} onOpenChange={setPreviewSheetOpen}>
+   647→        <SheetContent side="right" className="w-[90vw] sm:max-w-lg p-0">
+   648→          <SheetHeader className="p-4 pb-0">
+   649→            <SheetTitle className="font-[family-name:var(--font-poppins)]">Resume Preview</SheetTitle>
+   650→          </SheetHeader>
+   651→          <PreviewContainer customization={customization}>
+   652→            {previewContent}
+   653→          </PreviewContainer>
+   654→        </SheetContent>
+   655→      </Sheet>
+   656→
+   657→      {/* Template Gallery */}
+   658→      <TemplateGallery
+   659→        currentTemplateId={templateId} isProUser={isProUser}
+   660→        onSelect={handleTemplateSelect} onUpgradeRequest={() => setUpgradeOpen(true)}
+   661→        open={galleryOpen} onOpenChange={setGalleryOpen}
+   662→      />
+   663→
+   664→      <DeleteDialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen} onConfirm={handleDelete} />
+   665→      <UpgradeModal open={upgradeOpen} onOpenChange={setUpgradeOpen} onClose={() => setUpgradeOpen(false)} featureName="premium templates" />
+   666→
+   667→      {/* Hidden full-size render for PDF export (desktop) */}
+   668→      {/* clip-path hides it visually but keeps it renderable for html2canvas.
+   669→          PDF export clones the first child (TemplateEngine wrapper), not this div. */}
+   670→      <div
+   671→        ref={hiddenRenderRef}
+   672→        aria-hidden="true"
+   673→        style={{
+   674→          position: 'fixed',
+   675→          left: 0,
+   676→          top: 0,
+   677→          width: '794px',
+   678→          clipPath: 'polygon(0 0, 0 0, 0 0, 0 0)',
+   679→          pointerEvents: 'none',
+   680→          zIndex: -1,
+   681→        }}
+   682→      >
+   683→        {previewContent}
+   684→      </div>
+   685→    </div>
+   686→  );
+   687→}

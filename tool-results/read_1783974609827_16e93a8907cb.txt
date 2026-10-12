@@ -1,0 +1,936 @@
+     1→'use client';
+     2→
+     3→import { useState, useEffect, useCallback } from 'react';
+     4→import { motion } from 'framer-motion';
+     5→import { toast } from 'sonner';
+     6→import { useAuth } from '@/lib/auth/context';
+     7→import { FEATURE_DISPLAY_INFO, FEATURE_KEYS } from '@/lib/subscription/features';
+     8→import {
+     9→  Card,
+    10→  CardHeader,
+    11→  CardTitle,
+    12→  CardDescription,
+    13→  CardContent,
+    14→  CardFooter,
+    15→} from '@/components/ui/card';
+    16→import { Badge } from '@/components/ui/badge';
+    17→import { Button } from '@/components/ui/button';
+    18→import { Separator } from '@/components/ui/separator';
+    19→import { Progress } from '@/components/ui/progress';
+    20→import { Switch } from '@/components/ui/switch';
+    21→import { Skeleton } from '@/components/ui/skeleton';
+    22→import {
+    23→  Dialog,
+    24→  DialogContent,
+    25→  DialogDescription,
+    26→  DialogFooter,
+    27→  DialogHeader,
+    28→  DialogTitle,
+    29→} from '@/components/ui/dialog';
+    30→import {
+    31→  CheckCircle2,
+    32→  XCircle,
+    33→  CreditCard,
+    34→  ArrowRight,
+    35→  AlertTriangle,
+    36→  Crown,
+    37→  Sparkles,
+    38→  Building2,
+    39→  Receipt,
+    40→  Loader2,
+    41→  FileText,
+    42→} from 'lucide-react';
+    43→
+    44→// ── Types ────────────────────────────────────────────────────────────────────
+    45→
+    46→interface PlanFeature {
+    47→  key: string;
+    48→  enabled: boolean;
+    49→  limit: number | null;
+    50→}
+    51→
+    52→interface Plan {
+    53→  id: string;
+    54→  name: string;
+    55→  display_name: string;
+    56→  price_monthly: number;
+    57→  price_yearly: number;
+    58→  currency: string;
+    59→  description: string;
+    60→  features: PlanFeature[];
+    61→}
+    62→
+    63→interface Subscription {
+    64→  id: string;
+    65→  plan: {
+    66→    id: string;
+    67→    name: string;
+    68→    display_name: string;
+    69→    price_monthly: number;
+    70→    price_yearly: number;
+    71→    currency: string;
+    72→  };
+    73→  status: string;
+    74→  billing_cycle: string | null;
+    75→  started_at: string | null;
+    76→  expires_at: string | null;
+    77→  current_period_end: string | null;
+    78→  cancelled_at: string | null;
+    79→}
+    80→
+    81→interface UsageEntry {
+    82→  limit: number;
+    83→  used: number;
+    84→  enabled: boolean;
+    85→}
+    86→
+    87→interface Payment {
+    88→  id: string;
+    89→  amount: number;
+    90→  currency: string;
+    91→  status: string;
+    92→  transaction_reference: string;
+    93→  payment_method: string;
+    94→  paid_at: string | null;
+    95→  created_at: string;
+    96→  plan_name: string;
+    97→}
+    98→
+    99→// ── Helpers ──────────────────────────────────────────────────────────────────
+   100→
+   101→const PLAN_ORDER = ['free', 'pro', 'enterprise'] as const;
+   102→type PlanName = (typeof PLAN_ORDER)[number];
+   103→
+   104→function getPlanTier(planName: string): number {
+   105→  const idx = PLAN_ORDER.indexOf(planName.toLowerCase() as PlanName);
+   106→  return idx >= 0 ? idx : 0;
+   107→}
+   108→
+   109→function formatPrice(cents: number, currency: string = 'USD'): string {
+   110→  const amount = cents / 100;
+   111→  return new Intl.NumberFormat('en-US', {
+   112→    style: 'currency',
+   113→    currency,
+   114→    minimumFractionDigits: 2,
+   115→    maximumFractionDigits: 2,
+   116→  }).format(amount);
+   117→}
+   118→
+   119→function formatDate(dateStr: string | null): string {
+   120→  if (!dateStr) return 'N/A';
+   121→  return new Date(dateStr).toLocaleDateString('en-US', {
+   122→    year: 'numeric',
+   123→    month: 'long',
+   124→    day: 'numeric',
+   125→  });
+   126→}
+   127→
+   128→function formatShortDate(dateStr: string | null): string {
+   129→  if (!dateStr) return '—';
+   130→  return new Date(dateStr).toLocaleDateString('en-US', {
+   131→    year: 'numeric',
+   132→    month: 'short',
+   133→    day: 'numeric',
+   134→  });
+   135→}
+   136→
+   137→function getFeatureLabel(key: string): string {
+   138→  return FEATURE_DISPLAY_INFO[key]?.label ?? key.replace(/_/g, ' ');
+   139→}
+   140→
+   141→function getFeatureLimitText(feature: PlanFeature): string {
+   142→  if (!feature.enabled) return '';
+   143→  if (feature.limit === null || feature.limit === -1 || feature.limit === 0) return 'Unlimited';
+   144→  return String(feature.limit);
+   145→}
+   146→
+   147→const PLAN_ICONS: Record<string, React.ReactNode> = {
+   148→  free: <Sparkles className="w-5 h-5" />,
+   149→  pro: <Crown className="w-5 h-5" />,
+   150→  enterprise: <Building2 className="w-5 h-5" />,
+   151→};
+   152→
+   153→const PLAN_COLORS: Record<string, string> = {
+   154→  free: 'text-muted-foreground',
+   155→  pro: 'text-brand',
+   156→  enterprise: 'text-amber-600 dark:text-amber-400',
+   157→};
+   158→
+   159→// ── Animation variants ───────────────────────────────────────────────────────
+   160→
+   161→const fadeInUp = {
+   162→  hidden: { opacity: 0, y: 20 },
+   163→  visible: { opacity: 1, y: 0, transition: { duration: 0.5, ease: 'easeOut' } },
+   164→};
+   165→
+   166→const staggerContainer = {
+   167→  hidden: {},
+   168→  visible: { transition: { staggerChildren: 0.08 } },
+   169→};
+   170→
+   171→const cardVariant = {
+   172→  hidden: { opacity: 0, y: 24 },
+   173→  visible: { opacity: 1, y: 0, transition: { duration: 0.45, ease: 'easeOut' } },
+   174→};
+   175→
+   176→// ── Sub-components ───────────────────────────────────────────────────────────
+   177→
+   178→function SkeletonCard() {
+   179→  return (
+   180→    <Card className="overflow-hidden">
+   181→      <CardHeader>
+   182→        <Skeleton className="h-5 w-24" />
+   183→        <Skeleton className="h-3 w-48 mt-1" />
+   184→      </CardHeader>
+   185→      <CardContent>
+   186→        <Skeleton className="h-10 w-32" />
+   187→        <Skeleton className="h-4 w-full mt-2" />
+   188→        <Separator className="my-4" />
+   189→        <div className="space-y-3">
+   190→          {Array.from({ length: 5 }).map((_, i) => (
+   191→            <div key={i} className="flex items-center gap-3">
+   192→              <Skeleton className="h-4 w-4 rounded-full" />
+   193→              <Skeleton className="h-4 w-36" />
+   194→            </div>
+   195→          ))}
+   196→        </div>
+   197→      </CardContent>
+   198→      <CardFooter>
+   199→        <Skeleton className="h-10 w-full rounded-lg" />
+   200→      </CardFooter>
+   201→    </Card>
+   202→  );
+   203→}
+   204→
+   205→function EmptyState({ icon: Icon, title, description }: { icon: React.ElementType; title: string; description: string }) {
+   206→  return (
+   207→    <motion.div
+   208→      initial={{ opacity: 0, scale: 0.95 }}
+   209→      animate={{ opacity: 1, scale: 1 }}
+   210→      className="flex flex-col items-center justify-center py-16 text-center"
+   211→    >
+   212→      <div className="rounded-full bg-muted p-4 mb-4">
+   213→        <Icon className="w-8 h-8 text-muted-foreground" />
+   214→      </div>
+   215→      <h3 className="text-sm font-semibold font-[family-name:var(--font-poppins)] text-foreground">
+   216→        {title}
+   217→      </h3>
+   218→      <p className="text-sm text-muted-foreground mt-1 font-[family-name:var(--font-inter)] max-w-sm">
+   219→        {description}
+   220→      </p>
+   221→    </motion.div>
+   222→  );
+   223→}
+   224→
+   225→// ── Main Component ───────────────────────────────────────────────────────────
+   226→
+   227→export default function BillingPage() {
+   228→  useAuth(); // ensures session is active
+   229→
+   230→  // State
+   231→  const [loading, setLoading] = useState(true);
+   232→  const [subscription, setSubscription] = useState<Subscription | null>(null);
+   233→  const [plans, setPlans] = useState<Plan[]>([]);
+   234→  const [usage, setUsage] = useState<Record<string, UsageEntry>>({});
+   235→  const [rawUsage, setRawUsage] = useState<Record<string, number>>({});
+   236→  const [payments, setPayments] = useState<Payment[]>([]);
+   237→  const [isYearly, setIsYearly] = useState(false);
+   238→  const [upgrading, setUpgrading] = useState<string | null>(null);
+   239→  const [cancelDialogOpen, setCancelDialogOpen] = useState(false);
+   240→  const [cancelling, setCancelling] = useState(false);
+   241→
+   242→  const currentPlanName = subscription?.plan.name.toLowerCase() as PlanName || 'free';
+   243→  const currentTier = getPlanTier(currentPlanName);
+   244→  const isCancelled = subscription?.status === 'cancelled';
+   245→  const isFree = currentPlanName === 'free';
+   246→
+   247→  // Fetch all data
+   248→  const fetchAllData = useCallback(async () => {
+   249→    setLoading(true);
+   250→    try {
+   251→      const [subRes, plansRes, usageRes, paymentsRes] = await Promise.all([
+   252→        fetch('/api/subscriptions/me', { credentials: 'include' }).then(r => r.json()),
+   253→        fetch('/api/billing/plans', { credentials: 'include' }).then(r => r.json()),
+   254→        fetch('/api/usage/me', { credentials: 'include' }).then(r => r.json()),
+   255→        fetch('/api/payments/history', { credentials: 'include' }).then(r => r.json()),
+   256→      ]);
+   257→
+   258→      if (subRes.success) setSubscription(subRes.subscription);
+   259→      if (plansRes.success) setPlans(plansRes.plans);
+   260→      if (usageRes.success) {
+   261→        setUsage(usageRes.usage || {});
+   262→        setRawUsage(usageRes.raw || {});
+   263→      }
+   264→      if (paymentsRes.success) setPayments(paymentsRes.payments || []);
+   265→    } catch {
+   266→      toast.error('Failed to load billing data');
+   267→    } finally {
+   268→      setLoading(false);
+   269→    }
+   270→  }, []);
+   271→
+   272→  useEffect(() => {
+   273→    fetchAllData();
+   274→  }, [fetchAllData]);
+   275→
+   276→  // Handlers
+   277→  const handleUpgrade = async (planId: string, planDisplayName: string) => {
+   278→    setUpgrading(planId);
+   279→    try {
+   280→      const res = await fetch('/api/billing/subscribe', {
+   281→        method: 'POST',
+   282→        credentials: 'include',
+   283→        headers: { 'Content-Type': 'application/json' },
+   284→        body: JSON.stringify({ planId, billingCycle: isYearly ? 'yearly' : 'monthly' }),
+   285→      });
+   286→      const data = await res.json();
+   287→
+   288→      if (data.success) {
+   289→        if (data.payment_link) {
+   290→          window.location.href = data.payment_link;
+   291→        } else {
+   292→          toast.success(`Upgraded to ${planDisplayName}!`);
+   293→          await fetchAllData();
+   294→        }
+   295→      } else {
+   296→        toast.error(data.error || 'Upgrade failed');
+   297→      }
+   298→    } catch {
+   299→      toast.error('Something went wrong. Please try again.');
+   300→    } finally {
+   301→      setUpgrading(null);
+   302→    }
+   303→  };
+   304→
+   305→  const handleCancel = async () => {
+   306→    setCancelling(true);
+   307→    try {
+   308→      const res = await fetch('/api/billing/cancel', {
+   309→        method: 'POST',
+   310→        credentials: 'include',
+   311→        headers: { 'Content-Type': 'application/json' },
+   312→        body: JSON.stringify({ immediate: true }),
+   313→      });
+   314→      const data = await res.json();
+   315→
+   316→      if (data.success) {
+   317→        toast.success('Successfully downgraded to Free plan');
+   318→        setCancelDialogOpen(false);
+   319→        await fetchAllData();
+   320→      } else {
+   321→        toast.error(data.error || 'Failed to cancel');
+   322→      }
+   323→    } catch {
+   324→      toast.error('Something went wrong. Please try again.');
+   325→    } finally {
+   326→      setCancelling(false);
+   327→    }
+   328→  };
+   329→
+   330→  // ── RENDER ────────────────────────────────────────────────────────────────
+   331→
+   332→  if (loading) {
+   333→    return (
+   334→      <div className="space-y-8">
+   335→        <div>
+   336→          <Skeleton className="h-8 w-48" />
+   337→          <Skeleton className="h-4 w-72 mt-2" />
+   338→        </div>
+   339→        <Skeleton className="h-40 w-full rounded-xl" />
+   340→        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+   341→          <SkeletonCard />
+   342→          <SkeletonCard />
+   343→          <SkeletonCard />
+   344→        </div>
+   345→        <Skeleton className="h-60 w-full rounded-xl" />
+   346→      </div>
+   347→    );
+   348→  }
+   349→
+   350→  // Collect all feature keys from all plans for the comparison table
+   351→  const allFeatureKeys = Array.from(
+   352→    new Set(plans.flatMap(p => p.features.map(f => f.key)))
+   353→  ).filter(key => FEATURE_DISPLAY_INFO[key]);
+   354→
+   355→  return (
+   356→    <motion.div
+   357→      variants={staggerContainer}
+   358→      initial="hidden"
+   359→      animate="visible"
+   360→      className="space-y-8"
+   361→    >
+   362→      {/* Page Header */}
+   363→      <motion.div variants={fadeInUp}>
+   364→        <h1 className="text-2xl md:text-3xl font-bold font-[family-name:var(--font-poppins)] text-foreground">
+   365→          Billing & Plans
+   366→        </h1>
+   367→        <p className="text-muted-foreground mt-1 text-sm font-[family-name:var(--font-inter)]">
+   368→          Manage your subscription, view usage, and billing history.
+   369→        </p>
+   370→      </motion.div>
+   371→
+   372→      {/* ── 1. Current Plan Section ────────────────────────────────────────── */}
+   373→      <motion.div variants={fadeInUp}>
+   374→        <Card className="overflow-hidden">
+   375→          <CardContent className="p-6 md:p-8">
+   376→            <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+   377→              <div className="flex items-start gap-4">
+   378→                <div className={`rounded-xl p-3 ${isFree ? 'bg-muted' : 'bg-brand/10'}`}>
+   379→                  <span className={PLAN_COLORS[currentPlanName] || 'text-brand'}>
+   380→                    {PLAN_ICONS[currentPlanName] || <CreditCard className="w-5 h-5" />}
+   381→                  </span>
+   382→                </div>
+   383→                <div>
+   384→                  <div className="flex items-center gap-2.5">
+   385→                    <h2 className="text-lg font-semibold font-[family-name:var(--font-poppins)] text-foreground">
+   386→                      {subscription?.plan.display_name || 'Free Plan'}
+   387→                    </h2>
+   388→                    <Badge
+   389→                      variant={isCancelled ? 'destructive' : 'secondary'}
+   390→                      className={
+   391→                        !isCancelled && !isFree
+   392→                          ? 'bg-brand/10 text-brand border-brand/20'
+   393→                          : ''
+   394→                      }
+   395→                    >
+   396→                      {isCancelled ? 'Cancelled' : subscription?.status || 'Active'}
+   397→                    </Badge>
+   398→                  </div>
+   399→                  <p className="text-sm text-muted-foreground font-[family-name:var(--font-inter)] mt-0.5">
+   400→                    {isFree
+   401→                      ? 'You are on the free plan. Upgrade to unlock premium features.'
+   402→                      : isCancelled && subscription?.current_period_end
+   403→                        ? `Your plan expires on ${formatDate(subscription.current_period_end)}.`
+   404→                        : subscription?.billing_cycle === 'yearly'
+   405→                          ? `Next billing date: ${formatDate(subscription?.current_period_end || null)}`
+   406→                          : `Next billing date: ${formatDate(subscription?.current_period_end || null)}`
+   407→                    }
+   408→                  </p>
+   409→                </div>
+   410→              </div>
+   411→              <div className="flex items-center gap-3">
+   412→                {isFree ? (
+   413→                  <Button
+   414→                    className="bg-brand text-white hover:bg-brand/90 font-[family-name:var(--font-inter)] rounded-lg"
+   415→                    onClick={() => {
+   416→                      const proPlan = plans.find(p => p.name === 'pro');
+   417→                      if (proPlan) handleUpgrade(proPlan.id, proPlan.display_name);
+   418→                    }}
+   419→                    disabled={upgrading !== null}
+   420→                  >
+   421→                    {upgrading ? (
+   422→                      <Loader2 className="w-4 h-4 animate-spin" />
+   423→                    ) : (
+   424→                      <>
+   425→                        Upgrade
+   426→                        <ArrowRight className="w-4 h-4 ml-1" />
+   427→                      </>
+   428→                    )}
+   429→                  </Button>
+   430→                ) : (
+   431→                  <Button
+   432→                    variant="outline"
+   433→                    className="font-[family-name:var(--font-inter)] rounded-lg"
+   434→                    onClick={() => setCancelDialogOpen(true)}
+   435→                  >
+   436→                    Change Plan
+   437→                  </Button>
+   438→                )}
+   439→              </div>
+   440→            </div>
+   441→
+   442→            {/* Cancelled Warning */}
+   443→            {isCancelled && subscription?.current_period_end && (
+   444→              <motion.div
+   445→                initial={{ opacity: 0, height: 0 }}
+   446→                animate={{ opacity: 1, height: 'auto' }}
+   447→                className="mt-4 flex items-start gap-3 rounded-lg border border-amber-500/30 bg-amber-500/5 p-4"
+   448→              >
+   449→                <AlertTriangle className="w-5 h-5 text-amber-600 dark:text-amber-400 shrink-0 mt-0.5" />
+   450→                <div>
+   451→                  <p className="text-sm font-medium font-[family-name:var(--font-inter)] text-amber-700 dark:text-amber-300">
+   452→                    Your plan expires on {formatDate(subscription.current_period_end)}
+   453→                  </p>
+   454→                  <p className="text-xs text-amber-600/70 dark:text-amber-400/70 mt-0.5 font-[family-name:var(--font-inter)]">
+   455→                    You can continue using premium features until then. Reactivate your plan to avoid losing access.
+   456→                  </p>
+   457→                </div>
+   458→              </motion.div>
+   459→            )}
+   460→
+   461→            {/* Free plan usage bars */}
+   462→            {isFree && (
+   463→              <div className="mt-6 grid grid-cols-1 sm:grid-cols-3 gap-4">
+   464→                {[
+   465→                  {
+   466→                    key: FEATURE_KEYS.CREATE_RESUME,
+   467→                    rawKey: 'resume_count' as const,
+   468→                    label: 'Resumes',
+   469→                    icon: <FileText className="w-4 h-4" />,
+   470→                  },
+   471→                  {
+   472→                    key: FEATURE_KEYS.CREATE_COVER_LETTER,
+   473→                    rawKey: 'cover_letter_count' as const,
+   474→                    label: 'Cover Letters',
+   475→                    icon: <FileText className="w-4 h-4" />,
+   476→                  },
+   477→                  {
+   478→                    key: FEATURE_KEYS.PDF_EXPORT,
+   479→                    rawKey: 'exports_count' as const,
+   480→                    label: 'PDF Exports',
+   481→                    icon: <CreditCard className="w-4 h-4" />,
+   482→                  },
+   483→                ].map(item => {
+   484→                  const used = rawUsage[item.rawKey] ?? 0;
+   485→                  const limit = usage[item.key]?.limit ?? 1;
+   486→                  const pct = Math.min((used / limit) * 100, 100);
+   487→                  const isExhausted = used >= limit && limit > 0;
+   488→
+   489→                  return (
+   490→                    <div
+   491→                      key={item.key}
+   492→                      className="rounded-lg border border-border bg-background/50 p-4"
+   493→                    >
+   494→                      <div className="flex items-center justify-between mb-2">
+   495→                        <div className="flex items-center gap-2">
+   496→                          <span className="text-muted-foreground">{item.icon}</span>
+   497→                          <span className="text-sm font-medium font-[family-name:var(--font-inter)] text-foreground">
+   498→                            {item.label}
+   499→                          </span>
+   500→                        </div>
+   501→                        <span
+   502→                          className={`text-xs font-medium font-[family-name:var(--font-inter)] ${
+   503→                            isExhausted ? 'text-rose-500' : 'text-muted-foreground'
+   504→                          }`}
+   505→                        >
+   506→                          {used}/{limit}
+   507→                        </span>
+   508→                      </div>
+   509→                      <Progress
+   510→                        value={pct}
+   511→                        className={`h-2 ${isExhausted ? '[&>div]:bg-rose-500' : '[&>div]:bg-brand'}`}
+   512→                      />
+   513→                    </div>
+   514→                  );
+   515→                })}
+   516→              </div>
+   517→            )}
+   518→
+   519→            {/* Paid plan info row */}
+   520→            {!isFree && subscription && (
+   521→              <div className="mt-6 grid grid-cols-1 sm:grid-cols-3 gap-4">
+   522→                <div className="rounded-lg border border-border bg-background/50 p-4">
+   523→                  <p className="text-xs text-muted-foreground font-[family-name:var(--font-inter)] mb-1">Billing Cycle</p>
+   524→                  <p className="text-sm font-medium font-[family-name:var(--font-poppins)] text-foreground capitalize">
+   525→                    {subscription.billing_cycle || 'Monthly'}
+   526→                  </p>
+   527→                </div>
+   528→                <div className="rounded-lg border border-border bg-background/50 p-4">
+   529→                  <p className="text-xs text-muted-foreground font-[family-name:var(--font-inter)] mb-1">Period End</p>
+   530→                  <p className="text-sm font-medium font-[family-name:var(--font-poppins)] text-foreground">
+   531→                    {formatShortDate(subscription.current_period_end)}
+   532→                  </p>
+   533→                </div>
+   534→                {subscription.plan.name.toLowerCase() !== 'enterprise' && (
+   535→                <div className="rounded-lg border border-border bg-background/50 p-4">
+   536→                  <p className="text-xs text-muted-foreground font-[family-name:var(--font-inter)] mb-1">Plan Price</p>
+   537→                  <p className="text-sm font-medium font-[family-name:var(--font-poppins)] text-foreground">
+   538→                    {subscription.billing_cycle === 'yearly'
+   539→                      ? `${formatPrice(subscription.plan.price_yearly, subscription.plan.currency)}/yr`
+   540→                      : `${formatPrice(subscription.plan.price_monthly, subscription.plan.currency)}/mo`
+   541→                    }
+   542→                  </p>
+   543→                </div>
+   544→                )}
+   545→              </div>
+   546→            )}
+   547→          </CardContent>
+   548→        </Card>
+   549→      </motion.div>
+   550→
+   551→      {/* ── 2. Plan Comparison Cards ───────────────────────────────────────── */}
+   552→      <motion.div variants={fadeInUp}>
+   553→        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
+   554→          <div>
+   555→            <h2 className="text-lg font-semibold font-[family-name:var(--font-poppins)] text-foreground">
+   556→              Compare Plans
+   557→            </h2>
+   558→            <p className="text-sm text-muted-foreground font-[family-name:var(--font-inter)]">
+   559→              Find the plan that works best for you.
+   560→            </p>
+   561→          </div>
+   562→          {/* Monthly / Yearly toggle */}
+   563→          <div className="flex items-center gap-3">
+   564→            <span
+   565→              className={`text-sm font-medium font-[family-name:var(--font-inter)] transition-colors ${
+   566→                !isYearly ? 'text-foreground' : 'text-muted-foreground'
+   567→              }`}
+   568→            >
+   569→              Monthly
+   570→            </span>
+   571→            <Switch
+   572→              checked={isYearly}
+   573→              onCheckedChange={setIsYearly}
+   574→              aria-label="Toggle billing period"
+   575→            />
+   576→            <span
+   577→              className={`text-sm font-medium font-[family-name:var(--font-inter)] transition-colors ${
+   578→                isYearly ? 'text-foreground' : 'text-muted-foreground'
+   579→              }`}
+   580→            >
+   581→              Yearly
+   582→            </span>
+   583→            <Badge className="bg-emerald/10 text-emerald border-emerald/20 text-xs font-[family-name:var(--font-inter)]">
+   584→              Save 20%
+   585→            </Badge>
+   586→          </div>
+   587→        </div>
+   588→
+   589→        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+   590→          {plans.map(plan => {
+   591→            const planName = plan.name.toLowerCase() as PlanName;
+   592→            const tier = getPlanTier(planName);
+   593→            const isCurrentPlan = planName === currentPlanName;
+   594→            const isHigher = tier > currentTier;
+   595→            const isPro = planName === 'pro';
+   596→            const isEnterprise = planName === 'enterprise';
+   597→            const price = isYearly ? plan.price_yearly : plan.price_monthly;
+   598→            const otherPrice = isYearly ? plan.price_monthly : plan.price_yearly;
+   599→            const isFreePlan = planName === 'free';
+   600→
+   601→            return (
+   602→              <motion.div
+   603→                key={plan.id}
+   604→                variants={cardVariant}
+   605→                className={`relative rounded-2xl border bg-card flex flex-col overflow-hidden transition-shadow hover:shadow-md ${
+   606→                  isPro
+   607→                    ? 'border-brand shadow-lg lg:scale-[1.02]'
+   608→                    : isCurrentPlan
+   609→                      ? 'border-brand/50'
+   610→                      : 'border-border'
+   611→                }`}
+   612→              >
+   613→                {/* Popular badge */}
+   614→                {isPro && (
+   615→                  <span className="absolute -top-3 left-1/2 -translate-x-1/2 bg-brand text-white text-xs font-medium px-3 py-1 rounded-full font-[family-name:var(--font-inter)] z-10">
+   616→                    Most Popular
+   617→                  </span>
+   618→                )}
+   619→
+   620→                {/* Card header area */}
+   621→                <div className="p-6 pb-0 flex-1">
+   622→                  <div className="flex items-center justify-between">
+   623→                    <div className="flex items-center gap-2">
+   624→                      <span className={PLAN_COLORS[planName] || 'text-foreground'}>
+   625→                        {PLAN_ICONS[planName] || <CreditCard className="w-5 h-5" />}
+   626→                      </span>
+   627→                      <h3 className="text-lg font-bold font-[family-name:var(--font-poppins)] text-foreground">
+   628→                        {plan.display_name}
+   629→                      </h3>
+   630→                    </div>
+   631→                    {isCurrentPlan && (
+   632→                      <Badge
+   633→                        variant="outline"
+   634→                        className="border-brand/30 text-brand text-xs font-[family-name:var(--font-inter)]"
+   635→                      >
+   636→                        Current Plan
+   637→                      </Badge>
+   638→                    )}
+   639→                  </div>
+   640→
+   641→                  <p className="text-sm text-muted-foreground font-[family-name:var(--font-inter)] mt-1">
+   642→                    {plan.description}
+   643→                  </p>
+   644→
+   645→                  {/* Price */}
+   646→                  <div className="mt-4 flex items-baseline gap-1">
+   647→                    {isFreePlan ? (
+   648→                      <span className="text-4xl font-bold font-[family-name:var(--font-poppins)] text-foreground">
+   649→                        Free
+   650→                      </span>
+   651→                    ) : isEnterprise ? (
+   652→                      <span className="text-4xl font-bold font-[family-name:var(--font-poppins)] text-foreground">
+   653→                        Custom
+   654→                      </span>
+   655→                    ) : (
+   656→                      <>
+   657→                        <motion.span
+   658→                          key={isYearly ? 'yearly-price' : 'monthly-price'}
+   659→                          initial={{ opacity: 0, y: -8 }}
+   660→                          animate={{ opacity: 1, y: 0 }}
+   661→                          transition={{ duration: 0.2 }}
+   662→                          className="text-4xl font-bold font-[family-name:var(--font-poppins)] text-foreground"
+   663→                        >
+   664→                          {formatPrice(price, plan.currency)}
+   665→                        </motion.span>
+   666→                        <motion.span
+   667→                          key={isYearly ? 'yearly-period' : 'monthly-period'}
+   668→                          initial={{ opacity: 0, y: -8 }}
+   669→                          animate={{ opacity: 1, y: 0 }}
+   670→                          transition={{ duration: 0.2 }}
+   671→                          className="text-muted-foreground text-sm font-[family-name:var(--font-inter)]"
+   672→                        >
+   673→                          {isYearly ? '/yr' : '/mo'}
+   674→                        </motion.span>
+   675→                      </>
+   676→                    )}
+   677→                  </div>
+   678→
+   679→                  {/* Yearly savings note */}
+   680→                  {!isFreePlan && !isEnterprise && (
+   681→                    <motion.p
+   682→                      key={isYearly ? 'savings-on' : 'savings-off'}
+   683→                      initial={{ opacity: 0 }}
+   684→                      animate={{ opacity: 1 }}
+   685→                      className="text-xs text-muted-foreground font-[family-name:var(--font-inter)] mt-1"
+   686→                    >
+   687→                      {isYearly
+   688→                        ? `That's ${formatPrice(Math.round(price / 12), plan.currency)}/mo — billed annually`
+   689→                        : `Or ${formatPrice(plan.price_yearly, plan.currency)}/yr — save ${formatPrice(plan.price_monthly * 12 - plan.price_yearly, plan.currency)}`
+   690→                      }
+   691→                    </motion.p>
+   692→                  )}
+   693→
+   694→                  <Separator className="my-5" />
+   695→
+   696→                  {/* Feature list */}
+   697→                  <ul className="space-y-3">
+   698→                    {plan.features
+   699→                      .filter(f => FEATURE_DISPLAY_INFO[f.key])
+   700→                      .map(feature => {
+   701→                        const label = getFeatureLabel(feature.key);
+   702→                        const limitText = getFeatureLimitText(feature);
+   703→
+   704→                        return (
+   705→                          <li key={feature.key} className="flex items-start gap-2.5">
+   706→                            {feature.enabled ? (
+   707→                              <CheckCircle2 className="w-4 h-4 text-emerald mt-0.5 shrink-0" />
+   708→                            ) : (
+   709→                              <XCircle className="w-4 h-4 text-muted-foreground/40 mt-0.5 shrink-0" />
+   710→                            )}
+   711→                            <span
+   712→                              className={`text-sm font-[family-name:var(--font-inter)] ${
+   713→                                feature.enabled
+   714→                                  ? 'text-foreground/90'
+   715→                                  : 'text-muted-foreground/50 line-through'
+   716→                              }`}
+   717→                            >
+   718→                              {label}
+   719→                              {feature.enabled && limitText && limitText !== 'Unlimited' && (
+   720→                                <span className="text-muted-foreground ml-1">({limitText})</span>
+   721→                              )}
+   722→                              {feature.enabled && limitText === 'Unlimited' && (
+   723→                                <span className="text-emerald ml-1 text-xs">(Unlimited)</span>
+   724→                              )}
+   725→                            </span>
+   726→                          </li>
+   727→                        );
+   728→                      })}
+   729→                  </ul>
+   730→                </div>
+   731→
+   732→                {/* CTA button */}
+   733→                <div className="p-6 pt-2 mt-auto">
+   734→                  {isCurrentPlan ? (
+   735→                    <Button
+   736→                      variant="outline"
+   737→                      className="w-full rounded-lg font-[family-name:var(--font-inter)]"
+   738→                      disabled
+   739→                    >
+   740→                      Current Plan
+   741→                    </Button>
+   742→                  ) : isEnterprise ? (
+   743→                    <Button
+   744→                      variant="outline"
+   745→                      className="w-full rounded-lg font-[family-name:var(--font-inter)]"
+   746→                      onClick={() => toast.info('Contact our sales team at sales@careerforge.ai')}
+   747→                    >
+   748→                      Contact Sales
+   749→                      <ArrowRight className="w-4 h-4 ml-1" />
+   750→                    </Button>
+   751→                  ) : isHigher ? (
+   752→                    <Button
+   753→                      className={`w-full rounded-lg font-[family-name:var(--font-inter)] ${
+   754→                        isPro
+   755→                          ? 'bg-brand text-white hover:bg-brand/90'
+   756→                          : 'bg-foreground text-background hover:bg-foreground/90'
+   757→                      }`}
+   758→                      onClick={() => handleUpgrade(plan.id, plan.display_name)}
+   759→                      disabled={upgrading !== null}
+   760→                    >
+   761→                      {upgrading === plan.id ? (
+   762→                        <Loader2 className="w-4 h-4 animate-spin" />
+   763→                      ) : (
+   764→                        <>
+   765→                          Upgrade to {plan.display_name}
+   766→                          <ArrowRight className="w-4 h-4 ml-1" />
+   767→                        </>
+   768→                      )}
+   769→                    </Button>
+   770→                  ) : (
+   771→                    <Button
+   772→                      variant="outline"
+   773→                      className="w-full rounded-lg font-[family-name:var(--font-inter)] text-rose-500 border-rose-500/30 hover:bg-rose-500/5 hover:text-rose-600"
+   774→                      onClick={() => setCancelDialogOpen(true)}
+   775→                    >
+   776→                      Downgrade
+   777→                    </Button>
+   778→                  )}
+   779→                </div>
+   780→              </motion.div>
+   781→            );
+   782→          })}
+   783→        </div>
+   784→      </motion.div>
+   785→
+   786→      {/* ── 3. Payment History ─────────────────────────────────────────────── */}
+   787→      <motion.div variants={fadeInUp}>
+   788→        <Card>
+   789→          <CardHeader>
+   790→            <div className="flex items-center gap-2">
+   791→              <Receipt className="w-5 h-5 text-muted-foreground" />
+   792→              <CardTitle className="font-[family-name:var(--font-poppins)]">
+   793→                Payment History
+   794→              </CardTitle>
+   795→            </div>
+   796→            <CardDescription className="font-[family-name:var(--font-inter)]">
+   797→              View your past transactions and payment details.
+   798→            </CardDescription>
+   799→          </CardHeader>
+   800→          <CardContent>
+   801→            {payments.length === 0 ? (
+   802→              <EmptyState
+   803→                icon={Receipt}
+   804→                title="No payment history"
+   805→                description="When you upgrade your plan, your payment history will appear here."
+   806→              />
+   807→            ) : (
+   808→              <div className="overflow-x-auto -mx-6 px-6">
+   809→                <table className="w-full text-sm font-[family-name:var(--font-inter)]">
+   810→                  <thead>
+   811→                    <tr className="border-b border-border">
+   812→                      <th className="text-left py-3 px-3 text-xs font-medium text-muted-foreground uppercase tracking-wider">
+   813→                        Date
+   814→                      </th>
+   815→                      <th className="text-left py-3 px-3 text-xs font-medium text-muted-foreground uppercase tracking-wider">
+   816→                        Plan
+   817→                      </th>
+   818→                      <th className="text-left py-3 px-3 text-xs font-medium text-muted-foreground uppercase tracking-wider">
+   819→                        Amount
+   820→                      </th>
+   821→                      <th className="text-left py-3 px-3 text-xs font-medium text-muted-foreground uppercase tracking-wider">
+   822→                        Status
+   823→                      </th>
+   824→                      <th className="text-left py-3 px-3 text-xs font-medium text-muted-foreground uppercase tracking-wider hidden md:table-cell">
+   825→                        Method
+   826→                      </th>
+   827→                    </tr>
+   828→                  </thead>
+   829→                  <tbody>
+   830→                    {payments.map(payment => (
+   831→                      <tr
+   832→                        key={payment.id}
+   833→                        className="border-b border-border/50 last:border-0 hover:bg-muted/30 transition-colors"
+   834→                      >
+   835→                        <td className="py-3.5 px-3 text-foreground">
+   836→                          {formatShortDate(payment.paid_at || payment.created_at)}
+   837→                        </td>
+   838→                        <td className="py-3.5 px-3 text-foreground font-medium">
+   839→                          {payment.plan_name}
+   840→                        </td>
+   841→                        <td className="py-3.5 px-3 text-foreground">
+   842→                          {formatPrice(payment.amount, payment.currency)}
+   843→                        </td>
+   844→                        <td className="py-3.5 px-3">
+   845→                          <Badge
+   846→                            variant={
+   847→                              payment.status === 'successful'
+   848→                                ? 'secondary'
+   849→                                : payment.status === 'pending'
+   850→                                  ? 'outline'
+   851→                                  : 'destructive'
+   852→                            }
+   853→                            className={
+   854→                              payment.status === 'successful'
+   855→                                ? 'bg-emerald/10 text-emerald border-emerald/20'
+   856→                                : ''
+   857→                            }
+   858→                          >
+   859→                            {payment.status === 'successful'
+   860→                              ? 'Paid'
+   861→                              : payment.status === 'pending'
+   862→                                ? 'Pending'
+   863→                                : payment.status === 'failed'
+   864→                                  ? 'Failed'
+   865→                                  : payment.status.charAt(0).toUpperCase() + payment.status.slice(1)
+   866→                            }
+   867→                          </Badge>
+   868→                        </td>
+   869→                        <td className="py-3.5 px-3 text-muted-foreground capitalize hidden md:table-cell">
+   870→                          {payment.payment_method || '—'}
+   871→                        </td>
+   872→                      </tr>
+   873→                    ))}
+   874→                  </tbody>
+   875→                </table>
+   876→              </div>
+   877→            )}
+   878→          </CardContent>
+   879→        </Card>
+   880→      </motion.div>
+   881→
+   882→      {/* ── Cancel / Downgrade Dialog ──────────────────────────────────────── */}
+   883→      <Dialog open={cancelDialogOpen} onOpenChange={setCancelDialogOpen}>
+   884→        <DialogContent>
+   885→          <DialogHeader>
+   886→            <DialogTitle className="font-[family-name:var(--font-poppins)]">
+   887→              Downgrade to Free Plan?
+   888→            </DialogTitle>
+   889→            <DialogDescription className="font-[family-name:var(--font-inter)]">
+   890→              You are about to downgrade from{' '}
+   891→              <span className="font-medium text-foreground">
+   892→                {subscription?.plan.display_name || 'your current plan'}
+   893→              </span>{' '}
+   894→              to the Free plan. This action will take effect immediately and you will
+   895→              lose access to all premium features.
+   896→            </DialogDescription>
+   897→          </DialogHeader>
+   898→
+   899→          <div className="rounded-lg border border-rose-500/20 bg-rose-500/5 p-4 space-y-2">
+   900→            <div className="flex items-start gap-2">
+   901→              <AlertTriangle className="w-4 h-4 text-rose-500 mt-0.5 shrink-0" />
+   902→              <p className="text-sm text-rose-700 dark:text-rose-300 font-[family-name:var(--font-inter)]">
+   903→                <strong>What you&apos;ll lose:</strong> AI-powered resume builder,
+   904→                AI cover letter generator, ATS checker, job tracker, unlimited exports,
+   905→                and all other premium features.
+   906→              </p>
+   907→            </div>
+   908→          </div>
+   909→
+   910→          <DialogFooter>
+   911→            <Button
+   912→              variant="outline"
+   913→              className="rounded-lg font-[family-name:var(--font-inter)]"
+   914→              onClick={() => setCancelDialogOpen(false)}
+   915→              disabled={cancelling}
+   916→            >
+   917→              Keep Current Plan
+   918→            </Button>
+   919→            <Button
+   920→              variant="destructive"
+   921→              className="rounded-lg font-[family-name:var(--font-inter)]"
+   922→              onClick={handleCancel}
+   923→              disabled={cancelling}
+   924→            >
+   925→              {cancelling ? (
+   926→                <Loader2 className="w-4 h-4 animate-spin" />
+   927→              ) : (
+   928→                'Downgrade to Free'
+   929→              )}
+   930→            </Button>
+   931→          </DialogFooter>
+   932→        </DialogContent>
+   933→      </Dialog>
+   934→    </motion.div>
+   935→  );
+   936→}

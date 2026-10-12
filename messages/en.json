@@ -1,0 +1,1168 @@
+{
+  "meta": {
+    "title": "CareerForge AI — AI-Powered Career Platform",
+    "description": "Create ATS-standard resumes, AI-powered cover letters, analyze job listings, and optimize your entire job application with CareerForge AI."
+  },
+  "nav": {
+    "home": "Home",
+    "features": "Features",
+    "templates": "Templates",
+    "pricing": "Pricing",
+    "about": "About",
+    "faq": "FAQ",
+    "login": "Log In",
+    "getStarted": "Get Started"
+  },
+  "hero": {
+    "badge": "AI-Powered Career Platform",
+    "title": "Resumes, Cover Letters & Job Analysis — All in One AI Platform",
+    "description": "Create ATS-standard resumes, generate cover letters, analyze job descriptions, and track applications — all powered by advanced AI to accelerate your career.",
+    "primaryCta": "Get Started Free",
+    "dashboard": {
+      "resumePreview": "Resume Preview",
+      "aiScore": "AI Resume Score",
+      "atsScore": "ATS Score",
+      "coverLetter": "Cover Letter",
+      "jobTracker": "Job Tracker",
+      "pdfExport": "PDF Export",
+      "applications": "applications tracked",
+      "score": "score",
+      "excellent": "Excellent",
+      "optimized": "Optimized"
+    }
+  },
+  "trust": {
+    "heading": "Trusted by job seekers preparing ATS-standard applications for leading companies worldwide."
+  },
+  "features": {
+    "badge": "Powerful Features",
+    "title": "Everything You Need for a Successful Job Search",
+    "description": "From ATS-standard resume building and cover letter generation to job description analysis and application tracking — CareerForge AI is your complete career toolkit.",
+    "items": {
+      "aiResumeBuilder": {
+        "title": "AI Resume Builder",
+        "description": "Create ATS-standard resumes in minutes with our AI-powered builder. Just input your details and let AI craft the perfect resume that passes any Applicant Tracking System."
+      },
+      "aiCoverLetter": {
+        "title": "AI Cover Letter Generator",
+        "description": "Generate personalized, compelling cover letters tailored to each job application. AI ensures every word counts and matches the job requirements."
+      },
+      "atsOptimization": {
+        "title": "ATS Optimization & Standards",
+        "description": "Ensure your resume meets ATS standards. Our AI analyzes your resume against job requirements and optimizes formatting, keywords, and structure for maximum compatibility."
+      },
+      "resumeTemplates": {
+        "title": "ATS-Tested Resume Templates",
+        "description": "Choose from 50+ professionally designed templates. Each template is crafted by career experts and tested against real ATS systems for guaranteed compatibility."
+      },
+      "aiResumeReview": {
+        "title": "AI Resume & Cover Letter Review",
+        "description": "Get instant, actionable feedback on your resume and cover letter. Our AI identifies weaknesses and suggests improvements to boost your application success rate."
+      },
+      "jobTracker": {
+        "title": "Job Application Tracker",
+        "description": "Keep track of all your job applications in one place. Monitor statuses, schedule follow-ups, and never miss an opportunity with our intelligent tracking dashboard."
+      }
+    }
+  },
+  "about": {
+    "badge": "About Us",
+    "title": "Built to Empower Your Career Journey",
+    "description": "CareerForge AI is a comprehensive AI-powered career platform designed to help job seekers create professional, ATS-standard application materials and navigate the modern job market with confidence.",
+    "mission": {
+      "title": "Our Mission",
+      "description": "To democratize career success by giving every job seeker access to AI-powered tools that create ATS-standard resumes, compelling cover letters, and actionable job analysis — leveling the playing field for everyone."
+    },
+    "vision": {
+      "title": "Our Vision",
+      "description": "To become the world's leading career platform where AI and ATS expertise combine to help millions of professionals land their dream roles faster and with less effort."
+    },
+    "highlights": {
+      "atsStandard": {
+        "title": "ATS Standards",
+        "description": "Every document we create meets strict ATS formatting requirements to maximize your pass rate."
+      },
+      "aiPowered": {
+        "title": "AI-Powered",
+        "description": "Advanced AI trained on millions of successful applications crafts your materials with precision."
+      },
+      "allInOne": {
+        "title": "All-in-One Platform",
+        "description": "Resumes, cover letters, job analysis, and application tracking — everything in one place."
+      },
+      "global": {
+        "title": "Global Reach",
+        "description": "Trusted by job seekers worldwide applying to companies across every industry."
+      }
+    }
+  },
+  "templates": {
+    "badge": "Resume Templates",
+    "title": "Professional Templates That Get Noticed",
+    "description": "Choose from our curated collection of ATS-standard resume templates, designed and tested by career experts.",
+    "items": {
+      "modern": "Modern",
+      "professional": "Professional",
+      "executive": "Executive",
+      "minimal": "Minimal",
+      "creative": "Creative",
+      "atsFriendly": "ATS Friendly"
+    },
+    "viewAll": "View Details"
+  },
+  "aiFeatures": {
+    "badge": "AI Capabilities",
+    "title": "Powered by Advanced AI Technology",
+    "description": "Our AI engine is trained on millions of successful applications and ATS-optimized documents to give you the best possible results.",
+    "checklist": {
+      "aiResumeWriting": "AI Resume Writing",
+      "aiCoverLetterGen": "AI Cover Letter Generation",
+      "resumeRewriting": "Resume Rewriting",
+      "atsOptimization": "ATS Optimization",
+      "keywordSuggestions": "Keyword Suggestions",
+      "grammarImprovements": "Grammar Improvements",
+      "resumeScoring": "Resume Scoring"
+    },
+    "cta": "Try AI Features Free"
+  },
+  "atsChecker": {
+    "badge": "ATS Checker",
+    "title": "ATS-Standard Compliance Checker",
+    "description": "Our AI-powered ATS checker analyzes your resume against job descriptions and ATS standards, providing actionable optimization suggestions to maximize your pass rate.",
+    "metrics": {
+      "atsScore": "ATS Score",
+      "formatting": "Formatting",
+      "keywordMatch": "Keyword Match",
+      "missingSkills": "Missing Skills",
+      "suggestions": "Optimization Suggestions",
+      "excellent": "Excellent",
+      "good": "Good",
+      "needsWork": "Needs Work",
+      "found": "found",
+      "missing": "missing",
+      "matched": "Matched",
+      "partial": "Partial",
+      "unmatched": "Unmatched",
+      "tip1": "Add more action verbs to strengthen bullet points.",
+      "tip2": "Include quantifiable achievements for impact.",
+      "tip3": "Ensure consistent date formatting throughout.",
+      "tip4": "Add relevant keywords from the job description."
+    }
+  },
+  "statistics": {
+    "items": {
+      "templates": {
+        "value": "50+",
+        "label": "Resume Templates"
+      },
+      "suggestions": {
+        "value": "100+",
+        "label": "AI Suggestions"
+      },
+      "optimization": {
+        "value": "95%",
+        "label": "ATS Compliance"
+      },
+      "access": {
+        "value": "24/7",
+        "label": "Cloud Access"
+      }
+    }
+  },
+  "testimonials": {
+    "badge": "Testimonials",
+    "title": "Loved by Job Seekers Worldwide",
+    "description": "See what our users have to say about their experience with CareerForge AI.",
+    "items": {
+      "sarah": {
+        "name": "Sarah Johnson",
+        "title": "Software Engineer at Google",
+        "review": "CareerForge AI completely transformed my job search. The ATS optimization feature helped my resume pass through every filter. I landed 5 interviews in the first week!",
+        "rating": 5
+      },
+      "michael": {
+        "name": "Michael Chen",
+        "title": "Product Manager at Microsoft",
+        "review": "The AI resume and cover letter builder is incredible. It understood my experience and created application materials that perfectly highlighted my achievements. Highly recommended!",
+        "rating": 5
+      },
+      "emily": {
+        "name": "Emily Rodriguez",
+        "title": "Marketing Director at Deloitte",
+        "review": "I was skeptical about AI career tools, but CareerForge AI exceeded all my expectations. The cover letter generator and ATS checker alone saved me hours of work.",
+        "rating": 5
+      }
+    }
+  },
+  "pricing": {
+    "badge": "Pricing",
+    "title": "Simple, Transparent Pricing",
+    "description": "Choose the plan that fits your needs. Start free and upgrade as you grow.",
+    "monthly": "Monthly",
+    "yearly": "Yearly",
+    "yearlyDiscount": "Save 20%",
+    "plans": {
+      "free": {
+        "name": "Free",
+        "price": "0",
+        "period": "forever",
+        "description": "Get started with essential tools",
+        "features": [
+          "1 Resume & 3 Cover Letters",
+          "3 Resume Templates",
+          "AI Suggestions (5/day)",
+          "PDF Export",
+          "Basic ATS Check"
+        ],
+        "cta": "Get Started Free"
+      },
+      "pro": {
+        "name": "Pro",
+        "price": "$7.99",
+        "priceYearly": "$79.99",
+        "period": "/month",
+        "periodYearly": "/year",
+        "description": "For serious job seekers",
+        "features": [
+          "Unlimited Resumes & Cover Letters",
+          "All Templates",
+          "Unlimited AI Suggestions",
+          "Job Description Analysis",
+          "Advanced ATS Checker",
+          "Job Application Tracker",
+          "Priority Support"
+        ],
+        "cta": "Start Pro Trial",
+        "popular": "Most Popular"
+      },
+      "enterprise": {
+        "name": "Enterprise",
+        "price": "",
+        "priceYearly": "",
+        "period": "",
+        "periodYearly": "",
+        "description": "For teams and organizations",
+        "features": [
+          "Everything in Pro",
+          "Team Collaboration",
+          "Custom Branding",
+          "API Access",
+          "Bulk Resume Generation",
+          "Dedicated Support",
+          "SSO Integration"
+        ],
+        "cta": "Contact Sales"
+      }
+    }
+  },
+  "faq": {
+    "badge": "FAQ",
+    "title": "Frequently Asked Questions",
+    "description": "Everything you need to know about CareerForge AI.",
+    "items": {
+      "q1": {
+        "question": "What is CareerForge AI?",
+        "answer": "CareerForge AI is an AI-powered career platform that helps you create ATS-standard resumes, generate cover letters, analyze job descriptions, optimize for ATS systems, and track your job applications — all in one place."
+      },
+      "q2": {
+        "question": "Is CareerForge AI free to use?",
+        "answer": "Yes! We offer a generous free plan that includes 1 resume and 3 cover letters with basic templates, limited AI suggestions, and PDF export. Upgrade to Pro for unlimited access to all features."
+      },
+      "q3": {
+        "question": "What does ATS-standard mean?",
+        "answer": "ATS stands for Applicant Tracking System — the software companies use to filter resumes. Our platform ensures your resume meets ATS formatting standards, uses the right keywords, and avoids common pitfalls that cause automatic rejection."
+      },
+      "q4": {
+        "question": "Can I download my resume and cover letter as PDF?",
+        "answer": "Absolutely! All plans include PDF export for both resumes and cover letters. Your documents will be formatted perfectly for digital submission and printing, maintaining consistent styling across all devices."
+      },
+      "q5": {
+        "question": "How does the job description analysis work?",
+        "answer": "Our AI analyzes job descriptions to identify key requirements, skills, and keywords. It then compares them against your resume to provide a match score and specific suggestions to improve your application's alignment with the role."
+      },
+      "q6": {
+        "question": "Can I cancel my subscription anytime?",
+        "answer": "Yes, you can cancel your subscription at any time with no questions asked. Your account will remain active until the end of your current billing period, and you can continue using the free plan afterwards."
+      }
+    }
+  },
+  "cta": {
+    "title": "Ready to Build Your Dream Career?",
+    "description": "Join thousands of job seekers who have already transformed their job search with CareerForge AI. Start creating ATS-standard resumes, cover letters, and more — completely free.",
+    "button": "Get Started Free",
+    "note": "No credit card required. Start in seconds.",
+    "newsletterTitle": "Get Career Tips in Your Inbox",
+    "newsletterDescription": "Join 10,000+ professionals receiving weekly resume tips, career advice, and AI-powered job search strategies."
+  },
+  "footer": {
+    "product": {
+      "title": "Product",
+      "resumeBuilder": "Resume Builder",
+      "coverLetterGenerator": "Cover Letter Generator",
+      "templates": "Templates"
+    },
+    "company": {
+      "title": "Company",
+      "about": "About",
+      "contact": "Contact"
+    },
+    "resources": {
+      "title": "Resources",
+      "helpCenter": "Help Center",
+      "blog": "Blog"
+    },
+    "legal": {
+      "title": "Legal",
+      "privacy": "Privacy Policy",
+      "terms": "Terms of Service"
+    },
+    "newsletter": {
+      "title": "Stay Updated",
+      "description": "Get the latest career tips and product updates.",
+      "placeholder": "Enter your email",
+      "button": "Subscribe",
+      "success": "Thanks for subscribing!"
+    },
+    "copyright": "© 2025 CareerForge AI. All rights reserved."
+  },
+  "language": {
+    "en": "EN",
+    "fr": "FR"
+  },
+  "auth": {
+    "common": {
+      "email": "Email",
+      "password": "Password",
+      "confirmPassword": "Confirm Password",
+      "firstName": "First Name",
+      "lastName": "Last Name",
+      "orContinueWith": "or continue with",
+      "continueWith": "Continue with",
+      "loading": "Loading...",
+      "back": "Back",
+      "next": "Next",
+      "submit": "Submit",
+      "error": "Error",
+      "success": "Success",
+      "google": "Google",
+      "apple": "Apple"
+    },
+    "login": {
+      "title": "Welcome Back",
+      "subtitle": "Sign in to your CareerForge AI account",
+      "emailPlaceholder": "Enter your email address",
+      "passwordPlaceholder": "Enter your password",
+      "rememberMe": "Remember me",
+      "forgotPassword": "Forgot password?",
+      "loginButton": "Sign In",
+      "loggingIn": "Signing in...",
+      "noAccount": "Don't have an account?",
+      "createAccount": "Create Account",
+      "alreadyLoggedIn": "Welcome back!",
+      "alreadyLoggedInDesc": "You are already signed in.",
+      "goToDashboard": "Go to Dashboard",
+      "errors": {
+        "invalidCredentials": "Invalid email or password. Please try again.",
+        "emailRequired": "Email is required",
+        "emailInvalid": "Please enter a valid email address",
+        "passwordRequired": "Password is required",
+        "passwordMinLength": "Password must be at least 8 characters"
+      }
+    },
+    "signup": {
+      "title": "Create Your Account",
+      "subtitle": "Start building your career with AI-powered tools",
+      "firstNamePlaceholder": "Enter your first name",
+      "lastNamePlaceholder": "Enter your last name",
+      "emailPlaceholder": "Enter your email address",
+      "passwordPlaceholder": "Create a password",
+      "confirmPasswordPlaceholder": "Confirm your password",
+      "agreeToTerms": "I agree to the",
+      "termsOfService": "Terms of Service",
+      "privacyPolicy": "and",
+      "privacyPolicyLink": "Privacy Policy",
+      "signupButton": "Create Account",
+      "creatingAccount": "Creating account...",
+      "alreadyLoggedIn": "Welcome!",
+      "alreadyLoggedInDesc": "You are already signed in.",
+      "goToDashboard": "Go to Dashboard",
+      "hasAccount": "Already have an account?",
+      "signIn": "Sign In",
+      "errors": {
+        "firstNameRequired": "First name is required",
+        "lastNameRequired": "Last name is required",
+        "emailRequired": "Email is required",
+        "emailInvalid": "Please enter a valid email address",
+        "passwordRequired": "Password is required",
+        "passwordMinLength": "Password must be at least 8 characters",
+        "passwordUppercase": "Password must contain at least one uppercase letter",
+        "passwordLowercase": "Password must contain at least one lowercase letter",
+        "passwordNumber": "Password must contain at least one number",
+        "passwordSpecial": "Password must contain at least one special character",
+        "confirmPasswordRequired": "Please confirm your password",
+        "passwordsDoNotMatch": "Passwords do not match",
+        "termsRequired": "You must agree to the Terms of Service and Privacy Policy",
+        "emailAlreadyExists": "An account with this email already exists"
+      }
+    },
+    "passwordStrength": {
+      "veryWeak": "Very Weak",
+      "weak": "Weak",
+      "fair": "Fair",
+      "strong": "Strong",
+      "veryStrong": "Very Strong",
+      "requirements": "Password requirements:",
+      "minLength": "At least 8 characters",
+      "uppercase": "One uppercase letter",
+      "lowercase": "One lowercase letter",
+      "number": "One number",
+      "specialChar": "One special character"
+    },
+    "forgotPassword": {
+      "title": "Reset Your Password",
+      "subtitle": "Enter your email and we'll send you a link to reset your password",
+      "emailPlaceholder": "Enter your email address",
+      "submitButton": "Send Reset Link",
+      "sending": "Sending reset link...",
+      "backToLogin": "Back to Sign In",
+      "success": {
+        "title": "Check Your Email",
+        "subtitle": "We've sent a password reset link to",
+        "description": "The link will expire in 1 hour. If you don't see the email, check your spam folder.",
+        "backToLogin": "Back to Sign In",
+        "resendLink": "Resend Link"
+      },
+      "errors": {
+        "emailRequired": "Email is required",
+        "emailInvalid": "Please enter a valid email address",
+        "userNotFound": "No account found with this email address"
+      }
+    },
+    "resetPassword": {
+      "title": "Set New Password",
+      "subtitle": "Enter your new password below",
+      "newPasswordPlaceholder": "Enter new password",
+      "confirmPasswordPlaceholder": "Confirm new password",
+      "submitButton": "Reset Password",
+      "resetting": "Resetting password...",
+      "success": {
+        "title": "Password Reset Successfully",
+        "subtitle": "Your password has been updated. You can now sign in with your new password.",
+        "signInButton": "Sign In"
+      },
+      "errors": {
+        "passwordRequired": "Password is required",
+        "passwordMinLength": "Password must be at least 8 characters",
+        "confirmPasswordRequired": "Please confirm your password",
+        "passwordsDoNotMatch": "Passwords do not match",
+        "invalidOrExpiredToken": "This reset link is invalid or has expired. Please request a new one."
+      }
+    },
+    "verifyEmail": {
+      "title": "Verify Your Email",
+      "subtitle": "We've sent a verification link to your email address. Please check your inbox and click the link to activate your account.",
+      "resendButton": "Resend Verification Email",
+      "resending": "Resending...",
+      "changeEmail": "Change Email",
+      "success": {
+        "title": "Email Verified Successfully",
+        "subtitle": "Your email has been verified. Your account is now active.",
+        "continueButton": "Continue to Onboarding"
+      },
+      "errors": {
+        "invalidToken": "This verification link is invalid or has expired.",
+        "resendFailed": "Failed to resend verification email. Please try again.",
+        "resendSuccess": "Verification email sent successfully!",
+        "alreadyVerified": "Your email is already verified."
+      }
+    },
+    "onboarding": {
+      "stepIndicator": {
+        "step": "Step"
+      },
+      "welcome": {
+        "title": "Welcome to CareerForge AI!",
+        "subtitle": "Let's personalize your experience to help you achieve your career goals.",
+        "getStarted": "Get Started"
+      },
+      "personalInfo": {
+        "title": "Personal Information",
+        "subtitle": "Tell us a bit about yourself",
+        "firstNamePlaceholder": "Enter your first name",
+        "lastNamePlaceholder": "Enter your last name",
+        "countryPlaceholder": "Select your country",
+        "jobTitlePlaceholder": "e.g., Software Engineer, Marketing Manager",
+        "countries": {
+          "select": "Select country",
+          "ci": "Ivory Coast",
+          "sn": "Senegal",
+          "ml": "Mali",
+          "bf": "Burkina Faso",
+          "cm": "Cameroon",
+          "ne": "Niger",
+          "tg": "Togo",
+          "bj": "Benin",
+          "gn": "Guinea",
+          "td": "Chad",
+          "ga": "Gabon",
+          "cg": "Congo",
+          "cd": "DR Congo",
+          "us": "United States",
+          "gb": "United Kingdom",
+          "fr": "France",
+          "ca": "Canada",
+          "de": "Germany",
+          "ng": "Nigeria",
+          "gh": "Ghana",
+          "ke": "Kenya",
+          "za": "South Africa",
+          "other": "Other"
+        },
+        "errors": {
+          "firstNameRequired": "First name is required",
+          "lastNameRequired": "Last name is required",
+          "countryRequired": "Please select your country",
+          "jobTitleRequired": "Job title is required"
+        }
+      },
+      "careerLevel": {
+        "title": "Career Level",
+        "subtitle": "Where are you in your career journey?",
+        "student": {
+          "title": "Student",
+          "description": "Currently studying and looking for internships or first job"
+        },
+        "graduate": {
+          "title": "Graduate",
+          "description": "Recently graduated and entering the job market"
+        },
+        "professional": {
+          "title": "Professional",
+          "description": "Experienced professional looking to advance"
+        },
+        "freelancer": {
+          "title": "Freelancer",
+          "description": "Self-employed and looking for new opportunities"
+        },
+        "careerChanger": {
+          "title": "Career Changer",
+          "description": "Transitioning to a new industry or role"
+        },
+        "errors": {
+          "careerLevelRequired": "Please select your career level"
+        }
+      },
+      "careerGoal": {
+        "title": "Career Goal",
+        "subtitle": "What would you like to accomplish? (Select all that apply)",
+        "buildResume": {
+          "title": "Build Resume",
+          "description": "Create a professional ATS-standard resume"
+        },
+        "createCoverLetter": {
+          "title": "Create Cover Letter",
+          "description": "Generate compelling cover letters"
+        },
+        "improveResume": {
+          "title": "Improve Existing Resume",
+          "description": "Optimize and enhance your current resume"
+        },
+        "trackApplications": {
+          "title": "Track Job Applications",
+          "description": "Organize and monitor your job search"
+        },
+        "findJobs": {
+          "title": "Find New Jobs",
+          "description": "Discover opportunities matching your profile"
+        },
+        "errors": {
+          "selectAtLeastOne": "Please select at least one goal"
+        }
+      },
+      "finish": {
+        "title": "You're All Set!",
+        "subtitle": "Your profile is complete. Let's start building your career!",
+        "goToDashboard": "Go to Dashboard",
+        "description": "You now have access to all our AI-powered career tools. Start by creating your first resume or explore our templates."
+      },
+      "skip": "Skip for now",
+      "errors": {
+        "failed": "Failed to save. Please try again."
+      }
+    },
+    "google": {
+      "notConfigured": "Google sign-in is not configured yet. Please contact the administrator.",
+      "accessDenied": "Google sign-in was cancelled. You can try again or use your email and password.",
+      "noEmail": "Could not retrieve your email from Google. Please try again or sign up with email.",
+      "authFailed": "Google sign-in failed. Please try again or use your email and password.",
+      "accountLinked": "Your Google account has been linked successfully."
+    },
+    "errors": {
+      "unknown": "An unexpected error occurred. Please try again.",
+      "network": "Network error. Please check your connection and try again.",
+      "sessionExpired": "Your session has expired. Please sign in again.",
+      "unauthorized": "You are not authorized to perform this action."
+    }
+  },
+  "dashboard": {
+    "sidebar": {
+      "dashboard": "Dashboard",
+      "resumeBuilder": "Resume Builder",
+      "myResumes": "My Resumes",
+      "coverLetters": "Cover Letters",
+      "resumeReview": "Resume Review",
+      "atsChecker": "ATS Checker",
+      "jobTracker": "Job Tracker",
+      "templates": "Templates",
+      "profile": "Profile",
+      "billing": "Billing",
+      "settings": "Settings",
+      "helpCenter": "Help Center",
+      "logout": "Log Out",
+      "collapse": "Collapse",
+      "expand": "Expand"
+    },
+    "topNav": {
+      "searchPlaceholder": "Search resumes, cover letters, templates..."
+    },
+    "notifications": {
+      "title": "Notifications",
+      "markAllRead": "Mark all as read",
+      "viewAll": "View all",
+      "noNotifications": "No new notifications",
+      "resumeDownloaded": "Resume successfully downloaded.",
+      "atsImproved": "Your ATS score improved by 12%!",
+      "welcome": "Welcome to CareerForge AI! Start by creating your first resume.",
+      "profileComplete": "Complete your profile for better AI suggestions.",
+      "coverLetterGenerated": "Your cover letter has been generated."
+    },
+    "userMenu": {
+      "profile": "My Profile",
+      "settings": "Settings",
+      "billing": "Billing",
+      "logout": "Log Out"
+    },
+    "welcome": {
+      "goodMorning": "Good Morning",
+      "goodAfternoon": "Good Afternoon",
+      "goodEvening": "Good Evening",
+      "greeting": "Welcome back, {name}",
+      "message": "Let's build something that gets you hired."
+    },
+    "quickActions": {
+      "title": "Quick Actions",
+      "createResume": {
+        "title": "Create Resume",
+        "description": "Build a professional ATS-friendly resume with AI"
+      },
+      "createCoverLetter": {
+        "title": "Create Cover Letter",
+        "description": "Generate a tailored cover letter in seconds"
+      },
+      "reviewResume": {
+        "title": "Review Resume",
+        "description": "Get AI-powered feedback on your resume"
+      },
+      "trackApplication": {
+        "title": "Track Application",
+        "description": "Organize and monitor your job applications"
+      }
+    },
+    "stats": {
+      "title": "Overview",
+      "totalResumes": "Total Resumes",
+      "coverLetters": "Cover Letters",
+      "avgAtsScore": "Avg ATS Score",
+      "applicationsTracked": "Applications Tracked",
+      "downloads": "Downloads"
+    },
+    "recentDocuments": {
+      "title": "Recent Documents",
+      "name": "Document Name",
+      "type": "Type",
+      "lastUpdated": "Last Updated",
+      "status": "Status",
+      "actions": "Actions",
+      "view": "View",
+      "edit": "Edit",
+      "duplicate": "Duplicate",
+      "delete": "Delete",
+      "draft": "Draft",
+      "completed": "Completed",
+      "published": "Published",
+      "viewAll": "View All Documents"
+    },
+    "activity": {
+      "title": "Recent Activity",
+      "createdResume": "Created resume \"{name}\"",
+      "generatedCoverLetter": "Generated cover letter for {company}",
+      "downloadedPdf": "Downloaded {name} as PDF",
+      "updatedResume": "Updated resume \"{name}\"",
+      "submittedApplication": "Submitted application to {company}",
+      "noActivity": "No recent activity. Start by creating your first resume!",
+      "viewAll": "View All Activity"
+    },
+    "aiInsights": {
+      "title": "AI Insights",
+      "improveNow": "Improve Now",
+      "insight1": "Your resume could be improved by adding measurable achievements to your experience section.",
+      "insight2": "Your ATS score increased by 12% after the last update. Keep optimizing!",
+      "insight3": "Consider adding more keywords from job descriptions to improve your match rate."
+    },
+    "jobTracker": {
+      "title": "Job Tracker",
+      "subtitle": "Track and manage your job applications",
+      "addJob": "Add Job",
+      "addFirst": "Add Your First Application",
+      "noApplications": "No Applications Yet",
+      "noApplicationsDesc": "Start tracking your job applications to stay organized and monitor your progress.",
+      "noResults": "No applications match your search.",
+      "applied": "Applied",
+      "interview": "Interview",
+      "offer": "Offer",
+      "rejected": "Rejected",
+      "viewAll": "View All Applications",
+      "totalApplications": "Total Applications",
+      "interviewsScheduled": "Interviews Scheduled",
+      "offersReceived": "Offers Received",
+      "responseRate": "Response Rate",
+      "acceptanceRate": "Acceptance Rate",
+      "showStats": "Show Stats",
+      "hideStats": "Hide Stats",
+      "kanban": "Kanban",
+      "list": "List",
+      "calendar": "Calendar",
+      "search": "Search companies, titles, locations...",
+      "allStatus": "All Status",
+      "allWorkMode": "All",
+      "allEmploymentType": "All",
+      "filters": "Filters",
+      "clearFilters": "Clear All Filters",
+      "edit": "Edit",
+      "duplicate": "Duplicate",
+      "archive": "Archive",
+      "unarchive": "Unarchive",
+      "delete": "Delete",
+      "aiSuggestions": "AI Suggestions",
+      "save": "Save Changes",
+      "cancel": "Cancel",
+      "addApplication": "Add Application",
+      "editApplication": "Edit Application",
+      "companyName": "Company Name",
+      "jobTitle": "Job Title",
+      "jobDescription": "Job Description",
+      "jobUrl": "Job URL",
+      "salary": "Salary",
+      "location": "Location",
+      "employmentType": "Employment Type",
+      "workMode": "Work Mode",
+      "resumeUsed": "Resume Used",
+      "coverLetterUsed": "Cover Letter Used",
+      "notes": "Notes",
+      "status": "Status",
+      "importantDates": "Important Dates",
+      "appliedAt": "Applied At",
+      "interviewDate": "Interview Date",
+      "followUpDate": "Follow-up Date",
+      "deadlineDate": "Deadline Date",
+      "offerExpiry": "Offer Expiry",
+      "reminders": "Reminders",
+      "addReminder": "Add Reminder",
+      "newReminder": "New Reminder",
+      "reminderTitle": "Reminder title",
+      "reminderTypeFollowUp": "Follow-up",
+      "reminderTypeInterviewPrep": "Interview Prep",
+      "reminderTypeDeadline": "Deadline",
+      "reminderTypeOther": "Other",
+      "upcomingEvents": "Upcoming Events",
+      "noUpcomingEvents": "No upcoming events",
+      "generateAll": "Generate All",
+      "noSuggestions": "No suggestions yet",
+      "noSuggestionsHint": "Click a category above to generate AI-powered advice",
+      "tipInterview": "Interview Tips",
+      "tipResume": "Resume Improvements",
+      "tipCoverLetter": "Cover Letter Tips",
+      "tipFollowUp": "Follow-up Advice",
+      "tipNegotiation": "Negotiation Tips",
+      "statusWishlist": "Wishlist",
+      "statusApplied": "Applied",
+      "statusViewed": "Application Viewed",
+      "statusAssessment": "Assessment",
+      "statusInterview": "Interview",
+      "statusFinalInterview": "Final Interview",
+      "statusOffer": "Offer",
+      "statusAccepted": "Accepted",
+      "statusRejected": "Rejected",
+      "statusWithdrawn": "Withdrawn",
+      "eventInterview": "Interview",
+      "eventFollowUp": "Follow-up",
+      "eventDeadline": "Deadline",
+      "eventOfferExpiry": "Offer Expiry",
+      "dropHere": "Drop here",
+      "noApplicationsInColumn": "No applications",
+      "daysAgo": "{count} days ago",
+      "oneDayAgo": "1 day ago",
+      "today": "today"
+    },
+    "templates": {
+      "title": "Templates",
+      "preview": "Preview",
+      "professional": "Professional",
+      "modern": "Modern",
+      "executive": "Executive",
+      "minimal": "Minimal",
+      "creative": "Creative",
+      "atsFriendly": "ATS Friendly",
+      "viewAll": "View All Templates"
+    },
+    "careerTips": {
+      "title": "Career Tips",
+      "readMore": "Read More",
+      "minRead": "min read",
+      "viewAll": "View All Articles",
+      "tip1": {
+        "title": "10 ATS Resume Mistakes That Could Cost You the Interview",
+        "category": "Resume Tips",
+        "readingTime": "5"
+      },
+      "tip2": {
+        "title": "How to Write a Cover Letter That Gets You Hired",
+        "category": "Cover Letter",
+        "readingTime": "7"
+      },
+      "tip3": {
+        "title": "The Ultimate Guide to Job Interview Preparation",
+        "category": "Interview",
+        "readingTime": "10"
+      }
+    },
+    "emptyState": {
+      "noResumes": {
+        "title": "No resumes yet",
+        "description": "You haven't created your first resume yet.",
+        "action": "Create Resume"
+      },
+      "noCoverLetters": {
+        "title": "No cover letters yet",
+        "description": "You haven't created your first cover letter yet.",
+        "action": "Create Cover Letter"
+      },
+      "noApplications": {
+        "title": "No applications tracked",
+        "description": "Start tracking your job applications to stay organized.",
+        "action": "Track Application"
+      }
+    },
+    "comingSoon": {
+      "backToDashboard": "Back to Dashboard",
+      "resumeBuilder": {
+        "title": "AI Resume Builder",
+        "description": "Create professional, ATS-optimized resumes with AI assistance. Choose from templates, get smart content suggestions, and export to PDF."
+      },
+      "myResumes": {
+        "title": "My Resumes",
+        "description": "View, edit, and manage all your created resumes. Track versions, duplicate, and download anytime."
+      },
+      "coverLetters": {
+        "title": "Cover Letters",
+        "description": "Generate tailored cover letters for each job application. AI crafts personalized content based on the job description."
+      },
+      "resumeReview": {
+        "title": "AI Resume Review",
+        "description": "Get instant AI-powered feedback on your resume. Improve content, formatting, and ATS compatibility."
+      },
+      "atsChecker": {
+        "title": "ATS Compatibility Checker",
+        "description": "Analyze your resume against ATS standards. Get a compatibility score and actionable improvement tips."
+      },
+      "jobTracker": {
+        "title": "Job Application Tracker",
+        "description": "Track all your job applications in one place. Monitor status, set reminders, and analyze your success rate."
+      },
+      "templates": {
+        "title": "Resume Templates",
+        "description": "Browse our library of professionally designed, ATS-tested resume templates for every career level."
+      },
+      "profile": {
+        "title": "My Profile",
+        "description": "Manage your personal information, career details, and preferences to personalize your experience."
+      },
+      "billing": {
+        "title": "Billing & Subscription",
+        "description": "Manage your subscription plan, view invoices, and update your payment methods."
+      },
+      "settings": {
+        "title": "Settings",
+        "description": "Configure your account settings, notifications, language, theme, and security preferences."
+      }
+    }
+  },
+  "legal": {
+    "navbar": {
+      "privacy": "Privacy Policy",
+      "terms": "Terms of Service"
+    },
+    "footer": {
+      "privacy": "Privacy Policy",
+      "terms": "Terms of Service",
+      "copyright": "© 2025 CareerForge AI. All rights reserved."
+    },
+    "backToHome": "← Back to Home",
+    "privacyPolicy": {
+      "title": "Privacy Policy",
+      "lastUpdated": "Last updated: June 15, 2025",
+      "intro": "CareerForge AI (\"we\", \"us\", or \"our\") is committed to protecting your privacy. This Privacy Policy explains how we collect, use, disclose, and safeguard your information when you use our platform. Please read this policy carefully. By using CareerForge AI, you agree to the practices described in this Privacy Policy.",
+      "sections": {
+        "infoWeCollect": {
+          "title": "1. Information We Collect",
+          "personal": {
+            "title": "Personal Information",
+            "content": "We collect personal information that you voluntarily provide when you register, use our services, or communicate with us. This includes your name, email address, password, job title, career level, country of residence, and any other information you choose to provide during onboarding or while using our platform."
+          },
+          "usage": {
+            "title": "Usage Information",
+            "content": "We automatically collect information about your interactions with our platform, including pages visited, features used, time spent on each feature, document creation history, and navigation patterns. We also collect device information such as browser type, operating system, IP address, and device identifiers."
+          },
+          "documents": {
+            "title": "Document Data",
+            "content": "When you create resumes, cover letters, or other documents, the content you input is processed by our AI systems. We store this content to provide our services, improve our AI models, and enable you to access and edit your documents. Your document data is encrypted at rest and in transit."
+          }
+        },
+        "howWeUse": {
+          "title": "2. How We Use Your Information",
+          "content": "We use the information we collect for the following purposes: (a) to provide, maintain, and improve our services; (b) to process your requests and transactions; (c) to personalize your experience and deliver relevant content; (d) to communicate with you about your account, updates, and promotions; (e) to monitor and analyze usage patterns to improve our platform; (f) to detect, prevent, and address fraud, security issues, and technical problems; (g) to comply with legal obligations."
+        },
+        "infoSharing": {
+          "title": "3. Information Sharing and Disclosure",
+          "content": "We do not sell, trade, or rent your personal information to third parties. We may share your information in the following limited circumstances: (a) with service providers who assist in operating our platform (hosting, analytics, email delivery) under strict confidentiality agreements; (b) to comply with legal requirements, court orders, or governmental requests; (c) to protect our rights, privacy, safety, or property, or that of our users or the public; (d) in connection with a merger, acquisition, or sale of assets, where your information would be transferred as part of such transaction."
+        },
+        "dataSecurity": {
+          "title": "4. Data Security",
+          "content": "We implement industry-standard security measures to protect your personal information, including encryption at rest (AES-256) and in transit (TLS 1.3), secure data centers with restricted access, regular security audits and vulnerability assessments, access controls and authentication mechanisms, and continuous monitoring for unauthorized access. However, no method of transmission over the Internet or electronic storage is 100% secure, and we cannot guarantee absolute security."
+        },
+        "dataRetention": {
+          "title": "5. Data Retention",
+          "content": "We retain your personal information for as long as your account is active or as needed to provide our services. If you delete your account, we will delete your personal information within 30 days, except where we are required to retain certain information by law or for legitimate business purposes. Anonymized and aggregated data may be retained indefinitely for analytical purposes."
+        },
+        "yourRights": {
+          "title": "6. Your Rights (GDPR & Applicable Laws)",
+          "content": "Depending on your location, you may have the following rights regarding your personal data: (a) Right of Access — You can request a copy of the personal data we hold about you. (b) Right to Rectification — You can request correction of inaccurate or incomplete data. (c) Right to Erasure — You can request deletion of your personal data (\"right to be forgotten\"). (d) Right to Restrict Processing — You can request that we limit how we use your data. (e) Right to Data Portability — You can request your data in a machine-readable format. (f) Right to Object — You can object to our processing of your data for certain purposes. (g) Right to Withdraw Consent — You can withdraw your consent at any time where we rely on consent to process your data. To exercise any of these rights, please contact us at privacy@careerforge.ai."
+        },
+        "cookies": {
+          "title": "7. Cookies and Tracking Technologies",
+          "content": "We use cookies and similar tracking technologies to enhance your experience. Essential cookies are necessary for the platform to function (authentication, session management, security). Analytics cookies help us understand how you use our platform (anonymized usage data). Preference cookies remember your settings (language, theme, layout preferences). You can manage your cookie preferences through your browser settings or our cookie consent banner. Please note that disabling certain cookies may affect the functionality of our platform.",
+          "consent": {
+            "title": "Cookie Consent Mechanism",
+            "content": "When you first visit CareerForge AI, we present a cookie consent banner that allows you to: (a) Accept all cookies; (b) Accept only essential cookies; (c) Customize your cookie preferences by category. Your choice is saved and can be updated at any time through your account settings. We respect your preferences and do not set non-essential cookies without your explicit consent. The consent banner will reappear if we introduce new cookie categories or if your consent preferences are older than 12 months."
+          }
+        },
+        "thirdParty": {
+          "title": "8. Third-Party Services",
+          "content": "Our platform may contain links to third-party websites or integrate with third-party services (such as Google Sign-In and Apple Sign-In for authentication). We are not responsible for the privacy practices of these third-party services. We encourage you to read the privacy policies of any third-party services you access through our platform. When you use Sign in with Apple, Apple will share your name and email address with us in accordance with Apple's privacy policy."
+        },
+        "children": {
+          "title": "9. Children's Privacy",
+          "content": "CareerForge AI is not intended for use by individuals under the age of 16. We do not knowingly collect personal information from children. If we learn that we have collected personal information from a child under 16, we will take steps to delete that information as quickly as possible."
+        },
+        "international": {
+          "title": "10. International Data Transfers",
+          "content": "Your information may be transferred to and processed in countries other than your country of residence. We ensure appropriate safeguards are in place, including Standard Contractual Clauses approved by the European Commission, to protect your data during international transfers."
+        },
+        "changes": {
+          "title": "11. Changes to This Privacy Policy",
+          "content": "We may update this Privacy Policy from time to time. We will notify you of any material changes by posting the new Privacy Policy on this page and updating the \"Last updated\" date. We may also send you an email notification if the changes are significant. Your continued use of the platform after any changes constitutes your acceptance of the updated policy."
+        },
+        "dataBreach": {
+          "title": "12. Data Breach Notification",
+          "content": "In the event of a data breach that is likely to result in a risk to your rights and freedoms, we will notify you and the relevant supervisory authority within 72 hours of becoming aware of the breach, as required by applicable data protection laws. The notification will include the nature of the breach, the likely consequences, and the measures we have taken or propose to take to address the breach."
+        },
+        "contact": {
+          "title": "13. Contact Us",
+          "content": "If you have any questions, concerns, or requests regarding this Privacy Policy or our data practices, please contact us at: CareerForge AI, Privacy Team, Email: privacy@careerforge.ai"
+        }
+      }
+    },
+    "termsOfService": {
+      "title": "Terms of Service",
+      "lastUpdated": "Last updated: June 15, 2025",
+      "intro": "These Terms of Service (\"Terms\") govern your access to and use of CareerForge AI (\"Service\"), operated by CareerForge AI (\"we\", \"us\", or \"our\"). By accessing or using our Service, you agree to be bound by these Terms. If you do not agree to these Terms, please do not use our Service.",
+      "sections": {
+        "acceptance": {
+          "title": "1. Acceptance of Terms",
+          "content": "By creating an account, accessing, or using CareerForge AI, you confirm that you are at least 16 years of age and that you agree to comply with and be bound by these Terms of Service. If you are using the Service on behalf of an organization, you represent and warrant that you have the authority to bind that organization to these Terms."
+        },
+        "description": {
+          "title": "2. Description of Service",
+          "content": "CareerForge AI is an AI-powered career platform that provides tools for creating resumes, cover letters, analyzing job descriptions, optimizing documents for Applicant Tracking Systems (ATS), and tracking job applications. We reserve the right to modify, suspend, or discontinue any part of the Service at any time, with reasonable notice when possible."
+        },
+        "registration": {
+          "title": "3. User Registration and Accounts",
+          "content": "To access certain features, you must register for an account. You agree to: (a) provide accurate, current, and complete information during registration; (b) maintain and promptly update your account information; (c) maintain the security of your password and accept all risks of unauthorized access; (d) immediately notify us of any unauthorized use of your account; (e) not create multiple accounts or use the Service under a false identity."
+        },
+        "acceptableUse": {
+          "title": "4. Acceptable Use",
+          "content": "You agree not to: (a) use the Service for any unlawful purpose or to promote illegal activities; (b) generate content that is defamatory, harassing, discriminatory, or harmful; (c) misrepresent your identity, qualifications, or experience in documents created with our tools; (d) attempt to gain unauthorized access to our systems or other users' accounts; (e) interfere with or disrupt the integrity or performance of the Service; (f) use automated means (bots, scrapers) to access the Service without our permission; (g) reverse engineer, decompile, or disassemble any aspect of the Service; (h) share your account credentials with third parties."
+        },
+        "intellectualProperty": {
+          "title": "5. Intellectual Property",
+          "content": "The Service and its original content, features, and functionality (excluding user-generated content) are owned by CareerForge AI and are protected by international copyright, trademark, and other intellectual property laws. You retain ownership of the content you create using our tools. By using our Service, you grant us a limited, non-exclusive license to process your content for the purpose of providing the Service."
+        },
+        "subscriptions": {
+          "title": "6. Subscriptions and Payments",
+          "content": "Certain features require a paid subscription. By subscribing, you agree to: (a) pay all applicable fees as described on our pricing page; (b) provide accurate payment information; (c) authorize us to charge your payment method for the selected subscription period. Subscriptions automatically renew at the end of each billing period unless cancelled before the renewal date. We offer both monthly and yearly billing options. Yearly subscriptions are billed at a discounted rate and are non-refundable except as required by applicable law."
+        },
+        "cancellation": {
+          "title": "7. Cancellation and Refunds",
+          "content": "You may cancel your subscription at any time through your account settings or by contacting our support team. Upon cancellation, your subscription will remain active until the end of the current billing period. We do not provide refunds for partial billing periods, except as required by applicable law or as described in our refund policy. Free-tier features will remain available after cancellation."
+        },
+        "disclaimer": {
+          "title": "8. Disclaimer of Warranties",
+          "content": "The Service is provided on an \"AS IS\" and \"AS AVAILABLE\" basis. We make no warranties, expressed or implied, regarding the Service, including but not limited to: (a) the Service will be uninterrupted, timely, secure, or error-free; (b) the results obtained from the use of the Service will be accurate or reliable; (c) the AI-generated content will meet your specific requirements or expectations. You acknowledge that AI-generated content should be reviewed and edited before use."
+        },
+        "liabilityLimitation": {
+          "title": "9. Limitation of Liability",
+          "content": "To the fullest extent permitted by applicable law, CareerForge AI shall not be liable for any indirect, incidental, special, consequential, or punitive damages, including but not limited to loss of profits, data, or opportunities, arising out of or in connection with your use of the Service. Our total liability shall not exceed the amount you have paid to us in the twelve (12) months preceding the claim."
+        },
+        "indemnification": {
+          "title": "10. Indemnification",
+          "content": "You agree to indemnify, defend, and hold harmless CareerForge AI, its officers, directors, employees, agents, and affiliates from and against any claims, liabilities, damages, losses, costs, or expenses (including reasonable attorneys' fees) arising out of or in connection with: (a) your use of the Service; (b) your violation of these Terms; (c) your violation of any rights of a third party; (d) any content you create or submit through the Service."
+        },
+        "appleSignIn": {
+          "title": "11. Sign in with Apple",
+          "content": "CareerForge AI offers authentication through Apple Sign-In. By using Sign in with Apple, you agree to Apple's Terms of Service and acknowledge that: (a) Apple is not responsible for the functioning of our Service; (b) Apple is not liable for any claims arising from your use of our Service; (c) your use of Sign in with Apple is also governed by Apple's Privacy Policy; (d) you may be required to authenticate through Apple's Face ID, Touch ID, or device passcode; (e) we collect and process the data that Apple shares with us (name and email) in accordance with this Privacy Policy."
+        },
+        "disputeResolution": {
+          "title": "12. Dispute Resolution",
+          "content": "Any disputes arising out of or in connection with these Terms shall be resolved as follows: (a) Informal Resolution — You agree to first attempt to resolve any dispute with us by contacting our support team. We will attempt to resolve the dispute within 30 days. (b) Binding Arbitration — If the dispute is not resolved informally, it shall be submitted to binding arbitration administered under the rules of the applicable arbitration body. The arbitration shall be conducted in English, and the arbitrator's decision shall be final and binding. (c) Class Action Waiver — You agree that any dispute resolution proceedings will be conducted only on an individual basis and not in a class, consolidated, or representative action."
+        },
+        "governingLaw": {
+          "title": "13. Governing Law",
+          "content": "These Terms shall be governed by and construed in accordance with the laws of the jurisdiction in which CareerForge AI is registered, without regard to its conflict of law provisions. Any legal action or proceeding not subject to arbitration shall be brought exclusively in the courts of that jurisdiction, and you consent to the personal jurisdiction of those courts."
+        },
+        "changes": {
+          "title": "14. Changes to Terms",
+          "content": "We reserve the right to modify these Terms at any time. We will provide notice of material changes by posting the updated Terms on our website and updating the \"Last updated\" date. For significant changes, we will also notify you by email at least 30 days before the changes take effect. Your continued use of the Service after changes become effective constitutes acceptance of the revised Terms."
+        },
+        "severability": {
+          "title": "15. Severability",
+          "content": "If any provision of these Terms is found to be unenforceable or invalid, that provision will be limited or eliminated to the minimum extent necessary so that the remaining provisions remain in full force and effect."
+        },
+        "contact": {
+          "title": "16. Contact Us",
+          "content": "If you have any questions about these Terms of Service, please contact us at: CareerForge AI, Legal Team, Email: legal@careerforge.ai"
+        }
+      }
+    }
+  },
+  "content": {
+    "navbar": {
+      "helpCenter": "Help Center",
+      "blog": "Blog"
+    },
+    "footer": {
+      "helpCenter": "Help Center",
+      "blog": "Blog",
+      "privacy": "Privacy Policy",
+      "terms": "Terms of Service",
+      "copyright": "© 2025 CareerForge AI. All rights reserved."
+    },
+    "search": {
+      "placeholder": "Search articles...",
+      "noResults": "No results found",
+      "resultsFor": "Results for",
+      "clear": "Clear search"
+    },
+    "breadcrumb": {
+      "home": "Home",
+      "helpCenter": "Help Center",
+      "blog": "Blog",
+      "articles": "Articles"
+    },
+    "toc": {
+      "title": "Table of Contents",
+      "onThisPage": "On this page"
+    },
+    "share": {
+      "title": "Share this article",
+      "copyLink": "Copy link",
+      "copied": "Copied!"
+    },
+    "feedback": {
+      "question": "Was this article helpful?",
+      "yes": "Yes",
+      "no": "No",
+      "thankYou": "Thank you for your feedback!"
+    },
+    "newsletter": {
+      "title": "Stay Ahead in Your Career",
+      "description": "Receive resume tips, career advice, AI updates, and product news directly in your inbox.",
+      "placeholder": "Enter your email",
+      "button": "Subscribe",
+      "privacy": "We respect your privacy. Unsubscribe at any time."
+    },
+    "author": {
+      "otherArticles": "More from this author"
+    },
+    "readingTime": "min read"
+  },
+  "newsletterForm": {
+    "placeholder": "Enter your email address",
+    "button": "Subscribe",
+    "buttonLoading": "Subscribing...",
+    "ariaLabel": "Email address",
+    "ariaButton": "Subscribe to newsletter",
+    "success": {
+      "title": "Thank you for subscribing!",
+      "description": "You'll receive career tips, resume advice, and CareerForge AI updates."
+    },
+    "alreadySubscribed": {
+      "title": "You're already subscribed",
+      "description": "You're already on our list. Stay tuned for great content!"
+    },
+    "reactivated": {
+      "title": "Welcome back!",
+      "description": "Your subscription has been reactivated. You'll receive our next update."
+    },
+    "error": {
+      "title": "Something went wrong",
+      "description": "Please try again later."
+    },
+    "rateLimited": {
+      "title": "Too many requests",
+      "description": "Please wait a moment before trying again."
+    },
+    "validation": {
+      "required": "Email is required",
+      "invalid": "Please enter a valid email address",
+      "tooLong": "Email is too long"
+    },
+    "privacy": "We respect your privacy. Unsubscribe at any time."
+  },
+  "ai": {
+    "assistant": {
+      "title": "AI Resume Assistant",
+      "subtitle": "Powered by AI",
+      "description": "Select a quick action below or type a custom request to enhance this section.",
+      "quickActions": "Quick Actions",
+      "customPrompt": "Or ask AI anything:",
+      "placeholder": "Type your request... e.g. \"Make this more impactful with metrics\"",
+      "sendTooltip": "Send (⌘+Enter)",
+      "results": "Results",
+      "noResults": "No suggestions yet",
+      "noResultsHint": "Click a quick action or type a custom request to get started.",
+      "retry": "Retry",
+      "apply": "Apply",
+      "applyTooltip": "Replace current content with this suggestion",
+      "replace": "Replace",
+      "replaceTooltip": "Replace current content",
+      "insertBelow": "Insert Below",
+      "insertBelowTooltip": "Append this below the current content",
+      "copied": "Copied!",
+      "copy": "Copy",
+      "copyTooltip": "Copy to clipboard",
+      "regenerate": "Regenerate",
+      "regenerateTooltip": "Generate a new version",
+      "footer": "AI-generated content may need review. Always verify accuracy."
+    }
+  }
+}

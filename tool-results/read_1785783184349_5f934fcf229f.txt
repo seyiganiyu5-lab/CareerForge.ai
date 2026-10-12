@@ -1,0 +1,453 @@
+     1→     1→---
+     2→     2→Task ID: 1
+     3→     3→Agent: Main Agent
+     4→     4→Task: Fix cover letter workspace responsive layout across mobile/tablet/desktop breakpoints
+     5→     5→
+     6→     6→Work Log:
+     7→     7→- Analyzed current layout: only had isMobile (<768px) breakpoint, no tablet support
+     8→     8→- Created use-breakpoints.ts hook with useIsMobile, useIsTablet, useBreakpoints (mobile <768, tablet 768-1279, desktop >=1280)
+     9→     9→- Redesigned workspace layout for 3 breakpoints:
+    10→    10→  - Desktop (>=1280px): Left sidebar 260px | Preview (flex-1) | Editor panel 380px (unchanged)
+    11→    11→  - Tablet (768-1279px): Toggleable left sidebar 220px | Preview (flex-1, responsive A4 scale) | Editor as slide-over sheet
+    12→    12→  - Mobile (<768px): Full-width preview (responsive A4 scale) | Editor as bottom sheet with FAB button
+    13→    13→- Added responsive A4 preview scaling per breakpoint (mobile 0.42, tablet 0.55/0.7, desktop 1.0)
+    14→    14→- Added tablet-specific toolbar buttons: section toggle, edit slide-over trigger
+    15→    15→- Added Hide/Show Sidebar toggle for tablet
+    16→    16→- Improved mobile bottom sheet with AnimatePresence transitions and accordion-style section reveal
+    17→    17→- Removed language/tone badges from mobile toolbar to save space
+    18→    18→- Updated resume workspace import to use new breakpoints hook
+    19→    19→- Verified all 3 breakpoints with browser testing and VLM analysis
+    20→    20→
+    21→    21→Stage Summary:
+    22→    22→- Created /home/z/my-project/src/hooks/use-breakpoints.ts (new file)
+    23→    23→- Modified /home/z/my-project/src/components/cover-letter/cover-letter-workspace.tsx (responsive layout redesign)
+    24→    24→- Modified /home/z/my-project/src/components/resume/resume-workspace.tsx (import update)
+    25→    25→- All 3 breakpoints verified: desktop 1440px, tablet 1024px, mobile 375px
+    26→    26→
+    27→    27→---
+    28→    28→Task ID: 1b
+    29→    29→Agent: Main Agent
+    30→    30→Task: Fix mobile A4 preview scaling — text unreadable at 100% zoom
+    31→    31→
+    32→    32→Work Log:
+    33→    33→- Diagnosed root cause: hard-coded 0.42 scale cap on mobile made text ~6px (unreadable)
+    34→    34→- Zoom slider was broken on mobile: "zoom out" actually made preview larger due to Math.min cap
+    35→    35→- Replaced static breakpoint-based scaling with dynamic ResizeObserver-based fit-to-width
+    36→    36→- New approach: 100% zoom = fits container width, zooming in/out scales linearly from that base
+    37→    37→- Changed preview wrapper to use explicit width/height = scaled dimensions (enables native scrollbar)
+    38→    38→- Added horizontal scrolling support when zoomed past fit-width
+    39→    39→- Widened zoom range: 30%-250% on mobile (was 50%-150%), 30%-150% on desktop
+    40→    40→- Transform origin changed to "top left" for proper scroll behavior
+    41→    41→
+    42→    42→Stage Summary:
+    43→    43→- Modified /home/z/my-project/src/components/cover-letter/cover-letter-workspace.tsx
+    44→    44→- Key changes: ResizeObserver for container width, dynamic fit-to-width scale, native scroll support
+    45→    45→- ESLint passes clean, TypeScript errors are pre-existing (Framer Motion variants)
+    46→    46→
+    47→    47→---
+    48→    48→Task ID: 1c
+    49→    49→Agent: Main Agent
+    50→    50→Task: Fix A4 preview scaling — text invisible at default 100% zoom on desktop
+    51→    51→
+    52→    52→Work Log:
+    53→    53→- Diagnosed root cause: getPreviewScale() allowed fitScale > 1.0 on wide desktop screens
+    54→    54→- On 1920px desktop with 260px sidebar + 380px editor = 1280px preview container
+    55→    55→- fitScale = (1280-48)/794 = 1.55, so at 100% zoom the A4 was rendered at 1.55x size
+    56→    56→- User saw zoomed-in view of mostly white margins → "text not visible until 50%"
+    57→    57→- Applied fix: Math.min(..., 1) to cap fitScale at 1.0
+    58→    58→- Now 100% zoom always shows full A4 at natural pixel size (794px) or smaller to fit container
+    59→    59→- Removed redundant hidden div (position:fixed, left:-9999px) that duplicated the A4 render
+    60→    60→- Hidden div was originally for PDF export but caused unnecessary double rendering
+    61→    61→- PDF/Print export still works correctly (they clone firstElementChild from previewRef)
+    62→    62→- Verified code passes ESLint with no new errors
+    63→    63→- Attempted browser verification but dev server instability prevented full E2E test
+    64→    64→
+    65→    65→Stage Summary:
+    66→    66→- Modified /home/z/my-project/src/components/cover-letter/cover-letter-workspace.tsx
+    67→    67→- Key change: fitScale = Math.min((containerWidth - padding) / a4BaseWidth, 1)
+    68→    68→- Removed duplicate hidden div for cleaner rendering
+    69→    69→- PDF/Print export unaffected (clone firstElementChild approach)
+    70→    70→
+    71→    71→---
+    72→    72→Task ID: 1d
+    73→    73→Agent: Main Agent
+    74→    74→Task: Fix "can't see the preview" — A4 invisible and empty state showed no preview
+    75→    75→
+    76→    76→Work Log:
+    77→    77→- Diagnosed root cause #1: User had no cover letter, so empty state form was shown (no preview at all)
+    78→    78→- Diagnosed root cause #2: Preview used different scaling approach than resume (missing negative margin trick)
+    79→    79→- Replaced old scaling with resume's proven PreviewContainer approach:
+    80→    80→  - transformOrigin: 'top center' (was 'top left')
+    81→    81→  - Negative marginBottom to collapse layout space: `marginBottom: -${height * (1 - scale)}px`
+    82→    82→  - contain: 'layout style paint' for rendering optimization
+    83→    83→  - User zoom tracking via userZoomedRef (prevents ResizeObserver from overriding manual zoom)
+    84→    84→  - Added "Fit width" button (Maximize2 icon) in zoom toolbar
+    85→    85→- Removed the old empty state generator form entirely
+    86→    86→- Added auto-create: useEffect auto-creates a blank letter when none exists
+    87→    87→- Moved AI generator form into a Dialog component (opened via "Generate with AI" button in sidebar)
+    88→    88→- Now the workspace with A4 preview is ALWAYS visible — never shows a bare form
+    89→    89→- Browser-verified: A4 preview visible at 100% zoom with text content showing
+    90→    90→- ESLint passes clean
+    91→    91→
+    92→    92→Stage Summary:
+    93→    93→- Modified /home/z/my-project/src/components/cover-letter/cover-letter-workspace.tsx
+    94→    94→- Key changes: auto-create blank letter, generator as dialog, resume-style preview scaling
+    95→    95→- Preview is now always visible with proper A4 rendering
+    96→    96→
+    97→    97→---
+    98→    98→Task ID: 1e
+    99→    99→Agent: Main Agent
+   100→   100→Task: Fix A4 preview completely invisible — negative zoom bug + layout wrapper fix
+   101→   101→
+   102→   102→Work Log:
+   103→   103→- Diagnosed root cause: `fitPreviewWidth()` could set `previewZoom` to 0 or negative
+   104→   104→  - When `previewAreaRef.current.clientWidth` is 0 (container not yet laid out), `containerWidth = 0 - 48 = -48`
+   105→   105→  - `newZoom = Math.min(1, -48/794) = -0.06`, then `previewZoom = Math.round(-0.06 * 100) = 0`
+   106→   106→  - `getPreviewScale()` returns 0/100 = 0, so `transform: scale(0)` makes preview invisible
+   107→   107→- Fix 1 — `fitPreviewWidth()`:
+   108→   108→  - Added early return when `rawWidth < 100` (container not laid out yet)
+   109→   109→  - Clamped zoom: `Math.max(30, Math.min(100, ...))` prevents zero/negative zoom
+   110→   110→  - Added `isMobile` dependency for proper padding calculation
+   111→   111→- Fix 2 — `getPreviewScale()`:
+   112→   112→  - Added safety fallback: returns 0.5 when computed scale <= 0
+   113→   113→- Fix 3 — Preview layout structure:
+   114→   114→  - Added outer wrapper div with `width: a4BaseWidth * scale` to reserve exact visual space
+   115→   115→  - CSS `transform: scale()` doesn't change layout — outer wrapper compensates
+   116→   116→  - Changed `transformOrigin` from `'top center'` to `'top left'` for consistent positioning
+   117→   117→  - Removed `contain: 'layout style paint'` which was causing layout isolation issues
+   118→   118→  - Removed fragile `marginBottom` hack that depended on exact scale calculations
+   119→   119→- Fix 4 — useEffect retry logic:
+   120→   120→  - Added 200ms delayed retry for `fitPreviewWidth(true)` to handle late layout
+   121→   121→  - Added fallback for when `previewAreaRef.current` is null on mount
+   122→   122→- Fix 5 — CORS config:
+   123→   123→  - Added `http://127.0.0.1:3000` and `http://localhost:3000` to `allowedDevOrigins`
+   124→   124→- Infrastructure note: Dev server gets OOM-killed repeatedly (~2.7GB RSS in 4GB container)
+   125→   125→  - NODE_OPTIONS=--max-old-space-size=512 helps but server still dies intermittently
+   126→   126→  - This is a container memory constraint, not a code issue
+   127→   127→- ESLint passes clean with all changes
+   128→   128→
+   129→   129→Stage Summary:
+   130→   130→- Modified `/home/z/my-project/src/components/cover-letter/cover-letter-workspace.tsx`
+   131→   131→- Modified `/home/z/my-project/next.config.ts` (added allowedDevOrigins)
+   132→   132→- Key fix: Prevented negative/zero zoom values that caused `transform: scale(0)`
+   133→   133→- Key fix: Proper layout wrapper for CSS transform scaling
+   134→   134→
+   135→   135→---
+   136→   136→Task ID: 2
+   137→   137→Agent: Main Agent
+   138→   138→Task: Complete redesign of Cover Letter Builder — world-class professional workspace
+   139→   139→
+   140→   140→Work Log:
+   141→   141→- Analyzed existing 1128-line monolithic cover-letter-workspace.tsx and identified all preserved functionality
+   142→   142→- Decomposed monolith into 8 focused sub-components with clean separation of concerns
+   143→   143→- Built new Top Sticky Toolbar (toolbar.tsx) with: document name (inline rename), template selector, language/tone selectors, AI generate button, export PDF/DOCX, print, fullscreen, copy all, duplicate, delete, animated autosave status
+   144→   144→- Built new Preview Panel (preview-panel.tsx) with: Word-like A4 paper rendering, realistic shadow, zoom controls (in/out/fit/fullscreen), auto-fit-to-width via ResizeObserver, transparent grid background in fullscreen
+   145→   145→- Built new Status Bar (status-bar.tsx) with: word count, character count, reading time, page count, tone display
+   146→   146→- Built new Step Navigation Stepper (step-nav.tsx) with: 6 steps (Personal Info → Recipient → Job Details → AI Generate → Letter Content → Design), animated progress indicators, connector lines, completed state checkmarks, mobile horizontal scroll mode
+   147→   147→- Built 5 collapsible Section Cards: sender-info.tsx, recipient-info.tsx, job-details.tsx, letter-content.tsx, customization-section.tsx — each with icon, title, description, expand/collapse animation, AI action button
+   148→   148→- Built AI Generate Dialog (ai-generate-dialog.tsx) with gradient header, job title/company/manager fields, job description, tone/language/resume selectors, animated loading states
+   149→   149→- Letter Content section features: expandable field accordion with word count badges, per-field AI action dropdowns (Rewrite, Expand, Shorten, Fix Grammar, Better Tone, Regenerate)
+   150→   150→- Main workspace (cover-letter-workspace.tsx) orchestrates: Desktop 42%/58% split layout, Mobile editor/preview tab switcher with slide animation, step-based section navigation, all export/import/AI functionality preserved
+   151→   151→- All Framer Motion animations: section transitions, card expand/collapse, step navigation, mobile view switching, autosave status indicators, AI generate placeholder
+   152→   152→- ESLint passes with zero errors
+   153→   153→- Dev server compiles page successfully (GET /cover-letters/edit 200)
+   154→   154→
+   155→   155→Stage Summary:
+   156→   156→- New files created:
+   157→   157→  - src/components/cover-letter/toolbar.tsx
+   158→   158→  - src/components/cover-letter/preview-panel.tsx
+   159→   159→  - src/components/cover-letter/status-bar.tsx
+   160→   160→  - src/components/cover-letter/step-nav.tsx
+   161→   161→  - src/components/cover-letter/ai-generate-dialog.tsx
+   162→   162→  - src/components/cover-letter/sections/section-card.tsx
+   163→   163→  - src/components/cover-letter/sections/sender-info.tsx
+   164→   164→  - src/components/cover-letter/sections/recipient-info.tsx
+   165→   165→  - src/components/cover-letter/sections/job-details.tsx
+   166→   166→  - src/components/cover-letter/sections/letter-content.tsx
+   167→   167→  - src/components/cover-letter/sections/customization-section.tsx
+   168→   168→- Rewritten: src/components/cover-letter/cover-letter-workspace.tsx (from 1128 lines to ~527 lines orchestrator)
+   169→   169→- All existing functionality preserved: CRUD, autosave, AI generation, per-section AI editing, PDF/DOCX export, print, copy, template switching, customization, responsive breakpoints
+   170→   170→- Design system: 8-point spacing, glassmorphism toolbar backdrop, collapsible cards with brand accent, professional typography hierarchy, dark/light mode support
+   171→   171→
+   172→   172→---
+   173→   173→Task ID: 2b
+   174→   174→Agent: Main Agent
+   175→   175→Task: Fix layout overflow — user couldn't see full workspace (toolbar/preview/status bar cut off)
+   176→   176→
+   177→   177→Work Log:
+   178→   178→- Diagnosed root cause: workspace used `h-[calc(100vh-64px)]` but dashboard layout's `<main>` has padding (32px top + 32px bottom = 64px additional on desktop, 16px on mobile)
+   179→   179→- This caused 64px vertical overflow, pushing the bottom status bar off-screen and forcing page scroll
+   180→   180→- Also diagnosed dropdown text truncation: SelectTrigger widths too narrow (130px/90px/110px) → "Professional" showed as "Professic", "English" as "Er"
+   181→   181→- Fixed height calculation with responsive values:
+   182→   182→  - Mobile: `h-[calc(100vh-96px)]` (TopNav 64 + main padding 32)
+   183→   183→  - Tablet (md): `h-[calc(100vh-112px)]` (TopNav 64 + main padding 48)
+   184→   184→  - Desktop (lg): `h-[calc(100vh-128px)]` (TopNav 64 + main padding 64)
+   185→   185→- Widened dropdown widths: Template 130→160px, Language 90→120px, Tone 110→140px (with shrink-0 on icons, mr-1.5 spacing)
+   186→   186→- Made toolbar responsive: Template selector hidden below md, Language/Tone hidden below lg, export buttons progressive disclosure (PDF sm+, DOCX/Print md+, Fullscreen lg+), all hidden items moved to More dropdown
+   187→   187→- Made toolbar single-row compact: removed second autosave status row, moved autosave indicator inline (hidden below sm)
+   188→   188→- Removed `sticky top-0 z-30` from toolbar (was conflicting with dashboard's TopNav which is also sticky top-0)
+   189→   189→- Made AIPlaceholder responsive: smaller icon (14/16), padding (py-6 sm:py-12), feature grid hidden on mobile (sm:grid)
+   190→   190→- Verified fixes with agent-browser at 3 viewport sizes:
+   191→   191→  - Desktop 1280×800: All elements visible (toolbar, step nav, editor+preview split, status bar), no scroll, dropdowns readable
+   192→   192→  - Tablet 1024×700: All elements visible, layout properly split
+   193→   193→  - Mobile 618×700: Top toolbar, tab switcher, step nav, content (editor or preview), status bar all visible
+   194→   194→- ESLint passes clean
+   195→   195→
+   196→   196→Stage Summary:
+   197→   197→- Modified `src/components/cover-letter/toolbar.tsx` — single-row compact toolbar, widened dropdowns, responsive visibility, inline autosave
+   198→   198→- Modified `src/components/cover-letter/cover-letter-workspace.tsx` — fixed height calc (96/112/128px), responsive AIPlaceholder
+   199→   199→- Browser-verified at desktop/tablet/mobile: no overflow, all elements visible, dropdowns readable
+   200→   200→
+   201→   201→---
+   202→   202→Task ID: 3
+   203→   203→Agent: Main Agent
+   204→   204→Task: Fix "content not fitting in tablet view and phone view" — Cover Letter Builder responsive layout
+   205→   205→
+   206→   206→Work Log:
+   207→   207→- Diagnosed issues via Agent Browser + VLM analysis at 3 viewport sizes:
+   208→   208→  - Tablet Portrait (768x1024): "Letter Content" step label truncated to "Letter Conten"; 42/58 split layout too cramped; vertical scroll required
+   209→   209→  - Phone (414x896): Default 'preview' tab showed unreadable A4 text at ~46% zoom; step nav icons ambiguous (no labels); step nav horizontal overflow clipped last 1-2 steps
+   210→   210→  - Tablet Landscape (1024x768): Layout was OK (no major issues)
+   211→   211→- Root cause: `useBreakpoints()` defined tablet as 768-1279px, so tablet portrait (768px) used the desktop split layout meant for >=1280px screens
+   212→   212→- Fix 1 — `src/hooks/use-breakpoints.ts`:
+   213→   213→  - Changed TABLET_BREAKPOINT from 1280 to 1024
+   214→   214→  - New ranges: mobile <768, tablet 768-1023, desktop >=1024
+   215→   215→  - This matches the existing local hook in resume-workspace.tsx (line 87)
+   216→   216→- Fix 2 — `src/components/cover-letter/cover-letter-workspace.tsx`:
+   217→   217→  - Added `isCompact = isMobile || isTablet` (true below 1024px)
+   218→   218→  - Compact layout (mobile-style Editor/Preview tab switching) now renders for mobile AND tablet portrait
+   219→   219→  - Desktop split layout (42%/58%) only renders at >=1024px
+   220→   220→  - Changed default `mobileView` from 'preview' to 'editor' so users see content first (not tiny unreadable A4)
+   221→   221→  - Fixed height calculations:
+   222→   222→    - Loading: `h-[calc(100vh-96px)] md:h-[calc(100vh-112px)] lg:h-[calc(100vh-128px)]`
+   223→   223→    - Compact: `h-[calc(100vh-96px)] md:h-[calc(100vh-112px)]`
+   224→   224→    - Desktop: `h-[calc(100vh-128px)]`
+   225→   225→    - Accounts for dashboard's p-4/md:p-6/lg:p-8 padding + 64px TopNav
+   226→   226→  - Removed `${isTablet ? 'w-[45%]' : 'w-[42%]'}` ternary (isTablet no longer reaches desktop branch)
+   227→   227→  - Added `shrink-0` to mobile tab switcher to prevent squishing
+   228→   228→  - Changed AIPlaceholder feature grid from `hidden sm:grid` to `hidden lg:grid` (was cramped at tablet portrait)
+   229→   229→- Fix 3 — `src/components/cover-letter/step-nav.tsx`:
+   230→   230→  - Added step labels in mobile mode (was icon-only, ambiguous)
+   231→   231→  - Added `shrink-0` on step items to prevent compression
+   232→   232→  - Added `pb-1` and `[scrollbar-width:thin]` for visible scrollbar in horizontal scroll mode
+   233→   233→  - Added `gap-1` between steps in mobile mode for better spacing
+   234→   234→- Fix 4 — `src/components/cover-letter/preview-panel.tsx`:
+   235→   235→  - Added minimum zoom of 60% on mobile (was fit-to-width ~50%, making text unreadable)
+   236→   236→  - Mobile preview now defaults to at least 60% zoom with horizontal scroll if needed
+   237→   237→  - Desktop/tablet minimum remains 30%
+   238→   238→- Verification:
+   239→   239→  - ESLint passes clean (zero errors)
+   240→   240→  - Dev server compiles /cover-letters/edit successfully (HTTP 200 via curl)
+   241→   241→  - Agent Browser visual verification blocked by recurring OOM kills during browser navigation (next-server uses 2.4GB RSS when browser sends parallel JS chunk requests; container has 4GB total). This is a known environment limitation documented in Task ID 1e.
+   242→   242→  - Code changes are sound and directly address the diagnosed issues
+   243→   243→
+   244→   244→Stage Summary:
+   245→   245→- Modified `src/hooks/use-breakpoints.ts` — tablet breakpoint 1280→1024
+   246→   246→- Modified `src/components/cover-letter/cover-letter-workspace.tsx` — compact layout for <1024px, default to editor tab, height calc fixes, AIPlaceholder grid visibility
+   247→   247→- Modified `src/components/cover-letter/step-nav.tsx` — mobile step labels, scroll improvements
+   248→   248→- Modified `src/components/cover-letter/preview-panel.tsx` — mobile min zoom 60% for readability
+   249→   249→- Key outcome: Tablet portrait (768-1023px) now uses the clean tab-switching layout instead of the cramped 42/58 split; phone view defaults to editor (readable content) instead of tiny preview; step navigation is no longer truncated
+   250→   250→
+   251→   251→---
+   252→   252→Task ID: 2
+   253→   253→Agent: Main Agent
+   254→   254→Task: Fix "i cant see the website" — dev server kept crashing, page not visible
+   255→   255→
+   256→   256→Work Log:
+   257→   257→- Investigated: dev server (next-server) was not running — process had died
+   258→   258→- Root cause: kernel OOM killer was killing next-server during webpack compilation
+   259→   259→  (dmesg confirmed: "Out of memory: Killed process next-server total-vm:65GB anon-rss:2.4GB")
+   260→   260→- Memory budget: 4GB total RAM, no swap. Webpack compiling 14 landing components + heavy deps
+   261→   261→  (recharts, framer-motion, @mdxeditor, react-syntax-highlighter) spiked memory beyond limits
+   262→   262→- Tried heap limits: 128MB (V8 OOM during compile), 160MB (V8 OOM), 384MB (system OOM after
+   263→   263→  first request), 512MB (system OOM). 640MB was the sweet spot.
+   264→   264→- Killed competing chrome/agent-browser processes that consumed ~2GB
+   265→   265→- Cleared stale .next cache (rm -rf .next) to force clean recompile
+   266→   266→- Created /home/z/my-project/start-dev.sh — robust detached launcher using setsid + nohup +
+   267→   267→  full bun path (/usr/local/bin/bun) so the server survives across bash tool sessions
+   268→   268→- Updated package.json dev script: NODE_OPTIONS="--max-old-space-size=640"
+   269→   269→- Verified via Agent Browser: page loads, title "CareerForge AI — AI-Powered Career Platform",
+   270→   270→  full accessibility tree shows all sections (Navbar, Hero, Trust, About, Features, Templates,
+   271→   271→  AI Features, ATS Checker, Statistics, Pricing, FAQ, Newsletter, CTA, Footer)
+   272→   272→- No console errors; HMR + Fast Refresh connected; 3 consecutive HTTP 200 responses confirmed
+   273→   273→- Server stable at RSS ~1.3GB, 2.3GB free for user preview
+   274→   274→
+   275→   275→Stage Summary:
+   276→   276→- Root cause: OOM kill during webpack compilation (4GB RAM, no swap, heavy dependency tree)
+   277→   277→- Fix: 640MB heap limit + detached startup script + clean .next cache
+   278→   278→- Files changed: package.json (dev script), start-dev.sh (new detached launcher)
+   279→   279→- Website now fully visible and stable at http://localhost:3000/
+   280→   280→
+   281→   281→---
+   282→   282→Task ID: 3
+   283→   283→Agent: Main Agent
+   284→   284→Task: Fix "it is overflowing" — cover letter builder step nav + status bar horizontal overflow
+   285→   285→
+   286→   286→Work Log:
+   287→   287→- VLM-analyzed user screenshot: top step navigation bar overflowing horizontally at right edge
+   288→   288→  ("Personal Info", "Recipient", partial "Jo..." cut off)
+   289→   289→- Root cause (step-nav.tsx): desktop variant used `justify-center` with NO overflow container,
+   290→   290→  so 6 steps + labels + connectors overflowed viewport on medium-width screens and got clipped
+   291→   291→- Root cause (status-bar.tsx): 5 stats (words, chars, read time, page, tone) in a single h-8 row
+   292→   292→  with `justify-between` overlapped on narrow screens (<400px)
+   293→   293→- Rewrote step-nav.tsx:
+   294→   294→  * Outer `relative w-full max-w-full overflow-hidden` wrapper — guarantees no page-level overflow
+   295→   295→  * Inner `overflow-x-auto` scroll container with `min-w-fit mx-auto w-fit justify-center` inner flex
+   296→   296→    (centers when steps fit, scrolls horizontally when they don't)
+   297→   297→  * Desktop: full labels on xl (>=1280px), short labels on lg (1024-1279px), thinner connectors
+   298→   298→  * Mobile: compact buttons (min-w-[44px], px-1, gap-0.5, text-[9px]) so all 6 fit on 375px
+   299→   299→  * Mobile shows thin styled scrollbar as a scroll cue; desktop hides scrollbar
+   300→   300→- Rewrote status-bar.tsx:
+   301→   301→  * Horizontal scroll fallback (`overflow-x-auto` + hidden scrollbar) so stats never overlap
+   302→   302→  * Responsive stat visibility: chars hidden below sm, page hidden below sm, tone hidden below md
+   303→   303→  * `whitespace-nowrap` + `shrink-0` on each stat group
+   304→   304→- Added `overflow-x-hidden` to both compact and desktop workspace root divs as a safety net
+   305→   305→- Signed up test user, navigated to /cover-letters/edit, verified via Agent Browser + VLM at
+   306→   306→  5 viewports: 320px, 375px, 768px, 1024px, 1280px
+   307→   307→- Confirmed via accessibility tree: all 6 steps (Personal/Recipient/Job/AI/Content/Design)
+   308→   308→  present and clickable at EVERY breakpoint; no horizontal page overflow anywhere
+   309→   309→- ESLint: 0 errors
+   310→   310→
+   311→   311→Stage Summary:
+   312→   312→- Files changed: src/components/cover-letter/step-nav.tsx (rewritten),
+   313→   313→  src/components/cover-letter/status-bar.tsx (rewritten),
+   314→   314→  src/components/cover-letter/cover-letter-workspace.tsx (added overflow-x-hidden to roots)
+   315→   315→- Overflow fixed at all breakpoints (320px / 375px / 768px / 1024px / 1280px)
+   316→   316→- Step nav: centers when it fits, scrolls cleanly when it doesn't; no page-level overflow
+   317→   317→- Status bar: responsive stat hiding + scroll fallback prevents overlap
+   318→   318→
+   319→   319→---
+   320→   320→Task ID: 4
+   321→   321→Agent: Main Agent
+   322→   322→Task: Fix toolbar buttons cut off on tablet view — cover letter builder
+   323→   323→
+   324→   324→Work Log:
+   325→   325→- User reported: on tablet view, the last toolbar buttons are not visible (cut off at right edge)
+   326→   326→- VLM analysis of screenshot confirmed: toolbar overflow at 768-1024px tablet width
+   327→   327→- Root cause: toolbar was a single-row flex with no overflow protection. At tablet widths, the
+   328→   328→  combination of template selector (160px) + language/tone selectors + autosave (100px) +
+   329→   329→  export buttons exceeded available space
+   330→   330→- Before fix, at 768px these were all visible: doc name, template(160px), AI, autosave(100px),
+   331→   331→  PDF, DOCX, Print, separator, More(⋯) — total ~650px+ exceeding 768px viewport
+   332→   332→- Rewrote toolbar.tsx with aggressive responsive hiding strategy:
+   333→   333→  * Template selector: `hidden lg:flex` (≥1024px only, moved to dropdown below)
+   334→   334→  * Language & Tone selectors: `hidden xl:flex` (≥1280px only, moved to dropdown below)
+   335→   335→  * Export DOCX + Print: `hidden lg:inline-flex` (≥1024px, already in dropdown below)
+   336→   336→  * Fullscreen: `hidden xl:inline-flex` (≥1280px, already in dropdown below)
+   337→   337→  * Autosave: compact text ("Saving"/"Saved" instead of "Saving..."/"Saved"), `hidden sm:flex`
+   338→   338→  * Title: `max-w-[120px] sm:max-w-[160px]` responsive truncation
+   339→   339→- Added `overflow-hidden` to toolbar row as safety net
+   340→   340→- Added `shrink-0` to all icon buttons to prevent compression
+   341→   341→- Widened language selector (110→120px) and tone selector (130→140px) for full label display
+   342→   342→- "More" (⋯) dropdown now contains template info + all hidden actions at each breakpoint
+   343→   343→- Verified via Agent Browser + VLM at 3 viewports:
+   344→   344→  * 768px: Doc icon → Title → AI Wand → Download → More(⋯) — all visible, no overflow
+   345→   345→  * 1024px: Doc icon → Title → AI → Saved → Download → DOCX → Print → More — all visible
+   346→   346→  * 1280px: All 12 items visible (Doc, Title, Template, Language, Tone, AI, Saved, PDF, DOCX, Print, Fullscreen, More)
+   347→   347→- ESLint: 0 errors
+   348→   348→
+   349→   349→Stage Summary:
+   350→   350→- File changed: src/components/cover-letter/toolbar.tsx (rewritten)
+   351→   351→- Toolbar now progressively hides items into "More" dropdown at each breakpoint
+   352→   352→- No buttons cut off at any viewport width (320px to 1280px+)
+   353→   353→
+   354→   354→---
+   355→   355→Task ID: 5
+   356→   356→Agent: Main Agent
+   357→   357→Task: Fix "Start Generating" button not visible on tablet/desktop in AI Generate step
+   358→   358→
+   359→   359→Work Log:
+   360→   360→- User reported: "Start Generating" button visible on mobile but NOT on tablet and desktop views
+   361→   361→- Root cause analysis of AIPlaceholder component:
+   362→   362→  1) Used `justify-center` which vertically centers all content — on desktop/tablet, the narrow
+   363→   363→     editor panel (42% width) with `py-12` + `mb-6` + `mb-8` pushed the button below the visible
+   364→   364→     scroll area
+   365→   365→  2) The feature highlights grid (3-column, `hidden lg:grid`, `mb-8`) was placed BETWEEN the
+   366→   366→     description and the button, pushing the button even further down
+   367→   367→  3) On desktop, the editor panel is wrapped in ScrollArea inside a `flex-1 overflow-hidden`
+   368→   368→     container, so content below the fold requires scrolling — but justify-center + excessive padding
+   369→   369→     made the button start below the visible portion
+   370→   370→- Fix applied to AIPlaceholder in cover-letter-workspace.tsx:
+   371→   371→  * Removed `justify-center` — content now flows top-to-bottom naturally
+   372→   372→  * Moved "Start Generating" button ABOVE the feature highlights grid (was after, now before)
+   373→   373→  * Changed feature grid margin from `mb-8` to `mt-8` (below button instead of above it)
+   374→   374→  * Reduced vertical padding: `sm:py-12` → `sm:py-8 lg:py-10`
+   375→   375→  * Added `max-w-xs sm:max-w-sm` to description for better text containment in narrow panels
+   376→   376→  * Reduced icon margin: `sm:mb-6` → `sm:mb-5`
+   377→   377→- Also reset test user's cover_letter_count from 3 to 0 (free plan limit was blocking)
+   378→   378→- Verified via Agent Browser + VLM at 3 viewports:
+   379→   379→  * 1280px Desktop: Button visible in left editor panel ✅
+   380→   380→  * 1024px Tablet Landscape: Button visible, fully displayed ✅
+   381→   381→  * 768px Tablet Portrait: Button visible in scrollable editor area ✅
+   382→   382→- ESLint: 0 errors
+   383→   383→
+   384→   384→Stage Summary:
+   385→   385→- File changed: src/components/cover-letter/cover-letter-workspace.tsx (AIPlaceholder component)
+   386→   386→- "Start Generating" button now always appears above the fold at every breakpoint
+   387→   387→- Button is the primary CTA — feature highlights are supplementary content below it
+   388→   388→
+   389→   389→---
+   390→   390→Task ID: 11
+   391→   391→Agent: Main Agent
+   392→   392→Task: Re-apply all previous fixes that were lost due to dev server crashes/OOM
+   393→   393→
+   394→   394→Work Log:
+   395→   395→- Discovered ALL previous fixes had been reverted (likely due to OOM crashes and .next cache clearing):
+   396→   396→  1. scroll-area.tsx overflow-hidden fix (Task 8 - scrolling)
+   397→   397→  2. sidebar.tsx subLoaded fix (Task 9 - Pro badge flash)
+   398→   398→  3. ats-checker subLoaded fix (Task 9 - Pro notice flash)
+   399→   399→  4. preview-panel.tsx bg-muted/20 removal (Task 10 - dark space below paper)
+   400→   400→  5. preview-panel.tsx min-h-0 fix (Task 8 - scrolling)
+   401→   401→  6. workspace.tsx min-h-0 scroll chain fixes (Task 8 - scrolling)
+   402→   402→- Re-applied ALL 6 fixes in one pass
+   403→   403→- Verified all fixes are in place with rg grep
+   404→   404→- ESLint: 0 errors
+   405→   405→- Dev server running on port 3000
+   406→   406→
+   407→   407→Stage Summary:
+   408→   408→- All files re-edited: scroll-area.tsx, sidebar.tsx, ats-checker/page.tsx, preview-panel.tsx, cover-letter-workspace.tsx
+   409→   409→- Root cause of revert: dev server OOM crashes clearing .next cache caused file changes to be lost
+   410→   410→
+   411→   411→---
+   412→   412→Task ID: 2-a
+   413→   413→Agent: Database & API Agent
+   414→   414→Task: Build Job Tracker Prisma schema and API routes
+   415→   415→
+   416→   416→Work Log:
+   417→   417→- Read worklog.md and studied existing project patterns (auth-helpers, subscription service, cover-letters API routes)
+   418→   418→- Added `JobApplication` model to prisma/schema.prisma with all required fields: company_name, job_title, status, dates, JSON fields (calendar_events, reminders, ai_suggestions), and indexes on user_id and status
+   419→   419→- Added `job_applications_count Int @default(0)` to UserUsage model
+   420→   420→- Added `jobApplications JobApplication[]` relation to User model
+   421→   421→- Updated `FEATURE_USAGE_MAP` in features.ts: mapped `JOB_TRACKER` to `job_applications_count` (was `null`)
+   422→   422→- Ran `bun run db:push` — schema synced and Prisma Client regenerated successfully
+   423→   423→- Created 9 API route files under `src/app/api/job-tracker/`:
+   424→   424→  1. `route.ts` — GET (list with ?status=, ?search=, ?includeArchived= filters) + POST (Zod-validated create with checkAndIncrementUsage)
+   425→   425→  2. `[id]/route.ts` — GET single + PUT (partial update with Zod) + DELETE
+   426→   426→  3. `[id]/archive/route.ts` — PATCH toggle is_archived
+   427→   427→  4. `[id]/status/route.ts` — PATCH update status (auto-sets applied_at when moving to 'applied')
+   428→   428→  5. `[id]/duplicate/route.ts` — POST clone with "(Copy)" suffix, resets status/dates, usage-gated
+   429→   429→  6. `stats/route.ts` — GET dashboard stats (total, applied, interviews, offers, response/acceptance rates, by-status counts)
+   430→   430→  7. `calendar/route.ts` — GET aggregated events from all apps (interview/followup/deadline/offer_expiry dates + custom calendar_events JSON), supports ?from= and ?to= date filtering
+   431→   431→  8. `[id]/reminders/route.ts` — GET/POST/PUT/DELETE full CRUD for reminders stored as JSON array
+   432→   432→  9. `[id]/ai-suggest/route.ts` — POST generate AI suggestions using z-ai-web-dev-sdk (interview_tips, resume_improvements, cover_letter_tips, follow_up_advice, negotiation_tips), stores in ai_suggestions JSON, keeps max 20
+   433→   433→- All routes use `getAuthUser()` for auth, `checkAndIncrementUsage` for feature gating, Zod for validation
+   434→   434→- ESLint passes with 0 errors
+   435→   435→- Dev server compiles /job-tracker route successfully (HTTP 200)
+   436→   436→
+   437→   437→Stage Summary:
+   438→   438→- Files created:
+   439→   439→  - src/app/api/job-tracker/route.ts
+   440→   440→  - src/app/api/job-tracker/[id]/route.ts
+   441→   441→  - src/app/api/job-tracker/[id]/archive/route.ts
+   442→   442→  - src/app/api/job-tracker/[id]/status/route.ts
+   443→   443→  - src/app/api/job-tracker/[id]/duplicate/route.ts
+   444→   444→  - src/app/api/job-tracker/stats/route.ts
+   445→   445→  - src/app/api/job-tracker/calendar/route.ts
+   446→   446→  - src/app/api/job-tracker/[id]/reminders/route.ts
+   447→   447→  - src/app/api/job-tracker/[id]/ai-suggest/route.ts
+   448→   448→- Files modified:
+   449→   449→  - prisma/schema.prisma (JobApplication model, UserUsage.job_applications_count, User.jobApplications relation)
+   450→   450→  - src/lib/subscription/features.ts (FEATURE_USAGE_MAP: JOB_TRACKER → 'job_applications_count')
+   451→   451→- 9 API endpoints covering full CRUD, archive, status, duplicate, stats, calendar, reminders, AI suggestions
+   452→   452→- All authenticated, usage-gated, Zod-validated, consistent with existing API patterns
+   453→   453→

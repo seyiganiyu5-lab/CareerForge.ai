@@ -1,0 +1,570 @@
+     1→---
+     2→Task ID: 1
+     3→Agent: Main Orchestrator
+     4→Task: Build Subscription, Billing, Usage Limits, and Feature Access System
+     5→
+     6→Work Log:
+     7→- Investigated redirect loop from previous session — confirmed it's resolved (no middleware.ts, hasRedirectedRef guard in place, login uses window.location.href)
+     8→- Updated Prisma schema with Plan, PlanFeature, Subscription, UserUsage, Payment models
+     9→- Pushed schema to SQLite database
+    10→- Created seed script with Free/Pro/Enterprise plans and 13-19 features per plan
+    11→- Seeded database with plans and feature configurations
+    12→- Built core subscription service (src/lib/subscription/service.ts) with canAccess, checkAndIncrementUsage, getUserUsage, getPlans, upgradeSubscription, cancelSubscription, downgradeToFree, initializeUsage
+    13→- Built feature key constants and display info (src/lib/subscription/features.ts)
+    14→- Built auth helper for server-side user extraction (src/lib/subscription/auth-helpers.ts)
+    15→- Created API routes:
+    16→  - GET /api/billing/plans — fetch all plans with features
+    17→  - POST /api/billing/subscribe — upgrade/subscribe with Flutterwave integration
+    18→  - POST /api/billing/cancel — cancel subscription (immediate or end-of-period)
+    19→  - POST /api/billing/webhook — Flutterwave webhook handler
+    20→  - GET /api/subscriptions/me — current user subscription
+    21→  - GET /api/usage/me — current user usage + premium access status
+    22→  - POST /api/usage/check — server-side feature access check
+    23→  - GET /api/payments/history — payment history
+    24→  - POST /api/payments/verify — Flutterwave payment verification
+    25→- Updated signup route to initialize usage on new user creation
+    26→- Built billing page (933-line full billing UI with plan comparison, toggle, payment history)
+    27→- Built UpgradeModal component (premium feature upsell dialog)
+    28→- Built FeatureGate component (reusable wrapper for premium feature access)
+    29→- Built SubscriptionCard component (compact card for dashboard home)
+    30→- Updated dashboard home page layout to include SubscriptionCard
+    31→- Updated sidebar with Pro badges on premium features (AI Resume Review, ATS Checker, Job Tracker)
+    32→- Wrapped premium feature pages with FeatureGate (resume-review, ats-checker, job-tracker)
+    33→- Initialized subscriptions and usage records for all 6 existing users
+    34→- All lint checks pass clean
+    35→
+    36→Stage Summary:
+    37→- Complete SaaS subscription infrastructure built with Free/Pro/Enterprise plans
+    38→- 7 feature keys defined with usage tracking and limit enforcement
+    39→- Server-side permission system with canAccess() and checkAndIncrementUsage()
+    40→- Professional billing page with plan comparison, monthly/yearly toggle, payment history
+    41→- Flutterwave integration ready (demo mode in dev, production webhook handlers in place)
+    42→- Premium features gated with FeatureGate component showing upgrade modal
+    43→- Sidebar shows Pro badges for free users, hides them for paid users
+    44→- Future-ready: new features can be added by inserting a row in plan_features
+    45→
+    46→---
+    47→Task ID: 2
+    48→Agent: Main Orchestrator
+    49→Task: Build Resume Builder Workspace
+    50→
+    51→Work Log:
+    52→- Added Resume model to Prisma schema (id, user_id, title, data_json, template, status)
+    53→- Pushed schema and regenerated Prisma client
+    54→- Created comprehensive TypeScript types (src/types/resume.ts) with 12 section interfaces
+    55→- Created resume defaults utility (src/lib/resume/defaults.ts) with factory helpers and section counter
+    56→- Built 3 API routes:
+    57→  - GET/POST /api/resumes — list/create with subscription limit enforcement
+    58→  - GET/PUT/DELETE /api/resumes/[id] — read/update/delete individual resumes
+    59→  - POST /api/resumes/[id]/duplicate — duplicate with limit check
+    60→- Built useResume hook (src/hooks/use-resume.ts) with autosave (3s debounce), CRUD, URL-based resume selection
+    61→- Built 18 frontend components:
+    62→  - resume-workspace.tsx — 3-panel responsive layout (mobile tabs, tablet sidebar+sheet, desktop 3-panel)
+    63→  - resume-sidebar.tsx — 12-section navigation with icons, active highlighting, collapsible
+    64→  - section-editor.tsx — section router with Framer Motion transitions
+    65→  - resume-preview.tsx — Live A4 paper preview with ResizeObserver auto-scaling
+    66→  - resume-empty-state.tsx — Empty state with Create Resume CTA and upgrade modal
+    67→  - 12 section forms: personal-info, summary, work-experience, education, skills (tag input), projects, certifications, languages, awards, volunteer, references, additional-info
+    68→- Wrapped resume-builder page with FeatureGate for subscription enforcement
+    69→- Browser-verified: empty state → create resume → 3-panel workspace → section switching → live preview → form filling
+    70→
+    71→Stage Summary:
+    72→- Complete Resume Builder Workspace with 12 editable sections
+    73→- Real-time A4 paper preview that updates instantly on every keystroke
+    74→- Autosave with 3s debounce and visual status indicator (Saving.../Saved/Save failed)
+    75→- Responsive: 3-panel desktop, sidebar+sheet tablet, bottom tab mobile
+    76→- Resume management: create, rename, duplicate, delete via dropdown menu
+    77→- Subscription integration: Free users limited to 1 resume, Pro gets unlimited
+    78→- Future-ready architecture for AI generation, templates, import/export, version history
+    79→
+    80→---
+    81→Task ID: 3-a
+    82→Agent: Template Builder
+    83→Task: Create 2 resume template components (ATS Classic, Professional Blue)
+    84→
+    85→Work Log:
+    86→- Read project context (worklog.md), type definitions (template.ts, resume.ts), utilities (utils.ts), and sample data
+    87→- Created ATS Classic template (src/components/resume/templates/ats-classic.tsx)
+    88→  - Single-column layout with maximum ATS compatibility (no tables, no sidebars, no fancy layouts)
+    89→  - Section headings: ALL CAPS with accent-colored bottom border (2px solid)
+    90→  - Body text in primaryFont, headings in headingFont
+    91→  - Contact info as single line separated by " | "
+    92→  - Skills displayed as comma-separated inline text (not tags/chips)
+    93→  - Full section rendering: professionalSummary, workExperience, education, skills, projects, certifications, languages, awards, volunteerExperience, references, additionalInfo
+    94→  - All styling via inline style props (dynamic from customization), Tailwind only for flex layout
+    95→  - No dark: classes used
+    96→- Created Professional Blue template (src/components/resume/templates/professional-blue.tsx)
+    97→  - Modern corporate style with centered header (respects headerAlignment)
+    98→  - Name: large bold (800 weight), professional title in accent color below
+    99→  - Contact info: subtle row with accent-colored dot separators
+   100→  - Thin accent divider line under header (25% opacity)
+   101→  - Section headings: bold with 3px×12px accent-colored left border and optional trailing gray divider line
+   102→  - Work experience: company name bold, position on same line in accent color with location, date range right-aligned
+   103→  - Skills: clean inline tags with 10% opacity accent background and accent-colored text
+   104→  - Projects: name bold with tech stack in accent color inline, description below, URLs shown
+   105→  - Languages: "Language — Proficiency" format with bold language name
+   106→  - All dynamic styling via inline styles, hex-to-rgba helper for accent backgrounds
+   107→  - Full section coverage matching ATS Classic
+   108→- Both templates pass ESLint with zero errors/warnings
+   109→- Pre-existing lint error in template-engine.tsx (component created during render) is unrelated
+   110→
+   111→Stage Summary:
+   112→- Two production-quality resume template components built
+   113→- Both export default with correct TemplateComponentProps signature
+   114→- All 11 content sections rendered with professional layouts
+   115→- Full customization support: accentColor, primaryFont, headingFont, fontSize, sectionSpacing, pageMargins, lineHeight, headerAlignment, sectionDividers
+   116→- ATS Classic: recruiter-friendly, maximum ATS parseability, free-tier default
+   117→- Professional Blue: polished corporate look with accent color highlights, free-tier
+   118→
+   119→---
+   120→Task ID: 3-c
+   121→Agent: Template Builder
+   122→Task: Create Contemporary and Chronological resume template components
+   123→
+   124→Work Log:
+   125→- Read worklog.md, template types, resume types, utility functions, and sample data for context
+   126→- Created `/src/components/resume/templates/contemporary.tsx` — Modern professional resume template
+   127→  - Header: Name in headingFont (~20px), professional title in gray, contact row with accent-colored dot separators (3px circles)
+   128→  - Section headings: headingFont, bold, ~13px, with 2px accent-colored underline (when sectionDividers enabled)
+   129→  - Work experience: Position bold + " at " + company normal weight on one line, date range right-aligned in gray, location + description below
+   130→  - Skills: Pill-shaped tags with 1px accent border, accent-colored text, rounded-full, subtle and clean
+   131→  - Education: Degree + field bold on one line with date right-aligned, school + location in gray below
+   132→  - All dynamic styles via inline `style` props (font, color, spacing from customization)
+   133→  - All 12 section types rendered with proper content handling
+   134→- Created `/src/components/resume/templates/chronological.tsx` — Traditional recruiter-friendly resume template
+   135→  - Header: Name centered (respects headerAlignment) in headingFont (~22px), gray horizontal line (1px, #e5e7eb), contact info centered with " · " separators
+   136→  - Section headings: headingFont, bold, ALL CAPS, ~12px, letter-spacing 1.5px, thin gray divider line below (when sectionDividers enabled)
+   137→  - Work experience: Timeline style with accent-colored circle (6px) connected by thin accent vertical line (1px, 40% opacity), position bold, company in gray with location, date range right-aligned
+   138→  - Education: Same timeline style as work experience
+   139→  - Skills: Simple comma-separated text (ATS-friendly)
+   140→  - Chronological order respected via getVisibleSections + customization.sectionOrder
+   141→- Both templates: use getVisibleSections, getContactItems, getSectionLabel, formatDate, formatDateRange, getTemplateStyles
+   142→- Both templates: handle all 12 section types, respect all customization props, no dark: classes, white paper background
+   143→- Both files pass ESLint with zero errors/warnings
+   144→
+   145→Stage Summary:
+   146→- Two production-quality resume templates created: Contemporary (modern tech resume) and Chronological (traditional recruiter-friendly)
+   147→- Both follow the exact TemplateComponentProps signature and import pattern
+   148→- All styling is dynamic via inline styles from customization props (no hardcoded Tailwind for colors/fonts/spacing)
+   149→- Layout-only Tailwind classes (flex, column, wrap) used where appropriate
+   150→- Full section coverage: personalInfo header, summary, work, education, skills, projects, certifications, languages, awards, volunteer, references, additionalInfo
+   151→
+   152→---
+   153→Task ID: 3-b
+   154→Agent: Template Builder
+   155→Task: Create 2 resume template components (Executive, Modern Minimal)
+   156→
+   157→Work Log:
+   158→- Read worklog.md, type definitions (template.ts, resume.ts), utilities (utils.ts), sample data, registry.ts, and template-engine.tsx for context
+   159→- Created `/src/components/resume/templates/executive.tsx` — Premium C-suite resume template
+   160→  - Header: Large centered name (~20px, headingFont, weight 700, respects headerAlignment), thin 2px accent-colored line at 60% width, professional title centered in accent color below the line, contact info as single centered line with "  ·  " separators
+   161→  - Section headings: ALL CAPS, letter-spacing 2px, headingFont, accent-colored, generous top spacing (24× sectionSpacing), no borders/dividers (whitespace-separated sections)
+   162→  - Work experience: Bold position on first line with date range right-aligned in gray, company + location on second line in lighter color, description with generous line height
+   163→  - Education: Degree + field bold ("Degree in Field"), school + location in lighter color below, optional GPA shown
+   164→  - Skills: Clean comma-separated paragraph
+   165→  - Projects: Name bold with tech stack right-aligned in gray, description below, live URL in accent color
+   166→  - Certifications: Name bold with issuer + date on second line
+   167→  - Languages: Inline "Language — Proficiency" format
+   168→  - Awards, Volunteer, References, Additional Info: All rendered with consistent premium styling
+   169→  - All inline styles from customization props, no dark: classes
+   170→- Created `/src/components/resume/templates/modern-minimal.tsx` — Scandinavian minimalist resume template
+   171→  - Header: Very large name (~24px, headingFont, weight 800, tight letter-spacing -0.5px, respects headerAlignment), professional title in accent color below, contact info as clean flex-wrap row of individual items
+   172→  - Section headings: Very large (~16px), headingFont, bold (700), no ALL CAPS, no underline, no border — just big bold text with generous spacing below, near-black color (#0f172a)
+   173→  - NO dividers at all — even if sectionDividers is true, this template's identity is defined by absence of decoration
+   174→  - Skills: Inline text separated by middle dots ("  ·  ") with generous line height (1.8)
+   175→  - Work experience: Bold position + company on one line ("Position, Company"), date range right-aligned in lighter gray (#9ca3af), location below in medium gray, description with extra spacing
+   176→  - Education: School name bold with date range right-aligned, degree + field below in gray, GPA inline
+   177→  - Certifications: Name bold with date right-aligned, issuer below
+   178→  - Languages: Inline "Language — Proficiency" with flex-wrap
+   179→  - Awards: Name bold with year right-aligned, organization below
+   180→  - Volunteer: Role + organization on one line with em dash separator, description below
+   181→  - All inline styles, responsive to all customization props, no dark: classes
+   182→- Both templates: export default with correct TemplateComponentProps signature, import all 5 utilities from @/lib/templates/utils, handle all 12 section types via getVisibleSections, use personalInfo as special header (not a section heading)
+   183→- Both files pass ESLint with zero errors/warnings (pre-existing template-engine.tsx lint error is unrelated)
+   184→
+   185→Stage Summary:
+   186→- Two production-quality premium resume templates created: Executive (C-suite elegant) and Modern Minimal (Scandinavian clean)
+   187→- Executive: centered layout, thin accent line, ALL CAPS headings, comma-separated skills, serif-friendly, premium spacious feel
+   188→- Modern Minimal: extra-large name (24px), very large section headings (16px), no decoration at all, middle-dot skill separators, Scandinavian simplicity
+   189→- Both templates fully respect all 9 customization props and render all visible sections in the user-specified order
+   190→
+   191→---
+   192→Task ID: 3-e
+   193→Agent: Template Builder
+   194→Task: Create Tech Professional and Graduate resume template components
+   195→
+   196→Work Log:
+   197→- Read worklog.md, template types (template.ts), resume types (resume.ts), utility functions (utils.ts), sample data, registry, and defaults for context
+   198→- Verified both new template files pass ESLint with zero errors (pre-existing template-engine.tsx error is unrelated)
+   199→- Created `/src/components/resume/templates/tech-professional.tsx` — Developer-focused tech resume
+   200→  - Header: Name in headingFont (~20px), bold, respects headerAlignment. Professional title in lighter gray (#6b7280) below.
+   201→  - Contact info: Grid layout (auto-fill, minmax 140px) with small uppercase gray labels ("email", "phone", "github", etc.) above each value. GitHub/portfolio/web links rendered in accent color.
+   202→  - Section headings: headingFont, bold, ~13px, uppercase with 0.04em letter-spacing for monospace-feel. Dashed divider line (border-style: dashed, 1px, #d1d5db) when sectionDividers enabled.
+   203→  - Skills: Tech tag chips — each skill in a small rounded rectangle (4px border-radius) with 10% opacity accent background, accent-colored text, headingFont for code-like feel. Flex-wrap layout with small gaps.
+   204→  - Projects (PROMINENT): Project name bold in headingFont, tech stack in accent-colored headingFont text (small, ~82% size) like inline code, description below, GitHub/Live links with "→" prefix in accent color.
+   205→  - Work experience: Position bold, company + location on one line (gray), date range right-aligned, bullet points with accent-colored "•" prefix.
+   206→  - Education: Degree + field bold with date right-aligned, school + location + GPA on one line.
+   207→  - Certifications: Name bold with issuer + date right-aligned.
+   208→  - All other sections (languages, awards, volunteer, references, additionalInfo) fully rendered.
+   209→  - Helper functions: hexToRgba for accent backgrounds, splitBullets for description parsing, cleanUrl for display.
+   210→- Created `/src/components/resume/templates/graduate.tsx` — Education-first graduate/student resume
+   211→  - Header: Name centered (respects headerAlignment), large (~22px) in headingFont. Professional title centered below in accent color.
+   212→  - Contact info: Centered, separated by " · " in lighter gray.
+   213→  - EDUCATION-FIRST LAYOUT: `reorderEducationFirst()` function ensures education section appears before workExperience. Finds professionalSummary position and inserts education right after it, then workExperience after education.
+   214→  - Education (DETAILED): Degree + field bold and prominent (~105% size) with date right-aligned, school name below (font-weight 500), location + GPA on next line (GPA in bold), coursework/achievements from description rendered as bullet points.
+   215→  - Skills: Clean 2-column grid layout with small filled accent-colored circles (5px, border-radius 50%) before each skill name.
+   216→  - Work experience: Position bold, company + dates on one line, bullet points for description.
+   217→  - Projects: Name bold in headingFont, tech in accent color (font-weight 500), description below, GitHub/Live links in accent color.
+   218→  - Section headings: headingFont, bold, ~13px, 2px solid accent-colored bottom border when sectionDividers enabled.
+   219→  - All other sections fully rendered.
+   220→- Both templates: use all 5 utility imports (formatDate, formatDateRange, getContactItems, getVisibleSections, getSectionLabel, getTemplateStyles)
+   221→- Both templates: handle all 12 section types, respect all customization props, no dark: classes, white paper background
+   222→- All dynamic styling via inline style props; Tailwind used only for layout (flex, grid, items-center, etc.)
+   223→
+   224→Stage Summary:
+   225→- Two production-quality resume templates created: Tech Professional (developer-focused) and Graduate (education-first student layout)
+   226→- Both follow exact TemplateComponentProps signature and import pattern from @/lib/templates/utils
+   227→- Tech Professional: GitHub README meets resume aesthetic — tech tags, dashed dividers, labeled contact grid, prominent projects with → links
+   228→- Graduate: Reorders sections to put education before work experience; detailed education with GPA, coursework; 2-column skill grid with accent bullets; centered header
+   229→- Both pass ESLint cleanly (zero errors on new files)
+   230→
+   231→---
+   232→Task ID: 3-d
+   233→Agent: Template Builder (functional + combination)
+   234→Task: Create Functional and Combination resume template components
+   235→
+   236→Work Log:
+   237→- Created `/src/components/resume/templates/functional.tsx` — Skills-first layout for career changers
+   238→  - Two-section approach: summary + Core Competencies in top half, work/education/etc. in bottom half
+   239→  - Skills rendered as prominent 2-column grid of pills with 3px accent left border, #f9fafb background, rounded right corners, bold text
+   240→  - Skills section labeled "CORE COMPETENCIES" (template design choice, not "Skills")
+   241→  - Section headings use 3px accent-colored left border (16px tall) when sectionDividers enabled
+   242→  - Work experience is compact: position + company on one line, date range right-aligned
+   243→  - Header: name ~20px in headingFont, professional title in accent color, contact items separated by ·
+   244→  - Respects headerAlignment for name, title, and contact row positioning
+   245→  - All 11 section types rendered (summary, skills, work, education, projects, certifications, languages, awards, volunteer, references, additional info)
+   246→
+   247→- Created `/src/components/resume/templates/combination.tsx` — Balanced skills + experience hybrid layout
+   248→  - Priority section ordering: summary → skills → work experience → education, then remaining sections
+   249→  - Header: name in headingFont ~20px (respects headerAlignment), 2-column row below (title left, contact right-aligned)
+   250→  - Skills in clean 2-column grid with 4px accent-colored dot (circle) before each skill name
+   251→  - Section headings use 1.5px accent-colored bottom border when sectionDividers enabled
+   252→  - Work experience: position bold, company+location in gray on second line, date range right-aligned, description rendered as bullet points (• prefix per line)
+   253→  - Education: degree+field bold, school+location+GPA on second line, date range right-aligned
+   254→  - Projects and volunteer also use bullet-point rendering for descriptions
+   255→  - All 11 section types rendered with consistent styling
+   256→
+   257→- Both templates:
+   258→  - Export default with exact TemplateComponentProps signature
+   259→  - Import utilities from @/lib/templates/utils (getTemplateStyles, getVisibleSections, getContactItems, getSectionLabel, formatDate, formatDateRange)
+   260→  - Use inline style props for fonts, colors, spacing (dynamic from customization)
+   261→  - Use Tailwind classes only for layout (flex, grid, items-center, items-baseline, flex-wrap, justify-between)
+   262→  - No dark: classes, no hardcoded colors for dynamic elements
+   263→  - Pass ESLint with zero errors on new files
+   264→  - Already registered in lazy-loaded registry at /src/lib/templates/registry.ts
+   265→
+   266→Stage Summary:
+   267→- Two professional resume templates built: Functional (skills-first for career changers) and Combination (balanced hybrid)
+   268→- Functional template reorders sections to promote skills as "Core Competencies" with prominent pill-based grid visualization
+   269→- Combination template provides balanced 2-column header, accent dot skill grid, and bullet-pointed experience descriptions
+   270→- Both templates handle all 11 resume section types with proper empty-state filtering
+   271→- Both are fully integrated into the existing lazy-loaded template registry system
+   272→---
+   273→Task ID: 3
+   274→Agent: Main Orchestrator
+   275→Task: Build Resume Template Engine with 10 professional templates
+   276→
+   277→Work Log:
+   278→- Created template type system (src/types/template.ts): TemplateId, TemplateCustomization, TemplateMeta, FONT_OPTIONS, ACCENT_PRESETS, PAGE_DIMENSIONS
+   279→- Created template defaults (src/lib/templates/defaults.ts): per-template default customizations
+   280→- Created template utilities (src/lib/templates/utils.ts): formatDate, formatDateRange, getContactItems, getVisibleSections, sectionHasContent, getSectionLabel, getTemplateStyles
+   281→- Created template registry (src/lib/templates/registry.ts): lazy-loaded component map, metadata for all 10 templates, public API (getTemplateMeta, getTemplateComponent, getAllTemplates, isTemplateFree, isValidTemplateId)
+   282→- Created template engine (src/components/resume/template-engine.tsx): Suspense + createElement pattern for dynamic template rendering
+   283→- Created sample data (src/lib/templates/sample-data.ts): realistic resume data for template thumbnails
+   284→- Updated Prisma schema: added customization_json field, changed default template to ats-classic
+   285→- Pushed schema to database
+   286→- Updated API routes: /api/resumes and /api/resumes/[id] now handle template + customization_json
+   287→- Dispatched 5 parallel agents to build 10 templates:
+   288→  - ats-classic: Simple single-column, ALL CAPS headings with accent border, max ATS compat
+   289→  - professional-blue: Corporate style, accent left borders on headings, pill skill tags
+   290→  - executive: Premium C-suite, centered header with accent line, serif defaults, generous whitespace
+   291→  - modern-minimal: Scandinavian, very large headings, no dividers, dot-separated skills
+   292→  - contemporary: Modern balanced, accent dot separators in contact, pill skill borders, bulleted descriptions
+   293→  - chronological: Timeline style with accent circles + vertical lines, centered header
+   294→  - functional: Skills-first, prominent 2-column skill grid with accent left borders
+   295→  - combination: Hybrid layout, 2-column skill grid with accent dots, bulleted work descriptions
+   296→  - tech-professional: Developer-focused, labeled contact grid, dashed dividers, tech tag chips, prominent projects
+   297→  - graduate: Education-first reordering, centered header, detailed education section, 2-column skills
+   298→- Built Template Gallery (src/components/resume/template-gallery.tsx): Dialog grid with thumbnails, ATS star ratings, Free/Pro badges, hover actions, preview dialog, subscription gating
+   299→- Built Customization Panel (src/components/resume/customization-panel.tsx): Collapsible sections for Colors (presets + custom picker), Typography (font selectors, size, line height), Layout (alignment, margins, spacing, dividers, page size)
+   300→- Built Preview Container (src/components/resume/preview-container.tsx): Zoom in/out/fit-width toolbar, fullscreen support, auto-fit on resize
+   301→- Updated useResume hook: added templateId, customization, setTemplateId (resets customization), setCustomization; autosave now saves template + customization_json
+   302→- Updated ResumeWorkspace: integrated TemplateEngine, PreviewContainer, TemplateGallery, CustomizationPanel; header shows template name badge + Templates/Customize buttons; mobile has 4 tabs (Editor/Preview/Templates/Design); upgrade modal for premium templates
+   303→
+   304→Stage Summary:
+   305→- Complete Resume Template Engine with 10 professional, original templates
+   306→- Scalable architecture: add new templates by creating one component + one registry entry
+   307→- Template content fully separated from design via TemplateCustomization props
+   308→- Instant template switching with no data loss
+   309→- Professional Template Gallery with thumbnails, ATS ratings, Free/Pro gating
+   310→- Comprehensive Customization Panel: accent color, fonts, size, spacing, margins, alignment, dividers, page size
+   311→- Enhanced Preview: zoom in/out, fit width, fullscreen, A4/Letter support
+   312→- Subscription integration: Free users get 3 templates, Pro unlocks all 10
+   313→- All lint checks pass clean
+   314→---
+   315→Task ID: 4
+   316→Agent: Main Orchestrator
+   317→Task: Fix template rendering issues found during verification
+   318→
+   319→Work Log:
+   320→- Investigated "There is a problem" report from user
+   321→- Used Agent Browser to navigate, login, and inspect the resume builder
+   322→- Took screenshots and used VLM to analyze visual rendering
+   323→- Discovered Functional and Combination templates used `<div>` instead of `<h2>` for section headings, causing missing headings in accessibility tree
+   324→- Discovered Functional template had a fixed `height: '16px'` on section headings that could clip text at larger font sizes
+   325→- Fixed Functional template: changed section heading from `<div>` to `<h2>`, removed fixed height, added `margin: 0` and `lineHeight: 1.3`
+   326→- Fixed Combination template: changed section heading from `<div>` to `<h2>`, added `margin: 0` and `lineHeight: 1.3`
+   327→- Verified template-engine.tsx was already clean (imports consolidated, unused imports removed)
+   328→- Ran lint: zero errors
+   329→- Browser-verified: all 10 templates now render 7 h2 section headings each in the gallery
+   330→
+   331→Stage Summary:
+   332→- Fixed accessibility issue in 2 templates (Functional, Combination) that used divs instead of h2 for section headings
+   333→- Fixed potential text clipping bug in Functional template's section heading (removed fixed 16px height)
+   334→- All 10 templates now render correctly with semantic HTML headings
+   335→
+   336→---
+   337→Task ID: 3-a
+   338→Agent: Template Builder
+   339→Task: Redesign 3 resume template components (ATS Classic, Professional Blue, Executive)
+   340→
+   341→Work Log:
+   342→- Read worklog.md for project context, existing template files, type definitions, and utility functions
+   343→- Identified critical issues in all 3 existing templates: Tailwind className usage in PDF-incompatible preview context, missing entry filtering, inconsistent patterns, visual blandness
+   344→- Completely rewrote ATS Classic template (ats-classic.tsx)
+   345→  - Removed ALL Tailwind className usage — pure inline styles only for PDF compatibility
+   346→  - Replaced `className="flex justify-between"` with `display: 'flex', justifyContent: 'space-between'`
+   347→  - Root div uses `style={s.container}` from `getTemplateStyles()`
+   348→  - Added bullet point rendering (•) for work experience and project descriptions (split by newlines)
+   349→  - Section headings: ALL CAPS, accent color, 0.08em letter-spacing, thick 2.5px bottom border
+   350→  - Contact: pipe-separated (` | `) in small gray text
+   351→  - Skills: comma-separated plain text (max ATS compatibility)
+   352→  - Proper empty-array filtering on all section renderers (`.filter(e => e.company || e.position)` etc.)
+   353→  - Description text color changed to #4b5563 (medium gray) for better visual hierarchy
+   354→  - All 11 section types fully rendered with consistent spacing
+   355→- Completely rewrote Professional Blue template (professional-blue.tsx)
+   356→  - Removed ALL Tailwind className usage — pure inline styles only
+   357→  - Uses `hexToRgba` from utils (was using inline hex parsing before)
+   358→  - Header: extra-large name (fontWeight 800), title in accent color, 3px dot separators (circles) for contact items
+   359→  - Header divider: 1.5px line with accent color at 25% opacity
+   360→  - Section headings: bold black with 3px × 14px accent bar on left + optional gray horizontal line to right
+   361→  - Skills: rounded pills (borderRadius 12px) with 10% opacity accent background and accent-colored text
+   362→  - Languages: inline layout, language name bold (#111827) + proficiency in gray (#6b7280)
+   363→  - Proper entry filtering on all sections, consistent color palette
+   364→  - All 11 section types fully rendered
+   365→- Completely rewrote Executive template (executive.tsx)
+   366→  - Removed ALL Tailwind className usage — pure inline styles only
+   367→  - Added proper `SectionKey` import (was missing before)
+   368→  - Root div uses `style={s.container}` directly (was spreading with extra color override)
+   369→  - Fixed accent line margin logic: properly handles all 3 headerAlignment values (center: auto, right: auto, left: 0)
+   370→  - Added entry filtering on workExperience, education, projects, certifications, awards, volunteerExperience, references
+   371→  - Added missing date range display for education entries
+   372→  - Generous spacing: 24× sectionSpacing between sections, 12× between entries
+   373→  - Section headings: accent color, ALL CAPS, 2px letter-spacing, fontWeight 700
+   374→  - All 11 section types fully rendered with proper empty-state handling
+   375→- All 3 files pass ESLint with zero errors/warnings
+   376→- Dev server recompiled successfully with no errors
+   377→
+   378→Stage Summary:
+   379→- All 3 resume templates completely rewritten with visual upgrades and critical fixes
+   380→- Eliminated ALL Tailwind className usage (was incompatible with PDF preview rendering context)
+   381→- Consistent pattern: root div with `style={s.container}`, all layouts via inline flex/flexDirection/gap
+   382→- All templates properly filter empty entries before rendering
+   383→- All templates import and use the correct 6 utilities from @/lib/templates/utils
+   384→- ATS Classic: maximum ATS compatibility with bullet-pointed descriptions, thick accent borders
+   385→- Professional Blue: corporate polish with 14px accent bars, rounded skill pills, dot contact separators
+   386→- Executive: premium C-suite feel with 60% accent line, generous 2px letter-spacing headings, spacious layout
+   387→
+   388→---
+   389→Task ID: 3-b (redesign)
+   390→Agent: Template Builder
+   391→Task: Redesign 3 resume template components (Modern Minimal, Contemporary, Chronological) with visual upgrades
+   392→
+   393→Work Log:
+   394→- Read worklog.md, type definitions (template.ts, resume.ts), utilities (utils.ts), and existing template implementations for context
+   395→- Completely rewrote `/src/components/resume/templates/modern-minimal.tsx` — Scandinavian-inspired redesign
+   396→  - Root div now uses `style={s.container}` (was spreading with overrides)
+   397→  - Added `SectionKey` import and proper typing throughout
+   398→  - Added `hexToRgba` import per specification
+   399→  - Removed `'use client'` directive (not needed for server component)
+   400→  - Name: 24px * fontSize, weight 800, letterSpacing -0.5px, #0f172a
+   401→  - Title: accent color, weight 500, generous bottom spacing (16px)
+   402→  - Contact: single-line `·` separated text in small size, light gray (#6b7280)
+   403→  - Section headings: 16px * fontSize, weight 700, #0f172a, letterSpacing -0.3px — NO underline, NO decoration
+   404→  - Section spacing multiplied by 1.3x for generous breathing room
+   405→  - Skills: center-dot separated with `·`, lineHeight 1.8
+   406→  - Work entries: "Position, Company" inline bold, date right-aligned in #9ca3af, location small gray below
+   407→  - All 11 section types fully rendered with empty array filtering
+   408→- Completely rewrote `/src/components/resume/templates/contemporary.tsx` — Modern stylish redesign
+   409→  - Root div now uses `style={s.container}` (was manually constructing style object)
+   410→  - Added `SectionKey` import, removed unused type imports (ResumeData, WorkExperience, etc.)
+   411→  - Added `hexToRgba` import per specification
+   412→  - Removed `'use client'` directive
+   413→  - Name: 20px * fontSize, weight 700, #111827, letterSpacing -0.02em
+   414→  - Title: #6b7280, weight 400
+   415→  - Contact: 3px accent-colored dot separators between items
+   416→  - Section headings: accent color, weight 700, normal case, letterSpacing -0.01em
+   417→  - 2px accent underline with 1px borderRadius when sectionDividers enabled
+   418→  - Skills: bordered pills — `1px solid accentColor`, accent text, `borderRadius: 999px`, `2px 10px` padding
+   419→  - Work: "Position at Company" inline format with " at " connector, date right-aligned, location small below
+   420→  - All 11 section types fully rendered
+   421→- Completely rewrote `/src/components/resume/templates/chronological.tsx` — Timeline-focused redesign
+   422→  - Root div now uses `style={s.container}` (was manually constructing style object)
+   423→  - Added `SectionKey` import, removed unused type imports
+   424→  - Added `hexToRgba` import — used for timeline vertical line (40% opacity via rgba)
+   425→  - Removed `'use client'` directive
+   426→  - Name: 22px * fontSize, weight 700, #111827, letterSpacing 0.01em
+   427→  - Title: #6b7280, weight 400
+   428→  - Gray horizontal line (#e5e7eb) below header/title, contact dot-separated below the line
+   429→  - Section headings: ALL CAPS, weight 700, letterSpacing 1.5px, thin gray underline (#e5e7eb) when sectionDividers
+   430→  - Timeline (work + education only): paddingLeft 16px, vertical line at left:2px, 1px wide, accent at 40% opacity via hexToRgba
+   431→  - Timeline circles: 5px accent-colored circles at left:-20px (was 6px in old version)
+   432→  - Other sections (skills, projects, etc.): normal layout without timeline
+   433→  - All 11 section types fully rendered with proper empty array guards
+   434→- All 3 templates pass ESLint with zero errors/warnings
+   435→- Dev server compiles successfully with no errors
+   436→
+   437→Stage Summary:
+   438→- Three resume templates completely redesigned with upgraded visual identity
+   439→- All templates now correctly use `style={s.container}` as root div style
+   440→- All templates properly import `SectionKey` from `@/types/resume` and `hexToRgba` from utils
+   441→- Modern Minimal: ultra-clean Scandinavian aesthetic with 1.3x section spacing, no dividers, oversized typography
+   442→- Contemporary: modern professional with accent-colored dot separators, pill-shaped skill borders, 2px accent underlines
+   443→- Chronological: timeline layout with rgba-based 40% opacity vertical line, 5px timeline circles, ALL CAPS headings with 1.5px spacing
+   444→
+   445→---
+   446→Task ID: 3-c (redesign)
+   447→Agent: Template Builder (functional + combination + tech-professional + graduate)
+   448→Task: Redesign 4 resume template components (Functional, Combination, Tech Professional, Graduate) with visual upgrades
+   449→
+   450→Work Log:
+   451→- Read worklog.md, type definitions (template.ts, resume.ts), utilities (utils.ts), and all 4 existing template implementations for context
+   452→- Completely rewrote `/src/components/resume/templates/functional.tsx` — Skills-first compact redesign
+   453→  - Root div uses `style={s.container}` directly
+   454→  - Imported `hexToRgba` from utils per specification
+   455→  - Applied 0.8x compact spacing multiplier on all sectionGap, itemGap, and description margins
+   456→  - Name: 20px * fontSize, weight 700, #111827, respects headerAlignment
+   457→  - Title: accent color, weight 500, below name
+   458→  - Contact: dot-separated (·), gray text (#6b7280), respects headerAlignment for justifyContent
+   459→  - Skills section labeled "CORE COMPETENCIES" (design choice), promoted to top alongside summary
+   460→  - Skills: 2-column CSS grid, each card has `borderLeft: 3px solid accentColor`, `borderRadius: '0 4px 4px 0'`, `backgroundColor: '#f9fafb'`, `padding: '5px 10px'`, bold text
+   461→  - Section headings: ALL CAPS, accent color, 0.8px letter-spacing, weight 700; 3px left accent border when sectionDividers
+   462→  - Work: "Position | Company" inline, date range right-aligned, description below with `whiteSpace: 'pre-line'`
+   463→  - All 11 section types fully rendered with entry filtering
+   464→- Completely rewrote `/src/components/resume/templates/combination.tsx` — Hybrid layout redesign
+   465→  - Root div uses `style={s.container}` directly
+   466→  - Imported `hexToRgba` from utils per specification
+   467→  - Applied 0.8x compact spacing multiplier
+   468→  - Header: Name (left, bold) and contact items (right, dot-separated, small text) in same row; title below name
+   469→  - Section headings: ALL CAPS, accent color, 0.6px letter-spacing, weight 700; 1.5px bottom border in accent when sectionDividers
+   470→  - Skills: 2-column grid with 4px accent dot (circle) before each skill name
+   471→  - Work: Position bold + date right, company + location below, description split by newlines with `• ` prefix, indented (textIndent: -10px, paddingLeft: 10px)
+   472→  - Education: Degree + Field bold, date right, School + Location below, GPA inline if present
+   473→  - Volunteer and project descriptions also use bullet-point rendering
+   474→  - All 11 section types fully rendered
+   475→- Completely rewrote `/src/components/resume/templates/tech-professional.tsx` — Developer-focused redesign
+   476→  - Root div now uses `style={s.container}` directly (was using spread with extra props)
+   477→  - Imported `hexToRgba` from `@/lib/templates/utils` instead of defining local duplicate
+   478→  - Contact grid labels now fully uppercase ("EMAIL", "PHONE", "GITHUB", etc.)
+   479→  - Contact links (GITHUB, PORTFOLIO, WEB, LINKEDIN) render in accent color
+   480→  - Project descriptions now use `splitBullets()` with colored `•` bullet points (was plain text)
+   481→  - Volunteer descriptions now use `splitBullets()` with colored `•` bullet points (was plain text)
+   482→  - Additional Info uses `whiteSpace: 'pre-line'` (was `pre-wrap`)
+   483→  - `splitBullets` and `cleanUrl` helpers preserved at file bottom per specification
+   484→  - All section renderer functions cleaned up (removed unused `s` parameter where not needed)
+   485→  - All 11 section types fully rendered
+   486→- Completely rewrote `/src/components/resume/templates/graduate.tsx` — Education-first redesign
+   487→  - Root div now uses `style={s.container}` directly (was using spread)
+   488→  - Imported `hexToRgba` from `@/lib/templates/utils` per specification
+   489→  - Header always centered (hardcoded `textAlign: 'center'`), name 22px * fontSize
+   490→  - Title in accent color, weight 500, centered
+   491→  - Contact: centered, dot-separated in gray (#6b7280)
+   492→  - Education section uses `splitBullets()` for description/coursework rendering with accent-colored `•` bullets
+   493→  - Skills: 2-column CSS grid (not manual column splitting) with 5px accent circle bullets
+   494→  - Project links shown as plain "GitHub" / "Live Demo" text in accent color (no arrow prefix)
+   495→  - Additional Info and project descriptions use `whiteSpace: 'pre-line'`
+   496→  - `reorderEducationFirst()` function preserved for education-before-work layout
+   497→  - `splitBullets` helper preserved at file bottom per specification
+   498→  - All 11 section types fully rendered
+   499→- All 4 files pass ESLint with zero errors/warnings
+   500→- Dev server compiles successfully with no errors
+   501→
+   502→Stage Summary:
+   503→- Four resume templates completely redesigned with refined visual identity and upgraded styling
+   504→- Functional: compact 0.8x spacing, precise skill card dimensions (4px border-radius, 5px 10px padding), accent left-border headings
+   505→- Combination: 2-column header (name+contact same row, title below), bullet-pointed descriptions with 10px indent, accent dot skill grid
+   506→- Tech Professional: hexToRgba imported from utils (removed local duplicate), colored bullet descriptions for projects and volunteer, uppercase contact labels
+   507→- Graduate: CSS grid for 2-column skills, splitBullets for education coursework, plain link text (no arrows), pre-line whitespace for descriptions
+   508→---
+   509→Task ID: 3-a, 3-b, 3-c
+   510→Agent: Main Coordinator + 3 parallel subagents
+   511→Task: Redesign all 10 resume template layouts for professional visual quality
+   512→
+   513→Work Log:
+   514→- Audited all 10 existing templates and identified critical issues:
+   515→  - contemporary.tsx and chronological.tsx were MISSING container padding (content bled to edges)
+   516→  - getTemplateStyles container lacked box-sizing: border-box
+   517→  - TemplateEngine wrapper had unnecessary shadow class
+   518→  - All templates used inconsistent styling approaches
+   519→- Fixed core infrastructure (utils.ts):
+   520→  - Added box-sizing: border-box to container
+   521→  - Added hexToRgba helper function
+   522→  - Improved sectionGap default from 16x to 20x multiplier
+   523→- Fixed TemplateEngine wrapper:
+   524→  - Removed shadow class (cleaner paper appearance)
+   525→  - Set explicit background: white and box-sizing
+   526→- Redesigned all 10 templates in parallel (3 subagents):
+   527→  - Group 1: ATS Classic (thick accent borders, bullet points), Professional Blue (accent bars, rounded pills), Executive (centered serif, accent line, spacious)
+   528→  - Group 2: Modern Minimal (Scandinavian, huge headings, no decorations), Contemporary (accent dot separators, bordered pills), Chronological (timeline with accent line + circles)
+   529→  - Group 3: Functional (skills grid with accent cards), Combination (inline header, dot grid skills, bullet points), Tech Professional (labeled contact grid, tech tags, dashed dividers), Graduate (education-first, detailed entries)
+   530→- All templates now consistently use style={s.container} for proper padding
+   531→- All templates use inline styles only (no Tailwind className in template rendering)
+   532→- Browser verification with VLM confirmed:
+   533→  - Gallery: 7/10 (proper padding, clear hierarchy, professional)
+   534→  - Template preview: 8/10 (clean margins, prominent name, good spacing)
+   535→  - Executive template: premium feel, no visual issues
+   536→  - Chronological template: timeline line and dots visible and clean
+   537→- Lint: zero errors
+   538→- Dev server: no runtime errors
+   539→
+   540→Stage Summary:
+   541→- All 10 resume templates completely redesigned for professional visual quality
+   542→- Critical padding bugs in 2 templates fixed
+   543→- Core template infrastructure improved (box-sizing, hexToRgba helper)
+   544→- Browser-verified with VLM analysis confirming professional appearance
+   545→---
+   546→Task ID: 1
+   547→Agent: Main Agent
+   548→Task: Fix template gallery layout issues and customization panel overflow
+   549→
+   550→Work Log:
+   551→- Analyzed uploaded screenshot using VLM to identify specific UI issues
+   552→- Read all relevant source files: resume-workspace.tsx, template-gallery.tsx, customization-panel.tsx, preview-container.tsx, all 10 template components, sheet.tsx
+   553→- Fixed customization panel overflow: Added `gap-0 overflow-hidden` to SheetContent wrapper in resume-workspace.tsx, overriding the default `gap-4` from the Sheet component
+   554→- Fixed mobile customization panel: Added `overflow-hidden` to the mobile tab container
+   555→- Completely rewrote template-gallery.tsx for professional look:
+   556→  - Unified badge positioning (always top-right, consistent styling)
+   557→  - Better card dimensions (280px thumbnail height for A4 proportion)
+   558→  - Improved hover effects (backdrop-blur buttons, smoother transition)
+   559→  - Cleaner dialog structure (flex-col with proper shrink-0 headers)
+   560→  - Better description text (line-clamp-2, proper truncation)
+   561→  - Consistent card structure across all 10 templates
+   562→  - Improved preview dialog with better action buttons (Zap icon for upgrade, Check icon for use)
+   563→- Browser-verified all fixes with agent-browser and VLM analysis
+   564→
+   565→Stage Summary:
+   566→- Customization panel no longer overflows - verified by scrolling to bottom and confirming all sections (Colors, Typography, Layout with Page Size) are fully visible
+   567→- Template gallery now has consistent card heights, clean badge positioning, and professional appearance
+   568→- Template preview dialog renders correctly with clear action buttons
+   569→- 3-panel workspace layout (sidebar, editor, preview) working correctly
+   570→

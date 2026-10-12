@@ -1,0 +1,1101 @@
+     1	'use client';
+     2	
+     3	import { useState, useEffect, useRef, useCallback } from 'react';
+     4	import { motion, AnimatePresence } from 'framer-motion';
+     5	import {
+     6	  Mail,
+     7	  Sparkles,
+     8	  FileText,
+     9	  Copy,
+    10	  Download,
+    11	  Loader2,
+    12	  MoreVertical,
+    13	  Pencil,
+    14	  Trash2,
+    15	  CopyIcon,
+    16	  CheckCircle2,
+    17	  AlertCircle,
+    18	  User,
+    19	  Building2,
+    20	  Briefcase,
+    21	  PenLine,
+    22	  Settings2,
+    23	  LayoutTemplate,
+    24	  Undo2,
+    25	  Redo2,
+    26	  Type,
+    27	  MessageSquare,
+    28	  Minimize2,
+    29	  Maximize2,
+    30	  ZoomIn,
+    31	  ZoomOut,
+    32	  Printer,
+    33	  FileDown,
+    34	  ChevronLeft,
+    35	  ChevronRight,
+    36	  Loader,
+    37	  X,
+    38	  Wand2,
+    39	  ChevronDown,
+    40	  ChevronUp,
+    41	  Check,
+    42	} from 'lucide-react';
+    43	import { toast } from 'sonner';
+    44	import { useAuth } from '@/lib/auth/context';
+    45	import { useCoverLetter } from '@/hooks/use-cover-letter';
+    46	import { useBreakpoints } from '@/hooks/use-breakpoints';
+    47	import { CoverLetterTemplateEngine } from '@/components/cover-letter/template-engine';
+    48	import { exportToPDF } from '@/lib/export/pdf';
+    49	import { COVER_LETTER_TEMPLATES } from '@/lib/cover-letter/template-registry';
+    50	import { ACCENT_PRESETS, FONT_OPTIONS, createDefaultCustomization } from '@/lib/cover-letter/template-registry';
+    51	import type { CoverLetterSectionKey, CoverLetterTemplateId, AIEditAction, ToneType } from '@/types/cover-letter';
+    52	import { TONE_OPTIONS, LANGUAGE_OPTIONS } from '@/types/cover-letter';
+    53	import type { CoverLetterCustomization } from '@/types/cover-letter';
+    54	
+    55	import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+    56	import { Button } from '@/components/ui/button';
+    57	import { Input } from '@/components/ui/input';
+    58	import { Textarea } from '@/components/ui/textarea';
+    59	import { Label } from '@/components/ui/label';
+    60	import { Badge } from '@/components/ui/badge';
+    61	import { Separator } from '@/components/ui/separator';
+    62	import { Skeleton } from '@/components/ui/skeleton';
+    63	import { ScrollArea } from '@/components/ui/scroll-area';
+    64	import { Slider } from '@/components/ui/slider';
+    65	import {
+    66	  Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
+    67	} from '@/components/ui/select';
+    68	import {
+    69	  DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger,
+    70	} from '@/components/ui/dropdown-menu';
+    71	import {
+    72	  Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter,
+    73	} from '@/components/ui/dialog';
+    74	import {
+    75	  Tooltip, TooltipContent, TooltipProvider, TooltipTrigger,
+    76	} from '@/components/ui/tooltip';
+    77	import { UpgradeModal } from '@/components/billing/upgrade-modal';
+    78	
+    79	// ─── Sidebar Sections ────────────────────────────────────────
+    80	
+    81	const SECTIONS: { key: CoverLetterSectionKey; label: string; icon: React.ElementType }[] = [
+    82	  { key: 'sender-info', label: 'Your Info', icon: User },
+    83	  { key: 'recipient-info', label: 'Recipient', icon: Building2 },
+    84	  { key: 'job-details', label: 'Job Details', icon: Briefcase },
+    85	  { key: 'content', label: 'Content', icon: PenLine },
+    86	  { key: 'customization', label: 'Design', icon: Settings2 },
+    87	];
+    88	
+    89	// ─── AI Edit Actions ──────────────────────────────────────────
+    90	
+    91	const AI_ACTIONS: { action: AIEditAction; label: string; icon: React.ElementType }[] = [
+    92	  { action: 'rewrite', label: 'AI Rewrite', icon: Sparkles },
+    93	  { action: 'expand', label: 'Expand', icon: ChevronDown },
+    94	  { action: 'shorten', label: 'Shorten', icon: ChevronUp },
+    95	  { action: 'improve_grammar', label: 'Fix Grammar', icon: CheckCircle2 },
+    96	  { action: 'improve_tone', label: 'Better Tone', icon: MessageSquare },
+    97	  { action: 'regenerate_section', label: 'Regenerate', icon: Wand2 },
+    98	];
+    99	
+   100	// ─── Fade Animation ───────────────────────────────────────────
+   101	
+   102	const fadeUp = {
+   103	  hidden: { opacity: 0, y: 20 },
+   104	  visible: { opacity: 1, y: 0, transition: { duration: 0.4, ease: 'easeOut' } },
+   105	};
+   106	
+   107	// ─── Main Component ──────────────────────────────────────────
+   108	
+   109	export default function CoverLetterWorkspace() {
+   110	  const { user } = useAuth();
+   111	  const { isMobile, isTablet, isDesktop } = useBreakpoints();
+   112	  const [tabletSidebarOpen, setTabletSidebarOpen] = useState(true);
+   113	  const {
+   114	    data, letterId, title, templateId, customization,
+   115	    setData, setTitle, setTemplateId, setCustomization,
+   116	    loading, error, autosaveStatus, saveNow,
+   117	    createLetter, renameLetter, deleteLetter, duplicateLetter,
+   118	    generateWithAI, aiEdit,
+   119	  } = useCoverLetter();
+   120	
+   121	  const [activeSection, setActiveSection] = useState<CoverLetterSectionKey>('content');
+   122	  const [isGenerating, setIsGenerating] = useState(false);
+   123	  const [editingTitle, setEditingTitle] = useState(false);
+   124	  const [titleInput, setTitleInput] = useState('');
+   125	  const [showUpgrade, setShowUpgrade] = useState(false);
+   126	  const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
+   127	
+   128	  // AI Edit state per section
+   129	  const [editingSection, setEditingSection] = useState<string | null>(null);
+   130	  const [aiActionLoading, setAiActionLoading] = useState(false);
+   131	
+   132	  // Preview zoom — absolute scale value (e.g. 0.5 = 50%, 1.0 = 100%)
+   133	  const [previewZoom, setPreviewZoom] = useState(100);
+   134	  const userZoomedRef = useRef(false);
+   135	
+   136	  const previewAreaRef = useRef<HTMLDivElement>(null);
+   137	
+   138	  // Auto-fit preview width on mount and container resizes
+   139	  const fitPreviewWidth = useCallback((force = false) => {
+   140	    if (!previewAreaRef.current) return;
+   141	    if (!force && userZoomedRef.current) return;
+   142	    const rawWidth = previewAreaRef.current.clientWidth;
+   143	    if (rawWidth < 100) return; // container not laid out yet, skip
+   144	    const padding = isMobile ? 16 : 48;
+   145	    const containerWidth = rawWidth - padding;
+   146	    const newZoom = Math.max(30, Math.min(100, Math.round((containerWidth / 794) * 100)));
+   147	    setPreviewZoom(newZoom);
+   148	    userZoomedRef.current = false;
+   149	  }, [isMobile]);
+   150	
+   151	  useEffect(() => {
+   152	    // Initial fit attempt
+   153	    fitPreviewWidth(true);
+   154	    // Retry after layout settles (container may not be measured yet)
+   155	    const retryTimer = setTimeout(() => fitPreviewWidth(true), 200);
+   156	    const el = previewAreaRef.current;
+   157	    if (!el) {
+   158	      // Element might not be in DOM yet; retry again
+   159	      const mountTimer = setTimeout(() => {
+   160	        const el2 = previewAreaRef.current;
+   161	        if (el2) {
+   162	          const observer = new ResizeObserver(() => fitPreviewWidth(false));
+   163	          observer.observe(el2);
+   164	        }
+   165	      }, 300);
+   166	      return () => clearTimeout(mountTimer);
+   167	    }
+   168	    const observer = new ResizeObserver(() => fitPreviewWidth(false));
+   169	    observer.observe(el);
+   170	    return () => {
+   171	      clearTimeout(retryTimer);
+   172	      observer.disconnect();
+   173	    };
+   174	  }, [fitPreviewWidth]);
+   175	
+   176	  // Generation form state
+   177	  const [genJobTitle, setGenJobTitle] = useState('');
+   178	  const [genCompanyName, setGenCompanyName] = useState('');
+   179	  const [genHiringManager, setGenHiringManager] = useState('');
+   180	  const [genJobDescription, setGenJobDescription] = useState('');
+   181	  const [genTone, setGenTone] = useState<ToneType>('professional');
+   182	  const [genLanguage, setGenLanguage] = useState<'en' | 'fr'>('en');
+   183	  const [genResumeId, setGenResumeId] = useState('');
+   184	  const [resumes, setResumes] = useState<{ id: string; title: string }[]>([]);
+   185	  const [resumesLoading, setResumesLoading] = useState(false);
+   186	
+   187	  // Mobile sheet state
+   188	  const obileSheetOpen, setMobileSheetOpen] = useState(false);
+   189	  // Tablet editor sheet state
+   190	  const [tabletEditorOpen, setTabletEditorOpen] = useState(false);
+   191	
+   192	  // Confirm delete dialog
+   193	  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+   194	
+   195	  const previewRef = useRef<HTMLDivElement>(null);
+   196	
+   197	  // Fetch resumes for generation
+   198	  useEffect(() => {
+   199	    async function fetchResumes() {
+   200	      setResumesLoading(true);
+   201	      try {
+   202	        const res = await fetch('/api/resumes', { credentials: 'include' });
+   203	        const json = await res.json();
+   204	        if (json.success) setResumes(json.resumes || []);
+   205	      } catch { /* silent */ }
+   206	      finally { setResumesLoading(false); }
+   207	    }
+   208	    fetchResumes();
+   209	  }, []);
+   210	
+   211	  // Handle errors
+   212	  useEffect(() => {
+   213	    if (error === 'limit_reached') {
+   214	      setShowUpgrade(true);
+   215	    }
+   216	  }, [error]);
+   217	
+   218	  // ─── Handlers ──────────────────────────────────────────────
+   219	
+   220	  const handleCreate = async () => {
+   221	    const id = await createLetter();
+   222	    if (!id) {
+   223	      if (error === 'limit_reached') setShowUpgrade(true);
+   224	    }
+   225	  };
+   226	
+   227	  const handleGenerate = async () => {
+   228	    if (!genJobTitle.trim() || !genCompanyName.trim() || !genJobDescription.trim()) {
+   229	      toast.error('Please fill in job title, company name, and job description');
+   230	      return;
+   231	    }
+   232	
+   233	    // Create a letter first if none exists
+   234	    let id = letterId;
+   235	    if (!id) {
+   236	      id = await createLetter({ title: `${genJobTitle} at ${genCompanyName}` });
+   237	      if (!id) {
+   238	        if (error === 'limit_reached') { setShowUpgrade(true); return; }
+   239	        return;
+   240	      }
+   241	    }
+   242	
+   243	    setIsGenerating(true);
+   244	    const result = await generateWithAI({
+   245	      jobTitle: genJobTitle.trim(),
+   246	      companyName: genCompanyName.trim(),
+   247	      hiringManager: genHiringManager.trim() || undefined,
+   248	      jobDescription: genJobDescription.trim(),
+   249	      resumeId: genResumeId || undefined,
+   250	      tone: genTone,
+   251	      language: genLanguage,
+   252	    });
+   253	    setIsGenerating(false);
+   254	
+   255	    if (result.success) {
+   256	      toast.success('Cover letter generated!');
+   257	      setActiveSection('content');
+   258	      setMobileSheetOpen(false);
+   259	    } else {
+   260	      if (result.error === 'limit_reached') setShowUpgrade(true);
+   261	      else toast.error(result.error || 'Generation failed');
+   262	    }
+   263	  };
+   264	
+   265	  const handleAIEdit = async (section: string, action: AIEditAction) => {
+   266	    const text = data[section as keyof typeof data] as string;
+   267	    if (!text || !letterId) return;
+   268	
+   269	    setAiActionLoading(true);
+   270	    setEditingSection(section);
+   271	    const result = await aiEdit({
+   272	      action,
+   273	      section,
+   274	      text,
+   275	      tone: data.tone,
+   276	      language: data.language,
+   277	    });
+   278	    setAiActionLoading(false);
+   279	    setEditingSection(null);
+   280	
+   281	    if (result.success) {
+   282	      toast.success('Section updated!');
+   283	    } else {
+   284	      toast.error(result.error || 'AI edit failed');
+   285	    }
+   286	  };
+   287	
+   288	  const handleExportPDF = useCallback(async () => {
+   289	    if (!letterId || !previewRef.current) return;
+   290	    try {
+   291	      await exportToPDF({
+   292	        element: previewRef.current,
+   293	        filename: `cover-letter-${(data.companyName || 'draft').toLowerCase().replace(/\s+/g, '-')}.pdf`,
+   294	      });
+   295	      toast.success('PDF exported!');
+   296	    } catch {
+   297	      toast.error('Failed to export PDF');
+   298	    }
+   299	  }, [letterId, data.companyName]);
+   300	
+   301	  const handleExportDOCX = useCallback(async () => {
+   302	    if (!letterId) return;
+   303	    try {
+   304	      const res = await fetch(`/api/cover-letters/${letterId}/export-docx`, {
+   305	        method: 'POST',
+   306	        credentials: 'include',
+   307	      });
+   308	      if (!res.ok) {
+   309	        const json = await res.json();
+   310	        if (json.error === 'limit_reached') { setShowUpgrade(true); return; }
+   311	        toast.error('Export failed');
+   312	        return;
+   313	      }
+   314	      const blob = await res.blob();
+   315	      const url = URL.createObjectURL(blob);
+   316	      const a = document.createElement('a');
+   317	      a.href = url;
+   318	      a.download = `cover-letter-${(data.companyName || 'draft').toLowerCase().replace(/\s+/g, '-')}.docx`;
+   319	      document.body.appendChild(a);
+   320	      a.click();
+   321	      document.body.removeChild(a);
+   322	      URL.revokeObjectURL(url);
+   323	      toast.success('DOCX exported!');
+   324	    } catch {
+   325	      toast.error('Failed to export DOCX');
+   326	    }
+   327	  }, [letterId, data.companyName]);
+   328	
+   329	  const handlePrint = useCallback(() => {
+   330	    if (!previewRef.current) return;
+   331	    const clone = previewRef.current.firstElementChild?.cloneNode(true) as HTMLElement;
+   332	    if (!clone) return;
+   333	    const printWindow = window.open('', '_blank');
+   334	    if (!printWindow) return;
+   335	    printWindow.document.write(`
+   336	      <html><head><title>Cover Letter</title>
+   337	      <style>body{margin:0;display:flex;justify-content:center;}</style>
+   338	      </head><body></body></html>
+   339	    `);
+   340	    printWindow.document.body.appendChild(clone);
+   341	    printWindow.document.close();
+   342	    printWindow.print();
+   343	  }, []);
+   344	
+   345	  const handleCopyAll = useCallback(() => {
+   346	    const { salutation, opening, body, closing, signOff, fullName } = data;
+   347	    const text = [salutation, '', opening, '', body, '', closing, '', signOff, '', fullName].filter(Boolean).join('\n');
+   348	    navigator.clipboard.writeText(text).then(() => toast.success('Copied to clipboard!')).catch(() => toast.error('Copy failed'));
+   349	  }, [data]);
+   350	
+   351	  const handleRename = () => {
+   352	    if (!letterId || !titleInput.trim()) return;
+   353	    setTitle(titleInput.trim());
+   354	    setEditingTitle(false);
+   355	    toast.success('Renamed');
+   356	  };
+   357	
+   358	  const handleDelete = async () => {
+   359	    if (!letterId) return;
+   360	    await deleteLetter(letterId);
+   361	    setDeleteDialogOpen(false);
+   362	    toast.success('Cover letter deleted');
+   363	  };
+   364	
+   365	  // ─── Section Editors ────────────────────────────────────────
+   366	
+   367	  const renderSenderInfo = () => (
+   368	    <div className="space-y-4">
+   369	      <h3 className="text-sm font-semibold font-heading text-foreground">Your Information</h3>
+   370	      <div className="space-y-3">
+   371	        <div className="space-y-1.5">
+   372	          <Label className="text-xs font-body">Full Name</Label>
+   373	          <Input value={data.fullName} onChange={(e) => setData((p) => ({ ...p, fullName: e.target.value }))} placeholder="John Smith" className="font-body text-sm" />
+   374	        </div>
+   375	        <div className="grid grid-cols-2 gap-3">
+   376	          <div className="space-y-1.5">
+   377	            <Label className="text-xs font-body">Email</Label>
+   378	            <Input value={data.email} onChange={(e) => setData((p) => ({ ...p, email: e.target.value }))} placeholder="john@email.com" className="font-body text-sm" />
+   379	          </div>
+   380	          <div className="space-y-1.5">
+   381	            <Label className="text-xs font-body">Phone</Label>
+   382	            <Input value={data.phone} onChange={(e) => setData((p) => ({ ...p, phone: e.target.value }))} placeholder="+1 234 567 890" className="font-body text-sm" />
+   383	          </div>
+   384	        </div>
+   385	        <div className="grid grid-cols-2 gap-3">
+   386	          <div className="space-y-1.5">
+   387	            <Label className="text-xs font-body">Address / City</Label>
+   388	            <Input value={data.address} onChange={(e) => setData((p) => ({ ...p, address: e.target.value }))} placeholder="New York, NY" className="font-body text-sm" />
+   389	          </div>
+   390	          <div className="space-y-1.5">
+   391	            <Label className="text-xs font-body">LinkedIn</Label>
+   392	            <Input value={data.linkedIn} onChange={(e) => setData((p) => ({ ...p, linkedIn: e.target.value }))} placeholder="linkedin.com/in/..." className="font-body text-sm" />
+   393	          </div>
+   394	        </div>
+   395	      </div>
+   396	    </div>
+   397	  );
+   398	
+   399	  const renderRecipientInfo = () => (
+   400	    <div className="space-y-4">
+   401	      <h3 className="text-sm font-semibold font-heading text-foreground">Recipient Information</h3>
+   402	      <div className="space-y-3">
+   403	        <div className="space-y-1.5">
+   404	          <Label className="text-xs font-body">Hiring Manager <span className="text-muted-foreground">(optional)</span></Label>
+   405	          <Input value={data.hiringManager} onChange={(e) => setData((p) => ({ ...p, hiringManager: e.target.value }))} placeholder="Jane Smith" className="font-body text-sm" />
+   406	        </div>
+   407	        <div className="space-y-1.5">
+   408	          <Label className="text-xs font-body">Company Name</Label>
+   409	          <Input value={data.companyName} onChange={(e) => setData((p) => ({ ...p, companyName: e.target.value }))} placeholder="Acme Corp" className="font-body text-sm" />
+   410	        </div>
+   411	        <div className="space-y-1.5">
+   412	          <Label className="text-xs font-body">Company Address <span className="text-muted-foreground">(optional)</span></Label>
+   413	          <Input value={data.companyAddress} onChange={(e) => setData((p) => ({ ...p, companyAddress: e.target.value }))} placeholder="123 Business St, City" className="font-body text-sm" />
+   414	        </div>
+   415	      </div>
+   416	    </div>
+   417	  );
+   418	
+   419	  const renderJobDetails = () => (
+   420	    <div className="space-y-4">
+   421	      <h3 className="text-sm font-semibold font-heading text-foreground">Job Details</h3>
+   422	      <div className="space-y-3">
+   423	        <div className="space-y-1.5">
+   424	          <Label className="text-xs font-body">Job Title</Label>
+   425	          <Input value={data.jobTitle} onChange={(e) => setData((p) => ({ ...p, jobTitle: e.target.value }))} placeholder="Senior Developer" className="font-body text-sm" />
+   426	        </div>
+   427	        <div className="grid grid-cols-2 gap-3">
+   428	          <div className="space-y-1.5">
+   429	            <Label className="text-xs font-body">Language</Label>
+   430	            <Select value={data.language} onValueChange={(v) => setData((p) => ({ ...p, language: v as 'en' | 'fr' }))}>
+   431	              <SelectTrigger className="font-body text-sm"><SelectValue /></SelectTrigger>
+   432	              <SelectContent>
+   433	                {LANGUAGE_OPTIONS.map((l) => (
+   434	                  <SelectItem key={l.value} value={l.value} className="font-body">{l.label}</SelectItem>
+   435	                ))}
+   436	              </SelectContent>
+   437	            </Select>
+   438	          </div>
+   439	          <div className="space-y-1.5">
+   440	            <Label className="text-xs font-body">Tone</Label>
+   441	            <Select value={data.tone} onValueChange={(v) => setData((p) => ({ ...p, tone: v as ToneType }))}>
+   442	              <SelectTrigger className="font-body text-sm"><SelectValue /></SelectTrigger>
+   443	              <SelectContent>
+   444	                {TONE_OPTIONS.map((t) => (
+   445	                  <SelectItem key={t.value} value={t.value} className="font-body">{t.label}</SelectItem>
+   446	                ))}
+   447	              </SelectContent>
+   448	            </Select>
+   449	          </div>
+   450	        </div>
+   451	        <div className="space-y-1.5">
+   452	          <Label className="text-xs font-body">Date</Label>
+   453	          <Input type="date" value={data.date} onChange={(e) => setData((p) => ({ ...p, date: e.target.value }))} className="font-body text-sm" />
+   454	        </div>
+   455	      </div>
+   456	    </div>
+   457	  );
+   458	
+   459	  const renderContentSection = () => {
+   460	    const sections = [
+   461	      { key: 'salutation', label: 'Salutation' },
+   462	      { key: 'opening', label: 'Opening Paragraph' },
+   463	      { key: 'body', label: 'Body Paragraph' },
+   464	      { key: 'closing', label: 'Closing Paragraph' },
+   465	      { key: 'signOff', label: 'Sign Off' },
+   466	    ] as const;
+   467	
+   468	    return (
+   469	      <div className="space-y-4">
+   470	        <h3 className="text-sm font-semibold font-heading text-foreground">Letter Content</h3>
+   471	        {sections.map(({ key, label }) => (
+   472	          <div key={key} className="space-y-2">
+   473	            <div className="flex items-center justify-between">
+   474	              <Label className="text-xs font-body">{label}</Label>
+   475	              {key !== 'signOff' && key !== 'salutation' && letterId && (
+   476	                <DropdownMenu>
+   477	                  <DropdownMenuTrigger asChild>
+   478	                    <Button variant="ghost" size="sm" className="h-6 w-6 p-0 text-muted-foreground hover:text-brand" disabled={aiActionLoading}>
+   479	                      <Sparkles className="w-3 h-3" />
+   480	                    </Button>
+   481	                  </DropdownMenuTrigger>
+   482	                  <DropdownMenuContent align="end" className="w-44">
+   483	                    {AI_ACTIONS.map(({ action, label: al, icon: Icon }) => (
+   484	                      <DropdownMenuItem key={action} className="font-body text-sm gap-2" onClick={() => handleAIEdit(key, action)} disabled={aiActionLoading}>
+   485	                        <Icon className="w-3.5 h-3.5" />
+   486	                        {al}
+   487	                        {editingSection === key && <Loader2 className="w-3 h-3 ml-auto animate-spin" />}
+   488	                      </DropdownMenuItem>
+   489	                    ))}
+   490	                  </DropdownMenuContent>
+   491	                </DropdownMenu>
+   492	              )}
+   493	            </div>
+   494	            <Textarea
+   495	              value={data[key as keyof typeof data] as string}
+   496	              onChange={(e) => setData((p) => ({ ...p, [key]: e.target.value }))}
+   497	              placeholder={key === 'salutation' ? 'Dear Hiring Manager,' : key === 'signOff' ? 'Sincerely,' : `Write your ${label.toLowerCase()}...`}
+   498	              className="font-body text-sm min-h-[80px] resize-y"
+   499	              rows={key === 'body' ? 6 : key === 'opening' || key === 'closing' ? 4 : 1}
+   500	            />
+   501	          </div>
+   502	        ))}
+   503	      </div>
+   504	    );
+   505	  };
+   506	
+   507	  const renderCustomization = () => {
+   508	    const updateCustomization = (patch: Partial<CoverLetterCustomization>) => {
+   509	      setCustomization({ ...customization, ...patch });
+   510	    };
+   511	
+   512	    return (
+   513	      <div className="space-y-5">
+   514	        <h3 className="text-sm font-semibold font-heading text-foreground">Design & Customization</h3>
+   515	
+   516	        {/* Template Selector */}
+   517	        <div className="space-y-2">
+   518	          <Label className="text-xs font-body">Template</Label>
+   519	          <div className="grid grid-cols-3 gap-2">
+   520	            {COVER_LETTER_TEMPLATES.map((t) => (
+   521	              <button
+   522	                key={t.id}
+   523	                onClick={() => setTemplateId(t.id as CoverLetterTemplateId)}
+   524	                className={`relative p-2.5 rounded-lg border text-left transition-all ${
+   525	                  templateId === t.id
+   526	                    ? 'border-brand bg-brand/5 ring-1 ring-brand/30'
+   527	                    : 'border-border hover:border-border/80 hover:bg-muted/50'
+   528	                }`}
+   529	              >
+   530	                <div className="text-xs font-medium font-body truncate">{t.name}</div>
+   531	                <div className="text-[10px] text-muted-foreground mt-0.5">{t.tags[0]}</div>
+   532	                {t.tier === 'pro' && (
+   533	                  <Badge className="absolute top-1 right-1 text-[8px] px-1 py-0 h-3 bg-violet-100 text-violet-700 font-body">Pro</Badge>
+   534	                )}
+   535	              </button>
+   536	            ))}
+   537	          </div>
+   538	        </div>
+   539	
+   540	        <Separator />
+   541	
+   542	        {/* Accent Color */}
+   543	        <div className="space-y-2">
+   544	          <Label className="text-xs font-body">Accent Color</Label>
+   545	          <div className="flex flex-wrap gap-2">
+   546	            {ACCENT_PRESETS.map((c) => (
+   547	              <button
+   548	                key={c.value}
+   549	                onClick={() => updateCustomization({ accentColor: c.value })}
+   550	                className={`w-6 h-6 rounded-full border-2 transition-all ${
+   551	                  customization.accentColor === c.value ? 'border-foreground scale-110' : 'border-transparent hover:scale-105'
+   552	                }`}
+   553	                style={{ backgroundColor: c.value }}
+   554	                title={c.label}
+   555	              />
+   556	            ))}
+   557	          </div>
+   558	        </div>
+   559	
+   560	        {/* Font */}
+   561	        <div className="space-y-1.5">
+   562	          <Label className="text-xs font-body">Font</Label>
+   563	          <Select value={customization.primaryFont} onValueChange={(v) => updateCustomization({ primaryFont: v })}>
+   564	            <SelectTrigger className="font-body text-sm"><SelectValue /></SelectTrigger>
+   565	            <SelectContent>
+   566	              {FONT_OPTIONS.map((f) => (
+   567	                <SelectItem key={f.value} value={f.value} className="font-body" style={{ fontFamily: f.value }}>{f.label}</SelectItem>
+   568	              ))}
+   569	            </SelectContent>
+   570	          </Select>
+   571	        </div>
+   572	
+   573	        {/* Font Size */}
+   574	        <div className="space-y-2">
+   575	          <div className="flex items-center justify-between">
+   576	            <Label className="text-xs font-body">Font Size</Label>
+   577	            <span className="text-xs text-muted-foreground font-body">{Math.round(customization.fontSize * 100)}%</span>
+   578	          </div>
+   579	          <Slider value={[customization.fontSize]} min={0.8} max={1.4} step={0.05} onValueChange={([v]) => updateCustomization({ fontSize: v })} />
+   580	        </div>
+   581	
+   582	        {/* Line Spacing */}
+   583	        <div className="space-y-2">
+   584	          <div className="flex items-center justify-between">
+   585	            <Label className="text-xs font-body">Line Spacing</Label>
+   586	            <span className="text-xs text-muted-foreground font-body">{customization.lineSpacing.toFixed(1)}</span>
+   587	          </div>
+   588	          <Slider value={[customization.lineSpacing]} min={1.2} max={2.0} step={0.1} onValueChange={([v]) => updateCustomization({ lineSpacing: v })} />
+   589	        </div>
+   590	
+   591	        {/* Margins */}
+   592	        <div className="space-y-2">
+   593	          <div className="flex items-center justify-between">
+   594	            <Label className="text-xs font-body">Margins</Label>
+   595	            <span className="text-xs text-muted-foreground font-body">{customization.pageMargins}px</span>
+   596	          </div>
+   597	          <Slider value={[customization.pageMargins]} min={30} max={80} step={2} onValueChange={([v]) => updateCustomization({ pageMargins: v })} />
+   598	        </div>
+   599	
+   600	        {/* Date Format */}
+   601	        <div className="space-y-1.5">
+   602	          <Label className="text-xs font-body">Date Format</Label>
+   603	          <Select value={customization.dateFormat} onValueChange={(v) => updateCustomization({ dateFormat: v as CoverLetterCustomization['dateFormat'] })}>
+   604	            <SelectTrigger className="font-body text-sm"><SelectValue /></SelectTrigger>
+   605	            <SelectContent>
+   606	              <SelectItem value="full" className="font-body">Full (January 15, 2025)</SelectItem>
+   607	              <SelectItem value="short" className="font-body">Short (Jan 15, 2025)</SelectItem>
+   608	              <SelectItem value="iso" className="font-body">ISO (2025-01-15)</SelectItem>
+   609	            </SelectContent>
+   610	          </Select>
+   611	        </div>
+   612	      </div>
+   613	    );
+   614	  };
+   615	
+   616	  // ─── Auto-create blank letter if none exists ─────────────────
+   617	  const [showGeneratorDialog, setShowGeneratorDialog] = useState(false);
+   618	
+   619	  useEffect(() => {
+   620	    if (!loading && !letterId) {
+   621	      handleCreate();
+   622	    }
+   623	  }, [loading, letterId]);
+   624	
+   625	  // ─── Generator Dialog (AI fill) ───────────────────────────────
+   626	  const renderGeneratorDialog = () => (
+   627	    <Dialog open={showGeneratorDialog} onOpenChange={setShowGeneratorDialog}>
+   628	      <DialogContent className="font-body max-w-lg max-h-[85vh] overflow-y-auto">
+   629	        <DialogHeader>
+   630	          <DialogTitle className="flex items-center gap-2 font-heading">
+   631	            <Sparkles className="w-5 h-5 text-brand" />
+   632	            Generate with AI
+   633	          </DialogTitle>
+   634	          <DialogDescription className="font-body">
+   635	            Fill in the details and AI will write your cover letter.
+   636	          </DialogDescription>
+   637	        </DialogHeader>
+   638	        <div className="space-y-4 pt-2">
+   639	          <div className="space-y-1.5">
+   640	            <Label className="text-xs font-body">Job Title <span className="text-destructive">*</span></Label>
+   641	            <div className="relative">
+   642	              <Briefcase className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+   643	              <Input value={genJobTitle} onChange={(e) => setGenJobTitle(e.target.value)} placeholder="e.g. Senior Developer" className="pl-10 font-body text-sm" />
+   644	            </div>
+   645	          </div>
+   646	          <div className="space-y-1.5">
+   647	            <Label className="text-xs font-body">Company Name <span className="text-destructive">*</span></Label>
+   648	            <div className="relative">
+   649	              <Building2 className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+   650	              <Input value={genCompanyName} onChange={(e) => setGenCompanyName(e.target.value)} placeholder="e.g. Acme Corp" className="pl-10 font-body text-sm" />
+   651	            </div>
+   652	          </div>
+   653	          <div className="space-y-1.5">
+   654	            <Label className="text-xs font-body">Hiring Manager <span className="text-muted-foreground">(optional)</span></Label>
+   655	            <Input value={genHiringManager} onChange={(e) => setGenHiringManager(e.target.value)} placeholder="e.g. Jane Smith" className="font-body text-sm" />
+   656	          </div>
+   657	          <div className="space-y-1.5">
+   658	            <Label className="text-xs font-body">Job Description <span className="text-destructive">*</span></Label>
+   659	            <Textarea value={genJobDescription} onChange={(e) => setGenJobDescription(e.target.value)} placeholder="Paste the full job description..." className="min-h-[100px] font-body text-sm resize-y" />
+   660	          </div>
+   661	          <div className="grid grid-cols-3 gap-3">
+   662	            <div className="space-y-1.5">
+   663	              <Label className="text-xs font-body">Tone</Label>
+   664	              <Select value={genTone} onValueChange={(v) => setGenTone(v as ToneType)}>
+   665	                <SelectTrigger className="font-body text-sm"><SelectValue /></SelectTrigger>
+   666	                <SelectContent>
+   667	                  {TONE_OPTIONS.map((t) => (
+   668	                    <SelectItem key={t.value} value={t.value} className="font-body">{t.label}</SelectItem>
+   669	                  ))}
+   670	                </SelectContent>
+   671	              </Select>
+   672	            </div>
+   673	            <div className="space-y-1.5">
+   674	              <Label className="text-xs font-body">Language</Label>
+   675	              <Select value={genLanguage} onValueChange={(v) => setGenLanguage(v as 'en' | 'fr')}>
+   676	                <SelectTrigger className="font-body text-sm"><SelectValue /></SelectTrigger>
+   677	                <SelectContent>
+   678	                  {LANGUAGE_OPTIONS.map((l) => (
+   679	                    <SelectItem key={l.value} value={l.value} className="font-body">{l.label}</SelectItem>
+   680	                  ))}
+   681	                </SelectContent>
+   682	              </Select>
+   683	            </div>
+   684	            <div className="space-y-1.5">
+   685	              <Label className="text-xs font-body">Resume</Label>
+   686	              <Select value={genResumeId} onValueChange={setGenResumeId}>
+   687	                <SelectTrigger className="font-body text-sm">
+   688	                  <SelectValue placeholder={resumesLoading ? 'Loading...' : resumes.length === 0 ? 'None' : 'Choose...'} />
+   689	                </SelectTrigger>
+   690	                <SelectContent>
+   691	                  {resumes.map((r) => (
+   692	                    <SelectItem key={r.id} value={r.id} className="font-body">{r.title}</SelectItem>
+   693	                  ))}
+   694	                </SelectContent>
+   695	              </Select>
+   696	            </div>
+   697	          </div>
+   698	          <Button onClick={handleGenerate} disabled={isGenerating || !genJobTitle || !genCompanyName || !genJobDescription} className="w-full bg-brand hover:bg-brand/90 text-white font-body" size="lg">
+   699	            {isGenerating ? <><Loader2 className="w-4 h-4 mr-2 animate-spin" /> Generating...</> : <><Sparkles className="w-4 h-4 mr-2" /> Generate Cover Letter</>}
+   700	          </Button>
+   701	        </div>
+   702	      </DialogContent>
+   703	    </Dialog>
+   704	  );
+   705	
+   706	  // ─── Loading State ───────────────────────────────────────────
+   707	
+   708	  if (loading) {
+   709	    return (
+   710	      <div className="space-y-4">
+   711	        <Skeleton className="h-8 w-64" />
+   712	        <div className="grid grid-cols-1 lg:grid-cols-[280px_1fr] gap-4">
+   713	          <Skeleton className="h-[600px]" />
+   714	          <Skeleton className="h-[800px]" />
+   715	        </div>
+   716	      </div>
+   717	    );
+   718	  }
+   719	
+   720	  // ─── Active Section Content ──────────────────────────────────
+   721	
+   722	  const sectionContent: Record<CoverLetterSectionKey, React.ReactNode> = {
+   723	    'sender-info': renderSenderInfo(),
+   724	    'recipient-info': renderRecipientInfo(),
+   725	    'job-details': renderJobDetails(),
+   726	    'content': renderContentSection(),
+   727	    'customization': renderCustomization(),
+   728	  };
+   729	
+   730	  // ─── Compute A4 preview scale ───────────────────────────────
+   731	  const a4BaseWidth = 794;
+   732	  const a4BaseHeight = 1122;
+   733	  const getPreviewScale = () => {
+   734	    const s = previewZoom / 100;
+   735	    return s > 0 ? s : 0.5; // safety fallback
+   736	  };
+   737	
+   738	  // ─── Editor Panel (left side — navigation + content combined) ────────
+   739	  const renderEditorPanel = () => (
+   740	    <div className={`${isMobile ? 'hidden' : ''} ${isDesktop ? 'w-[400px]' : isTablet ? 'w-[340px]' : ''} shrink-0 border-r border-border/50 flex flex-col bg-card`}>
+   741	      {/* Header: Title + Actions */}
+   742	      <div className="px-4 py-3 border-b border-border/50 flex items-center gap-3">
+   743	        <div className="flex-1 min-w-0">
+   744	          {editingTitle ? (
+   745	            <div className="flex items-center gap-1">
+   746	              <Input value={titleInput} onChange={(e) => setTitleInput(e.target.value)} onKeyDown={(e) => e.key === 'Enter' && handleRename()} className="h-8 text-sm font-body" autoFocus />
+   747	              <Button variant="ghost" size="sm" className="h-8 w-8 p-0" onClick={handleRename}><Check className="w-4 h-4" /></Button>
+   748	            </div>
+   749	          ) : (
+   750	            <button onClick={() => { setTitleInput(title); setEditingTitle(true); }} className="text-left truncate text-sm font-semibold font-heading hover:text-brand transition-colors">
+   751	              {title || 'Untitled Cover Letter'}
+   752	            </button>
+   753	          )}
+   754	          <div className="flex items-center gap-1.5 mt-0.5">
+   755	            {autosaveStatus === 'saving' && <><Loader2 className="w-3 h-3 animate-spin text-brand" /><span className="text-[10px] text-muted-foreground font-body">Saving...</span></>}
+   756	            {autosaveStatus === 'saved' && <><CheckCircle2 className="w-3 h-3 text-emerald-500" /><span className="text-[10px] text-muted-foreground font-body">Saved</span></>}
+   757	            {autosaveStatus === 'error' && <><AlertCircle className="w-3 h-3 text-destructive" /><span className="text-[10px] text-muted-foreground font-body">Save failed</span></>}
+   758	          </div>
+   759	        </div>
+   760	        <DropdownMenu>
+   761	          <DropdownMenuTrigger asChild>
+   762	            <Button variant="outline" size="sm" className="h-8 w-8 p-0">
+   763	              <MoreVertical className="w-4 h-4" />
+   764	            </Button>
+   765	          </DropdownMenuTrigger>
+   766	          <DropdownMenuContent align="end" className="w-48">
+   767	            <DropdownMenuItem className="font-body text-sm gap-2" onClick={handleCopyAll}><CopyIcon className="w-4 h-4" /> Copy All</DropdownMenuItem>
+   768	            <DropdownMenuItem className="font-body text-sm gap-2" onClick={handleExportPDF}><Download className="w-4 h-4" /> Export PDF</DropdownMenuItem>
+   769	            <DropdownMenuItem className="font-body text-sm gap-2" onClick={handleExportDOCX}><FileDown className="w-4 h-4" /> Export DOCX</DropdownMenuItem>
+   770	            <DropdownMenuItem className="font-body text-sm gap-2" onClick={handlePrint}><Printer className="w-4 h-4" /> Print</DropdownMenuItem>
+   771	            <DropdownMenuSeparator />
+   772	            {letterId && (
+   773	              <DropdownMenuItem className="font-body text-sm gap-2" onClick={() => duplicateLetter(letterId)}><Copy className="w-4 h-4" /> Duplicate</DropdownMenuItem>
+   774	            )}
+   775	            <DropdownMenuItem className="font-body text-sm gap-2 text-destructive" onClick={() => setDeleteDialogOpen(true)}><Trash2 className="w-4 h-4" /> Delete</DropdownMenuItem>
+   776	          </DropdownMenuContent>
+   777	        </DropdownMenu>
+   778	      </div>
+   779	
+   780	      {/* Section Tabs */}
+   781	      <div className="flex items-center gap-0.5 px-4 py-2.5 border-b border-border/50 overflow-x-auto no-scrollbar">
+   782	        {SECTIONS.map((s) => (
+   783	          <button
+   784	            key={s.key}
+   785	            onClick={() => setActiveSection(s.key)}
+   786	            className={`shrink-0 flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-sm font-medium transition-all font-body ${
+   787	              activeSection === s.key
+   788	                ? 'bg-brand/10 text-brand'
+   789	                : 'text-muted-foreground hover:bg-accent hover:text-foreground'
+   790	            }`}
+   791	          >
+   792	            <s.icon className="w-4 h-4" />
+   793	            {s.label}
+   794	          </button>
+   795	        ))}
+   796	      </div>
+   797	
+   798	      {/* Section Content */}
+   799	      <ScrollArea className="flex-1">
+   800	        <div className="p-5">
+   801	          {sectionContent[activeSection]}
+   802	        </div>
+   803	      </ScrollArea>
+   804	
+   805	      {/* Bottom Actions */}
+   806	      <div className="px-4 py-3 border-t border-border/50 flex items-center gap-2">
+   807	        <Button
+   808	          className="flex-1 gap-2 font-body text-sm bg-brand hover:bg-brand/90"
+   809	          onClick={() => setShowGeneratorDialog(true)}
+   810	        >
+   811	          <Wand2 className="w-4 h-4" />
+   812	          Generate with AI
+   813	        </Button>
+   814	        <Button
+   815	          variant="outline"
+   816	          className="gap-2 font-body text-sm"
+   817	          onClick={() => { setActiveSection('content'); if (isTablet) setTabletEditorOpen(true); }}
+   818	        >
+   819	          <Sparkles className="w-4 h-4" />
+   820	          AI Tools
+   821	        </Button>
+   822	      </div>
+   823	    </div>
+   824	  );
+   825	
+   826	  // ─── Preview Panel (right side — large A4 preview) ──────────
+   827	  const renderPreviewPanel = () => {
+   828	    const scale = getPreviewScale();
+   829	    return (
+   830	      <div className="flex-1 flex flex-col min-w-0">
+   831	        {/* Preview Toolbar — clean and minimal */}
+   832	        <div className="flex items-center justify-between px-4 py-2.5 border-b border-border/50">
+   833	          <div className="flex items-center gap-2">
+   834	            {/* Tablet controls */}
+   835	            {isTablet && !tabletSidebarOpen && (
+   836	              <TooltipProvider delayDuration={0}>
+   837	                <Tooltip>
+   838	                  <TooltipTrigger asChild>
+   839	                    <Button variant="ghost" size="sm" className="h-8 w-8 p-0" onClick={() => setTabletSidebarOpen(true)}>
+   840	                      <LayoutTemplate className="w-4 h-4" />
+   841	                    </Button>
+   842	                  </TooltipTrigger>
+   843	                  <TooltipContent><span className="font-body">Show Editor</span></TooltipContent>
+   844	                </Tooltip>
+   845	              </TooltipProvider>
+   846	            )}
+   847	            {isTablet && (
+   848	              <TooltipProvider delayDuration={0}>
+   849	                <Tooltip>
+   850	                  <TooltipTrigger asChild>
+   851	                    <Button variant="ghost" size="sm" className="h-8 w-8 p-0" onClick={() => setTabletEditorOpen(true)}>
+   852	                      <PenLine className="w-4 h-4" />
+   853	                    </Button>
+   854	                  </TooltipTrigger>
+   855	                  <TooltipContent><span className="font-body">Edit</span></TooltipContent>
+   856	                </Tooltip>
+   857	              </TooltipProvider>
+   858	            )}
+   859	            {/* Template selector */}
+   860	            <div className="flex items-center gap-1">
+   861	              {COVER_LETTER_TEMPLATES.map((t) => (
+   862	                <button
+   863	                  key={t.id}
+   864	                  onClick={() => setTemplateId(t.id as CoverLetterTemplateId)}
+   865	                  className={`px-3 py-1 rounded-full text-xs font-medium transition-all font-body ${
+   866	                    templateId === t.id
+   867	                      ? 'bg-brand text-brand-foreground shadow-sm'
+   868	                      : 'bg-muted text-muted-foreground hover:bg-muted/80 hover:text-foreground'
+   869	                  }`}
+   870	                >
+   871	                  {t.name}
+   872	                </button>
+   873	              ))}
+   874	            </div>
+   875	          </div>
+   876	          <div className="flex items-center gap-2">
+   877	            <Badge variant="secondary" className="text-[11px] font-body">
+   878	              {data.language === 'fr' ? 'French' : 'English'} · {data.tone}
+   879	            </Badge>
+   880	            <div className="flex items-center gap-0.5 bg-muted/80 rounded-lg p-0.5">
+   881	              <TooltipProvider delayDuration={0}>
+   882	                <Tooltip>
+   883	                  <TooltipTrigger asChild>
+   884	                    <Button variant="ghost" size="sm" className="h-7 w-7 p-0" onClick={() => { userZoomedRef.current = true; setPreviewZoom((z) => Math.max(30, z - 10)); }}><ZoomOut className="w-3.5 h-3.5" /></Button>
+   885	                  </TooltipTrigger>
+   886	                  <TooltipContent><span className="font-body">Zoom out</span></TooltipContent>
+   887	                </Tooltip>
+   888	                <Tooltip>
+   889	                  <TooltipTrigger asChild>
+   890	                    <span className="text-xs text-muted-foreground font-body w-10 text-center select-none font-medium tabular-nums">{previewZoom}%</span>
+   891	                  </TooltipTrigger>
+   892	                </Tooltip>
+   893	                <Tooltip>
+   894	                  <TooltipTrigger asChild>
+   895	                    <Button variant="ghost" size="sm" className="h-7 w-7 p-0" onClick={() => { userZoomedRef.current = true; setPreviewZoom((z) => Math.min(isMobile ? 250 : 150, z + 10)); }}><ZoomIn className="w-3.5 h-3.5" /></Button>
+   896	                  </TooltipTrigger>
+   897	                  <TooltipContent><span className="font-body">Zoom in</span></TooltipContent>
+   898	                </Tooltip>
+   899	                <Tooltip>
+   900	                  <TooltipTrigger asChild>
+   901	                    <Button variant="ghost" size="sm" className="h-7 w-7 p-0" onClick={() => fitPreviewWidth(true)}><Maximize2 className="w-3.5 h-3.5" /></Button>
+   902	                  </TooltipTrigger>
+   903	                  <TooltipContent><span className="font-body">Fit width</span></TooltipContent>
+   904	                </Tooltip>
+   905	              </TooltipProvider>
+   906	            </div>
+   907	          </div>
+   908	        </div>
+   909	
+   910	        {/* Preview Area — overflow-auto allows horizontal scroll when zoomed in */}
+   911	        <div
+   912	          ref={previewAreaRef}
+   913	          className={`flex-1 overflow-auto ${isMobile ? 'p-3' : 'p-8'} bg-muted/30`}
+   914	        >
+   915	          <div className="flex justify-center">
+   916	            {/* A4 page: rendered at full 794×1122 then CSS-scaled down.
+   917	                Negative marginBottom collapses the layout space so the scrollbar
+   918	                matches the visual size (proven approach from resume PreviewContainer). */}
+   919	            <div
+   920	              ref={previewRef}
+   921	              style={{
+   922	                width: a4BaseWidth,
+   923	                minHeight: a4BaseHeight,
+   924	                backgroundColor: '#fff',
+   925	                boxShadow: '0 4px 6px -1px rgba(0,0,0,0.05), 0 20px 50px -12px rgba(0,0,0,0.15)',
+   926	                borderRadius: '6px',
+   927	                overflow: 'hidden',
+   928	                transform: `scale(${scale})`,
+   929	                transformOrigin: 'top center',
+   930	                marginBottom: `-${a4BaseHeight * (1 - scale)}px`,
+   931	                contain: 'layout style paint',
+   932	              }}
+   933	            >
+   934	              <CoverLetterTemplateEngine data={data} customization={customization} templateId={templateId} />
+   935	            </div>
+   936	          </div>
+   937	        </div>
+   938	      </div>
+   939	    );
+   940	  };
+   941	
+   942	  // ─── Shared: Mobile FAB ─────────────────────────────────────
+   943	  const renderMobileFAB = () => isMobile && (
+   944	    <Button
+   945	      variant="outline"
+   946	      size="sm"
+   947	      className="fixed bottom-20 right-4 z-30 gap-2 shadow-lg bg-background font-body"
+   948	      onClick={() => setMobileSheetOpen(true)}
+   949	    >
+   950	      <PenLine className="w-4 h-4" />
+   951	      Edit
+   952	    </Button>
+   953	  );
+   954	
+   955	  // ─── Mobile Bottom Sheet ───────────────────────────────────
+   956	  const renderMobileSheet = () => isMobile && (
+   957	    <div className={`fixed inset-0 z-40 ${mobileSheetOpen ? 'visible' : 'invisible'}`}>
+   958	      {mobileSheetOpen && <div className="absolute inset-0 bg-black/40" onClick={() => setMobileSheetOpen(false)} />}
+   959	      <AnimatePresence>
+   960	        {mobileSheetOpen && (
+   961	          <motion.div
+   962	            initial={{ y: '100%' }}
+   963	            animate={{ y: 0 }}
+   964	            exit={{ y: '100%' }}
+   965	            transition={{ type: 'spring', damping: 30, stiffness: 300 }}
+   966	            className="absolute bottom-0 left-0 right-0 bg-background rounded-t-2xl shadow-2xl"
+   967	            style={{ maxHeight: '75vh' }}
+   968	          >
+   969	            <div className="flex items-center justify-center p-3 border-b">
+   970	              <div className="w-10 h-1 bg-border rounded-full" />
+   971	            </div>
+   972	            <ScrollArea className="p-4" style={{ maxHeight: 'calc(75vh - 50px)' }}>
+   973	              <div className="space-y-3">
+   974	                {SECTIONS.map((s) => (
+   975	                  <div key={s.key}>
+   976	                    <button
+   977	                      onClick={() => setActiveSection(s.key)}
+   978	                      className={`w-full flex items-center gap-2 rounded-lg px-3 py-2.5 text-sm font-medium transition-all ${
+   979	                        activeSection === s.key ? 'bg-brand/10 text-brand' : 'text-muted-foreground hover:bg-accent'
+   980	                      }`}
+   981	                    >
+   982	                      <s.icon className="w-4 h-4" />
+   983	                      <span className="font-body">{s.label}</span>
+   984	                    </button>
+   985	                    <AnimatePresence mode="wait">
+   986	                      {activeSection === s.key && (
+   987	                        <motion.div
+   988	                          key={s.key}
+   989	                          initial={{ opacity: 0, height: 0 }}
+   990	                          animate={{ opacity: 1, height: 'auto' }}
+   991	                          exit={{ opacity: 0, height: 0 }}
+   992	                          transition={{ duration: 0.2 }}
+   993	                          className="overflow-hidden"
+   994	                        >
+   995	                          <div className="pt-3 pl-1">{sectionContent[s.key]}</div>
+   996	                        </motion.div>
+   997	                      )}
+   998	                    </AnimatePresence>
+   999	                  </div>
+  1000	                ))}
+  1001	              </div>
+  1002	            </ScrollArea>
+  1003	          </motion.div>
+  1004	        )}
+  1005	      </AnimatePresence>
+  1006	    </div>
+  1007	  );
+  1008	
+  1009	  // ─── Tablet Editor Slide-Over ─────────────────────────────────
+  1010	  const renderTabletEditorSheet = () => isTablet && (
+  1011	    <div className={`fixed inset-0 z-40 ${tabletEditorOpen ? 'visible' : 'invisible'}`}>
+  1012	      {tabletEditorOpen && <div className="absolute inset-0 bg-black/30" onClick={() => setTabletEditorOpen(false)} />}
+  1013	      <AnimatePresence>
+  1014	        {tabletEditorOpen && (
+  1015	          <motion.div
+  1016	            initial={{ x: '100%' }}
+  1017	            animate={{ x: 0 }}
+  1018	            exit={{ x: '100%' }}
+  1019	            transition={{ type: 'spring', damping: 30, stiffness: 300 }}
+  1020	            className="absolute top-0 right-0 bottom-0 w-[360px] max-w-[90vw] bg-background shadow-2xl flex flex-col border-l border-border/50"
+  1021	          >
+  1022	            {/* Sheet Header */}
+  1023	            <div className="flex items-center justify-between px-4 py-3 border-b border-border/50">
+  1024	              <h3 className="text-sm font-semibold font-heading text-foreground">
+  1025	                {SECTIONS.find((s) => s.key === activeSection)?.label || 'Edit'}
+  1026	              </h3>
+  1027	              <Button variant="ghost" size="sm" className="h-7 w-7 p-0" onClick={() => setTabletEditorOpen(false)}>
+  1028	                <X className="w-4 h-4" />
+  1029	              </Button>
+  1030	            </div>
+  1031	            {/* Quick section tabs */}
+  1032	            <div className="flex items-center gap-1 px-3 py-2 border-b border-border/50 overflow-x-auto">
+  1033	              {SECTIONS.map((s) => (
+  1034	                <button
+  1035	                  key={s.key}
+  1036	                  onClick={() => setActiveSection(s.key)}
+  1037	                  className={`shrink-0 flex items-center gap-1.5 rounded-md px-2.5 py-1.5 text-xs font-medium transition-all font-body ${
+  1038	                    activeSection === s.key
+  1039	                      ? 'bg-brand/10 text-brand'
+  1040	                      : 'text-muted-foreground hover:bg-accent'
+  1041	                  }`}
+  1042	                >
+  1043	                  <s.icon className="w-3 h-3" />
+  1044	                  {s.label}
+  1045	                </button>
+  1046	              ))}
+  1047	            </div>
+  1048	            {/* Editor Content */}
+  1049	            <ScrollArea className="flex-1">
+  1050	              <div className="p-4 space-y-1">
+  1051	                {sectionContent[activeSection]}
+  1052	              </div>
+  1053	            </ScrollArea>
+  1054	          </motion.div>
+  1055	        )}
+  1056	      </AnimatePresence>
+  1057	    </div>
+  1058	  );
+  1059	
+  1060	  // ─── Desktop: no separate editor panel — merged into editor panel ──
+  1061	  const renderDesktopEditor = () => null;
+  1062	
+  1063	  // ─── Workspace Layout ────────────────────────────────────────
+  1064	
+  1065	  return (
+  1066	    <div className="h-[calc(100vh-120px)] flex gap-0">
+  1067	      {/* Editor Panel: navigation + form fields combined */}
+  1068	      {renderEditorPanel()}
+  1069	
+  1070	      {/* Preview Panel: large A4 preview */}
+  1071	      {renderPreviewPanel()}
+  1072	
+  1073	      {/* Mobile: FAB + bottom sheet */}
+  1074	      {renderMobileFAB()}
+  1075	      {renderMobileSheet()}
+  1076	
+  1077	      {/* Tablet: editor slide-over */}
+  1078	      {renderTabletEditorSheet()}
+  1079	
+  1080	      {/* Delete Confirmation Dialog */}
+  1081	      <Dialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
+  1082	        <DialogContent className="font-body">
+  1083	          <DialogHeader>
+  1084	            <DialogTitle>Delete Cover Letter</DialogTitle>
+  1085	            <DialogDescription>Are you sure you want to delete this cover letter? This action cannot be undone.</DialogDescription>
+  1086	          </DialogHeader>
+  1087	          <DialogFooter>
+  1088	            <Button variant="outline" onClick={() => setDeleteDialogOpen(false)} className="font-body">Cancel</Button>
+  1089	            <Button variant="destructive" onClick={handleDelete} className="font-body">Delete</Button>
+  1090	          </DialogFooter>
+  1091	        </DialogContent>
+  1092	      </Dialog>
+  1093	
+  1094	      {/* Upgrade Modal */}
+  1095	      <UpgradeModal open={showUpgrade} onOpenChange={setShowUpgrade} />
+  1096	
+  1097	      {/* Generator Dialog */}
+  1098	      {renderGeneratorDialog()}
+  1099	    </div>
+  1100	  );
+  1101	}

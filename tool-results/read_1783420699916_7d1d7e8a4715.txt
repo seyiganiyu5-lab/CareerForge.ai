@@ -1,0 +1,622 @@
+     1→     1→export type ArticleBlock =
+     2→     2→  | { type: 'paragraph'; text: string }
+     3→     3→  | { type: 'heading'; text: string; level?: 2 | 3 }
+     4→     4→  | { type: 'list'; items: string[] }
+     5→     5→  | { type: 'callout'; variant: 'info' | 'tip' | 'warning'; title?: string; text: string }
+     6→     6→  | { type: 'quote'; text: string; author?: string }
+     7→     7→  | { type: 'steps'; steps: { title: string; description: string }[] };
+     8→     8→
+     9→     9→export interface HelpCategory {
+    10→    10→  slug: string;
+    11→    11→  icon: string;
+    12→    12→  articleCount: number;
+    13→    13→  content: {
+    14→    14→    en: { title: string; description: string };
+    15→    15→    fr: { title: string; description: string };
+    16→    16→  };
+    17→    17→}
+    18→    18→
+    19→    19→export interface HelpArticle {
+    20→    20→  slug: string;
+    21→    21→  category: string;
+    22→    22→  popular: boolean;
+    23→    23→  author: { name: string; role: string };
+    24→    24→  date: string;
+    25→    25→  lastUpdated: string;
+    26→    26→  seo: {
+    27→    27→    en: { description: string; keywords: string[] };
+    28→    28→    fr: { description: string; keywords: string[] };
+    29→    29→  };
+    30→    30→  content: {
+    31→    31→    en: { title: string; description: string; readingTime: number; body: ArticleBlock[] };
+    32→    32→    fr: { title: string; description: string; readingTime: number; body: ArticleBlock[] };
+    33→    33→  };
+    34→    34→}
+    35→    35→
+    36→    36→export const helpCategories: HelpCategory[] = [
+    37→    37→  { slug: 'getting-started', icon: 'Rocket', articleCount: 3, content: { en: { title: 'Getting Started', description: 'Learn the basics and set up your CareerForge AI account.' }, fr: { title: 'Premiers Pas', description: 'Apprenez les bases et configurez votre compte CareerForge AI.' } } },
+    38→    38→  { slug: 'account-profile', icon: 'UserCog', articleCount: 4, content: { en: { title: 'Account & Profile', description: 'Manage your account settings, preferences, and personal information.' }, fr: { title: 'Compte et Profil', description: 'Gérez vos paramètres de compte, vos préférences et vos informations personnelles.' } } },
+    39→    39→  { slug: 'resume-builder', icon: 'FileText', articleCount: 3, content: { en: { title: 'Resume Builder', description: 'Create, edit, and optimize professional ATS-friendly resumes.' }, fr: { title: 'Constructeur de CV', description: 'Créez, modifiez et optimisez des CV professionnels aux normes ATS.' } } },
+    40→    40→  { slug: 'ai-cover-letter', icon: 'Mail', articleCount: 2, content: { en: { title: 'AI Cover Letter', description: 'Generate personalized cover letters powered by artificial intelligence.' }, fr: { title: 'Lettre de Motivation IA', description: 'Générez des lettres de motivation personnalisées alimentées par l\'intelligence artificielle.' } } },
+    41→    41→  { slug: 'resume-review', icon: 'ScanSearch', articleCount: 2, content: { en: { title: 'Resume Review', description: 'Get AI-powered feedback and suggestions to improve your resume.' }, fr: { title: 'Révision de CV', description: 'Obtenez des retours et suggestions alimentés par l\'IA pour améliorer votre CV.' } } },
+    42→    42→  { slug: 'ats-optimization', icon: 'Target', articleCount: 3, content: { en: { title: 'ATS Optimization', description: 'Understand and optimize for Applicant Tracking Systems.' }, fr: { title: 'Optimisation ATS', description: 'Comprenez et optimisez pour les systèmes de suivi des candidats.' } } },
+    43→    43→  { slug: 'templates', icon: 'LayoutTemplate', articleCount: 2, content: { en: { title: 'Templates', description: 'Browse and customize professional resume templates.' }, fr: { title: 'Modèles', description: 'Parcourez et personnalisez des modèles de CV professionnels.' } } },
+    44→    44→  { slug: 'job-tracker', icon: 'ClipboardList', articleCount: 2, content: { en: { title: 'Job Tracker', description: 'Track your job applications and manage your job search pipeline.' }, fr: { title: 'Suivi de Candidatures', description: 'Suivez vos candidatures et gérez votre processus de recherche d\'emploi.' } } },
+    45→    45→  { slug: 'billing-subscription', icon: 'CreditCard', articleCount: 3, content: { en: { title: 'Billing & Subscription', description: 'Manage your subscription, payments, and billing information.' }, fr: { title: 'Facturation et Abonnement', description: 'Gérez votre abonnement, vos paiements et vos informations de facturation.' } } },
+    46→    46→  { slug: 'security', icon: 'Shield', articleCount: 2, content: { en: { title: 'Security', description: 'Learn about our security measures and how to protect your account.' }, fr: { title: 'Sécurité', description: 'Découvrez nos mesures de sécurité et comment protéger votre compte.' } } },
+    47→    47→  { slug: 'privacy', icon: 'Eye', articleCount: 2, content: { en: { title: 'Privacy', description: 'Understand how we handle and protect your personal data.' }, fr: { title: 'Vie Privée', description: 'Comprenez comment nous traitons et protégeons vos données personnelles.' } } },
+    48→    48→  { slug: 'technical-issues', icon: 'Wrench', articleCount: 2, content: { en: { title: 'Technical Issues', description: 'Troubleshoot common technical problems and find solutions.' }, fr: { title: 'Problèmes Techniques', description: 'Résolvez les problèmes techniques courants et trouvez des solutions.' } } },
+    49→    49→];
+    50→    50→
+    51→    51→export const helpArticles: HelpArticle[] = [
+    52→    52→  {
+    53→    53→    slug: 'how-to-create-first-resume', category: 'getting-started', popular: true,
+    54→    54→    author: { name: 'Sarah Chen', role: 'Content Lead' }, date: '2025-06-15', lastUpdated: '2025-07-01',
+    55→    55→    seo: { en: { description: 'Learn how to create your first professional resume with CareerForge AI.', keywords: ['resume', 'create', 'first resume', 'getting started'] }, fr: { description: 'Apprenez à créer votre premier CV professionnel avec CareerForge AI.', keywords: ['CV', 'créer', 'premier CV', 'premiers pas'] } },
+    56→    56→    content: {
+    57→    57→      en: { title: 'How to Create Your First Resume', description: 'A step-by-step guide to building your first professional resume with CareerForge AI.', readingTime: 5, body: [
+    58→    58→        { type: 'paragraph', text: 'Creating your first resume with CareerForge AI is quick and straightforward. Our AI-powered platform guides you through every step, ensuring your resume meets ATS standards and stands out to recruiters.' },
+    59→    59→        { type: 'heading', text: 'Step 1: Complete Your Profile', level: 2 },
+    60→    60→        { type: 'paragraph', text: 'Before creating a resume, make sure your profile is complete with your personal information, job title, and career level. This information helps our AI generate personalized content tailored to your experience.' },
+    61→    61→        { type: 'heading', text: 'Step 2: Choose a Template', level: 2 },
+    62→    62→        { type: 'paragraph', text: 'Browse our collection of professionally designed templates. Each template is ATS-compatible and can be customized with your preferred colors, fonts, and layout. Choose one that best represents your professional brand.' },
+    63→    63→        { type: 'tip', variant: 'tip', title: 'Pro Tip', text: 'Choose a clean, professional template. Simple designs often perform better with ATS systems than overly creative layouts.' },
+    64→    64→        { type: 'heading', text: 'Step 3: Add Your Content', level: 2 },
+    65→    65→        { type: 'paragraph', text: 'Fill in your work experience, education, skills, and certifications. Our AI will suggest improvements and optimize your content for ATS compatibility as you type.' },
+    66→    66→        { type: 'steps', steps: [
+    67→    67→          { title: 'Add Work Experience', description: 'List your previous positions with job titles, company names, dates, and key achievements. Use action verbs and quantify results where possible.' },
+    68→    68→          { title: 'Add Education', description: 'Include your degrees, institutions, graduation dates, and relevant coursework or honors.' },
+    69→    69→          { title: 'Add Skills', description: 'List both technical and soft skills relevant to your target position. Our AI will suggest skills based on your job description.' },
+    70→    70→          { title: 'Review & Export', description: 'Review your complete resume, check the ATS score, and export it as a polished PDF.' }
+    71→    71→        ]},
+    72→    72→        { type: 'paragraph', text: 'Your resume is now ready! You can always come back to edit it, generate new versions for different positions, or use our AI to tailor it to specific job descriptions.' },
+    73→    73→      ]},
+    74→    74→      fr: { title: 'Comment Créer Votre Premier CV', description: 'Un guide étape par étape pour construire votre premier CV professionnel avec CareerForge AI.', readingTime: 5, body: [
+    75→    75→        { type: 'paragraph', text: 'Créer votre premier CV avec CareerForge AI est rapide et simple. Notre plateforme alimentée par l\'IA vous guide à chaque étape, garantissant que votre CV répond aux normes ATS et se distingue auprès des recruteurs.' },
+    76→    76→        { type: 'heading', text: 'Étape 1 : Complétez Votre Profil', level: 2 },
+    77→    77→        { type: 'paragraph', text: 'Avant de créer un CV, assurez-vous que votre profil est complet avec vos informations personnelles, votre titre d\'emploi et votre niveau de carrière. Ces informations aident notre IA à générer du contenu personnalisé adapté à votre expérience.' },
+    78→    78→        { type: 'heading', text: 'Étape 2 : Choisissez un Modèle', level: 2 },
+    79→    79→        { type: 'paragraph', text: 'Parcourez notre collection de modèles professionnellement conçus. Chaque modèle est compatible ATS et peut être personnalisé avec vos couleurs, polices et mise en page préférés.' },
+    80→    80→        { type: 'callout', variant: 'tip', title: 'Conseil Pro', text: 'Choisissez un modèle propre et professionnel. Les designs simples fonctionnent souvent mieux avec les systèmes ATS que les mises en page trop créatives.' },
+    81→    81→        { type: 'heading', text: 'Étape 3 : Ajoutez Votre Contenu', level: 2 },
+    82→    82→        { type: 'paragraph', text: 'Remplissez votre expérience professionnelle, votre formation, vos compétences et vos certifications. Notre IA suggérera des améliorations et optimisera votre contenu pour la compatibilité ATS au fur et à mesure que vous tapez.' },
+    83→    83→        { type: 'steps', steps: [
+    84→    84→          { title: 'Ajoutez l\'Expérience Professionnelle', description: 'Listez vos postes précédents avec les titres, noms d\'entreprises, dates et réalisations clés.' },
+    85→    85→          { title: 'Ajoutez la Formation', description: 'Incluez vos diplômes, établissements, dates de graduation et cours ou honneurs pertinents.' },
+    86→    86→          { title: 'Ajoutez les Compétences', description: 'Listez les compétences techniques et comportementales pertinentes pour le poste visé.' },
+    87→    87→          { title: 'Vérifiez et Exportez', description: 'Vérifiez votre CV complet, consultez le score ATS et exportez-le en PDF professionnel.' }
+    88→    88→        ]},
+    89→    89→        { type: 'paragraph', text: 'Votre CV est maintenant prêt ! Vous pouvez toujours revenir le modifier, générer de nouvelles versions pour différents postes ou utiliser notre IA pour l\'adapter à des descriptions d\'emploi spécifiques.' },
+    90→    90→      ]},
+    91→    91→    }
+    92→    92→  },
+    93→    93→  {
+    94→    94→    slug: 'how-ats-works', category: 'ats-optimization', popular: true,
+    95→    95→    author: { name: 'Marcus Johnson', role: 'Career Expert' }, date: '2025-06-20', lastUpdated: '2025-07-05',
+    96→    96→    seo: { en: { description: 'Understand how Applicant Tracking Systems work and why ATS optimization matters for your job search.', keywords: ['ATS', 'applicant tracking system', 'optimization', 'resume'] }, fr: { description: 'Comprenez comment fonctionnent les systèmes de suivi des candidats et pourquoi l\'optimisation ATS importe.', keywords: ['ATS', 'suivi candidats', 'optimisation', 'CV'] } },
+    97→    97→    content: {
+    98→    98→      en: { title: 'How ATS Works and Why It Matters', description: 'Understanding Applicant Tracking Systems is crucial for getting your resume noticed by employers.', readingTime: 6, body: [
+    99→    99→        { type: 'paragraph', text: 'An Applicant Tracking System (ATS) is software used by employers to manage job applications. Over 98% of Fortune 500 companies use an ATS to screen resumes before a human ever sees them. Understanding how these systems work is essential for job search success.' },
+   100→   100→        { type: 'heading', text: 'How ATS Processes Your Resume', level: 2 },
+   101→   101→        { type: 'paragraph', text: 'When you submit your resume, the ATS performs several automated tasks:' },
+   102→   102→        { type: 'list', items: ['Parses your resume text and extracts key information (name, contact, education, experience, skills)', 'Matches your qualifications against the job description requirements', 'Scores and ranks your resume based on keyword matches and relevance', 'Flags or filters out resumes that don\'t meet minimum criteria'] },
+   103→   103→        { type: 'heading', text: 'Common ATS Pitfalls', level: 2 },
+   104→   104→        { type: 'callout', variant: 'warning', title: 'Watch Out', text: 'These common mistakes can cause your resume to be rejected by ATS before a human reviewer ever sees it.' },
+   105→   105→        { type: 'list', items: ['Using images, graphics, or complex formatting that ATS cannot read', 'Submitting PDFs with scanned images instead of text-based PDFs', 'Missing critical keywords from the job description', 'Using non-standard section headings that ATS cannot recognize', 'Including headers/footers that interfere with text parsing'] },
+   106→   106→        { type: 'heading', text: 'How CareerForge AI Helps', level: 2 },
+   107→   107→        { type: 'paragraph', text: 'CareerForge AI is specifically designed to create ATS-optimized resumes. Our platform ensures your resume uses clean formatting, includes relevant keywords, and follows the structural conventions that ATS systems expect.' },
+   108→   108→        { type: 'tip', variant: 'tip', text: 'Use our built-in ATS Checker to scan your resume against specific job descriptions and get an instant compatibility score with actionable improvement suggestions.' },
+   109→   109→      ]},
+   110→   110→      fr: { title: 'Comment Fonctionne l\'ATS et Pourquoi C\'est Important', description: 'Comprendre les systèmes de suivi des candidats est crucial pour que votre CV soit remarqué par les employeurs.', readingTime: 6, body: [
+   111→   111→        { type: 'paragraph', text: 'Un système de suivi des candidats (ATS) est un logiciel utilisé par les employeurs pour gérer les candidatures. Plus de 98 % des entreprises du Fortune 500 utilisent un ATS pour filtrer les CV avant qu\'un humain ne les voie.' },
+   112→   112→        { type: 'heading', text: 'Comment l\'ATS Traite Votre CV', level: 2 },
+   113→   113→        { type: 'list', items: ['Analyse le texte de votre CV et extrait les informations clés', 'Fait correspondre vos qualifications aux exigences de l\'offre d\'emploi', 'Note et classe votre CV en fonction des correspondances de mots-clés', 'Signale ou filtre les CV qui ne répondent pas aux critères minimums'] },
+   114→   114→        { type: 'heading', text: 'Pièges Courants de l\'ATS', level: 2 },
+   115→   115→        { type: 'callout', variant: 'warning', title: 'Attention', text: 'Ces erreurs courantes peuvent entraîner le rejet de votre CV par l\'ATS avant qu\'un humain ne le consulte.' },
+   116→   116→        { type: 'list', items: ['Utilisation d\'images ou de formatages complexes que l\'ATS ne peut pas lire', 'Soumission de PDF avec des images numérisées au lieu de PDF basés sur le texte', 'Absence de mots-clés critiques de la description d\'emploi', 'Utilisation d\'en-têtes de section non standards', 'Inclusion d\'en-têtes/pieds de page qui interfèrent avec l\'analyse du texte'] },
+   117→   117→        { type: 'heading', text: 'Comment CareerForge AI Aide', level: 2 },
+   118→   118→        { type: 'paragraph', text: 'CareerForge AI est spécialement conçu pour créer des CV optimisés pour l\'ATS. Notre plateforme garantit que votre CV utilise un formatage propre, inclut des mots-clés pertinents et suit les conventions structurelles que les systèmes ATS attendent.' },
+   119→   119→        { type: 'callout', variant: 'tip', text: 'Utilisez notre Vérificateur ATS intégré pour analyser votre CV par rapport à des descriptions d\'emploi spécifiques et obtenir un score de compatibilité instantané.' },
+   120→   120→      ]},
+   121→   121→    }
+   122→   122→  },
+   123→   123→  {
+   124→   124→    slug: 'how-to-generate-cover-letter', category: 'ai-cover-letter', popular: true,
+   125→   125→    author: { name: 'Sarah Chen', role: 'Content Lead' }, date: '2025-06-22', lastUpdated: '2025-07-02',
+   126→   126→    seo: { en: { description: 'Learn how to generate a personalized cover letter using CareerForge AI.', keywords: ['cover letter', 'AI', 'generate', 'personalized'] }, fr: { description: 'Apprenez à générer une lettre de motivation personnalisée avec CareerForge AI.', keywords: ['lettre de motivation', 'IA', 'générer', 'personnalisée'] } },
+   127→   127→    content: {
+   128→   128→      en: { title: 'How to Generate a Cover Letter with AI', description: 'Create a compelling, personalized cover letter in seconds with our AI-powered tool.', readingTime: 4, body: [
+   129→   129→        { type: 'paragraph', text: 'CareerForge AI\'s cover letter generator uses advanced AI to create personalized cover letters tailored to specific job positions. Here\'s how to make the most of this powerful feature.' },
+   130→   130→        { type: 'heading', text: 'Generating Your Cover Letter', level: 2 },
+   131→   131→        { type: 'steps', steps: [
+   132→   132→          { title: 'Navigate to Cover Letters', description: 'From your dashboard, click on "Cover Letter" in the left sidebar to access the cover letter generator.' },
+   133→   133→          { title: 'Enter Job Details', description: 'Paste the job description or enter the job title and company name. The more details you provide, the more personalized your cover letter will be.' },
+   134→   134→          { title: 'Generate with AI', description: 'Click "Generate with AI" and our system will create a tailored cover letter based on your resume and the job requirements.' },
+   135→   135→          { title: 'Review and Edit', description: 'Always review the generated letter. Personalize it further with specific examples from your experience that match the job requirements.' }
+   136→   136→        ]},
+   137→   137→        { type: 'callout', variant: 'info', title: 'Best Practice', text: 'While our AI generates excellent cover letters, always add a personal touch. Mention a specific project, achievement, or connection to the company to make your letter truly stand out.' },
+   138→   138→        { type: 'heading', text: 'Tips for Great Cover Letters', level: 2 },
+   139→   139→        { type: 'list', items: ['Address the hiring manager by name when possible', 'Open with a strong hook that relates to the company or role', 'Include 2-3 specific achievements that match the job requirements', 'Keep it concise — ideally one page', 'End with a clear call to action and your contact information'] },
+   140→   140→      ]},
+   141→   141→      fr: { title: 'Comment Générer une Lettre de Motivation avec l\'IA', description: 'Créez une lettre de motivation convaincante et personnalisée en quelques secondes avec notre outil alimenté par l\'IA.', readingTime: 4, body: [
+   142→   142→        { type: 'paragraph', text: 'Le générateur de lettres de motivation de CareerForge AI utilise une IA avancée pour créer des lettres de motivation personnalisées adaptées à des postes spécifiques.' },
+   143→   143→        { type: 'heading', text: 'Générer Votre Lettre de Motivation', level: 2 },
+   144→   144→        { type: 'steps', steps: [
+   145→   145→          { title: 'Accédez aux Lettres de Motivation', description: 'Depuis votre tableau de bord, cliquez sur "Lettre de Motivation" dans la barre latérale.' },
+   146→   146→          { title: 'Entrez les Détails du Poste', description: 'Collez la description d\'emploi ou entrez le titre du poste et le nom de l\'entreprise.' },
+   147→   147→          { title: 'Générez avec l\'IA', description: 'Cliquez sur "Générer avec l\'IA" et notre système créera une lettre de motivation sur mesure.' },
+   148→   148→          { title: 'Vérifiez et Modifiez', description: 'Vérifiez toujours la lettre générée. Personnalisez-la avec des exemples spécifiques de votre expérience.' }
+   149→   149→        ]},
+   150→   150→        { type: 'callout', variant: 'info', title: 'Bonne Pratique', text: 'Bien que notre IA génère d\'excellentes lettres de motivation, ajoutez toujours une touche personnelle. Mentionnez un projet ou une réalisation spécifique.' },
+   151→   151→        { type: 'heading', text: 'Conseils pour d\'Excellentes Lettres de Motivation', level: 2 },
+   152→   152→        { type: 'list', items: ['Adressez-vous au recruteur par son nom lorsque c\'est possible', 'Commencez par un accroche forte liée à l\'entreprise ou au poste', 'Incluez 2-3 réalisations spécifiques correspondant aux exigences du poste', 'Gardez-la concise — idéalement une page', 'Terminez par un appel à l\'action clair'] },
+   153→   153→      ]},
+   154→   154→    }
+   155→   155→  },
+   156→   156→  {
+   157→   157→    slug: 'how-to-change-language', category: 'account-profile', popular: true,
+   158→   158→    author: { name: 'Aminata Diallo', role: 'Support Specialist' }, date: '2025-06-10', lastUpdated: '2025-06-28',
+   159→   159→    seo: { en: { description: 'Learn how to change the display language of CareerForge AI.', keywords: ['language', 'settings', 'english', 'french'] }, fr: { description: 'Apprenez à changer la langue d\'affichage de CareerForge AI.', keywords: ['langue', 'paramètres', 'anglais', 'français'] } },
+   160→   160→    content: {
+   161→   161→      en: { title: 'How to Change Your Language', description: 'Switch between English and French on CareerForge AI.', readingTime: 2, body: [
+   162→   162→        { type: 'paragraph', text: 'CareerForge AI supports both English and French. You can switch the display language at any time using the language toggle in the navigation bar.' },
+   163→   163→        { type: 'heading', text: 'Changing the Language', level: 2 },
+   164→   164→        { type: 'steps', steps: [
+   165→   165→          { title: 'Find the Language Toggle', description: 'Look for the Globe icon in the top navigation bar (next to the theme toggle).' },
+   166→   166→          { title: 'Click to Switch', description: 'Click the Globe icon to instantly switch between English and French. The entire interface will update to your selected language.' },
+   167→   167→          { title: 'Language is Saved', description: 'Your language preference is automatically saved and will persist across sessions.' }
+   168→   168→        ]},
+   169→   169→        { type: 'callout', variant: 'info', text: 'The language setting affects the entire CareerForge AI interface, including all menus, labels, and system messages. Resume and cover letter content remains in the language you wrote it.' },
+   170→   170→      ]},
+   171→   171→      fr: { title: 'Comment Changer de Langue', description: 'Basculez entre l\'anglais et le français sur CareerForge AI.', readingTime: 2, body: [
+   172→   172→        { type: 'paragraph', text: 'CareerForge AI prend en charge l\'anglais et le français. Vous pouvez changer la langue d\'affichage à tout moment.' },
+   173→   173→        { type: 'heading', text: 'Changer la Langue', level: 2 },
+   174→   174→        { type: 'steps', steps: [
+   175→   175→          { title: 'Trouvez le Sélecteur de Langue', description: 'Recherchez l\'icône Globe dans la barre de navigation supérieure.' },
+   176→   176→          { title: 'Cliquez pour Changer', description: 'Cliquez sur l\'icône Globe pour basculer instantanément entre l\'anglais et le français.' },
+   177→   177→          { title: 'La Langue Est Sauvegardée', description: 'Votre préférence de langue est automatiquement sauvegardée et persiste entre les sessions.' }
+   178→   178→        ]},
+   179→   179→        { type: 'callout', variant: 'info', text: 'Le paramètre de langue affecte l\'ensemble de l\'interface de CareerForge AI. Le contenu de votre CV et de votre lettre de motivation reste dans la langue dans laquelle vous l\'avez rédigé.' },
+   180→   180→      ]},
+   181→   181→    }
+   182→   182→  },
+   183→   183→  {
+   184→   184→    slug: 'how-to-switch-dark-mode', category: 'account-profile', popular: true,
+   185→   185→    author: { name: 'Aminata Diallo', role: 'Support Specialist' }, date: '2025-06-12', lastUpdated: '2025-06-28',
+   186→   186→    seo: { en: { description: 'Learn how to switch between light and dark mode.', keywords: ['theme', 'dark mode', 'light mode', 'appearance'] }, fr: { description: 'Apprenez à basculer entre le mode clair et le mode sombre.', keywords: ['thème', 'mode sombre', 'mode clair', 'apparence'] } },
+   187→   187→    content: {
+   188→   188→      en: { title: 'How to Switch Between Light and Dark Mode', description: 'Customize your viewing experience with light and dark mode.', readingTime: 2, body: [
+   189→   189→        { type: 'paragraph', text: 'CareerForge AI supports both light and dark mode to suit your preferences and reduce eye strain during extended use.' },
+   190→   190→        { type: 'heading', text: 'Switching Themes', level: 2 },
+   191→   191→        { type: 'steps', steps: [
+   192→   192→          { title: 'Find the Theme Toggle', description: 'Look for the Sun/Moon icon in the top navigation bar.' },
+   193→   193→          { title: 'Click to Toggle', description: 'Click the icon to switch between light and dark mode. The change applies instantly.' },
+   194→   194→          { title: 'Automatic Detection', description: 'CareerForge AI can also detect your system preference and apply the appropriate theme automatically.' }
+   195→   195→        ]},
+   196→   196→      ]},
+   197→   197→      fr: { title: 'Comment Basculer entre le Mode Clair et Sombre', description: 'Personnalisez votre expérience d\'affichage avec le mode clair et sombre.', readingTime: 2, body: [
+   198→   198→        { type: 'paragraph', text: 'CareerForge AI prend en charge le mode clair et sombre pour s\'adapter à vos préférences.' },
+   199→   199→        { type: 'heading', text: 'Changer de Thème', level: 2 },
+   200→   200→        { type: 'steps', steps: [
+   201→   201→          { title: 'Trouvez le Sélecteur de Thème', description: 'Recherchez l\'icône Soleil/Lune dans la barre de navigation supérieure.' },
+   202→   202→          { title: 'Cliquez pour Basculer', description: 'Cliquez sur l\'icône pour basculer entre le mode clair et sombre.' },
+   203→   203→          { title: 'Détection Automatique', description: 'CareerForge AI peut également détecter la préférence de votre système.' }
+   204→   204→        ]},
+   205→   205→      ]},
+   206→   206→    }
+   207→   207→  },
+   208→   208→  {
+   209→   209→    slug: 'how-to-delete-account', category: 'account-profile', popular: true,
+   210→   210→    author: { name: 'Aminata Diallo', role: 'Support Specialist' }, date: '2025-06-18', lastUpdated: '2025-07-01',
+   211→   211→    seo: { en: { description: 'Learn how to permanently delete your CareerForge AI account.', keywords: ['delete', 'account', 'remove', 'data'] }, fr: { description: 'Apprenez à supprimer définitivement votre compte CareerForge AI.', keywords: ['supprimer', 'compte', 'données'] } },
+   212→   212→    content: {
+   213→   213→      en: { title: 'How to Delete Your Account', description: 'Permanently delete your account and all associated data.', readingTime: 3, body: [
+   214→   214→        { type: 'paragraph', text: 'If you no longer wish to use CareerForge AI, you can permanently delete your account. Please note that this action is irreversible and will remove all your data.' },
+   215→   215→        { type: 'callout', variant: 'warning', title: 'Important', text: 'Account deletion is permanent. All your resumes, cover letters, application data, and personal information will be permanently removed within 30 days. This action cannot be undone.' },
+   216→   216→        { type: 'heading', text: 'Before You Delete', level: 2 },
+   217→   217→        { type: 'list', items: ['Export any resumes or cover letters you want to keep', 'Cancel any active subscriptions', 'Download your data from account settings'] },
+   218→   218→        { type: 'heading', text: 'How to Delete', level: 2 },
+   219→   219→        { type: 'steps', steps: [
+   220→   220→          { title: 'Go to Settings', description: 'Navigate to your account settings from the dashboard.' },
+   221→   221→          { title: 'Find Delete Account', description: 'Scroll to the "Danger Zone" section and click "Delete Account".' },
+   222→   222→          { title: 'Confirm Deletion', description: 'Type your email address to confirm, then click "Delete My Account".' }
+   223→   223→        ]},
+   224→   224→      ]},
+   225→   225→      fr: { title: 'Comment Supprimer Votre Compte', description: 'Supprimez définitivement votre compte et toutes les données associées.', readingTime: 3, body: [
+   226→   226→        { type: 'paragraph', text: 'Si vous ne souhaitez plus utiliser CareerForge AI, vous pouvez supprimer définitivement votre compte. Cette action est irréversible.' },
+   227→   227→        { type: 'callout', variant: 'warning', title: 'Important', text: 'La suppression du compte est permanente. Tous vos CV, lettres de motivation et données personnelles seront supprimés dans les 30 jours. Cette action ne peut pas être annulée.' },
+   228→   228→        { type: 'heading', text: 'Avant de Supprimer', level: 2 },
+   229→   229→        { type: 'list', items: ['Exportez les CV ou lettres de motivation que vous souhaitez conserver', 'Annulez tout abonnement actif', 'Téléchargez vos données depuis les paramètres du compte'] },
+   230→   230→        { type: 'heading', text: 'Comment Supprimer', level: 2 },
+   231→   231→        { type: 'steps', steps: [
+   232→   232→          { title: 'Allez dans les Paramètres', description: 'Accédez aux paramètres de votre compte depuis le tableau de bord.' },
+   233→   233→          { title: 'Trouvez Supprimer le Compte', description: 'Défilez jusqu\'à la section "Zone de Danger" et cliquez sur "Supprimer le Compte".' },
+   234→   234→          { title: 'Confirmez la Suppression', description: 'Tapez votre adresse e-mail pour confirmer, puis cliquez sur "Supprimer Mon Compte".' }
+   235→   235→        ]},
+   236→   236→      ]},
+   237→   237→    }
+   238→   238→  },
+   239→   239→  {
+   240→   240→    slug: 'managing-your-subscription', category: 'billing-subscription', popular: false,
+   241→   241→    author: { name: 'Marcus Johnson', role: 'Career Expert' }, date: '2025-06-25', lastUpdated: '2025-07-03',
+   242→   242→    seo: { en: { description: 'Manage your CareerForge AI subscription plan, payments, and billing.', keywords: ['subscription', 'billing', 'payment', 'plan'] }, fr: { description: 'Gérez votre abonnement CareerForge AI, vos paiements et votre facturation.', keywords: ['abonnement', 'facturation', 'paiement', 'forfait'] } },
+   243→   243→    content: {
+   244→   244→      en: { title: 'Managing Your Subscription', description: 'Everything you need to know about plans, payments, and billing.', readingTime: 5, body: [
+   245→   245→        { type: 'paragraph', text: 'CareerForge AI offers flexible subscription plans to suit your needs. Here\'s how to manage your subscription.' },
+   246→   246→        { type: 'heading', text: 'Available Plans', level: 2 },
+   247→   247→        { type: 'list', items: ['Free Plan: 5 resumes and 5 cover letters with basic AI suggestions', 'Pro Plan (5,000 FCFA/month): Unlimited resumes and cover letters with full AI features', 'Enterprise Plan (24,000 FCFA/month): Everything in Pro plus team features and API access'] },
+   248→   248→        { type: 'heading', text: 'Upgrading or Downgrading', level: 2 },
+   249→   249→        { type: 'paragraph', text: 'You can change your plan at any time from your account settings. When upgrading, you\'ll get immediate access to new features. When downgrading, you\'ll retain access to your current plan until the end of the billing period.' },
+   250→   250→        { type: 'heading', text: 'Cancellation and Refunds', level: 2 },
+   251→   251→        { type: 'paragraph', text: 'You can cancel your subscription at any time. We offer a 7-day money-back guarantee for new subscribers. After cancellation, you\'ll continue to have access to paid features until the end of your current billing period.' },
+   252→   252→      ]},
+   253→   253→      fr: { title: 'Gérer Votre Abonnement', description: 'Tout ce que vous devez savoir sur les forfaits, les paiements et la facturation.', readingTime: 5, body: [
+   254→   254→        { type: 'paragraph', text: 'CareerForge AI propose des forfaits d\'abonnement flexibles pour répondre à vos besoins.' },
+   255→   255→        { type: 'heading', text: 'Forfaits Disponibles', level: 2 },
+   256→   256→        { type: 'list', items: ['Forfait Gratuit : 5 CV et 5 lettres de motivation avec suggestions IA de base', 'Forfait Pro (5 000 FCFA/mois) : CV et lettres illimités avec toutes les fonctionnalités IA', 'Forfait Entreprise (24 000 FCFA/mois) : Tout le Pro plus les fonctionnalités d\'équipe et l\'accès API'] },
+   257→   257→        { type: 'heading', text: 'Mise à Niveau ou Régression', level: 2 },
+   258→   258→        { type: 'paragraph', text: 'Vous pouvez changer de forfait à tout moment depuis les paramètres de votre compte. En cas de mise à niveau, vous aurez immédiatement accès aux nouvelles fonctionnalités.' },
+   259→   259→        { type: 'heading', text: 'Annulation et Remboursements', level: 2 },
+   260→   260→        { type: 'paragraph', text: 'Vous pouvez annuler votre abonnement à tout moment. Nous offrons une garantie de remboursement de 7 jours pour les nouveaux abonnés.' },
+   261→   261→      ]},
+   262→   262→    }
+   263→   263→  },
+   264→   264→  {
+   265→   265→    slug: 'customizing-templates', category: 'templates', popular: false,
+   266→   266→    author: { name: 'Sarah Chen', role: 'Content Lead' }, date: '2025-06-28', lastUpdated: '2025-07-01',
+   267→   267→    seo: { en: { description: 'Learn how to customize resume templates to match your personal brand.', keywords: ['template', 'customize', 'design', 'personalize'] }, fr: { description: 'Apprenez à personnaliser les modèles de CV pour correspondre à votre marque personnelle.', keywords: ['modèle', 'personnaliser', 'design'] } },
+   268→   268→    content: {
+   269→   269→      en: { title: 'Customizing Resume Templates', description: 'Make your resume stand out by personalizing templates to match your brand.', readingTime: 4, body: [
+   270→   270→        { type: 'paragraph', text: 'CareerForge AI offers a variety of professionally designed templates. Each template is fully customizable, allowing you to adjust colors, fonts, layout, and section order.' },
+   271→   271→        { type: 'heading', text: 'Template Customization Options', level: 2 },
+   272→   272→        { type: 'list', items: ['Color schemes: Choose from preset palettes or create custom colors', 'Font combinations: Select from professional font pairings', 'Section layout: Rearrange sections to highlight your strengths', 'Spacing and margins: Fine-tune the visual balance of your resume'] },
+   273→   273→        { type: 'callout', variant: 'tip', text: 'Keep your customization professional. Subtle color accents and clean typography make a stronger impression than bold or flashy designs.' },
+   274→   274→        { type: 'heading', text: 'ATS Compatibility', level: 2 },
+   275→   275→        { type: 'paragraph', text: 'All our templates are designed to be ATS-compatible. However, be mindful that excessive customization (especially with graphics and complex layouts) may reduce ATS readability. Always check your ATS score after making changes.' },
+   276→   276→      ]},
+   277→   277→      fr: { title: 'Personnaliser les Modèles de CV', description: 'Faites ressortir votre CV en personnalisant les modèles.', readingTime: 4, body: [
+   278→   278→        { type: 'paragraph', text: 'CareerForge AI propose une variété de modèles professionnellement conçus. Chaque modèle est entièrement personnalisable.' },
+   279→   279→        { type: 'heading', text: 'Options de Personnalisation', level: 2 },
+   280→   280→        { type: 'list', items: ['Palettes de couleurs : Choisissez parmi des palettes prédéfinies ou créez des couleurs personnalisées', 'Combinaisons de polices : Sélectionnez des paires de polices professionnelles', 'Mise en page : Réorganisez les sections pour mettre en valeur vos atouts', 'Espacement et marges : Ajustez l\'équilibre visuel de votre CV'] },
+   281→   281→        { type: 'callout', variant: 'tip', text: 'Gardez votre personnalisation professionnelle. Des accents de couleur subtils font une plus forte impression que des designs voyants.' },
+   282→   282→      ]},
+   283→   283→    }
+   284→   284→  },
+   285→   285→  {
+   286→   286→    slug: 'securing-your-account', category: 'security', popular: false,
+   287→   287→    author: { name: 'Aminata Diallo', role: 'Support Specialist' }, date: '2025-06-30', lastUpdated: '2025-07-02',
+   288→   288→    seo: { en: { description: 'Learn how to keep your CareerForge AI account secure.', keywords: ['security', 'password', 'two-factor', 'protect'] }, fr: { description: 'Apprenez à sécuriser votre compte CareerForge AI.', keywords: ['sécurité', 'mot de passe', 'protéger'] } },
+   289→   289→    content: {
+   290→   290→      en: { title: 'Securing Your Account', description: 'Best practices for keeping your CareerForge AI account safe.', readingTime: 3, body: [
+   291→   291→        { type: 'paragraph', text: 'Protecting your account is important. Here are the best practices to keep your CareerForge AI account and data secure.' },
+   292→   292→        { type: 'heading', text: 'Password Security', level: 2 },
+   293→   293→        { type: 'list', items: ['Use a strong, unique password (at least 8 characters with uppercase, lowercase, numbers, and special characters)', 'Never share your password with anyone', 'Use a password manager to generate and store strong passwords', 'Change your password periodically'] },
+   294→   294→        { type: 'heading', text: 'Account Protection Tips', level: 2 },
+   295→   295→        { type: 'list', items: ['Sign out from shared or public computers after use', 'Keep your email secure — it\'s used for account recovery', 'Review your account activity regularly', 'Contact support immediately if you notice suspicious activity'] },
+   296→   296→        { type: 'callout', variant: 'info', text: 'CareerForge AI uses industry-standard encryption (AES-256 at rest, TLS 1.3 in transit) to protect your data. We never store your password in plain text.' },
+   297→   297→      ]},
+   298→   298→      fr: { title: 'Sécuriser Votre Compte', description: 'Meilleures pratiques pour garder votre compte CareerForge AI en sécurité.', readingTime: 3, body: [
+   299→   299→        { type: 'paragraph', text: 'Protéger votre compte est important. Voici les meilleures pratiques pour garder votre compte et vos données en sécurité.' },
+   300→   300→        { type: 'heading', text: 'Sécurité du Mot de Passe', level: 2 },
+   301→   301→        { type: 'list', items: ['Utilisez un mot de passe fort et unique (au moins 8 caractères)', 'Ne partagez jamais votre mot de passe', 'Utilisez un gestionnaire de mots de passe', 'Changez votre mot de passe périodiquement'] },
+   302→   302→        { type: 'heading', text: 'Conseils de Protection', level: 2 },
+   303→   303→        { type: 'list', items: ['Déconnectez-vous des ordinateurs partagés après utilisation', 'Gardez votre e-mail sécurisé', 'Vérifiez régulièrement l\'activité de votre compte', 'Contactez le support immédiatement si vous remarquez une activité suspecte'] },
+   304→   304→      ]},
+   305→   305→    }
+   306→   306→  },
+   307→   307→  {
+   308→   308→    slug: 'using-ai-resume-suggestions', category: 'resume-builder', popular: false,
+   309→   309→    author: { name: 'Marcus Johnson', role: 'Career Expert' }, date: '2025-07-01', lastUpdated: '2025-07-05',
+   310→   310→    seo: { en: { description: 'How to use AI suggestions to improve your resume content.', keywords: ['AI', 'suggestions', 'resume', 'improve'] }, fr: { description: 'Comment utiliser les suggestions IA pour améliorer le contenu de votre CV.', keywords: ['IA', 'suggestions', 'CV', 'améliorer'] } },
+   311→   311→    content: {
+   312→   312→      en: { title: 'Using AI Resume Suggestions', description: 'Leverage AI to write more compelling resume content.', readingTime: 4, body: [
+   313→   313→        { type: 'paragraph', text: 'CareerForge AI provides intelligent suggestions as you build your resume. These suggestions help you write stronger bullet points, better descriptions, and more impactful content overall.' },
+   314→   314→        { type: 'heading', text: 'Types of AI Suggestions', level: 2 },
+   315→   315→        { type: 'list', items: ['Content Enhancement: AI suggests stronger verbs, more specific metrics, and clearer descriptions', 'Keyword Optimization: AI identifies missing keywords from your target job description', 'Skills Recommendations: AI suggests relevant skills based on your experience and target role', 'Formatting Tips: AI recommends structural improvements for better readability'] },
+   316→   316→        { type: 'callout', variant: 'tip', text: 'AI suggestions are a starting point. Always review and personalize them to accurately reflect your unique experience and achievements.' },
+   317→   317→      ]},
+   318→   318→      fr: { title: 'Utiliser les Suggestions IA pour le CV', description: 'Tirez parti de l\'IA pour rédiger un contenu de CV plus convaincant.', readingTime: 4, body: [
+   319→   319→        { type: 'paragraph', text: 'CareerForge AI fournit des suggestions intelligentes pendant la création de votre CV.' },
+   320→   320→        { type: 'heading', text: 'Types de Suggestions IA', level: 2 },
+   321→   321→        { type: 'list', items: ['Amélioration du contenu : l\'IA suggère des verbes plus forts et des descriptions plus claires', 'Optimisation des mots-clés : l\'IA identifie les mots-clés manquants', 'Recommandations de compétences : l\'IA suggère des compétences pertinentes', 'Conseils de formatage : l\'IA recommande des améliorations structurelles'] },
+   322→   322→      ]},
+   323→   323→    }
+   324→   324→  },
+   325→   325→  {
+   326→   326→    slug: 'tracking-job-applications', category: 'job-tracker', popular: false,
+   327→   327→    author: { name: 'Sarah Chen', role: 'Content Lead' }, date: '2025-07-02', lastUpdated: '2025-07-05',
+   328→   328→    seo: { en: { description: 'Learn how to use the job application tracker to manage your job search.', keywords: ['tracker', 'applications', 'job search', 'manage'] }, fr: { description: 'Apprenez à utiliser le suivi de candidatures pour gérer votre recherche d\'emploi.', keywords: ['suivi', 'candidatures', 'recherche d\'emploi'] } },
+   329→   329→    content: {
+   330→   330→      en: { title: 'Tracking Job Applications', description: 'Stay organized and never miss an opportunity with the Job Tracker.', readingTime: 3, body: [
+   331→   331→        { type: 'paragraph', text: 'The Job Tracker helps you organize your job search by tracking every application in one place. Stay on top of deadlines, follow-ups, and status updates.' },
+   332→   332→        { type: 'heading', text: 'Adding Applications', level: 2 },
+   333→   333→        { type: 'steps', steps: [
+   334→   334→          { title: 'Click "Add Application"', description: 'Enter the job title, company name, and a link to the job posting.' },
+   335→   335→          { title: 'Set Status', description: 'Track each application through stages: Applied, Interviewing, Offer, Rejected, or Accepted.' },
+   336→   336→          { title: 'Add Notes', description: 'Keep track of important details like interview dates, contacts, and follow-up reminders.' }
+   337→   337→        ]},
+   338→   338→      ]},
+   339→   339→      fr: { title: 'Suivre vos Candidatures', description: 'Restez organisé et ne manquez aucune opportunité avec le Suivi de Candidatures.', readingTime: 3, body: [
+   340→   340→        { type: 'paragraph', text: 'Le Suivi de Candidatures vous aide à organiser votre recherche d\'emploi en suivant chaque candidature au même endroit.' },
+   341→   341→        { type: 'heading', text: 'Ajouter des Candidatures', level: 2 },
+   342→   342→        { type: 'steps', steps: [
+   343→   343→          { title: 'Cliquez sur "Ajouter une Candidature"', description: 'Entrez le titre du poste, le nom de l\'entreprise et le lien vers l\'offre.' },
+   344→   344→          { title: 'Définissez le Statut', description: 'Suivez chaque candidature à travers les étapes : Postulé, Entretien, Offre, Refusé ou Accepté.' },
+   345→   345→          { title: 'Ajoutez des Notes', description: 'Gardez une trace des détails importants comme les dates d\'entretien et les rappels.' }
+   346→   346→        ]},
+   347→   347→      ]},
+   348→   348→    }
+   349→   349→  },
+   350→   350→  {
+   351→   351→    slug: 'payment-methods-and-pricing', category: 'billing-subscription', popular: false,
+   352→   352→    author: { name: 'Marcus Johnson', role: 'Career Expert' }, date: '2025-07-03', lastUpdated: '2025-07-05',
+   353→   353→    seo: { en: { description: 'Information about accepted payment methods and pricing.', keywords: ['payment', 'pricing', 'FCFA', 'methods'] }, fr: { description: 'Informations sur les méthodes de paiement acceptées et les tarifs.', keywords: ['paiement', 'tarifs', 'FCFA', 'méthodes'] } },
+   354→   354→    content: {
+   355→   355→      en: { title: 'Payment Methods and Pricing', description: 'Everything about payment options, currency, and pricing.', readingTime: 3, body: [
+   356→   356→        { type: 'paragraph', text: 'CareerForge AI processes payments in FCFA (West African CFA Franc). We support multiple payment methods to make subscribing convenient for our users.' },
+   357→   357→        { type: 'heading', text: 'Accepted Payment Methods', level: 2 },
+   358→   358→        { type: 'list', items: ['Mobile money and digital wallets', 'Credit and debit cards (Visa, Mastercard)', 'Bank transfers'] },
+   359→   359→        { type: 'heading', text: 'Pricing', level: 2 },
+   360→   360→        { type: 'list', items: ['Free: No cost, includes basic features', 'Pro: 5,000 FCFA/month or 48,000 FCFA/year (save 20%)', 'Enterprise: 24,000 FCFA/month or 230,400 FCFA/year (save 20%)'] },
+   361→   361→        { type: 'callout', variant: 'info', text: 'All prices are displayed inclusive of applicable taxes. Annual plans offer significant savings compared to monthly billing.' },
+   362→   362→      ]},
+   363→   363→      fr: { title: 'Méthodes de Paiement et Tarifs', description: 'Tout sur les options de paiement, la devise et les tarifs.', readingTime: 3, body: [
+   364→   364→        { type: 'paragraph', text: 'CareerForge AI traite les paiements en FCFA (Franc CFA de l\'Afrique de l\'Ouest).' },
+   365→   365→        { type: 'heading', text: 'Méthodes de Paiement Acceptées', level: 2 },
+   366→   366→        { type: 'list', items: ['Mobile money et portefeuilles numériques', 'Cartes de crédit et de débit (Visa, Mastercard)', 'Virements bancaires'] },
+   367→   367→        { type: 'heading', text: 'Tarifs', level: 2 },
+   368→   368→        { type: 'list', items: ['Gratuit : Sans frais, inclut les fonctionnalités de base', 'Pro : 5 000 FCFA/mois ou 48 000 FCFA/an (économie de 20 %)', 'Entreprise : 24 000 FCFA/mois ou 230 400 FCFA/an (économie de 20 %)'] },
+   369→   369→      ]},
+   370→   370→    }
+   371→   371→  },
+   372→   372→  {
+   373→   373→    slug: 'resume-review-ai-feedback', category: 'resume-review', popular: false,
+   374→   374→    author: { name: 'Sarah Chen', role: 'Content Lead' }, date: '2025-07-04', lastUpdated: '2025-07-05',
+   375→   375→    seo: { en: { description: 'Get AI-powered feedback on your resume to improve your chances.', keywords: ['review', 'feedback', 'AI', 'improve'] }, fr: { description: 'Obtenez des retours alimentés par l\'IA sur votre CV pour améliorer vos chances.', keywords: ['révision', 'retours', 'IA', 'améliorer'] } },
+   376→   376→    content: {
+   377→   377→      en: { title: 'Getting AI Resume Feedback', description: 'Use our AI review feature to get actionable feedback on your resume.', readingTime: 3, body: [
+   378→   378→        { type: 'paragraph', text: 'The AI Resume Review feature analyzes your resume and provides detailed feedback on content, structure, and ATS compatibility.' },
+   379→   379→        { type: 'heading', text: 'How to Get a Review', level: 2 },
+   380→   380→        { type: 'steps', steps: [
+   381→   381→          { title: 'Open Your Resume', description: 'Go to your resume in the editor and click "AI Review."' },
+   382→   382→          { title: 'Review Feedback', description: 'The AI will analyze your resume and provide specific suggestions organized by category.' },
+   383→   383→          { title: 'Apply Suggestions', description: 'Click on any suggestion to apply it directly to your resume, or dismiss it if not relevant.' }
+   384→   384→        ]},
+   385→   385→        { type: 'callout', variant: 'tip', text: 'Run an AI review after every major edit to ensure your resume stays optimized and error-free.' },
+   386→   386→      ]},
+   387→   387→      fr: { title: 'Obtenir des Retours IA sur Votre CV', description: 'Utilisez notre fonctionnalité de révision IA pour obtenir des retours exploitables.', readingTime: 3, body: [
+   388→   388→        { type: 'paragraph', text: 'La fonctionnalité de Révision IA analyse votre CV et fournit des retours détaillés sur le contenu, la structure et la compatibilité ATS.' },
+   389→   389→        { type: 'heading', text: 'Comment Obtenir une Révision', level: 2 },
+   390→   390→        { type: 'steps', steps: [
+   391→   391→          { title: 'Ouvrez Votre CV', description: 'Allez à votre CV dans l\'éditeur et cliquez sur "Révision IA."' },
+   392→   392→          { title: 'Consultez les Retours', description: 'L\'IA analysera votre CV et fournira des suggestions spécifiques.' },
+   393→   393→          { title: 'Appliquez les Suggestions', description: 'Cliquez sur une suggestion pour l\'appliquer directement ou ignorez-la.' }
+   394→   394→        ]},
+   395→   395→      ]},
+   396→   396→    }
+   397→   397→  },
+   398→   398→  {
+   399→   399→    slug: 'your-data-and-privacy', category: 'privacy', popular: false,
+   400→   400→    author: { name: 'Aminata Diallo', role: 'Support Specialist' }, date: '2025-07-02', lastUpdated: '2025-07-05',
+   401→   401→    seo: { en: { description: 'Understand how CareerForge AI handles your personal data.', keywords: ['privacy', 'data', 'GDPR', 'protection'] }, fr: { description: 'Comprenez comment CareerForge AI traite vos données personnelles.', keywords: ['vie privée', 'données', 'RGPD', 'protection'] } },
+   402→   402→    content: {
+   403→   403→      en: { title: 'Your Data and Privacy', description: 'How we collect, use, and protect your personal information.', readingTime: 4, body: [
+   404→   404→        { type: 'paragraph', text: 'At CareerForge AI, we take your privacy seriously. This article summarizes our data practices. For the full details, please read our Privacy Policy.' },
+   405→   405→        { type: 'heading', text: 'What We Collect', level: 2 },
+   406→   406→        { type: 'list', items: ['Account information: name, email, job title, career level', 'Resume and cover letter content you create', 'Usage analytics (anonymized)', 'Device and browser information'] },
+   407→   407→        { type: 'heading', text: 'Your Rights', level: 2 },
+   408→   408→        { type: 'list', items: ['Access and download your data at any time', 'Update or correct your personal information', 'Request deletion of your account and data', 'Object to processing for direct marketing', 'Restrict processing in certain circumstances'] },
+   409→   409→        { type: 'callout', variant: 'info', text: 'We do not sell your personal data to third parties. Your resume content is never used to train AI models without your explicit consent.' },
+   410→   410→      ]},
+   411→   411→      fr: { title: 'Vos Données et Votre Vie Privée', description: 'Comment nous collectons, utilisons et protégeons vos informations personnelles.', readingTime: 4, body: [
+   412→   412→        { type: 'paragraph', text: 'Chez CareerForge AI, nous prenons votre vie privée au sérieux. Pour les détails complets, veuillez lire notre Politique de Confidentialité.' },
+   413→   413→        { type: 'heading', text: 'Ce que Nous Collectons', level: 2 },
+   414→   414→        { type: 'list', items: ['Informations de compte : nom, e-mail, titre d\'emploi, niveau de carrière', 'Contenu de CV et lettres de motivation que vous créez', 'Analytiques d\'utilisation (anonymisées)', 'Informations sur l\'appareil et le navigateur'] },
+   415→   415→        { type: 'heading', text: 'Vos Droits', level: 2 },
+   416→   416→        { type: 'list', items: ['Accéder et télécharger vos données à tout moment', 'Mettre à jour ou corriger vos informations personnelles', 'Demander la suppression de votre compte et de vos données', 'Vous opposer au traitement à des fins de marketing direct', 'Demander la limitation du traitement'] },
+   417→   417→      ]},
+   418→   418→    }
+   419→   419→  },
+   420→   420→  {
+   421→   421→    slug: 'troubleshooting-common-issues', category: 'technical-issues', popular: false,
+   422→   422→    author: { name: 'Aminata Diallo', role: 'Support Specialist' }, date: '2025-07-03', lastUpdated: '2025-07-05',
+   423→   423→    seo: { en: { description: 'Solutions to common technical issues with CareerForge AI.', keywords: ['troubleshoot', 'issues', 'fix', 'problem'] }, fr: { description: 'Solutions aux problèmes techniques courants avec CareerForge AI.', keywords: ['dépannage', 'problèmes', 'résoudre'] } },
+   424→   424→    content: {
+   425→   425→      en: { title: 'Troubleshooting Common Issues', description: 'Solutions for the most frequently encountered technical problems.', readingTime: 4, body: [
+   426→   426→        { type: 'paragraph', text: 'If you\'re experiencing technical difficulties, check these common solutions before contacting support.' },
+   427→   427→        { type: 'heading', text: 'Page Not Loading', level: 2 },
+   428→   428→        { type: 'list', items: ['Clear your browser cache and cookies', 'Try a different browser (Chrome, Firefox, Safari)', 'Check your internet connection', 'Disable browser extensions that might interfere'] },
+   429→   429→        { type: 'heading', text: 'PDF Export Issues', level: 2 },
+   430→   430→        { type: 'list', items: ['Ensure your browser allows pop-ups from CareerForge AI', 'Try a different browser if the PDF is blank', 'Check that your resume content is not empty'] },
+   431→   431→        { type: 'heading', text: 'AI Suggestions Not Working', level: 2 },
+   432→   432→        { type: 'list', items: ['Free plan users are limited to 5 AI suggestions per day', 'Check your internet connection for real-time AI features', 'Try refreshing the page and retrying'] },
+   433→   433→        { type: 'callout', variant: 'info', text: 'If none of these solutions work, please contact our support team at support@careerforge.ai with a description of the issue and your browser/device information.' },
+   434→   434→      ]},
+   435→   435→      fr: { title: 'Résoudre les Problèmes Courants', description: 'Solutions aux problèmes techniques les plus fréquemment rencontrés.', readingTime: 4, body: [
+   436→   436→        { type: 'paragraph', text: 'Si vous rencontrez des difficultés techniques, vérifiez ces solutions courantes avant de contacter le support.' },
+   437→   437→        { type: 'heading', text: 'La Page ne Charge Pas', level: 2 },
+   438→   438→        { type: 'list', items: ['Videz le cache et les cookies de votre navigateur', 'Essayez un autre navigateur', 'Vérifiez votre connexion internet', 'Désactivez les extensions de navigateur'] },
+   439→   439→        { type: 'heading', text: 'Problèmes d\'Export PDF', level: 2 },
+   440→   440→        { type: 'list', items: ['Assurez-vous que votre navigateur autorise les pop-ups', 'Essayez un autre navigateur si le PDF est vide', 'Vérifiez que le contenu de votre CV n\'est pas vide'] },
+   441→   441→        { type: 'heading', text: 'Suggestions IA Non Fonctionnelles', level: 2 },
+   442→   442→        { type: 'list', items: ['Les utilisateurs du forfait gratuit sont limités à 5 suggestions IA par jour', 'Vérifiez votre connexion internet', 'Essayez de rafraîchir la page'] },
+   443→   443→      ]},
+   444→   444→    }
+   445→   445→  },
+   446→   446→  {
+   447→   447→    slug: 'getting-started-guide', category: 'getting-started', popular: false,
+   448→   448→    author: { name: 'Sarah Chen', role: 'Content Lead' }, date: '2025-06-15', lastUpdated: '2025-07-01',
+   449→   449→    seo: { en: { description: 'Complete getting started guide for CareerForge AI.', keywords: ['getting started', 'guide', 'setup', 'beginner'] }, fr: { description: 'Guide complet de démarrage pour CareerForge AI.', keywords: ['premiers pas', 'guide', 'configuration', 'débutant'] } },
+   450→   450→    content: {
+   451→   451→      en: { title: 'Getting Started with CareerForge AI', description: 'A complete guide to setting up and using CareerForge AI for the first time.', readingTime: 6, body: [
+   452→   452→        { type: 'paragraph', text: 'Welcome to CareerForge AI! This guide will walk you through everything you need to get started with our AI-powered career platform.' },
+   453→   453→        { type: 'heading', text: 'Create Your Account', level: 2 },
+   454→   454→        { type: 'paragraph', text: 'Sign up with your email and password, or use Google or Apple sign-in for faster registration. You\'ll receive a verification email — click the link to verify your account.' },
+   455→   455→        { type: 'heading', text: 'Complete Your Profile', level: 2 },
+   456→   456→        { type: 'paragraph', text: 'After verification, you\'ll be guided through a quick onboarding process where you\'ll provide:' },
+   457→   457→        { type: 'list', items: ['Your name and basic information', 'Your country and location', 'Your current job title', 'Your career level (Student, Graduate, Professional, etc.)', 'Your career goals'] },
+   458→   458→        { type: 'heading', text: 'Explore Your Dashboard', level: 2 },
+   459→   459→        { type: 'paragraph', text: 'Your dashboard is your command center. From here, you can access all CareerForge AI features including the resume builder, cover letter generator, ATS checker, and job tracker.' },
+   460→   460→        { type: 'callout', variant: 'tip', text: 'Start by creating your first resume. The AI will guide you through each section and provide suggestions to make your resume stand out.' },
+   461→   461→      ]},
+   462→   462→      fr: { title: 'Démarrer avec CareerForge AI', description: 'Un guide complet pour configurer et utiliser CareerForge AI pour la première fois.', readingTime: 6, body: [
+   463→   463→        { type: 'paragraph', text: 'Bienvenue sur CareerForge AI ! Ce guide vous accompagnera dans tout ce dont vous avez besoin pour démarrer.' },
+   464→   464→        { type: 'heading', text: 'Créez Votre Compte', level: 2 },
+   465→   465→        { type: 'paragraph', text: 'Inscrivez-vous avec votre e-mail et mot de passe, ou utilisez la connexion Google ou Apple pour une inscription plus rapide.' },
+   466→   466→        { type: 'heading', text: 'Complétez Votre Profil', level: 2 },
+   467→   467→        { type: 'list', items: ['Votre nom et informations de base', 'Votre pays et votre localisation', 'Votre titre d\'emploi actuel', 'Votre niveau de carrière', 'Vos objectifs professionnels'] },
+   468→   468→        { type: 'heading', text: 'Explorez Votre Tableau de Bord', level: 2 },
+   469→   469→        { type: 'paragraph', text: 'Votre tableau de bord est votre centre de commandement. Accédez à toutes les fonctionnalités : constructeur de CV, générateur de lettres de motivation, vérificateur ATS et suivi de candidatures.' },
+   470→   470→      ]},
+   471→   471→    }
+   472→   472→  },
+   473→   473→  {
+   474→   474→    slug: 'keyword-optimization-tips', category: 'ats-optimization', popular: false,
+   475→   475→    author: { name: 'Marcus Johnson', role: 'Career Expert' }, date: '2025-07-01', lastUpdated: '2025-07-05',
+   476→   476→    seo: { en: { description: 'Learn how to optimize your resume keywords for ATS systems.', keywords: ['keywords', 'ATS', 'optimization', 'tips'] }, fr: { description: 'Apprenez à optimiser les mots-clés de votre CV pour les systèmes ATS.', keywords: ['mots-clés', 'ATS', 'optimisation', 'conseils'] } },
+   477→   477→    content: {
+   478→   478→      en: { title: 'Keyword Optimization Tips', description: 'Master the art of keyword optimization to pass ATS screening.', readingTime: 4, body: [
+   479→   479→        { type: 'paragraph', text: 'Keywords are the bridge between your resume and the ATS. Here\'s how to optimize them effectively.' },
+   480→   480→        { type: 'heading', text: 'Finding the Right Keywords', level: 2 },
+   481→   481→        { type: 'list', items: ['Carefully read the job description and identify repeated terms', 'Include both the full term and common acronyms (e.g., "Search Engine Optimization" and "SEO")', 'Use industry-standard job titles and skill names', 'Include both hard skills (technical) and soft skills (interpersonal)'] },
+   482→   482→        { type: 'callout', variant: 'tip', text: 'Use CareerForge AI\'s ATS Checker to analyze your resume against a specific job description. It will identify missing keywords and suggest where to add them.' },
+   483→   483→      ]},
+   484→   484→      fr: { title: 'Conseils d\'Optimisation des Mots-Clés', description: 'Maîtrisez l\'art de l\'optimisation des mots-clés pour passer le filtrage ATS.', readingTime: 4, body: [
+   485→   485→        { type: 'paragraph', text: 'Les mots-clés sont le pont entre votre CV et l\'ATS. Voici comment les optimiser efficacement.' },
+   486→   486→        { type: 'heading', text: 'Trouver les Bons Mots-Clés', level: 2 },
+   487→   487→        { type: 'list', items: ['Lisez attentivement la description d\'emploi et identifiez les termes répétés', 'Incluez le terme complet et les acronymes courants', 'Utilisez des titres d\'emploi et des noms de compétences standard de l\'industrie', 'Incluez les compétences techniques et comportementales'] },
+   488→   488→      ]},
+   489→   489→    }
+   490→   490→  },
+   491→   491→  {
+   492→   492→    slug: 'two-factor-authentication', category: 'security', popular: false,
+   493→   493→    author: { name: 'Aminata Diallo', role: 'Support Specialist' }, date: '2025-07-04', lastUpdated: '2025-07-05',
+   494→   494→    seo: { en: { description: 'Learn about account security features and best practices.', keywords: ['security', 'authentication', 'account safety'] }, fr: { description: 'Découvrez les fonctionnalités de sécurité du compte.', keywords: ['sécurité', 'authentification', 'sécurité du compte'] } },
+   495→   495→    content: {
+   496→   496→      en: { title: 'Account Security Features', description: 'Advanced security features to protect your CareerForge AI account.', readingTime: 3, body: [
+   497→   497→        { type: 'paragraph', text: 'CareerForge AI implements multiple layers of security to protect your account and data.' },
+   498→   498→        { type: 'heading', text: 'Security Features', level: 2 },
+   499→   499→        { type: 'list', items: ['Encrypted password storage using industry-standard hashing', 'Secure session management with automatic timeout', 'Email verification for sensitive actions', 'Regular security audits and monitoring'] },
+   500→   500→        { type: 'heading', text: 'If Your Account is Compromised', level: 2 },
+   501→   501→        { type: 'steps', steps: [
+   502→   502→          { title: 'Change Your Password', description: 'Immediately change your password to a new, strong one.' },
+   503→   503→          { title: 'Contact Support', description: 'Email support@careerforge.ai to report the compromise.' },
+   504→   504→          { title: 'Review Activity', description: 'Check your account for any unauthorized changes or data access.' }
+   505→   505→        ]},
+   506→   506→      ]},
+   507→   507→      fr: { title: 'Fonctionnalités de Sécurité du Compte', description: 'Des fonctionnalités de sécurité avancées pour protéger votre compte CareerForge AI.', readingTime: 3, body: [
+   508→   508→        { type: 'paragraph', text: 'CareerForge AI implémente plusieurs couches de sécurité pour protéger votre compte et vos données.' },
+   509→   509→        { type: 'heading', text: 'Fonctionnalités de Sécurité', level: 2 },
+   510→   510→        { type: 'list', items: ['Stockage de mot de passe chiffré avec hachage standard de l\'industrie', 'Gestion de session sécurisée avec déconnexion automatique', 'Vérification par e-mail pour les actions sensibles', 'Audits de sécurité réguliers et surveillance'] },
+   511→   511→      ]},
+   512→   512→    }
+   513→   513→  },
+   514→   514→  {
+   515→   515→    slug: 'understanding-ai-cover-letter', category: 'ai-cover-letter', popular: false,
+   516→   516→    author: { name: 'Marcus Johnson', role: 'Career Expert' }, date: '2025-07-03', lastUpdated: '2025-07-05',
+   517→   517→    seo: { en: { description: 'How AI generates cover letters and how to use them effectively.', keywords: ['AI', 'cover letter', 'generation', 'personalization'] }, fr: { description: 'Comment l\'IA génère des lettres de motivation et comment les utiliser efficacement.', keywords: ['IA', 'lettre de motivation', 'génération', 'personnalisation'] } },
+   518→   518→    content: {
+   519→   519→      en: { title: 'How AI Cover Letter Generation Works', description: 'Understanding the technology behind AI-powered cover letters.', readingTime: 4, body: [
+   520→   520→        { type: 'paragraph', text: 'CareerForge AI uses advanced language models to generate cover letters that are tailored to your experience and the specific job you\'re applying for.' },
+   521→   521→        { type: 'heading', text: 'How It Works', level: 2 },
+   522→   522→        { type: 'list', items: ['The AI analyzes your resume to understand your skills, experience, and career trajectory', 'It processes the target job description to identify key requirements and desired qualifications', 'It generates a cover letter that bridges your experience with the job requirements', 'The output is personalized — not a generic template — and highlights your most relevant achievements'] },
+   523→   523→        { type: 'callout', variant: 'info', text: 'Your resume data is processed only to generate the cover letter and is not stored or used for any other purpose. We do not use your data to train our AI models.' },
+   524→   524→      ]},
+   525→   525→      fr: { title: 'Comment Fonctionne la Génération IA de Lettres de Motivation', description: 'Comprendre la technologie derrière les lettres de motivation alimentées par l\'IA.', readingTime: 4, body: [
+   526→   526→        { type: 'paragraph', text: 'CareerForge AI utilise des modèles de langage avancés pour générer des lettres de motivation adaptées à votre expérience et au poste spécifique.' },
+   527→   527→        { type: 'heading', text: 'Comment Ça Marche', level: 2 },
+   528→   528→        { type: 'list', items: ['L\'IA analyse votre CV pour comprendre vos compétences et votre expérience', 'Elle traite la description d\'emploi cible pour identifier les exigences clés', 'Elle génère une lettre de motivation qui relie votre expérience aux exigences du poste', 'Le résultat est personnalisé — pas un modèle générique'] },
+   529→   529→      ]},
+   530→   530→    }
+   531→   531→  },
+   532→   532→  {
+   533→   533→    slug: 'exporting-and-sharing-resumes', category: 'resume-builder', popular: false,
+   534→   534→    author: { name: 'Sarah Chen', role: 'Content Lead' }, date: '2025-07-05', lastUpdated: '2025-07-05',
+   535→   535→    seo: { en: { description: 'How to export and share your resumes in different formats.', keywords: ['export', 'PDF', 'share', 'download'] }, fr: { description: 'Comment exporter et partager vos CV dans différents formats.', keywords: ['export', 'PDF', 'partager', 'télécharger'] } },
+   536→   536→    content: {
+   537→   537→      en: { title: 'Exporting and Sharing Resumes', description: 'Download your resume as a professional PDF or share it directly.', readingTime: 3, body: [
+   538→   538→        { type: 'paragraph', text: 'Once your resume is ready, you can export it in professional formats or share it directly with employers.' },
+   539→   539→        { type: 'heading', text: 'Export Options', level: 2 },
+   540→   540→        { type: 'list', items: ['PDF Export: Generates a clean, ATS-compatible PDF file', 'Direct Link: Share a view-only link to your resume (coming soon)'] },
+   541→   541→        { type: 'heading', text: 'Best Practices for Sharing', level: 2 },
+   542→   542→        { type: 'list', items: ['Always export as PDF — this preserves formatting across all devices', 'Name your file professionally: "FirstName_LastName_Resume.pdf"', 'Verify the PDF looks correct before sending', 'Keep a backup copy stored safely'] },
+   543→   543→      ]},
+   544→   544→      fr: { title: 'Exporter et Partager des CV', description: 'Téléchargez votre CV en PDF professionnel ou partagez-le directement.', readingTime: 3, body: [
+   545→   545→        { type: 'paragraph', text: 'Une fois votre CV prêt, vous pouvez l\'exporter en formats professionnels ou le partager directement.' },
+   546→   546→        { type: 'heading', text: 'Options d\'Export', level: 2 },
+   547→   547→        { type: 'list', items: ['Export PDF : Génère un fichier PDF propre et compatible ATS', 'Lien Direct : Partagez un lien en lecture seule (bientôt disponible)'] },
+   548→   548→        { type: 'heading', text: 'Bonnes Pratiques pour le Partage', level: 2 },
+   549→   549→        { type: 'list', items: ['Exportez toujours en PDF pour préserver le formatage', 'Nommez votre fichier professionnellement', 'Vérifiez que le PDF est correct avant de l\'envoyer', 'Gardez une copie de sauvegarde'] },
+   550→   550→      ]},
+   551→   551→    }
+   552→   552→  },
+   553→   553→  {
+   554→   554→    slug: 'data-retention-and-deletion', category: 'privacy', popular: false,
+   555→   555→    author: { name: 'Aminata Diallo', role: 'Support Specialist' }, date: '2025-07-05', lastUpdated: '2025-07-05',
+   556→   556→    seo: { en: { description: 'How long we keep your data and how to request deletion.', keywords: ['data retention', 'deletion', 'GDPR', 'privacy'] }, fr: { description: 'Combien de temps nous conservons vos données et comment demander la suppression.', keywords: ['rétention des données', 'suppression', 'RGPD', 'vie privée'] } },
+   557→   557→    content: {
+   558→   558→      en: { title: 'Data Retention and Deletion', description: 'Understanding how long we keep your data and your right to deletion.', readingTime: 3, body: [
+   559→   559→        { type: 'paragraph', text: 'We retain your data only as long as necessary to provide our services. Here\'s our data retention policy.' },
+   560→   560→        { type: 'heading', text: 'Retention Periods', level: 2 },
+   561→   561→        { type: 'list', items: ['Active account data: Retained for as long as your account is active', 'Deleted accounts: Data removed from active systems within 30 days, from backups within 90 days', 'Analytics data: Anonymized and retained for up to 2 years for service improvement'] },
+   562→   562→        { type: 'heading', text: 'Requesting Data Deletion', level: 2 },
+   563→   563→        { type: 'paragraph', text: 'You can request complete data deletion through your account settings or by contacting privacy@careerforge.ai. We will process your request within 30 days.' },
+   564→   564→      ]},
+   565→   565→      fr: { title: 'Rétention et Suppression des Données', description: 'Comprendre la durée de conservation de vos données et votre droit à la suppression.', readingTime: 3, body: [
+   566→   566→        { type: 'paragraph', text: 'Nous conservons vos données uniquement aussi longtemps que nécessaire pour fournir nos services.' },
+   567→   567→        { type: 'heading', text: 'Délais de Conservation', level: 2 },
+   568→   568→        { type: 'list', items: ['Données de compte actif : Conservées tant que votre compte est actif', 'Comptes supprimés : Données supprimées des systèmes actifs sous 30 jours', 'Données analytiques : Anonymisées et conservées jusqu\'à 2 ans'] },
+   569→   569→        { type: 'heading', text: 'Demander la Suppression des Données', level: 2 },
+   570→   570→        { type: 'paragraph', text: 'Vous pouvez demander la suppression complète de vos données via les paramètres de votre compte ou en contactant privacy@careerforge.ai.' },
+   571→   571→      ]},
+   572→   572→    }
+   573→   573→  },
+   574→   574→];
+   575→   575→
+   576→   576→type Locale = 'en' | 'fr';
+   577→   577→
+   578→   578→export function getArticleBySlug(slug: string, locale: Locale): HelpArticle | undefined {
+   579→   579→  return helpArticles.find(a => a.slug === slug);
+   580→   580→}
+   581→   581→
+   582→   582→export function getArticlesByCategory(categorySlug: string, locale: Locale): HelpArticle[] {
+   583→   583→  return helpArticles.filter(a => a.category === categorySlug);
+   584→   584→}
+   585→   585→
+   586→   586→export function getPopularArticles(locale: Locale): HelpArticle[] {
+   587→   587→  return helpArticles.filter(a => a.popular);
+   588→   588→}
+   589→   589→
+   590→   590→export function searchArticles(query: string, locale: Locale): HelpArticle[] {
+   591→   591→  const q = query.toLowerCase().trim();
+   592→   592→  if (!q) return [];
+   593→   593→  return helpArticles.filter(a => {
+   594→   594→    const c = a.content[locale];
+   595→   595→    return (
+   596→   596→      c.title.toLowerCase().includes(q) ||
+   597→   597→      c.description.toLowerCase().includes(q) ||
+   598→   598→      c.body.some(b => {
+   599→   599→        if (b.type === 'paragraph' || b.type === 'quote') return b.text.toLowerCase().includes(q);
+   600→   600→        if (b.type === 'list') return b.items.some(i => i.toLowerCase().includes(q));
+   601→   601→        if (b.type === 'heading') return b.text.toLowerCase().includes(q);
+   602→   602→        if (b.type === 'callout') return (b.title + b.text).toLowerCase().includes(q);
+   603→   603→        if (b.type === 'steps') return b.steps.some(s => (s.title + s.description).toLowerCase().includes(q));
+   604→   604→        return false;
+   605→   605→      })
+   606→   606→    );
+   607→   607→  });
+   608→   608→}
+   609→   609→
+   610→   610→export function getRelatedArticles(currentSlug: string, category: string, locale: Locale, limit = 3): HelpArticle[] {
+   611→   611→  return helpArticles
+   612→   612→    .filter(a => a.slug !== currentSlug && a.category === category)
+   613→   613→    .slice(0, limit);
+   614→   614→}
+   615→   615→
+   616→   616→export function getAdjacentArticles(slug: string, locale: Locale): { prev?: HelpArticle; next?: HelpArticle } {
+   617→   617→  const idx = helpArticles.findIndex(a => a.slug === slug);
+   618→   618→  return {
+   619→   619→    prev: idx > 0 ? helpArticles[idx - 1] : undefined,
+   620→   620→    next: idx < helpArticles.length - 1 ? helpArticles[idx + 1] : undefined,
+   621→   621→  };
+   622→   622→}

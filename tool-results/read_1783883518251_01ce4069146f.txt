@@ -1,0 +1,1342 @@
+     1→'use client';
+     2→
+     3→import { useState, useEffect, useCallback, useRef } from 'react';
+     4→import { motion, AnimatePresence } from 'framer-motion';
+     5→import {
+     6→  Sparkles,
+     7→  ChevronDown,
+     8→  ChevronUp,
+     9→  CheckCircle2,
+    10→  XCircle,
+    11→  Info,
+    12→  AlertTriangle,
+    13→  FileText,
+    14→  Target,
+    15→  BookOpen,
+    16→  GraduationCap,
+    17→  Type,
+    18→  Layout,
+    19→  Trophy,
+    20→  SpellCheck,
+    21→  Eye,
+    22→  ArrowUpRight,
+    23→  ArrowDownRight,
+    24→  Clock,
+    25→  RotateCcw,
+    26→  History,
+    27→  Lock,
+    28→  Plus,
+    29→  Lightbulb,
+    30→  CircleCheckBig,
+    31→  Zap,
+    32→} from 'lucide-react';
+    33→import { FeatureGate } from '@/components/billing/feature-gate';
+    34→import { UpgradeModal } from '@/components/billing/upgrade-modal';
+    35→import { Button } from '@/components/ui/button';
+    36→import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+    37→import { Badge } from '@/components/ui/badge';
+    38→import { Skeleton } from '@/components/ui/skeleton';
+    39→import { Progress } from '@/components/ui/progress';
+    40→import { Separator } from '@/components/ui/separator';
+    41→import {
+    42→  Select,
+    43→  SelectContent,
+    44→  SelectItem,
+    45→  SelectTrigger,
+    46→  SelectValue,
+    47→} from '@/components/ui/select';
+    48→import { Textarea } from '@/components/ui/textarea';
+    49→import {
+    50→  Collapsible,
+    51→  CollapsibleContent,
+    52→  CollapsibleTrigger,
+    53→} from '@/components/ui/collapsible';
+    54→import { ScrollArea } from '@/components/ui/scroll-area';
+    55→import { useAuth } from '@/lib/auth/context';
+    56→
+    57→// ─── Types ───────────────────────────────────────────────────────────────────
+    58→
+    59→interface Resume {
+    60→  id: string;
+    61→  title: string;
+    62→  template: string;
+    63→  status: string;
+    64→  updated_at: string;
+    65→}
+    66→
+    67→interface CategoryScore {
+    68→  score: number;
+    69→  label: string;
+    70→}
+    71→
+    72→interface KeywordAnalysis {
+    73→  matched: string[];
+    74→  missing: string[];
+    75→  suggested: string[];
+    76→  matchPercentage: number;
+    77→}
+    78→
+    79→interface GrammarIssue {
+    80→  message: string;
+    81→  suggestion: string;
+    82→  severity: 'warning' | 'error' | 'info';
+    83→}
+    84→
+    85→interface FormattingIssue {
+    86→  issue: string;
+    87→  suggestion: string;
+    88→  severity: 'warning' | 'info';
+    89→}
+    90→
+    91→interface Suggestion {
+    92→  category: string;
+    93→  message: string;
+    94→  priority: 'high' | 'medium' | 'low';
+    95→  section: string;
+    96→}
+    97→
+    98→interface AtsReport {
+    99→  id: string;
+   100→  overallScore: number;
+   101→  categoryScores: Record<string, CategoryScore>;
+   102→  keywordAnalysis: KeywordAnalysis;
+   103→  grammarIssues: GrammarIssue[];
+   104→  formattingIssues: FormattingIssue[];
+   105→  suggestions: Suggestion[];
+   106→  createdAt: string;
+   107→}
+   108→
+   109→interface HistoryEntry {
+   110→  id: string;
+   111→  overallScore: number;
+   112→  resumeId: string;
+   113→  resumeTitle: string;
+   114→  createdAt: string;
+   115→}
+   116→
+   117→type PageState = 'initial' | 'loading' | 'results';
+   118→
+   119→const CATEGORY_ICONS: Record<string, React.ElementType> = {
+   120→  contactInfo: FileText,
+   121→  formatting: Layout,
+   122→  keywords: Target,
+   123→  skillsMatch: Zap,
+   124→  workExperience: BookOpen,
+   125→  education: GraduationCap,
+   126→  grammar: SpellCheck,
+   127→  readability: Eye,
+   128→  achievements: Trophy,
+   129→};
+   130→
+   131→const CATEGORY_KEYS = [
+   132→  'contactInfo',
+   133→  'formatting',
+   134→  'keywords',
+   135→  'skillsMatch',
+   136→  'workExperience',
+   137→  'education',
+   138→  'grammar',
+   139→  'readability',
+   140→  'achievements',
+   141→];
+   142→
+   143→const LOADING_STEPS = [
+   144→  'Analyzing formatting...',
+   145→  'Checking keywords...',
+   146→  'Scoring achievements...',
+   147→  'Generating recommendations...',
+   148→];
+   149→
+   150→// ─── Helper functions ────────────────────────────────────────────────────────
+   151→
+   152→function getScoreColor(score: number): string {
+   153→  if (score <= 40) return 'text-red-500';
+   154→  if (score <= 70) return 'text-amber-500';
+   155→  return 'text-emerald-500';
+   156→}
+   157→
+   158→function getScoreBgColor(score: number): string {
+   159→  if (score <= 40) return 'bg-red-500';
+   160→  if (score <= 70) return 'bg-amber-500';
+   161→  return 'bg-emerald-500';
+   162→}
+   163→
+   164→function getScoreTrackColor(score: number): string {
+   165→  if (score <= 40) return 'stroke-red-500';
+   166→  if (score <= 70) return 'stroke-amber-500';
+   167→  return 'stroke-emerald-500';
+   168→}
+   169→
+   170→function getScoreLabel(score: number): string {
+   171→  if (score <= 40) return 'Needs Work';
+   172→  if (score <= 70) return 'Good';
+   173→  return 'Excellent';
+   174→}
+   175→
+   176→function getScoreStatusText(score: number): string {
+   177→  if (score <= 40) return 'Critical';
+   178→  if (score <= 55) return 'Below Average';
+   179→  if (score <= 70) return 'Average';
+   180→  if (score <= 85) return 'Above Average';
+   181→  return 'Excellent';
+   182→}
+   183→
+   184→function getPriorityColor(priority: string): string {
+   185→  switch (priority) {
+   186→    case 'high': return 'bg-red-100 text-red-700 border-red-200 dark:bg-red-950/60 dark:text-red-400 dark:border-red-800';
+   187→    case 'medium': return 'bg-amber-100 text-amber-700 border-amber-200 dark:bg-amber-950/60 dark:text-amber-400 dark:border-amber-800';
+   188→    case 'low': return 'bg-emerald-100 text-emerald-700 border-emerald-200 dark:bg-emerald-950/60 dark:text-emerald-400 dark:border-emerald-800';
+   189→    default: return 'bg-muted text-muted-foreground';
+   190→  }
+   191→}
+   192→
+   193→function getSeverityIcon(severity: string) {
+   194→  switch (severity) {
+   195→    case 'error': return <XCircle className="size-4 shrink-0 text-red-500" aria-hidden="true" />;
+   196→    case 'warning': return <AlertTriangle className="size-4 shrink-0 text-amber-500" aria-hidden="true" />;
+   197→    case 'info': return <Info className="size-4 shrink-0 text-brand" aria-hidden="true" />;
+   198→    default: return <Info className="size-4 shrink-0 text-muted-foreground" aria-hidden="true" />;
+   199→  }
+   200→}
+   201→
+   202→function formatDate(dateStr: string): string {
+   203→  return new Date(dateStr).toLocaleDateString('en-US', {
+   204→    month: 'short',
+   205→    day: 'numeric',
+   206→    year: 'numeric',
+   207→    hour: 'numeric',
+   208→    minute: '2-digit',
+   209→  });
+   210→}
+   211→
+   212→// ─── Animated Score Circle ───────────────────────────────────────────────────
+   213→
+   214→function AnimatedScoreCircle({ score, size = 160 }: { score: number; size?: number }) {
+   215→  const [displayScore, setDisplayScore] = useState(0);
+   216→  const strokeWidth = 10;
+   217→  const radius = (size - strokeWidth) / 2;
+   218→  const circumference = 2 * Math.PI * radius;
+   219→  const center = size / 2;
+   220→  const color = getScoreTrackColor(score);
+   221→
+   222→  useEffect(() => {
+   223→    const duration = 1200;
+   224→    const startTime = Date.now();
+   225→    const animate = () => {
+   226→      const elapsed = Date.now() - startTime;
+   227→      const progress = Math.min(elapsed / duration, 1);
+   228→      const eased = 1 - Math.pow(1 - progress, 3);
+   229→      setDisplayScore(Math.round(score * eased));
+   230→      if (progress < 1) requestAnimationFrame(animate);
+   231→    };
+   232→    const raf = requestAnimationFrame(animate);
+   233→    return () => cancelAnimationFrame(raf);
+   234→  }, [score]);
+   235→
+   236→  return (
+   237→    <div className="relative inline-flex items-center justify-center" role="img" aria-label={`ATS Score: ${score} out of 100`}>
+   238→      <svg width={size} height={size} className="-rotate-90">
+   239→        <circle
+   240→          cx={center}
+   241→          cy={center}
+   242→          r={radius}
+   243→          fill="none"
+   244→          stroke="currentColor"
+   245→          className="text-muted/30"
+   246→          strokeWidth={strokeWidth}
+   247→        />
+   248→        <motion.circle
+   249→          cx={center}
+   250→          cy={center}
+   251→          r={radius}
+   252→          fill="none"
+   253→          className={color}
+   254→          strokeWidth={strokeWidth}
+   255→          strokeLinecap="round"
+   256→          strokeDasharray={circumference}
+   257→          initial={{ strokeDashoffset: circumference }}
+   258→          animate={{ strokeDashoffset: circumference - (circumference * score) / 100 }}
+   259→          transition={{ duration: 1.2, ease: [0.25, 0.46, 0.45, 0.94] }}
+   260→        />
+   261→      </svg>
+   262→      <div className="absolute flex flex-col items-center">
+   263→        <span className={`font-[family-name:var(--font-poppins)] text-4xl font-bold tabular-nums ${getScoreColor(score)}`}>
+   264→          {displayScore}
+   265→        </span>
+   266→        <span className="text-xs text-muted-foreground">/ 100</span>
+   267→      </div>
+   268→    </div>
+   269→  );
+   270→}
+   271→
+   272→// ─── Loading State ───────────────────────────────────────────────────────────
+   273→
+   274→function LoadingState() {
+   275→  const [currentStep, setCurrentStep] = useState(0);
+   276→
+   277→  useEffect(() => {
+   278→    const interval = setInterval(() => {
+   279→      setCurrentStep((prev) => (prev + 1) % LOADING_STEPS.length);
+   280→    }, 2200);
+   281→    return () => clearInterval(interval);
+   282→  }, []);
+   283→
+   284→  return (
+   285→    <motion.div
+   286→      initial={{ opacity: 0, y: 20 }}
+   287→      animate={{ opacity: 1, y: 0 }}
+   288→      exit={{ opacity: 0, y: -10 }}
+   289→      transition={{ duration: 0.3 }}
+   290→      className="flex flex-col items-center gap-8 py-12"
+   291→      role="status"
+   292→      aria-label="Analyzing resume"
+   293→    >
+   294→      {/* Pulsing score circle skeleton */}
+   295→      <div className="relative flex items-center justify-center">
+   296→        <motion.div
+   297→          className="size-40 rounded-full border-4 border-muted"
+   298→          animate={{ scale: [1, 1.04, 1] }}
+   299→          transition={{ duration: 2, repeat: Infinity, ease: 'easeInOut' }}
+   300→        />
+   301→        <motion.div
+   302→          className="absolute inset-2 rounded-full border-4 border-dashed border-brand/30"
+   303→          animate={{ rotate: 360 }}
+   304→          transition={{ duration: 3, repeat: Infinity, ease: 'linear' }}
+   305→        />
+   306→        <div className="absolute flex flex-col items-center">
+   307→          <Sparkles className="size-6 text-brand animate-pulse" aria-hidden="true" />
+   308→          <span className="mt-2 text-sm font-medium text-muted-foreground">Analyzing...</span>
+   309→        </div>
+   310→      </div>
+   311→
+   312→      {/* Step indicators */}
+   313→      <div className="w-full max-w-md space-y-3">
+   314→        {LOADING_STEPS.map((step, idx) => (
+   315→          <motion.div
+   316→            key={step}
+   317→            initial={{ opacity: 0, x: -12 }}
+   318→            animate={{ opacity: 1, x: 0 }}
+   319→            transition={{ delay: idx * 0.15, duration: 0.3 }}
+   320→            className={`flex items-center gap-3 rounded-lg px-4 py-3 transition-colors duration-300 ${
+   321→              idx === currentStep ? 'bg-brand/10 border border-brand/20' : 'border border-transparent'
+   322→            }`}
+   323→          >
+   324→            <motion.div
+   325→              animate={{
+   326→                scale: idx === currentStep ? [1, 1.2, 1] : 1,
+   327→                opacity: idx <= currentStep ? 1 : 0.3,
+   328→              }}
+   329→              transition={{ duration: 1, repeat: idx === currentStep ? Infinity : 0 }}
+   330→            >
+   331→              {idx < currentStep ? (
+   332→                <CheckCircle2 className="size-5 text-emerald-500" aria-hidden="true" />
+   333→              ) : (
+   334→                <div className={`size-5 rounded-full border-2 ${idx === currentStep ? 'border-brand' : 'border-muted-foreground/30'}`} />
+   335→              )}
+   336→            </motion.div>
+   337→            <span className={`text-sm font-medium transition-colors duration-300 ${
+   338→              idx === currentStep ? 'text-brand' : idx < currentStep ? 'text-emerald-600' : 'text-muted-foreground'
+   339→            }`}>
+   340→              {step}
+   341→            </span>
+   342→            {idx === currentStep && (
+   343→              <motion.div
+   344→                className="ml-auto size-4 rounded-full bg-brand"
+   345→                animate={{ opacity: [1, 0.3, 1] }}
+   346→                transition={{ duration: 1.2, repeat: Infinity }}
+   347→                aria-hidden="true"
+   348→              />
+   349→            )}
+   350→          </motion.div>
+   351→        ))}
+   352→      </div>
+   353→    </motion.div>
+   354→  );
+   355→}
+   356→
+   357→// ─── Category Score Card ─────────────────────────────────────────────────────
+   358→
+   359→function CategoryScoreCard({
+   360→  categoryKey,
+   361→  score,
+   362→  label,
+   363→  index,
+   364→}: {
+   365→  categoryKey: string;
+   366→  score: number;
+   367→  label: string;
+   368→  index: number;
+   369→}) {
+   370→  const Icon = CATEGORY_ICONS[categoryKey] || Type;
+   371→
+   372→  return (
+   373→    <motion.div
+   374→      initial={{ opacity: 0, y: 16 }}
+   375→      animate={{ opacity: 1, y: 0 }}
+   376→      transition={{ delay: 0.08 * index, duration: 0.4, ease: 'easeOut' }}
+   377→    >
+   378→      <Card className="h-full transition-shadow hover:shadow-md">
+   379→        <CardContent className="p-4">
+   380→          <div className="flex items-start justify-between">
+   381→            <div className="flex items-center gap-2.5">
+   382→              <div className={`flex size-9 items-center justify-center rounded-lg ${score <= 40 ? 'bg-red-100 dark:bg-red-950/60' : score <= 70 ? 'bg-amber-100 dark:bg-amber-950/60' : 'bg-emerald-100 dark:bg-emerald-950/60'}`}>
+   383→                <Icon className={`size-4.5 ${score <= 40 ? 'text-red-600 dark:text-red-400' : score <= 70 ? 'text-amber-600 dark:text-amber-400' : 'text-emerald-600 dark:text-emerald-400'}`} aria-hidden="true" />
+   384→              </div>
+   385→              <span className="text-sm font-medium leading-tight text-foreground">{label}</span>
+   386→            </div>
+   387→            <span className={`font-[family-name:var(--font-poppins)] text-lg font-bold tabular-nums ${getScoreColor(score)}`}>
+   388→              {score}
+   389→            </span>
+   390→          </div>
+   391→          <div className="mt-3">
+   392→            <Progress
+   393→              value={score}
+   394→              className={`h-2 ${score <= 40 ? '[&>[data-slot=progress-indicator]]:bg-red-500' : score <= 70 ? '[&>[data-slot=progress-indicator]]:bg-amber-500' : '[&>[data-slot=progress-indicator]]:bg-emerald-500'}`}
+   395→            />
+   396→          </div>
+   397→          <p className={`mt-1.5 text-xs font-medium ${score <= 40 ? 'text-red-500' : score <= 70 ? 'text-amber-500' : 'text-emerald-500'}`}>
+   398→            {getScoreStatusText(score)}
+   399→          </p>
+   400→        </CardContent>
+   401→      </Card>
+   402→    </motion.div>
+   403→  );
+   404→}
+   405→
+   406→// ─── Keyword Analysis Section ────────────────────────────────────────────────
+   407→
+   408→function KeywordAnalysisSection({
+   409→  analysis,
+   410→  hasJd,
+   411→  isPro,
+   412→}: {
+   413→  analysis: KeywordAnalysis;
+   414→  hasJd: boolean;
+   415→  isPro: boolean;
+   416→}) {
+   417→  if (!hasJd) {
+   418→    return (
+   419→      <motion.div
+   420→        initial={{ opacity: 0, y: 16 }}
+   421→        animate={{ opacity: 1, y: 0 }}
+   422→        transition={{ delay: 0.4 }}
+   423→      >
+   424→        <Card>
+   425→          <CardHeader className="pb-3">
+   426→            <CardTitle className="flex items-center gap-2 text-base">
+   427→              <Target className="size-5 text-brand" aria-hidden="true" />
+   428→              Keyword Analysis
+   429→            </CardTitle>
+   430→          </CardHeader>
+   431→          <CardContent>
+   432→            <div className="flex flex-col items-center justify-center rounded-lg border border-dashed py-10 text-center">
+   433→              <div className="flex size-12 items-center justify-center rounded-full bg-muted">
+   434→                {isPro ? (
+   435→                  <Target className="size-5 text-muted-foreground" aria-hidden="true" />
+   436→                ) : (
+   437→                  <Lock className="size-5 text-muted-foreground" aria-hidden="true" />
+   438→                )}
+   439→              </div>
+   440→              <p className="mt-3 text-sm text-muted-foreground">
+   441→                {isPro ? (
+   442→                  <>
+   443→                    Add a job description to get keyword match analysis, missing keywords, and
+   444→                    AI-powered suggestions.
+   445→                  </>
+   446→                ) : (
+   447→                  <>
+   448→                    <span className="font-semibold text-foreground">Pro Feature</span> — Add a job
+   449→                    description to unlock keyword match analysis, missing keywords, and AI-powered
+   450→                    suggestions.
+   451→                  </>
+   452→                )}
+   453→              </p>
+   454→              {!isPro && (
+   455→                <Badge variant="outline" className="mt-2 gap-1 border-brand/30 text-brand">
+   456→                  <Lock className="size-3" aria-hidden="true" />
+   457→                  Pro
+   458→                </Badge>
+   459→              )}
+   460→            </div>
+   461→          </CardContent>
+   462→        </Card>
+   463→      </motion.div>
+   464→    );
+   465→  }
+   466→
+   467→  return (
+   468→    <motion.div
+   469→      initial={{ opacity: 0, y: 16 }}
+   470→      animate={{ opacity: 1, y: 0 }}
+   471→      transition={{ delay: 0.4 }}
+   472→    >
+   473→      <Card>
+   474→        <CardHeader className="pb-3">
+   475→          <CardTitle className="flex items-center gap-2 text-base">
+   476→            <Target className="size-5 text-brand" aria-hidden="true" />
+   477→            Keyword Analysis
+   478→          </CardTitle>
+   479→        </CardHeader>
+   480→        <CardContent className="space-y-5">
+   481→          {/* Match percentage bar */}
+   482→          <div>
+   483→            <div className="mb-2 flex items-center justify-between">
+   484→              <span className="text-sm font-medium text-muted-foreground">Keyword Match</span>
+   485→              <span className={`font-[family-name:var(--font-poppins)] text-lg font-bold tabular-nums ${
+   486→                analysis.matchPercentage >= 70 ? 'text-emerald-500' : analysis.matchPercentage >= 40 ? 'text-amber-500' : 'text-red-500'
+   487→              }`}>
+   488→                {analysis.matchPercentage}%
+   489→              </span>
+   490→            </div>
+   491→            <Progress
+   492→              value={analysis.matchPercentage}
+   493→              className={`h-3 ${
+   494→                analysis.matchPercentage >= 70
+   495→                  ? '[&>[data-slot=progress-indicator]]:bg-emerald-500'
+   496→                  : analysis.matchPercentage >= 40
+   497→                    ? '[&>[data-slot=progress-indicator]]:bg-amber-500'
+   498→                    : '[&>[data-slot=progress-indicator]]:bg-red-500'
+   499→              }`}
+   500→            />
+   501→          </div>
+   502→
+   503→          <Separator />
+   504→
+   505→          {/* Three keyword columns */}
+   506→          <div className="grid gap-4 sm:grid-cols-3">
+   507→            {/* Matched */}
+   508→            <div>
+   509→              <h4 className="mb-2 flex items-center gap-1.5 text-sm font-semibold text-emerald-600 dark:text-emerald-400">
+   510→                <CheckCircle2 className="size-4" aria-hidden="true" />
+   511→                Matched ({analysis.matched.length})
+   512→              </h4>
+   513→              <div className="flex flex-wrap gap-1.5">
+   514→                {analysis.matched.length > 0 ? (
+   515→                  analysis.matched.map((kw) => (
+   516→                    <Badge key={kw} variant="outline" className="border-emerald-200 bg-emerald-50 text-emerald-700 dark:border-emerald-800 dark:bg-emerald-950/60 dark:text-emerald-400">
+   517→                      {kw}
+   518→                    </Badge>
+   519→                  ))
+   520→                ) : (
+   521→                  <p className="text-xs text-muted-foreground">No matched keywords</p>
+   522→                )}
+   523→              </div>
+   524→            </div>
+   525→
+   526→            {/* Missing */}
+   527→            <div>
+   528→              <h4 className="mb-2 flex items-center gap-1.5 text-sm font-semibold text-red-600 dark:text-red-400">
+   529→                <XCircle className="size-4" aria-hidden="true" />
+   530→                Missing ({analysis.missing.length})
+   531→              </h4>
+   532→              <div className="flex flex-wrap gap-1.5">
+   533→                {analysis.missing.length > 0 ? (
+   534→                  analysis.missing.map((kw) => (
+   535→                    <Badge key={kw} variant="outline" className="border-red-200 bg-red-50 text-red-700 dark:border-red-800 dark:bg-red-950/60 dark:text-red-400">
+   536→                      {kw}
+   537→                    </Badge>
+   538→                  ))
+   539→                ) : (
+   540→                  <p className="text-xs text-muted-foreground">No missing keywords</p>
+   541→                )}
+   542→              </div>
+   543→            </div>
+   544→
+   545→            {/* Suggested */}
+   546→            <div>
+   547→              <h4 className="mb-2 flex items-center gap-1.5 text-sm font-semibold text-amber-600 dark:text-amber-400">
+   548→                <Lightbulb className="size-4" aria-hidden="true" />
+   549→                Suggested ({analysis.suggested.length})
+   550→              </h4>
+   551→              <div className="flex flex-wrap gap-1.5">
+   552→                {analysis.suggested.length > 0 ? (
+   553→                  analysis.suggested.map((kw) => (
+   554→                    <Badge key={kw} variant="outline" className="gap-1 border-amber-200 bg-amber-50 text-amber-700 dark:border-amber-800 dark:bg-amber-950/60 dark:text-amber-400">
+   555→                      {kw}
+   556→                      <Plus className="size-3 cursor-pointer hover:text-amber-900 dark:hover:text-amber-200" aria-label={`Add ${kw} to resume`} />
+   557→                    </Badge>
+   558→                  ))
+   559→                ) : (
+   560→                  <p className="text-xs text-muted-foreground">No suggested keywords</p>
+   561→                )}
+   562→              </div>
+   563→            </div>
+   564→          </div>
+   565→        </CardContent>
+   566→      </Card>
+   567→    </motion.div>
+   568→  );
+   569→}
+   570→
+   571→// ─── Issues Section ──────────────────────────────────────────────────────────
+   572→
+   573→function IssuesList({
+   574→  title,
+   575→  icon: Icon,
+   576→  issues,
+   577→  emptyMessage,
+   578→}: {
+   579→  title: string;
+   580→  icon: React.ElementType;
+   581→  issues: { message: string; suggestion: string; severity: string }[];
+   582→  emptyMessage: string;
+   583→}) {
+   584→  const [open, setOpen] = useState(true);
+   585→  const errorCount = issues.filter((i) => i.severity === 'error').length;
+   586→  const warningCount = issues.filter((i) => i.severity === 'warning').length;
+   587→
+   588→  return (
+   589→    <Collapsible open={open} onOpenChange={setOpen}>
+   590→      <Card>
+   591→        <CollapsibleTrigger className="w-full">
+   592→          <CardHeader className="pb-3 hover:bg-muted/30 transition-colors rounded-t-lg">
+   593→            <div className="flex items-center justify-between">
+   594→              <CardTitle className="flex items-center gap-2 text-base">
+   595→                <Icon className="size-5 text-brand" aria-hidden="true" />
+   596→                {title}
+   597→                {issues.length > 0 && (
+   598→                  <Badge variant="secondary" className="ml-1">
+   599→                    {issues.length}
+   600→                  </Badge>
+   601→                )}
+   602→                {errorCount > 0 && (
+   603→                  <Badge variant="outline" className="ml-1 border-red-200 bg-red-50 text-red-600 dark:border-red-800 dark:bg-red-950/60 dark:text-red-400">
+   604→                    {errorCount} error{errorCount > 1 ? 's' : ''}
+   605→                  </Badge>
+   606→                )}
+   607→                {warningCount > 0 && (
+   608→                  <Badge variant="outline" className="ml-1 border-amber-200 bg-amber-50 text-amber-600 dark:border-amber-800 dark:bg-amber-950/60 dark:text-amber-400">
+   609→                    {warningCount} warning{warningCount > 1 ? 's' : ''}
+   610→                  </Badge>
+   611→                )}
+   612→              </CardTitle>
+   613→              {open ? (
+   614→                <ChevronUp className="size-4 text-muted-foreground" aria-hidden="true" />
+   615→              ) : (
+   616→                <ChevronDown className="size-4 text-muted-foreground" aria-hidden="true" />
+   617→              )}
+   618→            </div>
+   619→          </CardHeader>
+   620→        </CollapsibleTrigger>
+   621→        <CollapsibleContent>
+   622→          <CardContent>
+   623→            {issues.length > 0 ? (
+   624→              <ScrollArea className="max-h-96">
+   625→                <div className="space-y-2 pr-3">
+   626→                  {issues.map((issue, idx) => (
+   627→                    <motion.div
+   628→                      key={`${issue.message}-${idx}`}
+   629→                      initial={{ opacity: 0, x: -8 }}
+   630→                      animate={{ opacity: 1, x: 0 }}
+   631→                      transition={{ delay: 0.05 * idx, duration: 0.25 }}
+   632→                      className={`rounded-lg p-3 text-sm ${
+   633→                        idx % 2 === 0 ? 'bg-muted/40' : 'bg-background'
+   634→                      }`}
+   635→                    >
+   636→                      <div className="flex items-start gap-2.5">
+   637→                        {getSeverityIcon(issue.severity)}
+   638→                        <div className="flex-1 min-w-0">
+   639→                          <p className="font-medium text-foreground">{issue.message}</p>
+   640→                          <p className="mt-1 text-muted-foreground">{issue.suggestion}</p>
+   641→                        </div>
+   642→                      </div>
+   643→                    </motion.div>
+   644→                  ))}
+   645→                </div>
+   646→              </ScrollArea>
+   647→            ) : (
+   648→              <div className="flex flex-col items-center py-6 text-center">
+   649→                <CheckCircle2 className="size-8 text-emerald-500" aria-hidden="true" />
+   650→                <p className="mt-2 text-sm font-medium text-emerald-600 dark:text-emerald-400">{emptyMessage}</p>
+   651→              </div>
+   652→            )}
+   653→          </CardContent>
+   654→        </CollapsibleContent>
+   655→      </Card>
+   656→    </Collapsible>
+   657→  );
+   658→}
+   659→
+   660→// ─── Suggestions Checklist ───────────────────────────────────────────────────
+   661→
+   662→function SuggestionsChecklist({ suggestions }: { suggestions: Suggestion[] }) {
+   663→  const [checkedItems, setCheckedItems] = useState<Set<number>>(new Set());
+   664→
+   665→  const toggleItem = (idx: number) => {
+   666→    setCheckedItems((prev) => {
+   667→      const next = new Set(prev);
+   668→      if (next.has(idx)) next.delete(idx);
+   669→      else next.add(idx);
+   670→      return next;
+   671→    });
+   672→  };
+   673→
+   674→  if (suggestions.length === 0) return null;
+   675→
+   676→  const sorted = [...suggestions].sort((a, b) => {
+   677→    const order = { high: 0, medium: 1, low: 2 };
+   678→    return order[a.priority] - order[b.priority];
+   679→  });
+   680→
+   681→  return (
+   682→    <motion.div
+   683→      initial={{ opacity: 0, y: 16 }}
+   684→      animate={{ opacity: 1, y: 0 }}
+   685→      transition={{ delay: 0.55 }}
+   686→    >
+   687→      <Card>
+   688→        <CardHeader className="pb-3">
+   689→          <CardTitle className="flex items-center gap-2 text-base">
+   690→            <Lightbulb className="size-5 text-brand" aria-hidden="true" />
+   691→            Improvement Suggestions
+   692→          </CardTitle>
+   693→        </CardHeader>
+   694→        <CardContent>
+   695→          <ScrollArea className="max-h-96">
+   696→            <div className="space-y-2 pr-3">
+   697→              {sorted.map((item, idx) => {
+   698→                const isChecked = checkedItems.has(idx);
+   699→                return (
+   700→                  <motion.button
+   701→                    key={`${item.message}-${idx}`}
+   702→                    type="button"
+   703→                    onClick={() => toggleItem(idx)}
+   704→                    initial={{ opacity: 0, x: -8 }}
+   705→                    animate={{ opacity: 1, x: 0 }}
+   706→                    transition={{ delay: 0.04 * idx, duration: 0.25 }}
+   707→                    className={`flex w-full items-start gap-3 rounded-lg border p-3 text-left text-sm transition-colors ${
+   708→                      isChecked
+   709→                        ? 'border-emerald-200 bg-emerald-50/50 dark:border-emerald-800 dark:bg-emerald-950/40'
+   710→                        : 'border-transparent bg-muted/40 hover:bg-muted/60 dark:bg-muted/30 dark:hover:bg-muted/50'
+   711→                    }`}
+   712→                    aria-pressed={isChecked}
+   713→                  >
+   714→                    <motion.div
+   715→                      animate={isChecked ? { scale: [1, 1.3, 1] } : {}}
+   716→                      transition={{ duration: 0.3 }}
+   717→                    >
+   718→                      <CircleCheckBig
+   719→                        className={`size-5 shrink-0 mt-0.5 transition-colors ${
+   720→                          isChecked ? 'text-emerald-500' : 'text-muted-foreground/40'
+   721→                        }`}
+   722→                        aria-hidden="true"
+   723→                      />
+   724→                    </motion.div>
+   725→                    <div className="flex-1 min-w-0">
+   726→                      <div className="flex flex-wrap items-center gap-1.5">
+   727→                        <Badge
+   728→                          variant="outline"
+   729→                          className={`text-[10px] px-1.5 py-0 ${getPriorityColor(item.priority)}`}
+   730→                        >
+   731→                          {item.priority}
+   732→                        </Badge>
+   733→                        <Badge variant="secondary" className="text-[10px] px-1.5 py-0 capitalize">
+   734→                          {item.section}
+   735→                        </Badge>
+   736→                      </div>
+   737→                      <p className={`mt-1.5 leading-relaxed ${isChecked ? 'text-muted-foreground line-through' : 'text-foreground'}`}>
+   738→                        {item.message}
+   739→                      </p>
+   740→                    </div>
+   741→                  </motion.button>
+   742→                );
+   743→              })}
+   744→            </div>
+   745→          </ScrollArea>
+   746→        </CardContent>
+   747→      </Card>
+   748→    </motion.div>
+   749→  );
+   750→}
+   751→
+   752→// ─── History Section ─────────────────────────────────────────────────────────
+   753→
+   754→function HistorySection({
+   755→  history,
+   756→  onRestore,
+   757→}: {
+   758→  history: HistoryEntry[];
+   759→  onRestore: (entry: HistoryEntry) => void;
+   760→}) {
+   761→  const [open, setOpen] = useState(false);
+   762→
+   763→  return (
+   764→    <motion.div
+   765→      initial={{ opacity: 0, y: 16 }}
+   766→      animate={{ opacity: 1, y: 0 }}
+   767→      transition={{ delay: 0.65 }}
+   768→    >
+   769→      <Collapsible open={open} onOpenChange={setOpen}>
+   770→        <Card>
+   771→          <CollapsibleTrigger className="w-full">
+   772→            <CardHeader className="pb-3 hover:bg-muted/30 transition-colors rounded-t-lg">
+   773→              <div className="flex items-center justify-between">
+   774→                <CardTitle className="flex items-center gap-2 text-base">
+   775→                  <History className="size-5 text-brand" aria-hidden="true" />
+   776→                  Analysis History
+   777→                  {history.length > 0 && (
+   778→                    <Badge variant="secondary" className="ml-1">
+   779→                      {history.length}
+   780→                    </Badge>
+   781→                  )}
+   782→                </CardTitle>
+   783→                {open ? (
+   784→                  <ChevronUp className="size-4 text-muted-foreground" aria-hidden="true" />
+   785→                ) : (
+   786→                  <ChevronDown className="size-4 text-muted-foreground" aria-hidden="true" />
+   787→                )}
+   788→              </div>
+   789→            </CardHeader>
+   790→          </CollapsibleTrigger>
+   791→          <CollapsibleContent>
+   792→            <CardContent>
+   793→              {history.length > 0 ? (
+   794→                <ScrollArea className="max-h-96">
+   795→                  <div className="space-y-2 pr-3">
+   796→                    {history.map((entry, idx) => {
+   797→                      const prevScore = idx < history.length - 1 ? history[idx + 1].overallScore : null;
+   798→                      const delta = prevScore !== null ? entry.overallScore - prevScore : null;
+   799→                      return (
+   800→                        <motion.button
+   801→                          key={entry.id}
+   802→                          type="button"
+   803→                          onClick={() => onRestore(entry)}
+   804→                          initial={{ opacity: 0, x: -8 }}
+   805→                          animate={{ opacity: 1, x: 0 }}
+   806→                          transition={{ delay: 0.05 * idx, duration: 0.25 }}
+   807→                          className="flex w-full items-center gap-3 rounded-lg border p-3 text-left text-sm hover:bg-muted/50 transition-colors"
+   808→                          aria-label={`View analysis for ${entry.resumeTitle} with score ${entry.overallScore}`}
+   809→                        >
+   810→                          <div className={`flex size-10 items-center justify-center rounded-lg font-[family-name:var(--font-poppins)] text-sm font-bold ${
+   811→                            entry.overallScore <= 40 ? 'bg-red-100 text-red-700 dark:bg-red-950/60 dark:text-red-400' :
+   812→                            entry.overallScore <= 70 ? 'bg-amber-100 text-amber-700 dark:bg-amber-950/60 dark:text-amber-400' :
+   813→                            'bg-emerald-100 text-emerald-700 dark:bg-emerald-950/60 dark:text-emerald-400'
+   814→                          }`}>
+   815→                            {entry.overallScore}
+   816→                          </div>
+   817→                          <div className="flex-1 min-w-0">
+   818→                            <p className="font-medium text-foreground truncate">{entry.resumeTitle}</p>
+   819→                            <p className="flex items-center gap-1 text-xs text-muted-foreground">
+   820→                              <Clock className="size-3" aria-hidden="true" />
+   821→                              {formatDate(entry.createdAt)}
+   822→                            </p>
+   823→                          </div>
+   824→                          {delta !== null && (
+   825→                            <div className={`flex items-center gap-0.5 text-xs font-semibold ${
+   826→                              delta > 0 ? 'text-emerald-600 dark:text-emerald-400' : delta < 0 ? 'text-red-600 dark:text-red-400' : 'text-muted-foreground'
+   827→                            }`}>
+   828→                              {delta > 0 ? (
+   829→                                <ArrowUpRight className="size-3.5" aria-hidden="true" />
+   830→                              ) : delta < 0 ? (
+   831→                                <ArrowDownRight className="size-3.5" aria-hidden="true" />
+   832→                              ) : null}
+   833→                              {delta > 0 ? `+${delta}` : delta}
+   834→                            </div>
+   835→                          )}
+   836→                        </motion.button>
+   837→                      );
+   838→                    })}
+   839→                  </div>
+   840→                </ScrollArea>
+   841→              ) : (
+   842→                <div className="flex flex-col items-center py-6 text-center">
+   843→                  <History className="size-8 text-muted-foreground/40" aria-hidden="true" />
+   844→                  <p className="mt-2 text-sm text-muted-foreground">No analysis history yet</p>
+   845→                </div>
+   846→              )}
+   847→            </CardContent>
+   848→          </CollapsibleContent>
+   849→        </Card>
+   850→      </Collapsible>
+   851→    </motion.div>
+   852→  );
+   853→}
+   854→
+   855→// ─── Upgrade Limit Modal ─────────────────────────────────────────────────────
+   856→
+   857→function LimitReachedModal({
+   858→  open,
+   859→  onOpenChange,
+   860→  limit,
+   861→  used,
+   862→  planName,
+   863→}: {
+   864→  open: boolean;
+   865→  onOpenChange: (open: boolean) => void;
+   866→  limit: number;
+   867→  used: number;
+   868→  planName: string;
+   869→}) {
+   870→  return (
+   871→    <UpgradeModal
+   872→      open={open}
+   873→      onOpenChange={onOpenChange}
+   874→      featureName="ATS Resume Checker"
+   875→    />
+   876→  );
+   877→}
+   878→
+   879→// ─── Main Page Component ─────────────────────────────────────────────────────
+   880→
+   881→export default function AtsCheckerPage() {
+   882→  return (
+   883→    <FeatureGate featureKey="BASIC_ATS_SCORE">
+   884→      <AtsCheckerContent />
+   885→    </FeatureGate>
+   886→  );
+   887→}
+   888→
+   889→function AtsCheckerContent() {
+   890→  const { user } = useAuth();
+   891→  const [isPro, setIsPro] = useState(false);
+   892→
+   893→  // State
+   894→  const [pageState, setPageState] = useState<PageState>('initial');
+   895→  const [resumes, setResumes] = useState<Resume[]>([]);
+   896→  const [selectedResumeId, setSelectedResumeId] = useState<string>('');
+   897→  const [jobDescription, setJobDescription] = useState('');
+   898→  const [jdExpanded, setJdExpanded] = useState(false);
+   899→  const [report, setReport] = useState<AtsReport | null>(null);
+   900→  const [history, setHistory] = useState<HistoryEntry[]>([]);
+   901→  const [error, setError] = useState<string | null>(null);
+   902→  const [upgradeModalOpen, setUpgradeModalOpen] = useState(false);
+   903→  const [limitInfo, setLimitInfo] = useState<{ limit: number; used: number; planName: string } | null>(null);
+   904→  const [resumesLoading, setResumesLoading] = useState(true);
+   905→  const abortRef = useRef<AbortController | null>(null);
+   906→
+   907→  // Fetch subscription status on mount
+   908→  useEffect(() => {
+   909→    (async () => {
+   910→      try {
+   911→        const res = await fetch('/api/subscriptions/me', { credentials: 'include' });
+   912→        if (res.ok) {
+   913→          const data = await res.json();
+   914→          setIsPro(data.subscription?.plan?.name !== 'free');
+   915→        }
+   916→      } catch { /* silent */ }
+   917→    })();
+   918→  }, []);
+   919→
+   920→  // Fetch resumes on mount
+   921→  useEffect(() => {
+   922→    const controller = new AbortController();
+   923→    abortRef.current = controller;
+   924→
+   925→    async function fetchResumes() {
+   926→      try {
+   927→        const res = await fetch('/api/resumes', { credentials: 'include', signal: controller.signal });
+   928→        const data = await res.json();
+   929→        if (data.success && data.resumes) {
+   930→          setResumes(data.resumes);
+   931→          if (data.resumes.length > 0) {
+   932→            setSelectedResumeId(data.resumes[0].id);
+   933→          }
+   934→        }
+   935→      } catch {
+   936→        // Silently handle - user can still interact with the page
+   937→      } finally {
+   938→        setResumesLoading(false);
+   939→      }
+   940→    }
+   941→
+   942→    fetchResumes();
+   943→    return () => controller.abort();
+   944→  }, []);
+   945→
+   946→  // Fetch history on mount
+   947→  useEffect(() => {
+   948→    const controller = new AbortController();
+   949→    async function fetchHistory() {
+   950→      try {
+   951→        const res = await fetch('/api/ats-check/history', { credentials: 'include', signal: controller.signal });
+   952→        const data = await res.json();
+   953→        if (data.success && data.reports) {
+   954→          setHistory(data.reports);
+   955→        }
+   956→      } catch {
+   957→        // Silently handle
+   958→      }
+   959→    }
+   960→    fetchHistory();
+   961→    return () => controller.abort();
+   962→  }, []);
+   963→
+   964→  const handleAnalyze = useCallback(async () => {
+   965→    if (!selectedResumeId) return;
+   966→
+   967→    setError(null);
+   968→    setPageState('loading');
+   969→
+   970→    try {
+   971→      const body: { resumeId: string; jobDescription?: string } = { resumeId: selectedResumeId };
+   972→      if (isPro && jobDescription.trim()) {
+   973→        body.jobDescription = jobDescription.trim();
+   974→      }
+   975→
+   976→      const res = await fetch('/api/ats-check', {
+   977→        method: 'POST',
+   978→        headers: { 'Content-Type': 'application/json' },
+   979→        credentials: 'include',
+   980→        body: JSON.stringify(body),
+   981→      });
+   982→
+   983→      const data = await res.json();
+   984→
+   985→      if (data.success && data.report) {
+   986→        setReport(data.report);
+   987→        setPageState('results');
+   988→        // Refresh history
+   989→        try {
+   990→          const histRes = await fetch('/api/ats-check/history', { credentials: 'include' });
+   991→          const histData = await histRes.json();
+   992→          if (histData.success && histData.reports) {
+   993→            setHistory(histData.reports);
+   994→          }
+   995→        } catch {
+   996→          // Non-critical
+   997→        }
+   998→      } else if (!data.success && data.error === 'limit_reached') {
+   999→        setLimitInfo({ limit: data.limit, used: data.used, planName: data.planName });
+  1000→        setUpgradeModalOpen(true);
+  1001→        setPageState('initial');
+  1002→      } else {
+  1003→        setError(data.error || 'Analysis failed. Please try again.');
+  1004→        setPageState('initial');
+  1005→      }
+  1006→    } catch {
+  1007→      setError('Network error. Please check your connection and try again.');
+  1008→      setPageState('initial');
+  1009→    }
+  1010→  }, [selectedResumeId, jobDescription, isPro]);
+  1011→
+  1012→  const handleRestore = useCallback((entry: HistoryEntry) => {
+  1013→    // If we have the same report id, just show it. Otherwise navigate.
+  1014→    if (report?.id === entry.id) return;
+  1015→    // For now, just show a simplified view by selecting the resume
+  1016→    setSelectedResumeId(entry.resumeId);
+  1017→    setPageState('initial');
+  1018→  }, [report]);
+  1019→
+  1020→  const handleAnalyzeAgain = useCallback(() => {
+  1021→    setReport(null);
+  1022→    setPageState('initial');
+  1023→  }, []);
+  1024→
+  1025→  // ─── Render: Initial State ────────────────────────────────────────────────
+  1026→
+  1027→  function renderInitialState() {
+  1028→    return (
+  1029→      <motion.div
+  1030→        initial={{ opacity: 0, y: 16 }}
+  1031→        animate={{ opacity: 1, y: 0 }}
+  1032→        exit={{ opacity: 0, y: -10 }}
+  1033→        transition={{ duration: 0.35 }}
+  1034→        className="space-y-6"
+  1035→      >
+  1036→        {/* Header */}
+  1037→        <div>
+  1038→          <h1 className="font-[family-name:var(--font-poppins)] text-2xl font-bold tracking-tight sm:text-3xl">
+  1039→            ATS Resume Checker
+  1040→          </h1>
+  1041→          <p className="mt-1.5 font-[family-name:var(--font-inter)] text-sm text-muted-foreground max-w-2xl">
+  1042→            Analyze your resume against ATS (Applicant Tracking System) requirements. Get a detailed score
+  1043→            with actionable suggestions to improve your chances of passing automated screenings.
+  1044→          </p>
+  1045→        </div>
+  1046→
+  1047→        {/* Resume Selector Card */}
+  1048→        <Card>
+  1049→          <CardContent className="p-6 space-y-5">
+  1050→            {/* Resume Select */}
+  1051→            <div className="space-y-2">
+  1052→              <label htmlFor="resume-select" className="text-sm font-medium">
+  1053→                Select Resume
+  1054→              </label>
+  1055→              {resumesLoading ? (
+  1056→                <Skeleton className="h-9 w-full" />
+  1057→              ) : resumes.length > 0 ? (
+  1058→                <Select value={selectedResumeId} onValueChange={setSelectedResumeId}>
+  1059→                  <SelectTrigger id="resume-select" className="w-full">
+  1060→                    <SelectValue placeholder="Choose a resume to analyze" />
+  1061→                  </SelectTrigger>
+  1062→                  <SelectContent>
+  1063→                    {resumes.map((resume) => (
+  1064→                      <SelectItem key={resume.id} value={resume.id}>
+  1065→                        <div className="flex items-center gap-2">
+  1066→                          <FileText className="size-4 text-muted-foreground" aria-hidden="true" />
+  1067→                          {resume.title}
+  1068→                        </div>
+  1069→                      </SelectItem>
+  1070→                    ))}
+  1071→                  </SelectContent>
+  1072→                </Select>
+  1073→              ) : (
+  1074→                <div className="flex items-center gap-2 rounded-lg border border-dashed p-4 text-sm text-muted-foreground">
+  1075→                  <FileText className="size-4 shrink-0" aria-hidden="true" />
+  1076→                  No resumes found. Create a resume first, then come back to analyze it.
+  1077→                </div>
+  1078→              )}
+  1079→            </div>
+  1080→
+  1081→            <Separator />
+  1082→
+  1083→            {/* Job Description (collapsible) */}
+  1084→            <Collapsible open={jdExpanded} onOpenChange={setJdExpanded}>
+  1085→              <CollapsibleTrigger className="w-full">
+  1086→                <div className="flex items-center justify-between rounded-lg p-2 -m-2 hover:bg-muted/50 transition-colors">
+  1087→                  <div className="flex items-center gap-2.5">
+  1088→                    {isPro ? (
+  1089→                      <div className="flex size-8 items-center justify-center rounded-lg bg-brand/10">
+  1090→                        <Target className="size-4 text-brand" aria-hidden="true" />
+  1091→                      </div>
+  1092→                    ) : (
+  1093→                      <div className="flex size-8 items-center justify-center rounded-lg bg-muted">
+  1094→                        <Lock className="size-4 text-muted-foreground" aria-hidden="true" />
+  1095→                      </div>
+  1096→                    )}
+  1097→                    <div className="text-left">
+  1098→                      <p className="text-sm font-medium flex items-center gap-2">
+  1099→                        Add Job Description
+  1100→                        {!isPro && (
+  1101→                          <Badge variant="outline" className="gap-1 border-brand/30 text-brand text-[10px] px-1.5">
+  1102→                            <Lock className="size-2.5" aria-hidden="true" />
+  1103→                            Pro
+  1104→                          </Badge>
+  1105→                        )}
+  1106→                      </p>
+  1107→                      <p className="text-xs text-muted-foreground">
+  1108→                        {isPro
+  1109→                          ? 'Paste the job description for keyword comparison and tailored suggestions'
+  1110→                          : 'Upgrade to Pro for keyword comparison against job descriptions'}
+  1111→                      </p>
+  1112→                    </div>
+  1113→                  </div>
+  1114→                  <AnimatePresence mode="wait">
+  1115→                    <motion.div
+  1116→                      key={jdExpanded ? 'up' : 'down'}
+  1117→                      initial={{ rotate: -90, opacity: 0 }}
+  1118→                      animate={{ rotate: 0, opacity: 1 }}
+  1119→                      exit={{ rotate: 90, opacity: 0 }}
+  1120→                      transition={{ duration: 0.15 }}
+  1121→                    >
+  1122→                      {jdExpanded ? (
+  1123→                        <ChevronUp className="size-4 text-muted-foreground" aria-hidden="true" />
+  1124→                      ) : (
+  1125→                        <ChevronDown className="size-4 text-muted-foreground" aria-hidden="true" />
+  1126→                      )}
+  1127→                    </motion.div>
+  1128→                  </AnimatePresence>
+  1129→                </div>
+  1130→              </CollapsibleTrigger>
+  1131→              <CollapsibleContent>
+  1132→                <motion.div
+  1133→                  initial={{ opacity: 0, height: 0 }}
+  1134→                  animate={{ opacity: 1, height: 'auto' }}
+  1135→                  exit={{ opacity: 0, height: 0 }}
+  1136→                  transition={{ duration: 0.25 }}
+  1137→                  className="overflow-hidden"
+  1138→                >
+  1139→                  <div className="pt-3">
+  1140→                    {!isPro && (
+  1141→                      <div className="mb-3 flex items-center gap-2 rounded-lg border border-amber-200 bg-amber-50 p-3 text-sm text-amber-700 dark:border-amber-800 dark:bg-amber-950/60 dark:text-amber-400">
+  1142→                        <AlertTriangle className="size-4 shrink-0" aria-hidden="true" />
+  1143→                        <span>
+  1144→                          Job description comparison is a <strong>Pro feature</strong>. The analysis will
+  1145→                          run without JD matching on the free plan.
+  1146→                        </span>
+  1147→                      </div>
+  1148→                    )}
+  1149→                    <Textarea
+  1150→                      placeholder={
+  1151→                        isPro
+  1152→                          ? 'Paste the full job description here...'
+  1153→                          : 'This feature requires Pro. Upgrade to unlock job description comparison.'
+  1154→                      }
+  1155→                      value={jobDescription}
+  1156→                      onChange={(e) => setJobDescription(e.target.value)}
+  1157→                      disabled={!isPro}
+  1158→                      rows={5}
+  1159→                      className="resize-none"
+  1160→                      aria-label="Job description for keyword comparison"
+  1161→                    />
+  1162→                    <p className="mt-1.5 text-xs text-muted-foreground">
+  1163→                      {isPro
+  1164→                        ? 'The more detailed the job description, the better the keyword analysis.'
+  1165→                        : 'Upgrade to Pro to enable this field.'}
+  1166→                    </p>
+  1167→                  </div>
+  1168→                </motion.div>
+  1169→              </CollapsibleContent>
+  1170→            </Collapsible>
+  1171→
+  1172→            {/* Error Message */}
+  1173→            {error && (
+  1174→              <motion.div
+  1175→                initial={{ opacity: 0, y: -8 }}
+  1176→                animate={{ opacity: 1, y: 0 }}
+  1177→                className="flex items-center gap-2 rounded-lg border border-red-200 bg-red-50 p-3 text-sm text-red-700 dark:border-red-800 dark:bg-red-950/60 dark:text-red-400"
+  1178→                role="alert"
+  1179→              >
+  1180→                <AlertTriangle className="size-4 shrink-0" aria-hidden="true" />
+  1181→                {error}
+  1182→              </motion.div>
+  1183→            )}
+  1184→
+  1185→            {/* Analyze Button */}
+  1186→            <Button
+  1187→              onClick={handleAnalyze}
+  1188→              disabled={!selectedResumeId}
+  1189→              className="w-full bg-brand text-white hover:bg-brand/90 focus-visible:ring-brand/50 h-11 text-sm font-semibold"
+  1190→              size="lg"
+  1191→              aria-label="Start ATS analysis"
+  1192→            >
+  1193→              <Sparkles className="size-4" aria-hidden="true" />
+  1194→              Analyze Resume
+  1195→            </Button>
+  1196→          </CardContent>
+  1197→        </Card>
+  1198→
+  1199→        {/* History section in initial state */}
+  1200→        {history.length > 0 && (
+  1201→          <HistorySection history={history} onRestore={handleRestore} />
+  1202→        )}
+  1203→      </motion.div>
+  1204→    );
+  1205→  }
+  1206→
+  1207→  // ─── Render: Results State ────────────────────────────────────────────────
+  1208→
+  1209→  function renderResults() {
+  1210→    if (!report) return null;
+  1211→
+  1212→    return (
+  1213→      <motion.div
+  1214→        initial={{ opacity: 0 }}
+  1215→        animate={{ opacity: 1 }}
+  1216→        className="space-y-6"
+  1217→      >
+  1218→        {/* Top: Score Overview */}
+  1219→        <motion.div
+  1220→          initial={{ opacity: 0, y: 16 }}
+  1221→          animate={{ opacity: 1, y: 0 }}
+  1222→          transition={{ duration: 0.35 }}
+  1223→        >
+  1224→          <Card>
+  1225→            <CardContent className="p-6">
+  1226→              <div className="flex flex-col items-center gap-4 sm:flex-row sm:items-start sm:justify-between">
+  1227→                {/* Score circle */}
+  1228→                <div className="flex flex-col items-center gap-2">
+  1229→                  <AnimatedScoreCircle score={report.overallScore} />
+  1230→                  <span className={`font-[family-name:var(--font-poppins)] text-lg font-semibold ${getScoreColor(report.overallScore)}`}>
+  1231→                    {getScoreLabel(report.overallScore)}
+  1232→                  </span>
+  1233→                  <p className="text-xs text-muted-foreground">Overall ATS Score</p>
+  1234→                </div>
+  1235→
+  1236→                {/* Summary & actions */}
+  1237→                <div className="flex flex-col gap-3 text-center sm:text-right sm:items-end">
+  1238→                  <div>
+  1239→                    <h2 className="font-[family-name:var(--font-poppins)] text-xl font-bold tracking-tight">
+  1240→                      Analysis Complete
+  1241→                    </h2>
+  1242→                    <p className="text-sm text-muted-foreground mt-0.5">
+  1243→                      {report.suggestions.length} suggestion{report.suggestions.length !== 1 ? 's' : ''} to improve your score
+  1244→                    </p>
+  1245→                  </div>
+  1246→                  <div className="flex gap-2">
+  1247→                    <Button
+  1248→                      variant="outline"
+  1249→                      onClick={handleAnalyzeAgain}
+  1250→                      size="sm"
+  1251→                      className="font-[family-name:var(--font-inter)]"
+  1252→                      aria-label="Analyze another resume"
+  1253→                    >
+  1254→                      <RotateCcw className="size-3.5" aria-hidden="true" />
+  1255→                      Analyze Again
+  1256→                    </Button>
+  1257→                  </div>
+  1258→                </div>
+  1259→              </div>
+  1260→            </CardContent>
+  1261→          </Card>
+  1262→        </motion.div>
+  1263→
+  1264→        {/* Category Scores Grid */}
+  1265→        <motion.div
+  1266→          initial={{ opacity: 0, y: 16 }}
+  1267→          animate={{ opacity: 1, y: 0 }}
+  1268→          transition={{ delay: 0.15 }}
+  1269→        >
+  1270→          <h3 className="font-[family-name:var(--font-poppins)] text-base font-semibold mb-3">Category Scores</h3>
+  1271→          <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
+  1272→            {CATEGORY_KEYS.map((key, idx) => {
+  1273→              const cat = report.categoryScores[key];
+  1274→              if (!cat) return null;
+  1275→              return (
+  1276→                <CategoryScoreCard
+  1277→                  key={key}
+  1278→                  categoryKey={key}
+  1279→                  score={cat.score}
+  1280→                  label={cat.label}
+  1281→                  index={idx}
+  1282→                />
+  1283→              );
+  1284→            })}
+  1285→          </div>
+  1286→        </motion.div>
+  1287→
+  1288→        {/* Keyword Analysis */}
+  1289→        <KeywordAnalysisSection
+  1290→          analysis={report.keywordAnalysis}
+  1291→          hasJd={!!(report.keywordAnalysis.matched.length > 0 || report.keywordAnalysis.missing.length > 0 || report.keywordAnalysis.suggested.length > 0)}
+  1292→          isPro={isPro}
+  1293→        />
+  1294→
+  1295→        {/* Grammar Issues */}
+  1296→        <IssuesList
+  1297→          title="Grammar & Spelling"
+  1298→          icon={SpellCheck}
+  1299→          issues={report.grammarIssues}
+  1300→          emptyMessage="No grammar or spelling issues found!"
+  1301→        />
+  1302→
+  1303→        {/* Formatting Issues */}
+  1304→        <IssuesList
+  1305→          title="Formatting"
+  1306→          icon={Layout}
+  1307→          issues={report.formattingIssues}
+  1308→          emptyMessage="Formatting looks great!"
+  1309→        />
+  1310→
+  1311→        {/* Suggestions Checklist */}
+  1312→        <SuggestionsChecklist suggestions={report.suggestions} />
+  1313→
+  1314→        {/* History */}
+  1315→        <HistorySection history={history} onRestore={handleRestore} />
+  1316→      </motion.div>
+  1317→    );
+  1318→  }
+  1319→
+  1320→  // ─── Main Render ──────────────────────────────────────────────────────────
+  1321→
+  1322→  return (
+  1323→    <div className="space-y-6">
+  1324→      <AnimatePresence mode="wait">
+  1325→        {pageState === 'initial' && <div key="initial">{renderInitialState()}</div>}
+  1326→        {pageState === 'loading' && <div key="loading"><LoadingState /></div>}
+  1327→        {pageState === 'results' && <div key="results">{renderResults()}</div>}
+  1328→      </AnimatePresence>
+  1329→
+  1330→      {/* Upgrade Modal (limit reached) */}
+  1331→      {limitInfo && (
+  1332→        <LimitReachedModal
+  1333→          open={upgradeModalOpen}
+  1334→          onOpenChange={setUpgradeModalOpen}
+  1335→          limit={limitInfo.limit}
+  1336→          used={limitInfo.used}
+  1337→          planName={limitInfo.planName}
+  1338→        />
+  1339→      )}
+  1340→    </div>
+  1341→  );
+  1342→}

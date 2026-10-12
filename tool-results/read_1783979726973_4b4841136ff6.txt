@@ -1,0 +1,697 @@
+     1→import { NextRequest, NextResponse } from 'next/server';
+     2→import ZAI from 'z-ai-web-dev-sdk';
+     3→import { db } from '@/lib/db';
+     4→import { getAuthUser } from '@/lib/subscription/auth-helpers';
+     5→import { checkAndIncrementUsage } from '@/lib/subscription/service';
+     6→import { FEATURE_KEYS } from '@/lib/subscription/features';
+     7→
+     8→// ---------------------------------------------------------------------------
+     9→// Constants
+    10→// ---------------------------------------------------------------------------
+    11→
+    12→const VALID_SECTIONS = [
+    13→  'professionalSummary',
+    14→  'workExperience',
+    15→  'education',
+    16→  'skills',
+    17→  'projects',
+    18→  'certifications',
+    19→  'languages',
+    20→  'custom',
+    21→] as const;
+    22→
+    23→const VALID_ACTIONS = [
+    24→  'generate',
+    25→  'rewrite',
+    26→  'improve',
+    27→  'expand',
+    28→  'condense',
+    29→  'shorten',
+    30→  'more_professional',
+    31→  'more_technical',
+    32→  'simplify',
+    33→  'achievement',
+    34→  'grammar',
+    35→  'keywords',
+    36→  'skills_suggest',
+    37→  'custom',
+    38→] as const;
+    39→
+    40→const TONE_MODIFIERS: Record<string, string> = {
+    41→  professional: 'Use a professional, polished tone.',
+    42→  executive: 'Use an executive-level, strategic tone.',
+    43→  technical: 'Emphasize technical skills, tools, and methodologies.',
+    44→  graduate: 'Use a tone appropriate for a recent graduate.',
+    45→  entry_level: 'Use a tone appropriate for an entry-level position.',
+    46→  concise: 'Be extremely concise. Remove all filler words.',
+    47→};
+    48→
+    49→const BASE_SYSTEM_PROMPT = `You are an expert resume writer and career coach with deep knowledge of ATS (Applicant Tracking System) optimization. Your task is to help users write stronger, more professional, ATS-friendly resumes. Always:
+    50→- Use strong action verbs (Led, Developed, Implemented, Achieved, Optimized, etc.)
+    51→- Include measurable achievements where possible (numbers, percentages, dollar amounts)
+    52→- Keep content concise and impactful
+    53→- Optimize for ATS keywords and formatting
+    54→- Avoid first-person pronouns
+    55→- Use consistent tense (past tense for past roles, present for current)
+    56→- Return ONLY the improved text, no explanations or markdown formatting unless specifically asked`;
+    57→
+    58→// ---------------------------------------------------------------------------
+    59→// Types
+    60→// ---------------------------------------------------------------------------
+    61→
+    62→type Section = (typeof VALID_SECTIONS)[number];
+    63→type Action = (typeof VALID_ACTIONS)[number];
+    64→
+    65→interface AiAssistBody {
+    66→  section: string;
+    67→  action: string;
+    68→  content?: string;
+    69→  itemId?: string;
+    70→  customPrompt?: string;
+    71→  tone?: string;
+    72→  resumeContext?: ResumeContext;
+    73→  field?: string;
+    74→}
+    75→
+    76→interface ResumeContext {
+    77→  personalInfo?: {
+    78→    fullName?: string;
+    79→    professionalTitle?: string;
+    80→    email?: string;
+    81→    phone?: string;
+    82→    location?: string;
+    83→    website?: string;
+    84→    linkedin?: string;
+    85→    github?: string;
+    86→    portfolio?: string;
+    87→  };
+    88→  professionalSummary?: string;
+    89→  workExperience?: Array<{
+    90→    id?: string;
+    91→    position?: string;
+    92→    company?: string;
+    93→    location?: string;
+    94→    startDate?: string;
+    95→    endDate?: string;
+    96→    current?: boolean;
+    97→    description?: string;
+    98→  }>;
+    99→  education?: Array<{
+   100→    id?: string;
+   101→    degree?: string;
+   102→    field?: string;
+   103→    institution?: string;
+   104→    location?: string;
+   105→    startDate?: string;
+   106→    endDate?: string;
+   107→    gpa?: string;
+   108→    description?: string;
+   109→  }>;
+   110→  skills?: Array<{ id?: string; name?: string }>;
+   111→  projects?: Array<{
+   112→    id?: string;
+   113→    name?: string;
+   114→    description?: string;
+   115→    technologies?: string[];
+   116→    startDate?: string;
+   117→    endDate?: string;
+   118→    url?: string;
+   119→  }>;
+   120→  certifications?: Array<{
+   121→    name?: string;
+   122→    issuer?: string;
+   123→    date?: string;
+   124→  }>;
+   125→  languages?: Array<{
+   126→    name?: string;
+   127→    proficiency?: string;
+   128→  }>;
+   129→}
+   130→
+   131→interface PromptResult {
+   132→  systemPrompt: string;
+   133→  userMessage: string;
+   134→}
+   135→
+   136→// ---------------------------------------------------------------------------
+   137→// Prompt Builder
+   138→// ---------------------------------------------------------------------------
+   139→
+   140→function buildPrompt(
+   141→  section: string,
+   142→  action: string,
+   143→  body: AiAssistBody
+   144→): PromptResult {
+   145→  const { content, customPrompt, resumeContext, itemId, field } = body;
+   146→  const ctx = resumeContext;
+   147→
+   148→  // Extract commonly needed context values
+   149→  const jobTitle = ctx?.personalInfo?.professionalTitle || 'professional';
+   150→  const skillsList = (ctx?.skills || []).map((s: { name?: string }) => s.name).filter(Boolean).join(', ') || '';
+   151→  const yearsOfExperience = estimateYearsOfExperience(ctx?.workExperience || []);
+   152→
+   153→  // Tone modifier
+   154→  const toneModifier = body.tone && TONE_MODIFIERS[body.tone]
+   155→    ? `\n\n${TONE_MODIFIERS[body.tone]}`
+   156→    : '';
+   157→
+   158→  let userMessage = '';
+   159→  let systemPrompt = BASE_SYSTEM_PROMPT + toneModifier;
+   160→
+   161→  // -----------------------------------------------------------------------
+   162→  // Professional Summary
+   163→  // -----------------------------------------------------------------------
+   164→  if (section === 'professionalSummary') {
+   165→    switch (action) {
+   166→      case 'generate':
+   167→        userMessage = `Write a professional summary for a ${jobTitle} with ${yearsOfExperience} years of experience. Skills: ${skillsList}. Make it ATS-friendly, 2-3 sentences.`;
+   168→        break;
+   169→
+   170→      case 'rewrite':
+   171→        userMessage = `Rewrite this professional summary to be more impactful and ATS-optimized.\n\nCurrent summary:\n${content || '(empty)'}`;
+   172→        break;
+   173→
+   174→      case 'improve':
+   175→        userMessage = `Improve this professional summary with stronger action verbs and quantifiable achievements.\n\nCurrent summary:\n${content || '(empty)'}`;
+   176→        break;
+   177→
+   178→      case 'shorten':
+   179→        userMessage = `Shorten this professional summary to 1-2 sentences while keeping key information.\n\nCurrent summary:\n${content || '(empty)'}`;
+   180→        break;
+   181→
+   182→      case 'expand':
+   183→        userMessage = `Expand this professional summary with more detail about achievements and expertise.\n\nCurrent summary:\n${content || '(empty)'}`;
+   184→        break;
+   185→
+   186→      case 'more_professional':
+   187→        userMessage = `Make this professional summary more formal and executive-level.\n\nCurrent summary:\n${content || '(empty)'}`;
+   188→        break;
+   189→
+   190→      case 'more_technical':
+   191→        userMessage = `Make this professional summary more technically focused, emphasizing tools, technologies, and methodologies.\n\nCurrent summary:\n${content || '(empty)'}`;
+   192→        break;
+   193→
+   194→      case 'simplify':
+   195→        userMessage = `Simplify this professional summary for clarity, removing jargon.\n\nCurrent summary:\n${content || '(empty)'}`;
+   196→        break;
+   197→
+   198→      case 'grammar':
+   199→        userMessage = `Check and fix any grammar, spelling, or writing issues in this professional summary.\n\nCurrent summary:\n${content || '(empty)'}`;
+   200→        break;
+   201→
+   202→      case 'keywords':
+   203→        userMessage = `Suggest ATS-friendly keywords commonly found in job descriptions for a ${jobTitle}. Explain why each keyword is valuable. Format as: keyword - reason.`;
+   204→        break;
+   205→
+   206→      case 'custom':
+   207→        userMessage = `${customPrompt || ''}\n\n${content ? `Current summary:\n${content}` : ''}`;
+   208→        break;
+   209→
+   210→      default:
+   211→        userMessage = `Improve this professional summary.\n\nCurrent summary:\n${content || '(empty)'}`;
+   212→        break;
+   213→    }
+   214→  }
+   215→
+   216→  // -----------------------------------------------------------------------
+   217→  // Work Experience
+   218→  // -----------------------------------------------------------------------
+   219→  else if (section === 'workExperience') {
+   220→    const targetItem = findWorkExperienceItem(ctx, itemId);
+   221→    const position = targetItem?.position || 'this role';
+   222→    const company = targetItem?.company || 'the company';
+   223→
+   224→    switch (action) {
+   225→      case 'generate':
+   226→        userMessage = `Write 3-5 bullet points for a ${position} role at ${company}. Responsibilities: ${content || '(not provided)'}. Technologies: ${skillsList || 'from the skills section'}. Use strong action verbs and measurable achievements.`;
+   227→        break;
+   228→
+   229→      case 'rewrite':
+   230→        userMessage = `Rewrite these work experience bullet points to be more impactful.\n\nPosition: ${position} at ${company}\n\nCurrent bullet points:\n${content || '(empty)'}`;
+   231→        break;
+   232→
+   233→      case 'improve':
+   234→        userMessage = `Improve these bullet points with stronger action verbs and measurable impact.\n\nPosition: ${position} at ${company}\n\nCurrent bullet points:\n${content || '(empty)'}`;
+   235→        break;
+   236→
+   237→      case 'expand':
+   238→        userMessage = `Expand these bullet points with more detail and achievements.\n\nPosition: ${position} at ${company}\n\nCurrent bullet points:\n${content || '(empty)'}`;
+   239→        break;
+   240→
+   241→      case 'condense':
+   242→        userMessage = `Condense these bullet points to be more concise while keeping key achievements.\n\nPosition: ${position} at ${company}\n\nCurrent bullet points:\n${content || '(empty)'}`;
+   243→        break;
+   244→
+   245→      case 'shorten':
+   246→        userMessage = `Shorten these bullet points while retaining the most important information.\n\nPosition: ${position} at ${company}\n\nCurrent bullet points:\n${content || '(empty)'}`;
+   247→        break;
+   248→
+   249→      case 'achievement':
+   250→        userMessage = `Transform these responsibilities into measurable achievements with quantified results. Add metrics, percentages, or numbers where possible.\n\nPosition: ${position} at ${company}\n\nCurrent bullet points:\n${content || '(empty)'}`;
+   251→        break;
+   252→
+   253→      case 'more_professional':
+   254→        userMessage = `Make these work experience bullet points more formal and executive-level.\n\nPosition: ${position} at ${company}\n\nCurrent bullet points:\n${content || '(empty)'}`;
+   255→        break;
+   256→
+   257→      case 'more_technical':
+   258→        userMessage = `Make these work experience bullet points more technically focused, emphasizing specific tools, technologies, and methodologies used.\n\nPosition: ${position} at ${company}\n\nCurrent bullet points:\n${content || '(empty)'}`;
+   259→        break;
+   260→
+   261→      case 'simplify':
+   262→        userMessage = `Simplify these work experience bullet points for clarity, removing jargon.\n\nPosition: ${position} at ${company}\n\nCurrent bullet points:\n${content || '(empty)'}`;
+   263→        break;
+   264→
+   265→      case 'grammar':
+   266→        userMessage = `Check and fix any grammar, spelling, or writing issues.\n\nCurrent bullet points:\n${content || '(empty)'}`;
+   267→        break;
+   268→
+   269→      case 'keywords':
+   270→        userMessage = `Suggest ATS-friendly keywords commonly found in job descriptions for a ${position} role. Explain why each keyword is valuable. Format as: keyword - reason.`;
+   271→        break;
+   272→
+   273→      case 'custom':
+   274→        userMessage = `${customPrompt || ''}\n\n${content ? `Position: ${position} at ${company}\n\nCurrent bullet points:\n${content}` : ''}`;
+   275→        break;
+   276→
+   277→      default:
+   278→        userMessage = `Improve these work experience bullet points.\n\nPosition: ${position} at ${company}\n\nCurrent bullet points:\n${content || '(empty)'}`;
+   279→        break;
+   280→    }
+   281→  }
+   282→
+   283→  // -----------------------------------------------------------------------
+   284→  // Education
+   285→  // -----------------------------------------------------------------------
+   286→  else if (section === 'education') {
+   287→    const targetItem = findEducationItem(ctx, itemId);
+   288→    const degree = targetItem?.degree || 'this degree';
+   289→    const field = targetItem?.field || '';
+   290→    const institution = targetItem?.institution || 'this institution';
+   291→
+   292→    switch (action) {
+   293→      case 'generate':
+   294→        userMessage = `Write a brief description for a ${degree}${field ? ` in ${field}` : ''} from ${institution}. Highlight relevant coursework, honors, or activities if applicable.`;
+   295→        break;
+   296→
+   297→      case 'improve':
+   298→        userMessage = `Improve this education entry description.\n\nDegree: ${degree}${field ? ` in ${field}` : ''} at ${institution}\n\nCurrent description:\n${content || '(empty)'}`;
+   299→        break;
+   300→
+   301→      case 'rewrite':
+   302→        userMessage = `Rewrite this education entry to be more impactful.\n\nDegree: ${degree}${field ? ` in ${field}` : ''} at ${institution}\n\nCurrent description:\n${content || '(empty)'}`;
+   303→        break;
+   304→
+   305→      case 'expand':
+   306→        userMessage = `Expand this education entry with more detail about relevant coursework, projects, honors, or activities.\n\nDegree: ${degree}${field ? ` in ${field}` : ''} at ${institution}\n\nCurrent description:\n${content || '(empty)'}`;
+   307→        break;
+   308→
+   309→      case 'shorten':
+   310→        userMessage = `Shorten this education entry while keeping the most relevant information.\n\nCurrent description:\n${content || '(empty)'}`;
+   311→        break;
+   312→
+   313→      case 'grammar':
+   314→        userMessage = `Check and fix any grammar, spelling, or writing issues in this education entry.\n\nCurrent description:\n${content || '(empty)'}`;
+   315→        break;
+   316→
+   317→      case 'custom':
+   318→        userMessage = `${customPrompt || ''}\n\n${content ? `Degree: ${degree}${field ? ` in ${field}` : ''} at ${institution}\n\nCurrent description:\n${content}` : ''}`;
+   319→        break;
+   320→
+   321→      default:
+   322→        userMessage = `Improve this education entry.\n\nDegree: ${degree}${field ? ` in ${field}` : ''} at ${institution}\n\nCurrent description:\n${content || '(empty)'}`;
+   323→        break;
+   324→    }
+   325→  }
+   326→
+   327→  // -----------------------------------------------------------------------
+   328→  // Skills
+   329→  // -----------------------------------------------------------------------
+   330→  else if (section === 'skills') {
+   331→    switch (action) {
+   332→      case 'skills_suggest':
+   333→        userMessage = `Suggest 8-10 relevant skills for a ${jobTitle} with ${skillsList ? `current skills including: ${skillsList}` : 'no existing skills listed'}. Categorize them into Technical and Soft skills. Return in this EXACT format:
+   334→
+   335→Technical: Skill1, Skill2, Skill3, Skill4, Skill5
+   336→Soft: Skill6, Skill7, Skill8
+   337→
+   338→Only use "Technical:" and "Soft:" as prefixes. Do not add any other text, explanations, or formatting.`;
+   339→        break;
+   340→
+   341→      case 'improve':
+   342→        userMessage = `Improve and organize these skills to be more ATS-friendly and impactful.\n\nCurrent skills:\n${content || '(empty)'}`;
+   343→        break;
+   344→
+   345→      case 'rewrite':
+   346→        userMessage = `Rewrite and reorganize these skills for better presentation and ATS optimization.\n\nCurrent skills:\n${content || '(empty)'}`;
+   347→        break;
+   348→
+   349→      case 'keywords':
+   350→        userMessage = `Suggest ATS-friendly keywords commonly found in job descriptions for a ${jobTitle}. Explain why each keyword is valuable. Format as: keyword - reason.`;
+   351→        break;
+   352→
+   353→      case 'grammar':
+   354→        userMessage = `Check and fix any spelling, formatting, or consistency issues in this skills list.\n\nCurrent skills:\n${content || '(empty)'}`;
+   355→        break;
+   356→
+   357→      case 'custom':
+   358→        userMessage = `${customPrompt || ''}\n\n${content ? `Current skills:\n${content}` : ''}`;
+   359→        break;
+   360→
+   361→      default:
+   362→        userMessage = `Improve these skills.\n\nCurrent skills:\n${content || '(empty)'}`;
+   363→        break;
+   364→    }
+   365→  }
+   366→
+   367→  // -----------------------------------------------------------------------
+   368→  // Projects
+   369→  // -----------------------------------------------------------------------
+   370→  else if (section === 'projects') {
+   371→    const targetItem = findProjectItem(ctx, itemId);
+   372→    const projectName = targetItem?.name || 'this project';
+   373→    const technologies = targetItem?.technologies?.join(', ') || '';
+   374→
+   375→    switch (action) {
+   376→      case 'generate':
+   377→        userMessage = `Write a description for a project called "${projectName}"${technologies ? ` using ${technologies}` : ''}. Make it concise, highlight the purpose, and emphasize measurable outcomes.`;
+   378→        break;
+   379→
+   380→      case 'improve':
+   381→        userMessage = `Improve this project description to be more impactful and results-oriented.\n\nProject: ${projectName}${technologies ? `\nTechnologies: ${technologies}` : ''}\n\nCurrent description:\n${content || '(empty)'}`;
+   382→        break;
+   383→
+   384→      case 'rewrite':
+   385→        userMessage = `Rewrite this project description for stronger impact.\n\nProject: ${projectName}${technologies ? `\nTechnologies: ${technologies}` : ''}\n\nCurrent description:\n${content || '(empty)'}`;
+   386→        break;
+   387→
+   388→      case 'expand':
+   389→        userMessage = `Expand this project description with more detail about the problem solved, approach taken, and results achieved.\n\nProject: ${projectName}${technologies ? `\nTechnologies: ${technologies}` : ''}\n\nCurrent description:\n${content || '(empty)'}`;
+   390→        break;
+   391→
+   392→      case 'shorten':
+   393→        userMessage = `Shorten this project description while keeping the most important information.\n\nCurrent description:\n${content || '(empty)'}`;
+   394→        break;
+   395→
+   396→      case 'achievement':
+   397→        userMessage = `Transform this project description to emphasize measurable achievements and quantified results.\n\nProject: ${projectName}\n\nCurrent description:\n${content || '(empty)'}`;
+   398→        break;
+   399→
+   400→      case 'grammar':
+   401→        userMessage = `Check and fix any grammar, spelling, or writing issues in this project description.\n\nCurrent description:\n${content || '(empty)'}`;
+   402→        break;
+   403→
+   404→      case 'custom':
+   405→        userMessage = `${customPrompt || ''}\n\n${content ? `Project: ${projectName}\n\nCurrent description:\n${content}` : ''}`;
+   406→        break;
+   407→
+   408→      default:
+   409→        userMessage = `Improve this project description.\n\nProject: ${projectName}\n\nCurrent description:\n${content || '(empty)'}`;
+   410→        break;
+   411→    }
+   412→  }
+   413→
+   414→  // -----------------------------------------------------------------------
+   415→  // Certifications
+   416→  // -----------------------------------------------------------------------
+   417→  else if (section === 'certifications') {
+   418→    switch (action) {
+   419→      case 'improve':
+   420→        userMessage = `Improve this certification entry for better presentation.\n\nCurrent entry:\n${content || '(empty)'}`;
+   421→        break;
+   422→
+   423→      case 'grammar':
+   424→        userMessage = `Check and fix any grammar, spelling, or writing issues in this certification entry.\n\nCurrent entry:\n${content || '(empty)'}`;
+   425→        break;
+   426→
+   427→      case 'custom':
+   428→        userMessage = `${customPrompt || ''}\n\n${content ? `Current entry:\n${content}` : ''}`;
+   429→        break;
+   430→
+   431→      default:
+   432→        userMessage = `Improve this certification entry.\n\nCurrent entry:\n${content || '(empty)'}`;
+   433→        break;
+   434→    }
+   435→  }
+   436→
+   437→  // -----------------------------------------------------------------------
+   438→  // Languages
+   439→  // -----------------------------------------------------------------------
+   440→  else if (section === 'languages') {
+   441→    switch (action) {
+   442→      case 'improve':
+   443→        userMessage = `Improve this language entry for better presentation.\n\nCurrent entry:\n${content || '(empty)'}`;
+   444→        break;
+   445→
+   446→      case 'grammar':
+   447→        userMessage = `Check and fix any formatting or consistency issues in this language entry.\n\nCurrent entry:\n${content || '(empty)'}`;
+   448→        break;
+   449→
+   450→      case 'custom':
+   451→        userMessage = `${customPrompt || ''}\n\n${content ? `Current entry:\n${content}` : ''}`;
+   452→        break;
+   453→
+   454→      default:
+   455→        userMessage = `Improve this language entry.\n\nCurrent entry:\n${content || '(empty)'}`;
+   456→        break;
+   457→    }
+   458→  }
+   459→
+   460→  // -----------------------------------------------------------------------
+   461→  // Custom / Fallback
+   462→  // -----------------------------------------------------------------------
+   463→  else {
+   464→    if (action === 'custom') {
+   465→      userMessage = `${customPrompt || ''}\n\n${content ? `Content:\n${content}` : ''}`;
+   466→    } else {
+   467→      userMessage = `${action}: ${content || '(no content provided)'}`;
+   468→    }
+   469→  }
+   470→
+   471→  // Override for grammar action on any section that wasn't handled specifically
+   472→  if (action === 'grammar' && section !== 'professionalSummary' && section !== 'workExperience' && section !== 'education' && section !== 'skills' && section !== 'projects' && section !== 'certifications' && section !== 'languages') {
+   473→    userMessage = `Check and fix grammar, spelling, repetition, weak wording, and passive voice. Return only the corrected text.\n\n${content || '(empty)'}`;
+   474→  }
+   475→
+   476→  // Override for keywords action on any section that wasn't handled specifically
+   477→  if (action === 'keywords' && section !== 'professionalSummary' && section !== 'workExperience' && section !== 'skills') {
+   478→    userMessage = `Suggest ATS-friendly keywords commonly found in job descriptions for a ${jobTitle}. Explain why each keyword is valuable. Format as: keyword - reason.`;
+   479→  }
+   480→
+   481→  return { systemPrompt, userMessage };
+   482→}
+   483→
+   484→// ---------------------------------------------------------------------------
+   485→// Helpers
+   486→// ---------------------------------------------------------------------------
+   487→
+   488→function estimateYearsOfExperience(workExperience?: ResumeContext['workExperience']): string {
+   489→  if (!workExperience || workExperience.length === 0) return 'several';
+   490→  let totalYears = 0;
+   491→  for (const exp of workExperience) {
+   492→    if (exp.startDate) {
+   493→      const start = new Date(exp.startDate);
+   494→      const end = exp.current ? new Date() : (exp.endDate ? new Date(exp.endDate) : new Date());
+   495→      const diffMs = end.getTime() - start.getTime();
+   496→      totalYears += Math.max(0, Math.round(diffMs / (365.25 * 24 * 60 * 60 * 1000)));
+   497→    }
+   498→  }
+   499→  return totalYears > 0 ? String(totalYears) : 'several';
+   500→}
+   501→
+   502→function findWorkExperienceItem(
+   503→  ctx: ResumeContext | undefined,
+   504→  itemId?: string
+   505→): ResumeContext['workExperience'] extends (infer T)[] | undefined ? NonNullable<T> : never {
+   506→  if (!ctx?.workExperience || !itemId) return {} as never;
+   507→  return ctx.workExperience.find((item) => item.id === itemId) || ({} as never);
+   508→}
+   509→
+   510→function findEducationItem(
+   511→  ctx: ResumeContext | undefined,
+   512→  itemId?: string
+   513→): ResumeContext['education'] extends (infer T)[] | undefined ? NonNullable<T> : never {
+   514→  if (!ctx?.education || !itemId) return {} as never;
+   515→  return ctx.education.find((item) => item.id === itemId) || ({} as never);
+   516→}
+   517→
+   518→function findProjectItem(
+   519→  ctx: ResumeContext | undefined,
+   520→  itemId?: string
+   521→): ResumeContext['projects'] extends (infer T)[] | undefined ? NonNullable<T> : never {
+   522→  if (!ctx?.projects || !itemId) return {} as never;
+   523→  return ctx.projects.find((item) => item.id === itemId) || ({} as never);
+   524→}
+   525→
+   526→// ---------------------------------------------------------------------------
+   527→// POST Handler
+   528→// ---------------------------------------------------------------------------
+   529→
+   530→export async function POST(
+   531→  request: NextRequest,
+   532→  { params }: { params: Promise<{ id: string }> }
+   533→) {
+   534→  try {
+   535→    // 1. Authentication
+   536→    const auth = await getAuthUser();
+   537→    if (!auth) {
+   538→      return NextResponse.json(
+   539→        { success: false, error: 'Unauthorized' },
+   540→        { status: 401 }
+   541→      );
+   542→    }
+   543→
+   544→    // 2. Parse & validate request body
+   545→    const body: AiAssistBody = await request.json();
+   546→    const { section, action, content, customPrompt, tone, resumeContext, itemId, field } = body;
+   547→
+   548→    if (!section || !action) {
+   549→      return NextResponse.json(
+   550→        { success: false, error: 'Missing required fields: section and action' },
+   551→        { status: 400 }
+   552→      );
+   553→    }
+   554→
+   555→    if (!VALID_SECTIONS.includes(section as Section)) {
+   556→      return NextResponse.json(
+   557→        { success: false, error: `Invalid section. Must be one of: ${VALID_SECTIONS.join(', ')}` },
+   558→        { status: 400 }
+   559→      );
+   560→    }
+   561→
+   562→    if (!VALID_ACTIONS.includes(action as Action)) {
+   563→      return NextResponse.json(
+   564→        { success: false, error: `Invalid action. Must be one of: ${VALID_ACTIONS.join(', ')}` },
+   565→        { status: 400 }
+   566→      );
+   567→    }
+   568→
+   569→    if (action === 'custom' && !customPrompt) {
+   570→      return NextResponse.json(
+   571→        { success: false, error: 'customPrompt is required when action is "custom"' },
+   572→        { status: 400 }
+   573→      );
+   574→    }
+   575→
+   576→    // 3. Resolve resume ID from route params
+   577→    const { id } = await params;
+   578→
+   579→    // 4. Ownership check
+   580→    const resume = await db.resume.findUnique({
+   581→      where: { id },
+   582→    });
+   583→
+   584→    if (!resume || resume.user_id !== auth.userId) {
+   585→      return NextResponse.json(
+   586→        { success: false, error: 'Resume not found' },
+   587→        { status: 404 }
+   588→      );
+   589→    }
+   590→
+   591→    // 5. Feature gating
+   592→    const usage = await checkAndIncrementUsage(auth.userId, FEATURE_KEYS.AI_RESUME_BUILDER);
+   593→    if (!usage.allowed) {
+   594→      return NextResponse.json(
+   595→        {
+   596→          success: false,
+   597→          error: usage.reason || 'limit_reached',
+   598→          limit: usage.limit,
+   599→          used: usage.used,
+   600→          planName: usage.planName,
+   601→        },
+   602→        { status: 403 }
+   603→      );
+   604→    }
+   605→
+   606→    // 6. Build the AI prompt
+   607→    const { systemPrompt, userMessage } = buildPrompt(section, action, body);
+   608→
+   609→    // 7. Call the AI SDK
+   610→    const zai = await ZAI.create();
+   611→    const completion = await zai.chat.completions.create({
+   612→      messages: [
+   613→        { role: 'assistant', content: systemPrompt },
+   614→        { role: 'user', content: userMessage },
+   615→      ],
+   616→      thinking: { type: 'disabled' },
+   617→    });
+   618→
+   619→    const aiResponse = completion.choices[0]?.message?.content?.trim();
+   620→
+   621→    if (!aiResponse) {
+   622→      return NextResponse.json(
+   623→        { success: false, error: 'Failed to generate suggestion' },
+   624→        { status: 500 }
+   625→      );
+   626→    }
+   627→
+   628→    // 8. Save to AiHistory
+   629→    await db.aiHistory.create({
+   630→      data: {
+   631→        resume_id: id,
+   632→        user_id: auth.userId,
+   633→        section,
+   634→        action,
+   635→        prompt: systemPrompt + '\n\n' + userMessage,
+   636→        result: aiResponse,
+   637→        original_text: content || '',
+   638→      },
+   639→    });
+   640→
+   641→    // 9. Return success
+   642→    return NextResponse.json({
+   643→      success: true,
+   644→      result: aiResponse,
+   645→      action,
+   646→      section,
+   647→      usage: {
+   648→        limit: usage.limit,
+   649→        used: usage.used + 1, // reflect the just-incremented count
+   650→      },
+   651→    });
+   652→  } catch (error) {
+   653→    console.error('[AI Assist] Error:', error);
+   654→
+   655→    // Handle ZAI-specific errors gracefully
+   656→    if (error instanceof Error) {
+   657→      const message = error.message.toLowerCase();
+   658→      if (
+   659→        message.includes('rate limit') ||
+   660→        message.includes('quota') ||
+   661→        message.includes('too many requests')
+   662→      ) {
+   663→        return NextResponse.json(
+   664→          { success: false, error: 'AI service is temporarily unavailable. Please try again in a moment.' },
+   665→          { status: 503 }
+   666→        );
+   667→      }
+   668→
+   669→      if (
+   670→        message.includes('api key') ||
+   671→        message.includes('authentication') ||
+   672→        message.includes('unauthorized')
+   673→      ) {
+   674→        return NextResponse.json(
+   675→          { success: false, error: 'AI service configuration error. Please contact support.' },
+   676→          { status: 500 }
+   677→        );
+   678→      }
+   679→
+   680→      if (
+   681→        message.includes('timeout') ||
+   682→        message.includes('network') ||
+   683→        message.includes('fetch')
+   684→      ) {
+   685→        return NextResponse.json(
+   686→          { success: false, error: 'AI service request timed out. Please try again.' },
+   687→          { status: 504 }
+   688→        );
+   689→      }
+   690→    }
+   691→
+   692→    return NextResponse.json(
+   693→      { success: false, error: 'Failed to generate suggestion' },
+   694→      { status: 500 }
+   695→    );
+   696→  }
+   697→}

@@ -1,0 +1,484 @@
+   580→   580→        "subtitle": "Votre profil est complet. Commencons a construire votre carriere !",
+   581→   581→        "goToDashboard": "Aller au Tableau de Bord",
+   582→   582→        "description": "Vous avez maintenant acces a tous nos outils de carriere alimentes par l'IA. Commencez par creer votre premier CV ou explorez nos modeles."
+   583→   583→      },
+   584→   584→      "skip": "Passer pour le moment",
+   585→   585→      "errors": {
+   586→   586→        "failed": "Echec de la sauvegarde. Veuillez reessayer."
+   587→   587→      }
+   588→   588→    },
+   589→   589→    "errors": {
+   590→   590→      "unknown": "Une erreur inattendue s'est produite. Veuillez reessayer.",
+   591→   591→      "network": "Erreur reseau. Veuillez verifier votre connexion et reessayer.",
+   592→   592→      "sessionExpired": "Votre session a expire. Veuillez vous reconnecter.",
+   593→   593→      "unauthorized": "Vous n'etes pas autorise a effectuer cette action."
+   594→   594→    }
+   595→   595→  },
+   596→   596→  "dashboard": {
+   597→   597→    "welcomeBack": "Bienvenue, {name} !",
+   598→   598→    "subtitle": "Voici un apercu de vos outils de carriere. Commencez a creer vos documents professionnels aujourd'hui.",
+   599→   599→    "features": {
+   600→   600→      "resumeBuilder": {
+   601→   601→        "title": "Constructeur de CV",
+   602→   602→        "description": "Creez des CV aux normes ATS avec des suggestions alimentees par l'IA et des modeles professionnels."
+   603→   603→      },
+   604→   604→      "coverLetter": {
+   605→   605→        "title": "Lettre de Motivation",
+   606→   606→        "description": "Generez des lettres de motivation personnalisees adaptees a chaque candidature."
+   607→   607→      },
+   608→   608→      "atsChecker": {
+   609→   609→        "title": "Verificateur ATS",
+   610→   610→        "description": "Analysez votre CV par rapport aux descriptions d'emploi pour une compatibilite ATS maximale."
+   611→   611→      },
+   612→   612→      "jobTracker": {
+   613→   613→        "title": "Suivi des Candidatures",
+   614→   614→        "description": "Suivez toutes vos candidatures, statuts et relances en un seul endroit."
+   615→   615→      }
+   616→   616→    },
+   617→   617→    "comingSoon": "Bientot Disponible",
+   618→   618→    "quickActions": "Actions Rapides",
+   619→   619→    "getStarted": "Commencer",
+   620→   620→    "viewTemplates": "Voir les Modeles",
+   621→   621→    "recentActivity": "Activite Recente",
+   622→   622→    "noActivity": "Aucune activite recente. Commencez par creer votre premier CV !",
+   623→   623→    "userMenu": {
+   624→   624→      "profile": "Profil",
+   625→   625→      "settings": "Parametres",
+   626→   626→      "billing": "Facturation",
+   627→   627→      "logout": "Se Deconnecter"
+   628→   628→    }
+   629→   629→  },
+   630→   630→  "privacyPolicy": {
+   631→   631→    "hero": {
+   632→   632→      "title": "Politique de Confidentialité",
+   633→   633→      "subtitle": "Découvrez comment CareerForge AI collecte, utilise, protège et gère vos informations. Votre vie privée est importante pour nous.",
+   634→   634→      "lastUpdated": "Dernière Mise à Jour",
+   635→   635→      "lastUpdatedDate": "6 juillet 2025",
+   636→   636→      "effectiveDate": "Date d'Entrée en Vigueur",
+   637→   637→      "effectiveDateValue": "6 juillet 2025",
+   638→   638→      "readingTime": "Temps de lecture estimé :",
+   639→   639→      "readingTimeValue": "12",
+   640→   640→      "readingTimeUnit": "min de lecture"
+   641→   641→    },
+   642→   642→    "search": {
+   643→   643→      "placeholder": "Rechercher dans cette politique...",
+   644→   644→      "noResults": "Aucun résultat trouvé",
+   645→   645→      "clear": "Effacer la recherche"
+   646→   646→    },
+   647→   647→    "toc": {
+   648→   648→      "title": "Table des Matières"
+   649→   649→    },
+   650→   650→    "backToTop": "Retour en haut",
+   651→   651→    "sections": {
+   652→   652→      "introduction": {
+   653→   653→        "title": "Introduction",
+   654→   654→        "content": [
+   655→   655→          "CareerForge AI (\"nous\", \"notre\" ou \"nos\") s'engage à protéger votre vie privée. Cette Politique de Confidentialité explique comment nous collectons, utilisons, divulguons et protégeons vos informations lorsque vous utilisez notre plateforme de carrière propulsée par l'IA, y compris notre constructeur de CV, générateur de lettres de motivation, outils d'optimisation ATS et suivi de candidatures.",
+   656→   656→          "En accédant à ou en utilisant CareerForge AI, vous acceptez la collecte et l'utilisation d'informations conformément à cette politique. Si vous n'acceptez pas les termes de cette Politique de Confidentialité, veuillez ne pas accéder à la plateforme.",
+   657→   657→          "Cette politique s'applique à tous les utilisateurs de CareerForge AI, y compris les visiteurs, les utilisateurs inscrits sur les plans gratuits et payants (Pro à 5 000 FCFA/mois, Entreprise à 24 000 FCFA/mois), et toute autre personne interagissant avec nos services."
+   658→   658→        ]
+   659→   659→      },
+   660→   660→      "infoWeCollect": {
+   661→   661→        "title": "Informations que Nous Collectons",
+   662→   662→        "content": "Nous collectons plusieurs types d'informations pour fournir et améliorer nos services de carrière propulsés par l'IA :",
+   663→   663→        "subsections": [
+   664→   664→          {
+   665→   665→            "title": "Informations Personnelles",
+   666→   666→            "content": "Lorsque vous créez un compte, nous collectons votre nom, adresse e-mail, mot de passe (stocké sous forme de hachage sécurisé), pays, titre d'emploi, niveau de carrière et objectifs professionnels. Ces informations sont nécessaires pour personnaliser votre expérience et fournir des suggestions pertinentes alimentées par l'IA."
+   667→   667→          },
+   668→   668→          {
+   669→   669→            "title": "Données du CV",
+   670→   670→            "content": "Lorsque vous créez ou modifiez un CV, nous collectons votre expérience professionnelle, historique de formation, compétences, certifications, résumé professionnel et tout autre contenu que vous incluez dans votre CV. Ces données sont traitées par notre IA pour générer des CV optimisés aux normes ATS adaptés à vos objectifs de carrière."
+   671→   671→          },
+   672→   672→          {
+   673→   673→            "title": "Données des Lettres de Motivation",
+   674→   674→            "content": "Lorsque vous générez ou modifiez une lettre de motivation, nous collectons le contenu que vous saisissez, y compris vos qualifications, la description de l'emploi cible et le texte de la lettre de motivation générée. Ces données aident notre IA à affiner les futures suggestions et à améliorer la personnalisation."
+   675→   675→          },
+   676→   676→          {
+   677→   677→            "title": "Fichiers Téléchargés",
+   678→   678→            "content": "Si vous téléchargez des CV, lettres de motivation ou autres documents existants, nous traitons le contenu pour extraire les informations pertinentes. Les fichiers téléchargés sont stockés de manière sécurisée et utilisés uniquement pour remplir vos documents de carrière au sein de la plateforme."
+   679→   679→          },
+   680→   680→          {
+   681→   681→            "title": "Données d'Entrée IA",
+   682→   682→            "content": "Tout texte que vous fournissez en tant qu'entrée à nos fonctionnalités IA — y compris les descriptions d'emploi pour analyse, les requêtes d'amélioration de CV et les retours sur le contenu généré par l'IA — est traité temporairement pour fournir le service demandé. Nous n'utilisons pas vos entrées IA pour former nos modèles sans votre consentement explicite."
+   683→   683→          }
+   684→   684→        ]
+   685→   685→      },
+   686→   686→      "autoCollected": {
+   687→   687→        "title": "Informations Collectées Automatiquement",
+   688→   688→        "content": "Lorsque vous utilisez CareerForge AI, nous collectons automatiquement certaines informations sur votre appareil et votre utilisation, notamment :",
+   689→   689→        "subsections": [
+   690→   690→          {
+   691→   691→            "title": "Cookies et Technologies Similaires",
+   692→   692→            "content": "Nous utilisons des cookies, des balises web et des technologies de suivi similaires pour maintenir votre session, mémoriser vos préférences (telles que les paramètres de langue et de thème) et analyser la façon dont vous interagissez avec notre plateforme."
+   693→   693→          },
+   694→   694→          {
+   695→   695→            "title": "Données Analytiques",
+   696→   696→            "content": "Nous collectons des données d'utilisation anonymisées, y compris les pages visitées, les fonctionnalités utilisées (telles que le constructeur de CV, le vérificateur ATS, le suivi de candidatures), le temps passé sur chaque fonctionnalité et les modèles d'interaction. Cela nous aide à améliorer notre plateforme et l'expérience utilisateur."
+   697→   697→          },
+   698→   698→          {
+   699→   699→            "title": "Informations sur l'Appareil et le Navigateur",
+   700→   700→            "content": "Nous collectons des informations sur le type d'appareil, le système d'exploitation, le type et la version du navigateur, la résolution d'écran et d'autres détails techniques nécessaires pour assurer des performances et une compatibilité optimales sur tous les appareils."
+   701→   701→          },
+   702→   702→          {
+   703→   703→            "title": "Adresse IP et Localisation",
+   704→   704→            "content": "Nous pouvons collecter votre adresse IP et dériver des données de localisation approximatives à des fins de sécurité, de prévention du spam et pour fournir du contenu et des tarifs pertinents pour la région (y compris la devise FCFA pour les marchés ouest-africains)."
+   705→   705→          },
+   706→   706→          {
+   707→   707→            "title": "Préférences de Langue et de Thème",
+   708→   708→            "content": "Nous stockons votre préférence de langue (Anglais/Français) et votre préférence de thème (mode clair/sombre) pour offrir une expérience personnalisée à chaque visite sur CareerForge AI."
+   709→   709→          }
+   710→   710→        ]
+   711→   711→      },
+   712→   712→      "howWeUse": {
+   713→   713→        "title": "Comment Nous Utilisons Vos Informations",
+   714→   714→        "content": "Nous utilisons les informations que nous collectons aux fins suivantes :",
+   715→   715→        "subsections": [
+   716→   716→          {
+   717→   717→            "title": "Prestation de Services",
+   718→   718→            "content": "Pour fournir, maintenir et améliorer notre constructeur de CV propulsé par l'IA, générateur de lettres de motivation, outils d'optimisation ATS, analyse de descriptions d'emploi et fonctionnalités de suivi de candidatures. Cela inclut la génération de suggestions de contenu personnalisées et l'optimisation de vos documents pour la compatibilité ATS."
+   719→   719→          },
+   720→   720→          {
+   721→   721→            "title": "Gestion du Compte",
+   722→   722→            "content": "Pour créer et gérer votre compte, authentifier votre identité, traiter les paiements d'abonnement en devise FCFA, envoyer des notifications liées au service et fournir un support client."
+   723→   723→          },
+   724→   724→          {
+   725→   725→            "title": "Amélioration de la Plateforme",
+   726→   726→            "content": "Pour analyser les modèles d'utilisation, identifier les bugs, développer de nouvelles fonctionnalités et améliorer les performances globales et l'expérience utilisateur de CareerForge AI."
+   727→   727→          },
+   728→   728→          {
+   729→   729→            "title": "Communication",
+   730→   730→            "content": "Pour vous envoyer des mises à jour importantes concernant votre compte, des alertes de sécurité, des annonces de fonctionnalités et (avec votre consentement) des communications marketing concernant de nouveaux modèles, des fonctionnalités IA et des ressources de carrière."
+   731→   731→          },
+   732→   732→          {
+   733→   733→            "title": "Sécurité et Conformité",
+   734→   734→            "content": "Pour détecter et prévenir la fraude, les accès non autorisés et d'autres activités illégales, et pour se conformer aux lois et réglementations applicables en matière de protection des données."
+   735→   735→          }
+   736→   736→        ]
+   737→   737→      },
+   738→   738→      "aiProcessing": {
+   739→   739→        "title": "Traitement IA et Gestion des Données",
+   740→   740→        "content": [
+   741→   741→          "CareerForge AI utilise l'intelligence artificielle avancée pour alimenter nos outils de carrière. Lorsque vous utilisez nos fonctionnalités IA, vos données sont traitées à travers nos systèmes IA pour générer des CV, des lettres de motivation, des scores ATS et des recommandations personnalisées.",
+   742→   742→          "Notre IA est conçue pour vous assister dans la création de documents professionnels de carrière. Cependant, le contenu généré par l'IA est fourni comme point de départ et doit toujours être révisé, édité et vérifié par vous avant toute soumission à un employeur ou à un système de candidature.",
+   743→   743→          "Nous n'utilisons pas vos données personnelles, le contenu de votre CV ou le texte de votre lettre de motivation pour former nos modèles IA. Vos documents de carrière restent votre propriété et ne sont pas partagés avec des tiers à des fins de formation IA."
+   744→   744→        ]
+   745→   745→      },
+   746→   746→      "sharingInfo": {
+   747→   747→        "title": "Partage de Vos Informations",
+   748→   748→        "content": [
+   749→   749→          "Nous pouvons partager vos informations avec les catégories de tiers suivantes uniquement aux fins décrites dans cette politique :",
+   750→   750→          "Nous ne vendons pas vos informations personnelles à des tiers. Vos données ne sont jamais vendues, louées ou échangées à des fins marketing ou pour tout autre but."
+   751→   751→        ],
+   752→   752→        "subsections": [
+   753→   753→          {
+   754→   754→            "title": "Prestataires de Services",
+   755→   755→            "content": "Nous travaillons avec des prestataires de services tiers de confiance qui nous assistent dans l'exploitation de notre plateforme, le traitement des paiements, l'envoi d'e-mails, l'hébergement de notre infrastructure et la réalisation d'analyses. Ces prestataires sont contractuellement tenus de protéger vos données et ne peuvent les utiliser que pour fournir des services en notre nom."
+   756→   756→          },
+   757→   757→          {
+   758→   758→            "title": "Exigences Légales",
+   759→   759→            "content": "Nous pouvons divulguer vos informations si la loi l'exige, en réponse à une procédure légale valide, ou pour protéger les droits, la propriété ou la sécurité de CareerForge AI, de nos utilisateurs ou du public."
+   760→   760→          },
+   761→   761→          {
+   762→   762→            "title": "Transferts Commerciaux",
+   763→   763→            "content": "En cas de fusion, acquisition, réorganisation ou vente d'actifs, vos informations peuvent être transférées dans le cadre de la transaction. Nous vous informerons de tout changement de propriétaire ou d'utilisation de vos informations personnelles."
+   764→   764→          }
+   765→   765→        ]
+   766→   766→      },
+   767→   767→      "dataStorage": {
+   768→   768→        "title": "Stockage et Sécurité des Données",
+   769→   769→        "content": [
+   770→   770→          "Nous mettons en œuvre des mesures de sécurité conformes aux normes de l'industrie pour protéger vos informations :",
+   771→   771→          "Vos données de CV, lettres de motivation et informations personnelles sont stockées sur des serveurs sécurisés avec chiffrement au repos (AES-256) et en transit (TLS 1.3). Nous effectuons des audits de sécurité réguliers et maintenons des systèmes de sauvegarde complets pour prévenir la perte de données.",
+   772→   772→          "Bien que nous nous efforcions d'utiliser des moyens commercialement acceptables pour protéger vos informations, aucune méthode de stockage ou de transmission électronique n'est totalement sécurisée. Nous vous encourageons à utiliser des mots de passe solides et à nous contacter immédiatement si vous soupçonnez un accès non autorisé à votre compte."
+   773→   773→        ]
+   774→   774→      },
+   775→   775→      "cookies": {
+   776→   776→        "title": "Cookies",
+   777→   777→        "content": "CareerForge AI utilise des cookies et des technologies similaires aux fins suivantes :",
+   778→   778→        "subsections": [
+   779→   779→          {
+   780→   780→            "title": "Cookies d'Authentification",
+   781→   781→            "content": "Cookies essentiels qui maintiennent votre session de connexion, mémorisent votre compte et assurent un accès sécurisé à vos CV, lettres de motivation et données de carrière."
+   782→   782→          },
+   783→   783→          {
+   784→   784→            "title": "Cookies de Préférences",
+   785→   785→            "content": "Cookies qui mémorisent vos paramètres, y compris la préférence de langue (Anglais/Français), la sélection de thème (mode clair/sombre) et les préférences d'interface."
+   786→   786→          },
+   787→   787→          {
+   788→   788→            "title": "Cookies Analytiques",
+   789→   789→            "content": "Cookies qui nous aident à comprendre comment vous utilisez CareerForge AI — quelles fonctionnalités vous utilisez le plus, comment vous naviguez entre le constructeur de CV et le vérificateur ATS, et où nous pouvons nous améliorer. Ceux-ci sont anonymisés et ne contiennent pas de données personnelles."
+   790→   790→          }
+   791→   791→        ]
+   792→   792→      },
+   793→   793→      "userRights": {
+   794→   794→        "title": "Vos Droits",
+   795→   795→        "content": "Vous disposez des droits suivants concernant vos informations personnelles :",
+   796→   796→        "subsections": [
+   797→   797→          {
+   798→   798→            "title": "Accès et Téléchargement",
+   799→   799→            "content": "Vous pouvez accéder et télécharger toutes vos informations personnelles, CV, lettres de motivation et données de candidature à tout moment via les paramètres de votre compte ou en contactant notre équipe de support."
+   800→   800→          },
+   801→   801→          {
+   802→   802→            "title": "Mise à Jour et Correction",
+   803→   803→            "content": "Vous pouvez mettre à jour vos informations personnelles, le contenu de votre CV, vos lettres de motivation et votre profil de carrière à tout moment via les outils d'édition de la plateforme."
+   804→   804→          },
+   805→   805→          {
+   806→   806→            "title": "Suppression de Compte",
+   807→   807→            "content": "Vous pouvez demander la suppression de votre compte et de toutes les données associées à tout moment. Lors de la suppression, vos CV, lettres de motivation, données de suivi de candidatures et informations personnelles seront définitivement supprimés de nos systèmes dans les 30 jours, sauf lorsque la rétention est exigée par la loi."
+   808→   808→          },
+   809→   809→          {
+   810→   810→            "title": "Portabilité des Données",
+   811→   811→            "content": "Vous pouvez exporter vos CV, lettres de motivation et données de carrière dans des formats standards (PDF, JSON) à tout moment via votre tableau de bord de compte."
+   812→   812→          },
+   813→   813→          {
+   814→   814→            "title": "Limitation du Traitement",
+   815→   815→            "content": "Vous avez le droit de demander la limitation du traitement de vos données personnelles dans certaines circonstances, par exemple lorsque vous contestez l'exactitude de vos données, ou lorsque le traitement est illicite mais que vous préférez la limitation à la suppression."
+   816→   816→          },
+   817→   817→          {
+   818→   818→            "title": "Opposition au Traitement",
+   819→   819→            "content": "Vous avez le droit de vous opposer au traitement de vos données personnelles à des fins de marketing direct ou lorsque nous nous appuyons sur des intérêts légitimes comme base juridique du traitement. Nous cesserons le traitement à moins que nous n'ayons des motifs légitimes impérieux qui prévalent sur vos intérêts, droits et libertés."
+   820→   820→          }
+   821→   821→        ]
+   822→   822→      },
+   823→   823→      "dataRetention": {
+   824→   824→        "title": "Rétention des Données",
+   825→   825→        "content": [
+   826→   826→          "Nous conservons vos informations personnelles tant que votre compte est actif ou tant que nécessaire pour vous fournir les services de CareerForge AI. Si vous supprimez votre compte, nous supprimerons vos données personnelles dans les 30 jours, sauf lorsque nous sommes tenus de conserver certaines informations à des fins légales, comptables ou réglementaires.",
+   827→   827→          "Les CV, lettres de motivation et données de suivi de candidatures associés aux comptes supprimés sont définitivement purgés de nos systèmes actifs dans les 30 jours et de nos systèmes de sauvegarde dans les 90 jours."
+   828→   828→        ]
+   829→   829→      },
+   830→   830→      "dataBreach": {
+   831→   831→        "title": "Notification de Violation de Données",
+   832→   832→        "content": "En cas de violation de données susceptible de constituer un risque pour les droits et libertés des personnes, nous notifierons les utilisateurs concernés sans retard injustifié et dans un délai de 72 heures après en avoir pris connaissance, conformément aux lois applicables en matière de protection des données. Les notifications seront envoyées par e-mail à l'adresse associée à votre compte et pourront inclure une description de la nature de la violation, les catégories de données concernées, les conséquences probables et les mesures que nous avons prises ou proposons de prendre pour remédier à la violation. Nous notifierons également les autorités de contrôle compétentes lorsque cela est requis par la loi applicable."
+   833→   833→      },
+   834→   834→      "childrenPrivacy": {
+   835→   835→        "title": "Vie Privée des Enfants",
+   836→   836→        "content": "CareerForge AI n'est pas destiné aux personnes de moins de 16 ans. Nous ne collectons pas sciemment d'informations personnelles auprès d'enfants de moins de 16 ans. Si vous êtes un parent ou tuteur et croyez que votre enfant nous a fourni des informations personnelles, veuillez nous contacter immédiatement à support@careerforge.ai, et nous prendrons des mesures pour supprimer rapidement ces informations."
+   837→   837→      },
+   838→   838→      "internationalUsers": {
+   839→   839→        "title": "Utilisateurs Internationaux",
+   840→   840→        "content": "CareerForge AI est disponible dans le monde entier, avec une attention particulière pour les utilisateurs des marchés ouest-africains où nous offrons des tarifs en devise FCFA. Vos informations peuvent être transférées et traitées dans des pays autres que le vôtre. En utilisant CareerForge AI, vous consentez au transfert de vos informations vers nos installations et prestataires de services dans ces juridictions, qui peuvent avoir des lois différentes en matière de protection des données. Nous prenons des mesures de sauvegarde appropriées pour garantir que vos données bénéficient d'un niveau de protection adéquat, quel que soit l'endroit où elles sont traitées."
+   841→   841→      },
+   842→   842→      "policyChanges": {
+   843→   843→        "title": "Modifications de Cette Politique",
+   844→   844→        "content": "Nous pouvons mettre à jour cette Politique de Confidentialité de temps à autre pour refléter les changements dans nos pratiques, technologies, exigences légales ou d'autres facteurs. Lorsque nous apportons des modifications, nous mettrons à jour la date de « Dernière Mise à Jour » en haut de cette page et, pour les modifications importantes, nous vous en informerons par e-mail ou par un avis visible sur notre plateforme. Nous vous encourageons à consulter périodiquement cette politique pour rester informé de la façon dont nous protégeons vos informations. Votre utilisation continue de CareerForge AI après toute modification constitue votre acceptation de la politique mise à jour."
+   845→   845→      },
+   846→   846→      "contactUs": {
+   847→   847→        "title": "Nous Contacter",
+   848→   848→        "content": [
+   849→   849→          "Si vous avez des questions, préoccupations ou demandes concernant cette Politique de Confidentialité ou nos pratiques en matière de données, veuillez nous contacter :",
+   850→   850→          "E-mail : privacy@careerforge.ai",
+   851→   851→          "Support : support@careerforge.ai",
+   852→   852→          "Nous répondrons à toutes les demandes liées aux données dans un délai de 30 jours."
+   853→   853→        ]
+   854→   854→      }
+   855→   855→    }
+   856→   856→  },
+   857→   857→  "termsOfService": {
+   858→   858→    "hero": {
+   859→   859→      "title": "Conditions d'Utilisation",
+   860→   860→      "subtitle": "Veuillez lire attentivement ces conditions avant d'utiliser CareerForge AI. En utilisant notre plateforme, vous acceptez d'être lié par ces conditions.",
+   861→   861→      "lastUpdated": "Dernière Mise à Jour",
+   862→   862→      "lastUpdatedDate": "6 juillet 2025",
+   863→   863→      "effectiveDate": "Date d'Entrée en Vigueur",
+   864→   864→      "effectiveDateValue": "6 juillet 2025",
+   865→   865→      "readingTime": "Temps de lecture estimé :",
+   866→   866→      "readingTimeValue": "15",
+   867→   867→      "readingTimeUnit": "min de lecture"
+   868→   868→    },
+   869→   869→    "search": {
+   870→   870→      "placeholder": "Rechercher dans ces conditions...",
+   871→   871→      "noResults": "Aucun résultat trouvé",
+   872→   872→      "clear": "Effacer la recherche"
+   873→   873→    },
+   874→   874→    "toc": {
+   875→   875→      "title": "Table des Matières"
+   876→   876→    },
+   877→   877→    "backToTop": "Retour en haut",
+   878→   878→    "sections": {
+   879→   879→      "acceptanceOfTerms": {
+   880→   880→        "title": "Acceptation des Conditions",
+   881→   881→        "content": [
+   882→   882→          "En accédant à ou en utilisant CareerForge AI (\"la Plateforme\"), vous reconnaissez avoir lu, compris et accepté d'être lié par ces Conditions d'Utilisation (\"Conditions\"), ainsi que par notre Politique de Confidentialité. Si vous n'acceptez pas ces Conditions, vous ne devez pas accéder à ou utiliser la Plateforme.",
+   883→   883→          "Ces Conditions constituent un accord juridiquement contraignant entre vous (\"Utilisateur\", \"vous\") et CareerForge AI (\"nous\", \"notre\" ou \"nos\"). Nous nous réservons le droit de modifier ces Conditions à tout moment, et votre utilisation continue de la Plateforme après toute modification constitue une acceptation des Conditions révisées."
+   884→   884→        ]
+   885→   885→      },
+   886→   886→      "eligibility": {
+   887→   887→        "title": "Éligibilité",
+   888→   888→        "content": [
+   889→   889→          "Pour utiliser CareerForge AI, vous devez avoir au moins 16 ans. Si vous avez moins de 18 ans, vous devez avoir le consentement d'un parent ou tuteur pour utiliser la Plateforme.",
+   890→   890→          "En créant un compte, vous déclarez et garantissez que vous avez l'âge légal pour former un contrat contraignant dans votre juridiction, que vous n'avez pas été précédemment suspendu ou banni de la Plateforme, et que toutes les informations d'inscription que vous fournissez sont exactes et complètes."
+   891→   891→        ]
+   892→   892→      },
+   893→   893→      "accountRegistration": {
+   894→   894→        "title": "Inscription au Compte",
+   895→   895→        "content": [
+   896→   896→          "Pour accéder à toutes les fonctionnalités de CareerForge AI, y compris la création de CV, la génération de lettres de motivation et le suivi de candidatures, vous devez inscrire un compte. Vous pouvez vous inscrire en utilisant votre adresse e-mail et mot de passe, ou via nos options de connexion Google ou Apple.",
+   897→   897→          "Vous êtes responsable de la confidentialité de vos identifiants de compte et de toutes les activités qui se produisent sous votre compte. Vous devez nous informer immédiatement de toute utilisation non autorisée de votre compte. Nous ne sommes pas responsables des pertes ou dommages découlant de votre défaillance à protéger votre compte.",
+   898→   898→          "Vous ne pouvez pas créer plusieurs comptes, usurper l'identité d'une autre personne ou utiliser de fausses informations lors de l'inscription."
+   899→   899→        ]
+   900→   900→      },
+   901→   901→      "userResponsibilities": {
+   902→   902→        "title": "Responsabilités de l'Utilisateur",
+   903→   903→        "content": [
+   904→   904→          "En tant qu'utilisateur de CareerForge AI, vous acceptez les responsabilités suivantes :",
+   905→   905→          "Vous êtes seul responsable de l'exactitude et de l'exhaustivité de toutes les informations que vous fournissez, y compris mais sans s'y limiter le contenu du CV, les lettres de motivation, les données personnelles et l'historique professionnel. CareerForge AI fournit des suggestions et du contenu générés par l'IA pour vous assister, mais vous devez examiner et vérifier tout contenu avant de l'utiliser dans toute candidature.",
+   906→   906→          "Vous vous engagez à ne pas abuser de la Plateforme, à ne pas tenter d'obtenir un accès non autorisé à des systèmes ou des données, à ne pas interférer avec le bon fonctionnement de la Plateforme, ou à utiliser la Plateforme de toute manière qui viole les lois applicables ou les droits d'autrui."
+   907→   907→        ]
+   908→   908→      },
+   909→   909→      "acceptableUse": {
+   910→   910→        "title": "Utilisation Acceptable",
+   911→   911→        "content": "Vous acceptez d'utiliser CareerForge AI uniquement à des fins légales et conformément à ces Conditions. Vous ne devez pas :",
+   912→   912→        "items": [
+   913→   913→          "Utiliser la Plateforme pour créer des CV, lettres de motivation ou documents de carrière frauduleux, trompeurs ou fallacieux",
+   914→   914→          "Fausser vos qualifications, expérience ou identité dans tout document généré via la Plateforme",
+   915→   915→          "Utiliser la Plateforme pour harceler, nuire ou diffamer une personne ou une entité",
+   916→   916→          "Tenter de rétroconcevoir, décompiler ou désassembler toute partie de la Plateforme",
+   917→   917→          "Utiliser des scripts automatisés, des bots ou des outils de scraping pour accéder ou extraire des données de la Plateforme",
+   918→   918→          "Partager vos identifiants de compte avec des tiers ou autoriser un accès non autorisé à votre compte",
+   919→   919→          "Utiliser la Plateforme à des fins interdites par les lois ou réglementations applicables",
+   920→   920→          "Télécharger ou transmettre tout logiciel malveillant, virus ou autre code nuisible"
+   921→   921→        ]
+   922→   922→      },
+   923→   923→      "aiServices": {
+   924→   924→        "title": "Services IA",
+   925→   925→        "content": [
+   926→   926→          "CareerForge AI fournit des outils propulsés par l'intelligence artificielle pour vous assister dans la création et l'optimisation de vos documents de carrière. Ces outils incluent la rédaction de CV par IA, la génération de lettres de motivation par IA, le score ATS, l'optimisation de mots-clés et l'analyse de descriptions d'emploi.",
+   927→   927→          "Important : Tout contenu généré par l'IA est fourni comme assistance et point de départ pour vos documents de carrière. Vous êtes seul responsable de la révision, de l'édition et de la vérification de l'exactitude, de l'exhaustivité et de la pertinence de tout contenu généré par l'IA avant de le soumettre à un employeur, un site d'emploi ou un système de candidature.",
+   928→   928→          "CareerForge AI ne garantit pas que les CV générés par l'IA passeront un système ATS spécifique, que vous recevrez des entretiens d'embauche, ou que vous obtiendrez un emploi. La Plateforme fournit des outils et des suggestions pour améliorer vos documents de candidature, mais votre réussite dépend de nombreux facteurs indépendants de notre contrôle.",
+   929→   929→          "Nous nous réservons le droit de modifier, améliorer ou discontinuer toute fonctionnalité IA à tout moment sans préavis, bien que nous nous efforcerons de fournir un préavis raisonnable pour les changements importants."
+   930→   930→        ]
+   931→   931→      },
+   932→   932→      "subscriptions": {
+   933→   933→        "title": "Abonnements et Forfaits",
+   934→   934→        "content": [
+   935→   935→          "CareerForge AI propose les forfaits d'abonnement suivants :",
+   936→   936→          "Forfait Gratuit : Inclut 5 CV et 5 lettres de motivation, modèles de base, suggestions IA limitées (5 par jour), export PDF et vérification ATS de base. Disponible sans frais.",
+   937→   937→          "Forfait Pro : Inclut des CV et lettres de motivation illimités, tous les modèles, suggestions IA illimitées, analyse de descriptions d'emploi, vérification ATS avancée, suivi de candidatures et support prioritaire. Disponible à 5 000 FCFA par mois ou 48 000 FCFA par an.",
+   938→   938→          "Forfait Entreprise : Inclut tout le Pro, plus la collaboration d'équipe, la personnalisation de marque, l'accès API, la génération de CV en lot, le support dédié et l'intégration SSO. Disponible à 24 000 FCFA par mois ou 230 400 FCFA par an.",
+   939→   939→          "Votre abonnement se renouvelle automatiquement à la fin de chaque période de facturation sauf si vous annulez avant la date de renouvellement. Vous pouvez gérer votre abonnement via les paramètres de votre compte."
+   940→   940→        ]
+   941→   941→      },
+   942→   942→      "payments": {
+   943→   943→        "title": "Paiements et Facturation",
+   944→   944→        "content": [
+   945→   945→          "Les paiements pour les abonnements payants sont traités en devise FCFA (Franc CFA de l'Afrique de l'Ouest). Les prix sont affichés toutes taxes comprises sauf mention contraire.",
+   946→   946→          "En vous abonnant à un forfait payant, vous nous autorisez à débiter les frais d'abonnement applicables sur votre moyen de paiement choisi au début de chaque période de facturation. Vous êtes responsable de la mise à jour de vos informations de paiement.",
+   947→   947→          "Si un paiement échoue, nous pouvons tenter de traiter le paiement à nouveau dans un délai raisonnable. Si le paiement ne peut être collecté, votre compte peut être rétrogradé au forfait Gratuit jusqu'à ce que des informations de paiement valides soient fournies."
+   948→   948→        ]
+   949→   949→      },
+   950→   950→      "refundPolicy": {
+   951→   951→        "title": "Politique de Remboursement",
+   952→   952→        "content": [
+   953→   953→          "Nous offrons une garantie de satisfaction pour les nouveaux abonnés Pro et Entreprise. Si vous n'êtes pas satisfait de votre abonnement, vous pouvez demander un remboursement intégral dans les 7 jours suivant votre achat initial en contactant notre équipe de support.",
+   954→   954→          "Après la période de remboursement de 7 jours, les abonnements ne sont pas remboursables pour le reste de la période de facturation. Cependant, vous pouvez annuler votre abonnement à tout moment, et vous continuerez à avoir accès aux fonctionnalités payantes jusqu'à la fin de votre période de facturation en cours.",
+   955→   955→          "Les remboursements, s'ils sont approuvés, seront traités dans les 14 jours ouvrables vers votre moyen de paiement d'origine. Nous nous réservons le droit de refuser les demandes de remboursement que nous jugeons abusives ou faites de mauvaise foi."
+   956→   956→        ]
+   957→   957→      },
+   958→   958→      "accountSuspension": {
+   959→   959→        "title": "Suspension et Résiliation du Compte",
+   960→   960→        "content": [
+   961→   961→          "Nous nous réservons le droit de suspendre ou résilier votre compte à notre seule discrétion, sans préavis, dans les circonstances suivantes :",
+   962→   962→          "Violation de ces Conditions d'Utilisation, y compris les politiques d'utilisation acceptable ; activités frauduleuses, abusives ou illégales ; périodes d'inactivité prolongées (12 mois ou plus) ; ou défaillance de paiement des frais d'abonnement applicables.",
+   963→   963→          "Lors de la suspension ou de la résiliation, votre droit d'utiliser la Plateforme cessera immédiatement. Nous pouvons, mais ne sommes pas tenus de, vous donner l'opportunité d'exporter vos données avant la suppression définitive. Les dispositions de ces Conditions qui, par leur nature, doivent survivre à la résiliation resteront en vigueur."
+   964→   964→        ]
+   965→   965→      },
+   966→   966→      "intellectualProperty": {
+   967→   967→        "title": "Propriété Intellectuelle",
+   968→   968→        "content": [
+   969→   969→          "La plateforme CareerForge AI, y compris sa conception, ses fonctionnalités, ses modèles IA, ses modèles de documents, ses logos et tout autre contenu (à l'exclusion de vos documents personnels), est la propriété de ou licenciée à CareerForge AI et est protégée par les lois sur la propriété intellectuelle. Vous ne pouvez pas copier, modifier, distribuer ou créer des œuvres dérivées de toute partie de la Plateforme sans notre autorisation écrite expresse.",
+   970→   970→          "Vous conservez la pleine propriété de tout contenu que vous créez sur la Plateforme, y compris vos CV, lettres de motivation et données de carrière personnelles. En utilisant nos fonctionnalités IA, vous accordez à CareerForge AI une licence limitée, non exclusive pour traiter votre contenu uniquement aux fins de fournir nos services.",
+   971→   971→          "CareerForge AI et ses logos sont des marques de commerce de CareerForge AI. Vous ne pouvez pas utiliser nos marques sans notre consentement écrit préalable."
+   972→   972→        ]
+   973→   973→      },
+   974→   974→      "thirdPartyServices": {
+   975→   975→        "title": "Services Tiers",
+   976→   976→        "content": [
+   977→   977→          "CareerForge AI peut s'intégrer à ou faire des liens vers des services tiers, y compris des processeurs de paiement, des outils analytiques et des fournisseurs d'authentification. Ces services tiers sont régis par leurs propres conditions et politiques de confidentialité, que nous vous encourageons à consulter.",
+   978→   978→          "Nous ne sommes pas responsables des pratiques, du contenu ou de la fonctionnalité de tout service tiers. Votre utilisation de services tiers est à vos propres risques, et vous devez faire preuve de prudence lorsque vous fournissez des informations à ou via ces services.",
+   979→   979→          "L'intégration avec des services tiers n'implique pas notre approbation de ces services."
+   980→   980→        ]
+   981→   981→      },
+   982→   982→      "disclaimer": {
+   983→   983→        "title": "Avertissement",
+   984→   984→        "content": [
+   985→   985→          "CareerForge AI est fourni « en l'état » et « selon disponibilité », sans garanties d'aucune sorte, expresse ou implicite. Nous ne garantissons pas que la Plateforme sera ininterrompue, exempte d'erreurs ou libre de virus ou d'autres composants nuisibles.",
+   986→   986→          "Bien que nous nous efforcions de fournir un contenu généré par l'IA exact et utile, nous ne formulons aucune représentation ni garantie quant à l'exactitude, la fiabilité ou l'adéquation de tout CV, lettre de motivation, score ATS ou recommandation de carrière généré par l'IA. Tout contenu généré par l'IA doit être indépendamment vérifié par vous avant utilisation.",
+   987→   987→          "CareerForge AI ne garantit pas l'emploi, les entretiens d'embauche ou tout résultat spécifique résultant de l'utilisation de nos services. Votre réussite professionnelle dépend de nombreux facteurs indépendants de notre contrôle."
+   988→   988→        ]
+   989→   989→      },
+   990→   990→      "limitationOfLiability": {
+   991→   991→        "title": "Limitation de Responsabilité",
+   992→   992→        "content": [
+   993→   993→          "Dans la mesure maximale permise par la loi applicable, CareerForge AI et ses dirigeants, administrateurs, employés, agents et affiliés ne seront pas responsables de tout dommage indirect, incident, spécial, conséquent ou punitif, y compris mais sans s'y limiter la perte de profits, de données, d'opportunités d'emploi ou de bonne réputation, découlant de ou lié à votre utilisation ou incapacité à utiliser la Plateforme.",
+   994→   994→          "Notre responsabilité totale pour toute réclamation découlant de ou liée à ces Conditions ou à la Plateforme ne dépassera pas le montant total que vous avez payé à CareerForge AI au cours des douze (12) mois précédant la réclamation. Cette limitation s'applique quelle que soit la théorie juridique sur laquelle la réclamation est basée."
+   995→   995→        ]
+   996→   996→      },
+   997→   997→      "indemnification": {
+   998→   998→        "title": "Indemnisation",
+   999→   999→        "content": [
+  1000→  1000→          "Vous acceptez d'indemniser, de défendre et de dégager de toute responsabilité CareerForge AI, ses dirigeants, administrateurs, employés, agents, affiliés et concédants de licence contre toutes réclamations, dommages, pertes, responsabilités, coûts et dépenses (y compris les honoraires raisonnables d'avocats) découlant de ou liés à : (a) votre utilisation ou incapacité à utiliser la Plateforme ; (b) votre violation de ces Conditions ; (c) votre violation de toute loi ou réglementation applicable ; (d) votre violation des droits de tout tiers, y compris les droits de propriété intellectuelle, les droits à la vie privée ou les droits exclusifs ; ou (e) tout contenu que vous soumettez, créez ou transmettez par la Plateforme, y compris les CV, lettres de motivation et autres documents de carrière contenant des informations fausses, trompeuses ou frauduleuses.",
+  1001→  1001→          "Cette obligation d'indemnisation survivra à la résiliation ou l'expiration de votre compte et de ces Conditions."
+  1002→  1002→        ]
+  1003→  1003→      },
+  1004→  1004→      "governingLaw": {
+  1005→  1005→        "title": "Loi Applicable et Juridiction",
+  1006→  1006→        "content": [
+  1007→  1007→          "Ces Conditions d'Utilisation et tout litige découlant de ou lié à ces Conditions ou à la Plateforme seront régis par et interprétés conformément aux lois du Sénégal, sans tenir compte de ses principes de conflit de lois.",
+  1008→  1008→          "Vous acceptez que toute action légale ou procédure découlant de ou liée à ces Conditions soit exclusivement portée devant les tribunaux du Sénégal, et vous consentez à la compétence personnelle et à la juridiction de ces tribunaux. Si une disposition de ces Conditions est jugée invalide ou inapplicable, les dispositions restantes resteront pleinement en vigueur et en effet."
+  1009→  1009→        ]
+  1010→  1010→      },
+  1011→  1011→      "disputeResolution": {
+  1012→  1012→        "title": "Résolution des Litiges",
+  1013→  1013→        "content": [
+  1014→  1014→          "Avant de déposer toute réclamation légale formelle, vous acceptez de tenter de résoudre tout litige avec nous de manière informelle en contactant notre équipe de support à support@careerforge.ai. Nous tenterons de résoudre le litige dans un délai de 30 jours suivant la réception de votre notification. Si le litige ne peut être résolu de manière informelle, l'une ou l'autre partie peut poursuivre les recours légaux formels comme décrit dans la section Loi Applicable et Juridiction.",
+  1015→  1015→          "Vous et CareerForge AI convenez que toute réclamation découlant de ou liée à ces Conditions ou à la Plateforme doit être déposée dans un délai d'un (1) an à compter de la date à laquelle la réclamation a surgi, faute de quoi elle sera définitivement prescrite."
+  1016→  1016→        ]
+  1017→  1017→      },
+  1018→  1018→      "termination": {
+  1019→  1019→        "title": "Résiliation",
+  1020→  1020→        "content": [
+  1021→  1021→          "Vous pouvez résilier votre compte à tout moment en contactant notre équipe de support ou via les paramètres de votre compte. Lors de la résiliation, votre droit d'utiliser la Plateforme cessera immédiatement.",
+  1022→  1022→          "Nous pouvons suspendre ou résilier votre accès à la Plateforme à tout moment pour violation de ces Conditions, fraude soupçonnée, ou toute autre raison à notre discrétion, avec ou sans préavis.",
+  1023→  1023→          "Après la résiliation, nous conserverons vos données pendant 30 jours pour vous permettre de demander une exportation. Après cette période, toutes les données associées à votre compte seront définitivement supprimées conformément à notre Politique de Confidentialité, sauf lorsque la rétention est exigée par la loi."
+  1024→  1024→        ]
+  1025→  1025→      },
+  1026→  1026→      "changesToTerms": {
+  1027→  1027→        "title": "Modifications de Ces Conditions",
+  1028→  1028→        "content": [
+  1029→  1029→          "Nous nous réservons le droit de modifier ces Conditions d'Utilisation à tout moment. Lorsque nous apportons des modifications, nous mettrons à jour la date de « Dernière Mise à Jour » en haut de cette page. Pour les modifications importantes pouvant affecter vos droits, nous fournirons un préavis d'au moins 30 jours par e-mail ou par un avis visible sur la Plateforme.",
+  1030→  1030→          "Votre utilisation continue de CareerForge AI après la date d'entrée en vigueur de toute modification constitue votre acceptation des Conditions révisées. Si vous êtes en désaccord avec des modifications, vous devez cesser d'utiliser la Plateforme et pouvez demander la suppression de votre compte.",
+  1031→  1031→          "Nous vous encourageons à consulter périodiquement ces Conditions pour rester informé des mises à jour."
+  1032→  1032→        ]
+  1033→  1033→      },
+  1034→  1034→      "contactInformation": {
+  1035→  1035→        "title": "Coordonnées",
+  1036→  1036→        "content": [
+  1037→  1037→          "Si vous avez des questions ou des préoccupations concernant ces Conditions d'Utilisation, veuillez nous contacter :",
+  1038→  1038→          "E-mail : legal@careerforge.ai",
+  1039→  1039→          "Support : support@careerforge.ai",
+  1040→  1040→          "Pour toute notification légale formelle, veuillez l'envoyer à l'adresse e-mail ci-dessus. Nous accuserons réception des notifications formelles dans les 5 jours ouvrables."
+  1041→  1041→        ]
+  1042→  1042→      }
+  1043→  1043→    }
+  1044→  1044→  },
+  1045→  1045→  "legalFooter": {
+  1046→  1046→    "brandDescription": "Plateforme de carriere propulsee par l'IA pour creer des CV aux normes ATS, des lettres de motivation et bien plus.",
+  1047→  1047→    "legal": {
+  1048→  1048→      "title": "Legal",
+  1049→  1049→      "privacy": "Politique de Confidentialite",
+  1050→  1050→      "terms": "Conditions d'Utilisation"
+  1051→  1051→    },
+  1052→  1052→    "support": {
+  1053→  1053→      "title": "Support",
+  1054→  1054→      "contact": "Nous Contacter",
+  1055→  1055→      "helpCenter": "Centre d'Aide"
+  1056→  1056→    },
+  1057→  1057→    "social": {
+  1058→  1058→      "title": "Connecter"
+  1059→  1059→    },
+  1060→  1060→    "copyright": "© 2025 CareerForge AI. Tous droits reserves.",
+  1061→  1061→    "disclaimer": "Ces informations sont a titre indicatif uniquement et ne constituent pas un conseil juridique."
+  1062→  1062→  }
+  1063→  1063→}

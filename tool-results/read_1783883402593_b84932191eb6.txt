@@ -1,0 +1,1037 @@
+     1→     1→import { NextRequest, NextResponse } from 'next/server';
+     2→     2→import ZAI from 'z-ai-web-dev-sdk';
+     3→     3→import { db } from '@/lib/db';
+     4→     4→import { getAuthUser } from '@/lib/subscription/auth-helpers';
+     5→     5→import { checkAndIncrementUsage } from '@/lib/subscription/service';
+     6→     6→import { FEATURE_KEYS } from '@/lib/subscription/features';
+     7→     7→import type {
+     8→     8→  ResumeData,
+     9→     9→  PersonalInfo,
+    10→    10→  WorkExperience,
+    11→    11→  Education,
+    12→    12→  Skill,
+    13→    13→} from '@/types/resume';
+    14→    14→
+    15→    15→// ─── Types ──────────────────────────────────────────────────────────────
+    16→    16→
+    17→    17→interface CategoryScore {
+    18→    18→  score: number;
+    19→    19→  label: string;
+    20→    20→}
+    21→    21→
+    22→    22→interface KeywordAnalysis {
+    23→    23→  matched: string[];
+    24→    24→  missing: string[];
+    25→    25→  suggested: string[];
+    26→    26→  matchPercentage: number;
+    27→    27→}
+    28→    28→
+    29→    29→interface GrammarIssue {
+    30→    30→  message: string;
+    31→    31→  suggestion: string;
+    32→    32→  severity: 'error' | 'warning' | 'info';
+    33→    33→}
+    34→    34→
+    35→    35→interface FormattingIssue {
+    36→    36→  issue: string;
+    37→    37→  suggestion: string;
+    38→    38→  severity: 'error' | 'warning' | 'info';
+    39→    39→}
+    40→    40→
+    41→    41→interface Suggestion {
+    42→    42→  category: string;
+    43→    43→  message: string;
+    44→    44→  priority: 'high' | 'medium' | 'low';
+    45→    45→  section?: string;
+    46→    46→}
+    47→    47→
+    48→    48→interface LocalScores {
+    49→    49→  contactInfo: number;
+    50→    50→  formatting: number;
+    51→    51→  workExperience: number;
+    52→    52→  education: number;
+    53→    53→  skills: number;
+    54→    54→  readability: number;
+    55→    55→  achievements: number;
+    56→    56→  formattingIssues: FormattingIssue[];
+    57→    57→}
+    58→    58→
+    59→    59→// ─── Constants ──────────────────────────────────────────────────────────
+    60→    60→
+    61→    61→const ACTION_VERBS = [
+    62→    62→  'Achieved', 'Administered', 'Advanced', 'Analyzed', 'Appointed',
+    63→    63→  'Approved', 'Arranged', 'Assessed', 'Assigned', 'Attained',
+    64→    64→  'Authored', 'Automated', 'Balanced', 'Boosted', 'Built',
+    65→    65→  'Catalogued', 'Centralized', 'Chaired', 'Championed', 'Coached',
+    66→    66→  'Collaborated', 'Compiled', 'Completed', 'Composed', 'Conceptualized',
+    67→    67→  'Conducted', 'Consolidated', 'Constructed', 'Consulted', 'Contributed',
+    68→    68→  'Controlled', 'Converted', 'Coordinated', 'Corresponded', 'Created',
+    69→    69→  'Cultivated', 'Customized', 'Delegated', 'Delivered', 'Demonstrated',
+    70→    70→  'Designed', 'Developed', 'Devised', 'Directed', 'Discovered',
+    71→    71→  'Doubled', 'Drafted', 'Drove', 'Earned', 'Edited',
+    72→    72→  'Educated', 'Elevated', 'Eliminated', 'Enabled', 'Encouraged',
+    73→    73→  'Engineered', 'Enhanced', 'Ensured', 'Established', 'Evaluated',
+    74→    74→  'Exceeded', 'Executed', 'Expanded', 'Expedited', 'Facilitated',
+    75→    75→  'Finalized', 'Forecasted', 'Formulated', 'Founded', 'Generated',
+    76→    76→  'Grew', 'Guided', 'Headed', 'Hired', 'Identified',
+    77→    77→  'Implemented', 'Improved', 'Increased', 'Influenced', 'Initiated',
+    78→    78→  'Innovated', 'Inspected', 'Inspired', 'Instituted', 'Integrated',
+    79→    79→  'Introduced', 'Invented', 'Investigated', 'Launched', 'Led',
+    80→    80→  'Leveraged', 'Lobbying', 'Maintained', 'Managed', 'Maximized',
+    81→    81→  'Mentored', 'Merged', 'Minimized', 'Modernized', 'Monitored',
+    82→    82→  'Motivated', 'Negotiated', 'Obtained', 'Optimized', 'Orchestrated',
+    83→    83→  'Organized', 'Outperformed', 'Overhauled', 'Oversaw', 'Partnered',
+    84→    84→  'Pioneered', 'Planned', 'Prepared', 'Presented', 'Prioritized',
+    85→    85→  'Processed', 'Produced', 'Programmed', 'Projected', 'Promoted',
+    86→    86→  'Proposed', 'Provided', 'Published', 'Pursued', 'Raised',
+    87→    87→  'Ranked', 'Realigned', 'Redesigned', 'Reduced', 'Refined',
+    88→    88→  'Reformed', 'Remodeled', 'Reorganized', 'Represented', 'Researched',
+    89→    89→  'Resolved', 'Restored', 'Restructured', 'Revamped', 'Reviewed',
+    90→    90→  'Revitalized', 'Saved', 'Secured', 'Shaped', 'Simplified',
+    91→    91→  'Solved', 'Spearheaded', 'Standardized', 'Stimulated', 'Streamlined',
+    92→    92→  'Strengthened', 'Structured', 'Succeeded', 'Supervised', 'Surpassed',
+    93→    93→  'Synchronized', 'Targeted', 'Taught', 'Tested', 'Trained',
+    94→    94→  'Transformed', 'Translated', 'Tripled', 'Unified', 'Updated',
+    95→    95→  'Upgraded', 'Utilized', 'Validated', 'Verified', 'Visualized',
+    96→    96→  'Volunteered', 'Won', 'Wrote',
+    97→    97→];
+    98→    98→
+    99→    99→// ─── Helper: Count words in text ────────────────────────────────────────
+   100→   100→
+   101→   101→function wordCount(text: string): number {
+   102→   102→  if (!text || !text.trim()) return 0;
+   103→   103→  return text.trim().split(/\s+/).filter(Boolean).length;
+   104→   104→}
+   105→   105→
+   106→   106→// ─── Local Analysis Functions ──────────────────────────────────────────
+   107→   107→
+   108→   108→function analyzeContactInfo(personalInfo: PersonalInfo): { score: number; suggestions: Suggestion[] } {
+   109→   109→  let score = 100;
+   110→   110→  const suggestions: Suggestion[] = [];
+   111→   111→
+   112→   112→  const hasEmail = !!personalInfo.email && personalInfo.email.trim().length > 0;
+   113→   113→  const hasPhone = !!personalInfo.phone && personalInfo.phone.trim().length > 0;
+   114→   114→  const hasLocation = !!personalInfo.location && personalInfo.location.trim().length > 0;
+   115→   115→  const hasLinkedIn = !!personalInfo.linkedin && personalInfo.linkedin.trim().length > 0;
+   116→   116→  const hasWebsite = !!personalInfo.website && personalInfo.website.trim().length > 0;
+   117→   117→  const hasPortfolio = !!personalInfo.portfolio && personalInfo.portfolio.trim().length > 0;
+   118→   118→  const hasFullName = !!personalInfo.fullName && personalInfo.fullName.trim().length > 0;
+   119→   119→  const hasTitle = !!personalInfo.professionalTitle && personalInfo.professionalTitle.trim().length > 0;
+   120→   120→
+   121→   121→  // Critical field deductions
+   122→   122→  if (!hasEmail) {
+   123→   123→    score -= 30;
+   124→   124→    suggestions.push({
+   125→   125→      category: 'contactInfo',
+   126→   126→      message: 'Add a professional email address to your contact information',
+   127→   127→      priority: 'high',
+   128→   128→      section: 'personalInfo',
+   129→   129→    });
+   130→   130→  }
+   131→   131→  if (!hasPhone) {
+   132→   132→    score -= 25;
+   133→   133→    suggestions.push({
+   134→   134→      category: 'contactInfo',
+   135→   135→      message: 'Add a phone number so recruiters can reach you directly',
+   136→   136→      priority: 'high',
+   137→   137→      section: 'personalInfo',
+   138→   138→    });
+   139→   139→  }
+   140→   140→  if (!hasLocation) {
+   141→   141→    score -= 20;
+   142→   142→    suggestions.push({
+   143→   143→      category: 'contactInfo',
+   144→   144→      message: 'Add your location (city, state) — many employers filter by location',
+   145→   145→      priority: 'high',
+   146→   146→      section: 'personalInfo',
+   147→   147→    });
+   148→   148→  }
+   149→   149→  if (!hasFullName) {
+   150→   150→    score -= 15;
+   151→   151→    suggestions.push({
+   152→   152→      category: 'contactInfo',
+   153→   153→      message: 'Add your full name at the top of your resume',
+   154→   154→      priority: 'high',
+   155→   155→      section: 'personalInfo',
+   156→   156→    });
+   157→   157→  }
+   158→   158→
+   159→   159→  // Bonus fields
+   160→   160→  if (!hasTitle) {
+   161→   161→    score -= 5;
+   162→   162→    suggestions.push({
+   163→   163→      category: 'contactInfo',
+   164→   164→      message: 'Add a professional title/headline below your name',
+   165→   165→      priority: 'medium',
+   166→   166→      section: 'personalInfo',
+   167→   167→    });
+   168→   168→  }
+   169→   169→  if (!hasLinkedIn) {
+   170→   170→    score -= 5;
+   171→   171→    suggestions.push({
+   172→   172→      category: 'contactInfo',
+   173→   173→      message: 'Add your LinkedIn profile URL to strengthen your professional presence',
+   174→   174→      priority: 'medium',
+   175→   175→      section: 'personalInfo',
+   176→   176→    });
+   177→   177→  }
+   178→   178→  if (!hasWebsite && !hasPortfolio) {
+   179→   179→    score -= 3;
+   180→   180→    suggestions.push({
+   181→   181→      category: 'contactInfo',
+   182→   182→      message: 'Consider adding a portfolio or personal website URL',
+   183→   183→      priority: 'low',
+   184→   184→      section: 'personalInfo',
+   185→   185→    });
+   186→   186→  }
+   187→   187→
+   188→   188→  return { score: Math.max(0, Math.min(100, score)), suggestions };
+   189→   189→}
+   190→   190→
+   191→   191→function analyzeFormatting(resume: ResumeData): { score: number; issues: FormattingIssue[] } {
+   192→   192→  let score = 100;
+   193→   193→  const issues: FormattingIssue[] = [];
+   194→   194→
+   195→   195→  // Check professional summary
+   196→   196→  if (!resume.professionalSummary || resume.professionalSummary.trim().length === 0) {
+   197→   197→    score -= 20;
+   198→   198→    issues.push({
+   199→   199→      issue: 'Missing professional summary',
+   200→   200→      suggestion: 'Add a 2-3 sentence professional summary highlighting your key achievements and target role',
+   201→   201→      severity: 'error',
+   202→   202→    });
+   203→   203→  } else if (resume.professionalSummary.trim().length <= 20) {
+   204→   204→    score -= 12;
+   205→   205→    issues.push({
+   206→   206→      issue: 'Professional summary is too short',
+   207→   207→      suggestion: 'Expand your summary to 2-3 sentences highlighting key achievements and target role',
+   208→   208→      severity: 'warning',
+   209→   209→    });
+   210→   210→  }
+   211→   211→
+   212→   212→  // Check work experience
+   213→   213→  if (!resume.workExperience || resume.workExperience.length === 0) {
+   214→   214→    score -= 25;
+   215→   215→    issues.push({
+   216→   216→      issue: 'No work experience entries',
+   217→   217→      suggestion: 'Add at least one work experience entry with job title, company, and description',
+   218→   218→      severity: 'error',
+   219→   219→    });
+   220→   220→  } else {
+   221→   221→    const hasDescription = resume.workExperience.some(
+   222→   222→      (exp) => exp.description && exp.description.trim().length > 0
+   223→   223→    );
+   224→   224→    if (!hasDescription) {
+   225→   225→      score -= 15;
+   226→   226→      issues.push({
+   227→   227→        issue: 'Work experience entries lack descriptions',
+   228→   228→        suggestion: 'Add bullet-point descriptions for each role highlighting responsibilities and achievements',
+   229→   229→        severity: 'error',
+   230→   230→      });
+   231→   231→    }
+   232→   232→  }
+   233→   233→
+   234→   234→  // Check education
+   235→   235→  if (!resume.education || resume.education.length === 0) {
+   236→   236→    score -= 15;
+   237→   237→    issues.push({
+   238→   238→      issue: 'No education entries',
+   239→   239→      suggestion: 'Add at least one education entry with degree, field of study, and school',
+   240→   240→      severity: 'warning',
+   241→   241→    });
+   242→   242→  }
+   243→   243→
+   244→   244→  // Check skills
+   245→   245→  if (!resume.skills || resume.skills.length === 0) {
+   246→   246→    score -= 15;
+   247→   247→    issues.push({
+   248→   248→      issue: 'No skills listed',
+   249→   249→      suggestion: 'Add at least 3 relevant skills to help ATS systems match your resume',
+   250→   250→      severity: 'error',
+   251→   251→    });
+   252→   252→  } else if (resume.skills.length < 3) {
+   253→   253→    score -= 8;
+   254→   254→    issues.push({
+   255→   255→      issue: 'Too few skills listed',
+   256→   256→      suggestion: 'Add more skills — aim for at least 7-10 relevant skills for better ATS matching',
+   257→   257→      severity: 'warning',
+   258→   258→    });
+   259→   259→  }
+   260→   260→
+   261→   261→  // Check date consistency in work experience
+   262→   262→  if (resume.workExperience && resume.workExperience.length > 0) {
+   263→   263→    // Recognized date formats: "Jan 2023", "January 2023", "01/2023", "01/01/2023", "2023", "2024-12" (YYYY-MM)
+   264→   264→    const datePatterns = [
+   265→   265→      /^(jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec|january|february|march|april|may|june|july|august|september|october|november|december)\s*\d{4}$/i,
+   266→   266→      /^\d{1,2}\/\d{4}$/,
+   267→   267→      /^\d{1,2}\/\d{1,2}\/\d{2,4}$/,
+   268→   268→      /^\d{4}$/,
+   269→   269→      /^\d{4}-\d{1,2}$/,  // YYYY-MM format (e.g., 2024-12)
+   270→   270→    ];
+   271→   271→
+   272→   272→    // First, determine which format is used by the first entry
+   273→   273→    let detectedFormat: number | null = null;
+   274→   274→    const dates = resume.workExperience
+   275→   275→      .flatMap((exp) => [exp.startDate, exp.endDate, exp.current ? 'Present' : null])
+   276→   276→      .filter((d): d is string => !!d && d.trim() !== '' && d.trim().toLowerCase() !== 'present');
+   277→   277→
+   278→   278→    for (const date of dates) {
+   279→   279→      for (let i = 0; i < datePatterns.length; i++) {
+   280→   280→        if (datePatterns[i].test(date.trim())) {
+   281→   281→          if (detectedFormat === null) {
+   282→   282→            detectedFormat = i;
+   283→   283→          } else if (detectedFormat !== i) {
+   284→   284→            // Inconsistent: different format detected
+   285→   285→            score -= 3;
+   286→   286→            issues.push({
+   287→   287→              issue: 'Mixed date formats detected across work experience entries',
+   288→   288→              suggestion: 'Use a consistent date format like "Jan 2023", "01/2023", or "2024-12" throughout',
+   289→   289→              severity: 'warning',
+   290→   290→            });
+   291→   291→            break;
+   292→   292→          }
+   293→   293→          break;
+   294→   294→        }
+   295→   295→      }
+   296→   296→      // If a date doesn't match ANY known format, flag it
+   297→   297→      if (detectedFormat !== null) break; // already flagged inconsistency
+   298→   298→      const matchesAny = datePatterns.some((p) => p.test(date.trim()));
+   299→   299→      if (!matchesAny) {
+   300→   300→        score -= 3;
+   301→   301→        issues.push({
+   302→   302→          issue: `Unrecognized date format: "${date}"`,
+   303→   303→          suggestion: 'Use a standard format like "Jan 2023", "MM/YYYY", or "YYYY-MM"',
+   304→   304→          severity: 'warning',
+   305→   305→        });
+   306→   306→        break;
+   307→   307→      }
+   308→   308→    }
+   309→   309→  }
+   310→   310→
+   311→   311→  return { score: Math.max(0, Math.min(100, score)), issues };
+   312→   312→}
+   313→   313→
+   314→   314→function analyzeWorkExperience(workExperience: WorkExperience[]): { score: number; suggestions: Suggestion[] } {
+   315→   315→  if (!workExperience || workExperience.length === 0) {
+   316→   316→    return {
+   317→   317→      score: 0,
+   318→   318→      suggestions: [
+   319→   319→        {
+   320→   320→          category: 'workExperience',
+   321→   321→          message: 'Add work experience to significantly improve your resume score',
+   322→   322→          priority: 'high',
+   323→   323→          section: 'workExperience',
+   324→   324→        },
+   325→   325→      ],
+   326→   326→    };
+   327→   327→  }
+   328→   328→
+   329→   329→  let score = 0;
+   330→   330→  const suggestions: Suggestion[] = [];
+   331→   331→
+   332→   332→  // Number of entries scoring
+   333→   333→  const count = workExperience.length;
+   334→   334→  if (count === 1) score = 40;
+   335→   335→  else if (count === 2) score = 70;
+   336→   336→  else if (count >= 3) score = 90;
+   337→   337→
+   338→   338→  // Average description length
+   339→   339→  const entriesWithDesc = workExperience.filter((e) => e.description && e.description.trim().length > 0);
+   340→   340→  if (entriesWithDesc.length > 0) {
+   341→   341→    const avgDescLen = entriesWithDesc.reduce((sum, e) => sum + e.description.trim().length, 0) / entriesWithDesc.length;
+   342→   342→
+   343→   343→    if (avgDescLen < 50) {
+   344→   344→      score -= 20;
+   345→   345→      suggestions.push({
+   346→   346→        category: 'workExperience',
+   347→   347→        message: 'Work experience descriptions are too brief — add more detail about your responsibilities and achievements',
+   348→   348→        priority: 'high',
+   349→   349→        section: 'workExperience',
+   350→   350→      });
+   351→   351→    } else if (avgDescLen < 150) {
+   352→   352→      score -= 10;
+   353→   353→      suggestions.push({
+   354→   354→        category: 'workExperience',
+   355→   355→        message: 'Expand your work experience descriptions with more specific details and accomplishments',
+   356→   356→        priority: 'medium',
+   357→   357→        section: 'workExperience',
+   358→   358→      });
+   359→   359→    } else if (avgDescLen >= 150) {
+   360→   360→      score += 5; // Bonus for detailed descriptions
+   361→   361→    }
+   362→   362→  } else {
+   363→   363→    score -= 20;
+   364→   364→    suggestions.push({
+   365→   365→      category: 'workExperience',
+   366→   366→      message: 'Add descriptions to your work experience entries with bullet points',
+   367→   367→      priority: 'high',
+   368→   368→      section: 'workExperience',
+   369→   369→    });
+   370→   370→  }
+   371→   371→
+   372→   372→  // Current job flag
+   373→   373→  const hasCurrentJob = workExperience.some((e) => e.currentJob);
+   374→   374→  if (hasCurrentJob) {
+   375→   375→    score += 5;
+   376→   376→  }
+   377→   377→
+   378→   378→  // Action verbs check
+   379→   379→  let totalBullets = 0;
+   380→   380→  let actionVerbBullets = 0;
+   381→   381→
+   382→   382→  for (const exp of entriesWithDesc) {
+   383→   383→    const bullets = exp.description
+   384→   384→      .split('\n')
+   385→   385→      .map((b) => b.trim())
+   386→   386→      .filter((b) => b.length > 0 && (b.startsWith('-') || b.startsWith('•') || b.startsWith('*')));
+   387→   387→
+   388→   388→    for (const bullet of bullets) {
+   389→   389→      const cleanBullet = bullet.replace(/^[-•*]\s*/, '').trim();
+   390→   390→      if (cleanBullet.length === 0) continue;
+   391→   391→      totalBullets++;
+   392→   392→      const firstWord = cleanBullet.split(/\s+/)[0];
+   393→   393→      if (ACTION_VERBS.some((verb) => firstWord.toLowerCase() === verb.toLowerCase())) {
+   394→   394→        actionVerbBullets++;
+   395→   395→      }
+   396→   396→    }
+   397→   397→  }
+   398→   398→
+   399→   399→  if (totalBullets > 0) {
+   400→   400→    const actionVerbRatio = actionVerbBullets / totalBullets;
+   401→   401→    if (actionVerbRatio < 0.3) {
+   402→   402→      score -= 10;
+   403→   403→      suggestions.push({
+   404→   404→        category: 'workExperience',
+   405→   405→        message: 'Start more bullet points with strong action verbs (Led, Developed, Achieved, Implemented, etc.)',
+   406→   406→        priority: 'medium',
+   407→   407→        section: 'workExperience',
+   408→   408→      });
+   409→   409→    } else if (actionVerbRatio >= 0.6) {
+   410→   410→      score += 5; // Bonus for strong action verbs
+   411→   411→    }
+   412→   412→  }
+   413→   413→
+   414→   414→  return { score: Math.max(0, Math.min(100, score)), suggestions };
+   415→   415→}
+   416→   416→
+   417→   417→function analyzeEducation(education: Education[]): { score: number; suggestions: Suggestion[] } {
+   418→   418→  if (!education || education.length === 0) {
+   419→   419→    return {
+   420→   420→      score: 0,
+   421→   421→      suggestions: [
+   422→   422→        {
+   423→   423→          category: 'education',
+   424→   424→          message: 'Add education information to your resume',
+   425→   425→          priority: 'high',
+   426→   426→          section: 'education',
+   427→   427→        },
+   428→   428→      ],
+   429→   429→    };
+   430→   430→  }
+   431→   431→
+   432→   432→  let score = education.length === 1 ? 60 : 85;
+   433→   433→  const suggestions: Suggestion[] = [];
+   434→   434→
+   435→   435→  // Check degree and field
+   436→   436→  const hasDegree = education.some((e) => e.degree && e.degree.trim().length > 0);
+   437→   437→  const hasField = education.some((e) => e.fieldOfStudy && e.fieldOfStudy.trim().length > 0);
+   438→   438→
+   439→   439→  if (!hasDegree) {
+   440→   440→    score -= 20;
+   441→   441→    suggestions.push({
+   442→   442→      category: 'education',
+   443→   443→      message: 'Specify the degree type for your education entries (e.g., B.Sc., M.A., MBA)',
+   444→   444→      priority: 'high',
+   445→   445→      section: 'education',
+   446→   446→    });
+   447→   447→  }
+   448→   448→
+   449→   449→  if (!hasField) {
+   450→   450→    score -= 15;
+   451→   451→    suggestions.push({
+   452→   452→      category: 'education',
+   453→   453→      message: 'Add your field of study to strengthen your educational background',
+   454→   454→      priority: 'medium',
+   455→   455→      section: 'education',
+   456→   456→    });
+   457→   457→  }
+   458→   458→
+   459→   459→  // Check dates
+   460→   460→  const hasDates = education.some((e) => e.startDate && e.startDate.trim().length > 0);
+   461→   461→  if (!hasDates) {
+   462→   462→    score -= 10;
+   463→   463→    suggestions.push({
+   464→   464→      category: 'education',
+   465→   465→      message: 'Add graduation or attendance dates for education entries',
+   466→   466→      priority: 'low',
+   467→   467→      section: 'education',
+   468→   468→    });
+   469→   469→  }
+   470→   470→
+   471→   471→  return { score: Math.max(0, Math.min(100, score)), suggestions };
+   472→   472→}
+   473→   473→
+   474→   474→function analyzeSkills(skills: Skill[]): { score: number; suggestions: Suggestion[] } {
+   475→   475→  if (!skills || skills.length === 0) {
+   476→   476→    return {
+   477→   477→      score: 0,
+   478→   478→      suggestions: [
+   479→   479→        {
+   480→   480→          category: 'skills',
+   481→   481→          message: 'Add skills to help ATS systems match your resume to job requirements',
+   482→   482→          priority: 'high',
+   483→   483→          section: 'skills',
+   484→   484→        },
+   485→   485→      ],
+   486→   486→    };
+   487→   487→  }
+   488→   488→
+   489→   489→  let score: number;
+   490→   490→  const suggestions: Suggestion[] = [];
+   491→   491→  const count = skills.length;
+   492→   492→
+   493→   493→  if (count <= 3) score = 30;
+   494→   494→  else if (count <= 6) score = 60;
+   495→   495→  else if (count <= 10) score = 80;
+   496→   496→  else score = 95;
+   497→   497→
+   498→   498→  if (count < 4) {
+   499→   499→    suggestions.push({
+   500→   500→      category: 'skills',
+   501→   501→      message: 'Add more skills — aim for at least 7-10 for better ATS matching',
+   502→   502→      priority: 'high',
+   503→   503→      section: 'skills',
+   504→   504→    });
+   505→   505→  } else if (count < 7) {
+   506→   506→    suggestions.push({
+   507→   507→      category: 'skills',
+   508→   508→      message: 'Consider adding more relevant skills to improve keyword matching',
+   509→   509→      priority: 'medium',
+   510→   510→      section: 'skills',
+   511→   511→    });
+   512→   512→  }
+   513→   513→
+   514→   514→  // Check skill name length (very short names may be too vague)
+   515→   515→  const shortSkills = skills.filter((s) => s.name.trim().split(/\s+/).length < 2).length;
+   516→   516→  const shortRatio = shortSkills / count;
+   517→   517→  if (shortRatio > 0.8 && count > 3) {
+   518→   518→    score -= 5;
+   519→   519→    suggestions.push({
+   520→   520→      category: 'skills',
+   521→   521→      message: 'Include more specific skill names (e.g., "React.js" instead of just "React")',
+   522→   522→      priority: 'low',
+   523→   523→      section: 'skills',
+   524→   524→    });
+   525→   525→  }
+   526→   526→
+   527→   527→  return { score: Math.max(0, Math.min(100, score)), suggestions };
+   528→   528→}
+   529→   529→
+   530→   530→function analyzeReadability(resume: ResumeData): number {
+   531→   531→  // Total word count across all text sections
+   532→   532→  const texts: string[] = [];
+   533→   533→
+   534→   534→  if (resume.professionalSummary) texts.push(resume.professionalSummary);
+   535→   535→  if (resume.personalInfo?.professionalTitle) texts.push(resume.personalInfo.professionalTitle);
+   536→   536→
+   537→   537→  if (resume.workExperience) {
+   538→   538→    for (const exp of resume.workExperience) {
+   539→   539→      if (exp.description) texts.push(exp.description);
+   540→   540→      if (exp.position) texts.push(exp.position);
+   541→   541→    }
+   542→   542→  }
+   543→   543→
+   544→   544→  if (resume.education) {
+   545→   545→    for (const edu of resume.education) {
+   546→   546→      if (edu.degree) texts.push(edu.degree);
+   547→   547→      if (edu.fieldOfStudy) texts.push(edu.fieldOfStudy);
+   548→   548→    }
+   549→   549→  }
+   550→   550→
+   551→   551→  if (resume.projects) {
+   552→   552→    for (const proj of resume.projects) {
+   553→   553→      if (proj.description) texts.push(proj.description);
+   554→   554→    }
+   555→   555→  }
+   556→   556→
+   557→   557→  if (resume.additionalInfo?.text) texts.push(resume.additionalInfo.text);
+   558→   558→
+   559→   559→  const totalWords = texts.reduce((sum, text) => sum + wordCount(text), 0);
+   560→   560→
+   561→   561→  // Ideal range: 300-800 words
+   562→   562→  if (totalWords < 100) return 20;
+   563→   563→  if (totalWords < 200) return 45;
+   564→   564→  if (totalWords < 300) return 65;
+   565→   565→  if (totalWords <= 800) return 90;
+   566→   566→  if (totalWords <= 1000) return 80;
+   567→   567→  if (totalWords <= 1200) return 65;
+   568→   568→  return 45; // Way too long
+   569→   569→}
+   570→   570→
+   571→   571→function analyzeAchievements(workExperience: WorkExperience[]): { score: number; suggestions: Suggestion[] } {
+   572→   572→  if (!workExperience || workExperience.length === 0) {
+   573→   573→    return { score: 0, suggestions: [] };
+   574→   574→  }
+   575→   575→
+   576→   576→  const suggestions: Suggestion[] = [];
+   577→   577→  let totalBullets = 0;
+   578→   578→  let quantifiableBullets = 0;
+   579→   579→
+   580→   580→  const metricsPattern = /\d+%|\$[\d,.]+|\d+\+?\s*(?:users?|clients?|customers?|members?|people|projects?|teams?|reports?|sites?|pages?|articles?|products?|services?|applications?|systems?|processes?|campaigns?|accounts?)/i;
+   581→   581→  const numberPattern = /\b\d{2,}\b/;
+   582→   582→
+   583→   583→  for (const exp of workExperience) {
+   584→   584→    if (!exp.description) continue;
+   585→   585→    const bullets = exp.description
+   586→   586→      .split('\n')
+   587→   587→      .map((b) => b.trim())
+   588→   588→      .filter((b) => b.length > 0);
+   589→   589→
+   590→   590→    for (const bullet of bullets) {
+   591→   591→      const clean = bullet.replace(/^[-•*]\s*/, '').trim();
+   592→   592→      if (clean.length === 0) continue;
+   593→   593→      totalBullets++;
+   594→   594→
+   595→   595→      if (metricsPattern.test(clean) || numberPattern.test(clean)) {
+   596→   596→        quantifiableBullets++;
+   597→   597→      }
+   598→   598→    }
+   599→   599→  }
+   600→   600→
+   601→   601→  if (totalBullets === 0) return { score: 10, suggestions };
+   602→   602→
+   603→   603→  const ratio = quantifiableBullets / totalBullets;
+   604→   604→  let score: number;
+   605→   605→
+   606→   606→  if (ratio >= 0.6) score = 95;
+   607→   607→  else if (ratio >= 0.4) score = 80;
+   608→   608→  else if (ratio >= 0.2) score = 60;
+   609→   609→  else if (ratio >= 0.1) score = 40;
+   610→   610→  else score = 20;
+   611→   611→
+   612→   612→  if (ratio < 0.3) {
+   613→   613→    suggestions.push({
+   614→   614→      category: 'achievements',
+   615→   615→      message: 'Add quantifiable achievements with numbers, percentages, or dollar amounts to your bullet points',
+   616→   616→      priority: 'high',
+   617→   617→      section: 'workExperience',
+   618→   618→    });
+   619→   619→  } else if (ratio < 0.5) {
+   620→   620→    suggestions.push({
+   621→   621→      category: 'achievements',
+   622→   622→      message: 'More of your bullet points should include quantifiable results (e.g., "Increased sales by 25%")',
+   623→   623→      priority: 'medium',
+   624→   624→      section: 'workExperience',
+   625→   625→    });
+   626→   626→  }
+   627→   627→
+   628→   628→  return { score, suggestions };
+   629→   629→}
+   630→   630→
+   631→   631→// ─── AI Analysis ────────────────────────────────────────────────────────
+   632→   632→
+   633→   633→async function analyzeWithAI(
+   634→   634→  resume: ResumeData,
+   635→   635→  jobDescription?: string
+   636→   636→): Promise<{
+   637→   637→  keywordAnalysis: KeywordAnalysis;
+   638→   638→  grammarIssues: GrammarIssue[];
+   639→   639→  grammarScore: number;
+   640→   640→  keywordScore: number;
+   641→   641→  skillsMatchScore: number;
+   642→   642→  aiSuggestions: Suggestion[];
+   643→   643→}> {
+   644→   644→  const zai = await ZAI.create();
+   645→   645→
+   646→   646→  const resumeText = `
+   647→   647→Name: ${resume.personalInfo?.fullName || 'N/A'}
+   648→   648→Title: ${resume.personalInfo?.professionalTitle || 'N/A'}
+   649→   649→Summary: ${resume.professionalSummary || 'None'}
+   650→   650→Skills: ${(resume.skills || []).map((s) => s.name).join(', ') || 'None'}
+   651→   651→Work Experience:
+   652→   652→${(resume.workExperience || [])
+   653→   653→  .map(
+   654→   654→    (e) =>
+   655→   655→      `- ${e.position} at ${e.company} (${e.startDate} - ${e.currentJob ? 'Present' : e.endDate}): ${e.description || 'No description'}`
+   656→   656→  )
+   657→   657→  .join('\n')}
+   658→   658→Education:
+   659→   659→${(resume.education || [])
+   660→   660→  .map((e) => `- ${e.degree} in ${e.fieldOfStudy || 'N/A'} from ${e.school} (${e.startDate} - ${e.endDate})`)
+   661→   661→  .join('\n')}
+   662→   662→Projects:
+   663→   663→${(resume.projects || [])
+   664→   664→  .map((p) => `- ${p.name}: ${p.description || 'No description'} (Tech: ${p.technologies || 'N/A'})`)
+   665→   665→  .join('\n')}
+   666→   666→  `.trim();
+   667→   667→
+   668→   668→  let prompt: string;
+   669→   669→
+   670→   670→  if (jobDescription && jobDescription.trim()) {
+   671→   671→    prompt = `Analyze this resume against the following job description and respond ONLY with valid JSON, no markdown.
+   672→   672→
+   673→   673→JOB DESCRIPTION:
+   674→   674→${jobDescription}
+   675→   675→
+   676→   676→RESUME:
+   677→   677→${resumeText}
+   678→   678→
+   679→   679→Respond with this exact JSON structure:
+   680→   680→{
+   681→   681→  "keywordAnalysis": {
+   682→   682→    "matched": ["keyword1", "keyword2"],
+   683→   683→    "missing": ["keyword1", "keyword2"],
+   684→   684→    "suggested": ["keyword1", "keyword2"],
+   685→   685→    "matchPercentage": 65
+   686→   686→  },
+   687→   687→  "grammarIssues": [
+   688→   688→    { "message": "description of issue", "suggestion": "how to fix it", "severity": "warning" }
+   689→   689→  ],
+   690→   690→  "grammarScore": 85,
+   691→   691→  "keywordScore": 70,
+   692→   692→  "skillsMatchScore": 65,
+   693→   693→  "suggestions": [
+   694→   694→    { "category": "keywords", "message": "actionable suggestion", "priority": "high", "section": "skills" }
+   695→   695→  ]
+   696→   696→}
+   697→   697→
+   698→   698→Instructions:
+   699→   699→- "matched": skills/keywords from the job description found in the resume (case-insensitive)
+   700→   700→- "missing": important skills/keywords from the job description NOT found in the resume
+   701→   701→- "suggested": additional relevant keywords that could strengthen alignment
+   702→   702→- "matchPercentage": percentage of critical job keywords found in resume (0-100)
+   703→   703→- "grammarIssues": any grammar, spelling, or readability issues found in the resume text. Do NOT flag date format issues — dates in formats like "Jan 2023", "MM/YYYY", "YYYY-MM", or "YYYY" are all valid.
+   704→   704→- "grammarScore": overall grammar and language quality (0-100)
+   705→   705→- "keywordScore": how well the resume's keywords align with the job (0-100)
+   706→   706→- "skillsMatchScore": how well listed skills match job requirements (0-100)
+   707→   707→- "suggestions": 3-5 actionable improvement suggestions
+   708→   708→- Only return the JSON, no explanation text`;
+   709→   709→  } else {
+   710→   710→    prompt = `Analyze this resume for ATS optimization and respond ONLY with valid JSON, no markdown.
+   711→   711→
+   712→   712→RESUME:
+   713→   713→${resumeText}
+   714→   714→
+   715→   715→Respond with this exact JSON structure:
+   716→   716→{
+   717→   717→  "keywordAnalysis": {
+   718→   718→    "matched": ["existing keyword 1", "existing keyword 2"],
+   719→   719→    "missing": [],
+   720→   720→    "suggested": ["suggested keyword 1", "suggested keyword 2", "suggested keyword 3"],
+   721→   721→    "matchPercentage": 70
+   722→   722→  },
+   723→   723→  "grammarIssues": [
+   724→   724→    { "message": "description of issue", "suggestion": "how to fix it", "severity": "warning" }
+   725→   725→  ],
+   726→   726→  "grammarScore": 85,
+   727→   727→  "keywordScore": 70,
+   728→   728→  "skillsMatchScore": 70,
+   729→   729→  "suggestions": [
+   730→   730→    { "category": "keywords", "message": "actionable suggestion", "priority": "high", "section": "skills" }
+   731→   731→  ]
+   732→   732→}
+   733→   733→
+   734→   734→Instructions:
+   735→   735→- "matched": strong, relevant keywords already present in the resume
+   736→   736→- "missing": empty array (no job description to compare against)
+   737→   737→- "suggested": 5-10 industry-relevant keywords/skills the resume should include based on the target role/industry
+   738→   738→- "matchPercentage": estimated ATS keyword strength (0-100)
+   739→   739→- "grammarIssues": any grammar, spelling, readability, or weak verb usage issues found. Do NOT flag date format issues — dates in formats like "Jan 2023", "MM/YYYY", "YYYY-MM", or "YYYY" are all valid.
+   740→   740→- "grammarScore": overall grammar and language quality (0-100)
+   741→   741→- "keywordScore": keyword strength and relevance (0-100)
+   742→   742→- "skillsMatchScore": how comprehensive the skills section is (0-100)
+   743→   743→- "suggestions": 3-5 actionable improvement suggestions covering grammar, keywords, content strength, and ATS optimization
+   744→   744→- Only return the JSON, no explanation text`;
+   745→   745→  }
+   746→   746→
+   747→   747→  try {
+   748→   748→    const completion = await zai.chat.completions.create({
+   749→   749→      messages: [
+   750→   750→        {
+   751→   751→          role: 'assistant',
+   752→   752→          content:
+   753→   753→            'You are an ATS resume analysis expert. Respond ONLY with valid JSON, no markdown.',
+   754→   754→        },
+   755→   755→        { role: 'user', content: prompt },
+   756→   756→      ],
+   757→   757→      thinking: { type: 'disabled' },
+   758→   758→    });
+   759→   759→
+   760→   760→    const raw = completion.choices[0]?.message?.content?.trim();
+   761→   761→    if (!raw) throw new Error('Empty AI response');
+   762→   762→
+   763→   763→    // Extract JSON from response (handle potential markdown wrapping)
+   764→   764→    const jsonMatch = raw.match(/\{[\s\S]*\}/);
+   765→   765→    if (!jsonMatch) throw new Error('No JSON found in AI response');
+   766→   766→
+   767→   767→    const parsed = JSON.parse(jsonMatch[0]);
+   768→   768→
+   769→   769→    return {
+   770→   770→      keywordAnalysis: {
+   771→   771→        matched: Array.isArray(parsed.keywordAnalysis?.matched)
+   772→   772→          ? parsed.keywordAnalysis.matched.slice(0, 20)
+   773→   773→          : [],
+   774→   774→        missing: Array.isArray(parsed.keywordAnalysis?.missing)
+   775→   775→          ? parsed.keywordAnalysis.missing.slice(0, 20)
+   776→   776→          : [],
+   777→   777→        suggested: Array.isArray(parsed.keywordAnalysis?.suggested)
+   778→   778→          ? parsed.keywordAnalysis.suggested.slice(0, 20)
+   779→   779→          : [],
+   780→   780→        matchPercentage:
+   781→   781→          typeof parsed.keywordAnalysis?.matchPercentage === 'number'
+   782→   782→            ? Math.max(0, Math.min(100, parsed.keywordAnalysis.matchPercentage))
+   783→   783→            : 50,
+   784→   784→      },
+   785→   785→      grammarIssues: Array.isArray(parsed.grammarIssues)
+   786→   786→        ? parsed.grammarIssues
+   787→   787→            .filter(
+   788→   788→              (g: Record<string, unknown>) =>
+   789→   789→                g.message && g.suggestion && ['error', 'warning', 'info'].includes(g.severity as string)
+   790→   790→            )
+   791→   791→            .slice(0, 15)
+   792→   792→        : [],
+   793→   793→      grammarScore:
+   794→   794→        typeof parsed.grammarScore === 'number'
+   795→   795→          ? Math.max(0, Math.min(100, parsed.grammarScore))
+   796→   796→          : 75,
+   797→   797→      keywordScore:
+   798→   798→        typeof parsed.keywordScore === 'number'
+   799→   799→          ? Math.max(0, Math.min(100, parsed.keywordScore))
+   800→   800→          : 60,
+   801→   801→      skillsMatchScore:
+   802→   802→        typeof parsed.skillsMatchScore === 'number'
+   803→   803→          ? Math.max(0, Math.min(100, parsed.skillsMatchScore))
+   804→   804→          : 60,
+   805→   805→      aiSuggestions: Array.isArray(parsed.suggestions)
+   806→   806→        ? parsed.suggestions
+   807→   807→            .filter(
+   808→   808→              (s: Record<string, unknown>) =>
+   809→   809→                s.category && s.message && ['high', 'medium', 'low'].includes(s.priority as string)
+   810→   810→            )
+   811→   811→            .slice(0, 10)
+   812→   812→        : [],
+   813→   813→    };
+   814→   814→  } catch (error) {
+   815→   815→    console.error('[ATS Check] AI analysis failed:', error);
+   816→   816→    // Return sensible defaults on AI failure
+   817→   817→    return {
+   818→   818→      keywordAnalysis: {
+   819→   819→        matched: (resume.skills || []).map((s) => s.name).slice(0, 10),
+   820→   820→        missing: [],
+   821→   821→        suggested: [],
+   822→   822→        matchPercentage: 50,
+   823→   823→      },
+   824→   824→      grammarIssues: [],
+   825→   825→      grammarScore: 75,
+   826→   826→      keywordScore: 50,
+   827→   827→      skillsMatchScore: 50,
+   828→   828→      aiSuggestions: [],
+   829→   829→    };
+   830→   830→  }
+   831→   831→}
+   832→   832→
+   833→   833→// ─── Score Combination ──────────────────────────────────────────────────
+   834→   834→
+   835→   835→function calculateOverallScore(scores: {
+   836→   836→  contactInfo: number;
+   837→   837→  formatting: number;
+   838→   838→  keywords: number;
+   839→   839→  skillsMatch: number;
+   840→   840→  workExperience: number;
+   841→   841→  education: number;
+   842→   842→  grammar: number;
+   843→   843→  readability: number;
+   844→   844→  achievements: number;
+   845→   845→}): number {
+   846→   846→  return Math.round(
+   847→   847→    scores.contactInfo * 0.10 +
+   848→   848→      scores.formatting * 0.15 +
+   849→   849→      scores.keywords * 0.15 +
+   850→   850→      scores.skillsMatch * 0.15 +
+   851→   851→      scores.workExperience * 0.15 +
+   852→   852→      scores.education * 0.10 +
+   853→   853→      scores.grammar * 0.08 +
+   854→   854→      scores.readability * 0.07 +
+   855→   855→      scores.achievements * 0.05
+   856→   856→  );
+   857→   857→}
+   858→   858→
+   859→   859→// ─── POST Handler ───────────────────────────────────────────────────────
+   860→   860→
+   861→   861→export async function POST(request: NextRequest) {
+   862→   862→  try {
+   863→   863→    // 1. Parse request body
+   864→   864→    let body: { resumeId?: string; jobDescription?: string };
+   865→   865→    try {
+   866→   866→      body = await request.json();
+   867→   867→    } catch {
+   868→   868→      return NextResponse.json(
+   869→   869→        { success: false, error: 'Invalid request body' },
+   870→   870→        { status: 400 }
+   871→   871→      );
+   872→   872→    }
+   873→   873→
+   874→   874→    const { resumeId, jobDescription } = body;
+   875→   875→
+   876→   876→    if (!resumeId || typeof resumeId !== 'string') {
+   877→   877→      return NextResponse.json(
+   878→   878→        { success: false, error: 'resumeId is required' },
+   879→   879→        { status: 400 }
+   880→   880→      );
+   881→   881→    }
+   882→   882→
+   883→   883→    // 2. Authentication
+   884→   884→    const user = await getAuthUser(request);
+   885→   885→    if (!user) {
+   886→   886→      return NextResponse.json(
+   887→   887→        { success: false, error: 'Unauthorized' },
+   888→   888→        { status: 401 }
+   889→   889→      );
+   890→   890→    }
+   891→   891→
+   892→   892→    // 3. Feature access check
+   893→   893→    const access = await checkAndIncrementUsage(user.userId, FEATURE_KEYS.ATS_CHECKER);
+   894→   894→    if (!access.allowed) {
+   895→   895→      return NextResponse.json(
+   896→   896→        {
+   897→   897→          success: false,
+   898→   898→          error: 'limit_reached',
+   899→   899→          limit: access.limit,
+   900→   900→          used: access.used,
+   901→   901→          planName: access.planName,
+   902→   902→        },
+   903→   903→        { status: 403 }
+   904→   904→      );
+   905→   905→    }
+   906→   906→
+   907→   907→    // 4. Fetch resume and verify ownership
+   908→   908→    const resume = await db.resume.findUnique({
+   909→   909→      where: { id: resumeId },
+   910→   910→    });
+   911→   911→
+   912→   912→    if (!resume) {
+   913→   913→      return NextResponse.json(
+   914→   914→        { success: false, error: 'Resume not found' },
+   915→   915→        { status: 404 }
+   916→   916→      );
+   917→   917→    }
+   918→   918→
+   919→   919→    if (resume.user_id !== user.userId) {
+   920→   920→      return NextResponse.json(
+   921→   921→        { success: false, error: 'Resume not found' },
+   922→   922→        { status: 404 }
+   923→   923→      );
+   924→   924→    }
+   925→   925→
+   926→   926→    // 5. Parse resume data
+   927→   927→    let resumeData: ResumeData;
+   928→   928→    try {
+   929→   929→      resumeData = typeof resume.data_json === 'string'
+   930→   930→        ? JSON.parse(resume.data_json)
+   931→   931→        : resume.data_json;
+   932→   932→      // Migrate old skills without category
+   933→   933→      if (resumeData.skills) {
+   934→   934→        resumeData.skills = resumeData.skills.map((s: Record<string, string>) => ({
+   935→   935→          ...s,
+   936→   936→          category: s.category || 'technical',
+   937→   937→        }));
+   938→   938→      }
+   939→   939→    } catch {
+   940→   940→      return NextResponse.json(
+   941→   941→        { success: false, error: 'Invalid resume data' },
+   942→   942→        { status: 400 }
+   943→   943→      );
+   944→   944→    }
+   945→   945→
+   946→   946→    // 6. Run local deterministic analysis
+   947→   947→    const contactResult = analyzeContactInfo(resumeData.personalInfo || {} as PersonalInfo);
+   948→   948→    const formattingResult = analyzeFormatting(resumeData);
+   949→   949→    const workResult = analyzeWorkExperience(resumeData.workExperience || []);
+   950→   950→    const educationResult = analyzeEducation(resumeData.education || []);
+   951→   951→    const skillsResult = analyzeSkills(resumeData.skills || []);
+   952→   952→    const readabilityScore = analyzeReadability(resumeData);
+   953→   953→    const achievementsResult = analyzeAchievements(resumeData.workExperience || []);
+   954→   954→
+   955→   955→    // 7. Run AI analysis (with graceful fallback)
+   956→   956→    const aiResult = await analyzeWithAI(resumeData, jobDescription);
+   957→   957→
+   958→   958→    // 8. Combine scores
+   959→   959→    const categoryScores = {
+   960→   960→      contactInfo: contactResult.score,
+   961→   961→      formatting: formattingResult.score,
+   962→   962→      keywords: aiResult.keywordScore,
+   963→   963→      skillsMatch: aiResult.skillsMatchScore,
+   964→   964→      workExperience: workResult.score,
+   965→   965→      education: educationResult.score,
+   966→   966→      grammar: aiResult.grammarScore,
+   967→   967→      readability: readabilityScore,
+   968→   968→      achievements: achievementsResult.score,
+   969→   969→    };
+   970→   970→
+   971→   971→    const overallScore = calculateOverallScore(categoryScores);
+   972→   972→
+   973→   973→    // 9. Merge all suggestions
+   974→   974→    const allSuggestions: Suggestion[] = [
+   975→   975→      ...contactResult.suggestions,
+   976→   976→      ...workResult.suggestions,
+   977→   977→      ...educationResult.suggestions,
+   978→   978→      ...skillsResult.suggestions,
+   979→   979→      ...achievementsResult.suggestions,
+   980→   980→      ...aiResult.aiSuggestions,
+   981→   981→    ];
+   982→   982→
+   983→   983→    // Sort by priority
+   984→   984→    const priorityOrder: Record<string, number> = { high: 0, medium: 1, low: 2 };
+   985→   985→    allSuggestions.sort((a, b) => (priorityOrder[a.priority] ?? 2) - (priorityOrder[b.priority] ?? 2));
+   986→   986→
+   987→   987→    // 10. Build formatted response
+   988→   988→    const categoryScoresFormatted: Record<string, CategoryScore> = {
+   989→   989→      contactInfo: { score: categoryScores.contactInfo, label: 'Contact Information' },
+   990→   990→      formatting: { score: categoryScores.formatting, label: 'Formatting' },
+   991→   991→      keywords: { score: categoryScores.keywords, label: 'Keywords' },
+   992→   992→      skillsMatch: { score: categoryScores.skillsMatch, label: 'Skills Match' },
+   993→   993→      workExperience: { score: categoryScores.workExperience, label: 'Work Experience' },
+   994→   994→      education: { score: categoryScores.education, label: 'Education' },
+   995→   995→      grammar: { score: categoryScores.grammar, label: 'Grammar' },
+   996→   996→      readability: { score: categoryScores.readability, label: 'Readability' },
+   997→   997→      achievements: { score: categoryScores.achievements, label: 'Achievements' },
+   998→   998→    };
+   999→   999→
+  1000→  1000→    // 11. Store in database
+  1001→  1001→    const report = await db.atsReport.create({
+  1002→  1002→      data: {
+  1003→  1003→        user_id: user.userId,
+  1004→  1004→        resume_id: resumeId,
+  1005→  1005→        overall_score: overallScore,
+  1006→  1006→        category_scores: JSON.stringify(categoryScoresFormatted),
+  1007→  1007→        keyword_analysis: JSON.stringify(aiResult.keywordAnalysis),
+  1008→  1008→        grammar_issues: JSON.stringify(aiResult.grammarIssues),
+  1009→  1009→        formatting_issues: JSON.stringify(formattingResult.issues),
+  1010→  1010→        suggestions: JSON.stringify(allSuggestions.slice(0, 20)),
+  1011→  1011→        job_description: jobDescription || '',
+  1012→  1012→        resume_snapshot: resume.data_json,
+  1013→  1013→      },
+  1014→  1014→    });
+  1015→  1015→
+  1016→  1016→    // 12. Return response
+  1017→  1017→    return NextResponse.json({
+  1018→  1018→      success: true,
+  1019→  1019→      report: {
+  1020→  1020→        id: report.id,
+  1021→  1021→        overallScore,
+  1022→  1022→        categoryScores: categoryScoresFormatted,
+  1023→  1023→        keywordAnalysis: aiResult.keywordAnalysis,
+  1024→  1024→        grammarIssues: aiResult.grammarIssues,
+  1025→  1025→        formattingIssues: formattingResult.issues,
+  1026→  1026→        suggestions: allSuggestions.slice(0, 20),
+  1027→  1027→        createdAt: report.created_at.toISOString(),
+  1028→  1028→      },
+  1029→  1029→    });
+  1030→  1030→  } catch (error) {
+  1031→  1031→    console.error('[ATS Check] Unexpected error:', error);
+  1032→  1032→    return NextResponse.json(
+  1033→  1033→      { success: false, error: 'Internal server error' },
+  1034→  1034→      { status: 500 }
+  1035→  1035→    );
+  1036→  1036→  }
+  1037→  1037→}

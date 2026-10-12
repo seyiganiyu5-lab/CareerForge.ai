@@ -1,0 +1,248 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id                    String    @id @default(cuid())
+  email                 String    @unique
+  first_name            String?
+  last_name             String?
+  password_hash         String?   @default("")
+  auth_provider         String    @default("email")
+  google_id             String?   @unique
+  google_picture_url    String?
+  country               String?
+  job_title             String?
+  career_level          String?
+  career_goal           String?
+  language              String    @default("en")
+  theme                 String    @default("system")
+  email_verified        Boolean   @default(false)
+  onboarding_completed  Boolean   @default(false)
+  verification_token    String?
+  reset_token           String?
+  reset_token_expires   DateTime?
+  created_at            DateTime  @default(now())
+  updated_at            DateTime  @updatedAt
+
+  subscription   Subscription?
+  usage          UserUsage?
+  payments       Payment[]
+  resumes        Resume[]
+  coverLetters   CoverLetter[]
+  aiHistory      AiHistory[]
+  jobApplications JobApplication[]
+}
+
+model Plan {
+  id            String   @id @default(cuid())
+  name          String                        // free, pro, enterprise
+  display_name  String                        // Free, Pro, Enterprise
+  price_monthly Int      @default(0)
+  price_yearly  Int      @default(0)
+  currency      String   @default("USD")
+  billing_cycle String   @default("monthly")  // monthly, yearly
+  features      String   @default("[]")        // JSON array of feature keys
+  description   String   @default("")
+  sort_order    Int      @default(0)
+  is_active     Boolean  @default(true)
+  created_at    DateTime @default(now())
+  updated_at    DateTime @updatedAt
+
+  subscriptions Subscription[]
+  plan_features PlanFeature[]
+}
+
+model PlanFeature {
+  id          String   @id @default(cuid())
+  plan_id     String
+  feature_key String
+  enabled     Boolean  @default(true)
+  limit_value Int      @default(-1)  // -1 = unlimited
+  created_at  DateTime @default(now())
+
+  plan Plan @relation(fields: [plan_id], references: [id], onDelete: Cascade)
+
+  @@unique([plan_id, feature_key])
+}
+
+model Subscription {
+  id                        String    @id @default(cuid())
+  user_id                   String    @unique
+  plan_id                   String
+  status                    String    @default("active")  // active, cancelled, expired, past_due
+  started_at                DateTime  @default(now())
+  expires_at                DateTime?
+  cancelled_at              DateTime?
+  billing_cycle             String    @default("monthly")
+  flutterwave_subscription_id String?
+  current_period_start      DateTime  @default(now())
+  current_period_end        DateTime?
+  created_at                DateTime  @default(now())
+  updated_at                DateTime  @updatedAt
+
+  user    User  @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  plan    Plan  @relation(fields: [plan_id], references: [id])
+  payments Payment[]
+}
+
+model UserUsage {
+  id              String   @id @default(cuid())
+  user_id         String   @unique
+  resume_count    Int      @default(0)
+  cover_letter_count Int   @default(0)
+  ai_requests     Int      @default(0)
+  resume_reviews  Int      @default(0)
+  exports_count   Int      @default(0)
+  ats_checks      Int      @default(0)
+  job_applications_count Int @default(0)
+  updated_at      DateTime @updatedAt
+  created_at      DateTime @default(now())
+
+  user User @relation(fields: [user_id], references: [id], onDelete: Cascade)
+}
+
+model Payment {
+  id                      String    @id @default(cuid())
+  user_id                 String
+  subscription_id         String?
+  amount                  Int       // amount in cents
+  currency                String    @default("USD")
+  status                  String    @default("pending")  // pending, successful, failed, refunded
+  transaction_reference   String?
+  flutterwave_transaction_id String?
+  payment_method          String?
+  paid_at                 DateTime?
+  created_at              DateTime  @default(now())
+  updated_at              DateTime  @updatedAt
+
+  user        User        @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  subscription Subscription? @relation(fields: [subscription_id], references: [id])
+}
+
+model Resume {
+  id                  String   @id @default(cuid())
+  user_id             String
+  title               String   @default("Untitled Resume")
+  data_json           String   @default("{}")           // Full resume data as JSON
+  template            String   @default("ats-classic")  // Template ID
+  customization_json  String   @default("{}")           // Template customization as JSON
+  status              String   @default("draft")        // draft, completed
+  created_at          DateTime @default(now())
+  updated_at          DateTime @updatedAt
+
+  user      User       @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  aiHistory AiHistory[]
+
+  @@index([user_id])
+}
+
+model AiHistory {
+  id            String   @id @default(cuid())
+  resume_id     String
+  user_id       String
+  section       String                        // which resume section
+  action        String                        // generate, rewrite, improve, etc.
+  prompt        String                        // the full prompt sent to AI
+  result        String                        // AI-generated content
+  original_text String   @default("")          // text before AI modification
+  is_applied    Boolean  @default(false)       // whether user applied the suggestion
+  created_at    DateTime @default(now())
+
+  resume Resume @relation(fields: [resume_id], references: [id], onDelete: Cascade)
+  user   User   @relation(fields: [user_id], references: [id], onDelete: Cascade)
+
+  @@index([resume_id])
+  @@index([user_id])
+}
+
+model Post {
+  id        String   @id @default(cuid())
+  title     String
+  content   String?
+  published Boolean  @default(false)
+  authorId  String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model NewsletterSubscriber {
+  id            String   @id @default(cuid())
+  email         String   @unique
+  language      String   @default("en")
+  status        String   @default("active")
+  subscribed_at DateTime @default(now())
+  updated_at    DateTime @updatedAt
+  source        String   @default("landing")
+  created_at    DateTime @default(now())
+}
+
+model CoverLetter {
+  id                    String   @id @default(cuid())
+  user_id               String
+  title                 String   @default("Untitled Cover Letter")
+  data_json             String   @default("{}")
+  template              String   @default("professional")
+  customization_json    String   @default("{}")
+  status                String   @default("draft")
+  language              String   @default("en")
+  created_at            DateTime @default(now())
+  updated_at            DateTime @updatedAt
+
+  user     User                @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  versions CoverLetterVersion[]
+
+  @@index([user_id])
+}
+
+model JobApplication {
+  id                String    @id @default(cuid())
+  user_id           String
+  company_name      String
+  job_title         String
+  job_description   String?
+  job_url           String?
+  salary            String?
+  location          String?
+  employment_type   String?
+  work_mode         String?
+  resume_used       String?
+  cover_letter_used String?
+  notes             String?
+  status            String    @default("wishlist")
+  is_archived       Boolean   @default(false)
+  applied_at        DateTime?
+  interview_date    DateTime?
+  follow_up_date    DateTime?
+  deadline_date     DateTime?
+  offer_expiry      DateTime?
+  calendar_events   String    @default("[]")
+  reminders         String    @default("[]")
+  ai_suggestions    String    @default("[]")
+  created_at        DateTime  @default(now())
+  updated_at        DateTime  @updatedAt
+
+  user User @relation(fields: [user_id], references: [id], onDelete: Cascade)
+
+  @@index([user_id])
+  @@index([status])
+}
+
+model CoverLetterVersion {
+  id                 String   @id @default(cuid())
+  cover_letter_id    String
+  version_number     Int
+  data_json          String   @default("{}")
+  change_summary     String   @default("")
+  created_at         DateTime @default(now())
+
+  coverLetter CoverLetter @relation(fields: [cover_letter_id], references: [id], onDelete: Cascade)
+
+  @@unique([cover_letter_id, version_number])
+  @@index([cover_letter_id])
+}

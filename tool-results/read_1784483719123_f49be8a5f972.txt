@@ -1,0 +1,831 @@
+     1→import type { TemplateComponentProps } from '@/types/template';
+     2→import type { SectionKey } from '@/types/resume';
+     3→import {
+     4→  formatDate,
+     5→  formatDateRange,
+     6→  formatDateRangeRaw,
+     7→  getContactItems,
+     8→  getVisibleSections,
+     9→  getSectionLabel,
+    10→  getTemplateStyles,
+    11→  hexToRgba,
+    12→} from '@/lib/templates/utils';
+    13→
+    14→export default function Executive({ data, customization }: TemplateComponentProps) {
+    15→  const s = getTemplateStyles(customization);
+    16→  const { accentColor, fontSize, sectionSpacing, lineHeight } = customization;
+    17→
+    18→  const nameSize = `${26 * fontSize}px`;
+    19→  const titleSize = `${12 * fontSize}px`;
+    20→  const headingSize = `${11 * fontSize}px`;
+    21→  const baseSize = `${10.5 * fontSize}px`;
+    22→  const smallSize = `${9.5 * fontSize}px`;
+    23→  const sectionGap = `${Math.round(26 * sectionSpacing)}px`;
+    24→  const entryGap = `${Math.round(14 * sectionSpacing)}px`;
+    25→  const smallEntryGap = `${Math.round(8 * sectionSpacing)}px`;
+    26→
+    27→  const contactItems = getContactItems(data.personalInfo);
+    28→  const visibleSections = getVisibleSections(data, customization.hiddenSections, customization.sectionOrder);
+    29→
+    30→  const nameFont = 'Georgia, "Times New Roman", serif';
+    31→
+    32→  // ── Decorative section heading with flanking lines ────────
+    33→  const renderSectionHeading = (key: SectionKey) => {
+    34→    const label = getSectionLabel(key);
+    35→    if (!label) return null;
+    36→    return (
+    37→      <div
+    38→        style={{
+    39→          display: 'flex',
+    40→          alignItems: 'center',
+    41→          justifyContent: 'center',
+    42→          gap: '12px',
+    43→          margin: `0 0 ${10 * sectionSpacing}px 0`,
+    44→        }}
+    45→      >
+    46→        <div
+    47→          style={{
+    48→            width: '40px',
+    49→            height: '1px',
+    50→            backgroundColor: '#d1d5db',
+    51→            flexShrink: 0,
+    52→          }}
+    53→        />
+    54→        <h2
+    55→          style={{
+    56→            fontFamily: nameFont,
+    57→            fontSize: headingSize,
+    58→            fontWeight: 600,
+    59→            color: '#1a1a2e',
+    60→            textTransform: 'uppercase' as const,
+    61→            letterSpacing: '0.15em',
+    62→            margin: 0,
+    63→            lineHeight: 1.4,
+    64→            whiteSpace: 'nowrap' as const,
+    65→          }}
+    66→        >
+    67→          {label}
+    68→        </h2>
+    69→        <div
+    70→          style={{
+    71→            width: '40px',
+    72→            height: '1px',
+    73→            backgroundColor: '#d1d5db',
+    74→            flexShrink: 0,
+    75→          }}
+    76→        />
+    77→      </div>
+    78→    );
+    79→  };
+    80→
+    81→  return (
+    82→    <div style={s.container}>
+    83→      {/* ── Header ─────────────────────────────────────────── */}
+    84→      <div style={{ textAlign: 'center' as const, marginBottom: sectionGap }}>
+    85→        {/* Thin rule line above name */}
+    86→        <div
+    87→          style={{
+    88→            width: '80%',
+    89→            maxWidth: '500px',
+    90→            height: '0.5px',
+    91→            backgroundColor: '#d1d5db',
+    92→            margin: '0 auto 16px auto',
+    93→          }}
+    94→        />
+    95→
+    96→        <h1
+    97→          style={{
+    98→            fontFamily: nameFont,
+    99→            fontSize: nameSize,
+   100→            fontWeight: 700,
+   101→            color: '#1a1a2e',
+   102→            margin: '0 0 8px 0',
+   103→            letterSpacing: '1px',
+   104→            lineHeight: 1.15,
+   105→          }}
+   106→        >
+   107→          {data.personalInfo.fullName}
+   108→        </h1>
+   109→
+   110→        {/* Thin rule line below name */}
+   111→        <div
+   112→          style={{
+   113→            width: '40%',
+   114→            maxWidth: '250px',
+   115→            height: '0.5px',
+   116→            backgroundColor: '#d1d5db',
+   117→            margin: '0 auto 14px auto',
+   118→          }}
+   119→        />
+   120→
+   121→        {data.personalInfo.professionalTitle && (
+   122→          <p
+   123→            style={{
+   124→              fontFamily: s.body.fontFamily,
+   125→              fontSize: titleSize,
+   126→              color: accentColor,
+   127→              margin: '0 0 16px 0',
+   128→              fontWeight: 500,
+   129→              letterSpacing: '0.5px',
+   130→              lineHeight: 1.3,
+   131→            }}
+   132→          >
+   133→            {data.personalInfo.professionalTitle}
+   134→          </p>
+   135→        )}
+   136→
+   137→        {contactItems.length > 0 && (
+   138→          <p
+   139→            style={{
+   140→              fontFamily: s.body.fontFamily,
+   141→              fontSize: smallSize,
+   142→              color: '#6b7280',
+   143→              margin: 0,
+   144→              lineHeight: 1.7,
+   145→              letterSpacing: '0.2px',
+   146→            }}
+   147→          >
+   148→            {contactItems.join('  |  ')}
+   149→          </p>
+   150→        )}
+   151→      </div>
+   152→
+   153→      {/* ── Sections ───────────────────────────────────────── */}
+   154→      {visibleSections.map((key, idx) => (
+   155→        <div
+   156→          key={key}
+   157→          style={{
+   158→            marginTop: idx > 0 ? sectionGap : 0,
+   159→          }}
+   160→        >
+   161→          {renderSectionHeading(key)}
+   162→          <div>{renderSection(key)}</div>
+   163→        </div>
+   164→      ))}
+   165→    </div>
+   166→  );
+   167→
+   168→  // ── Section Renderers ──────────────────────────────────────
+   169→
+   170→  function renderSection(key: SectionKey) {
+   171→    switch (key) {
+   172→      case 'professionalSummary':
+   173→        return renderProfessionalSummary();
+   174→      case 'workExperience':
+   175→        return renderWorkExperience();
+   176→      case 'education':
+   177→        return renderEducation();
+   178→      case 'skills':
+   179→        return renderSkills();
+   180→      case 'projects':
+   181→        return renderProjects();
+   182→      case 'certifications':
+   183→        return renderCertifications();
+   184→      case 'languages':
+   185→        return renderLanguages();
+   186→      case 'awards':
+   187→        return renderAwards();
+   188→      case 'volunteerExperience':
+   189→        return renderVolunteerExperience();
+   190→      case 'references':
+   191→        return renderReferences();
+   192→      case 'additionalInfo':
+   193→        return renderAdditionalInfo();
+   194→      default:
+   195→        return null;
+   196→    }
+   197→  }
+   198→
+   199→  function renderProfessionalSummary() {
+   200→    if (!data.professionalSummary.trim()) return null;
+   201→    return (
+   202→      <p
+   203→        style={{
+   204→          fontFamily: s.body.fontFamily,
+   205→          fontSize: baseSize,
+   206→          color: '#374151',
+   207→          lineHeight: lineHeight,
+   208→          margin: 0,
+   209→          whiteSpace: 'pre-line' as const,
+   210→          textAlign: 'center' as const,
+   211→        }}
+   212→      >
+   213→        {data.professionalSummary}
+   214→      </p>
+   215→    );
+   216→  }
+   217→
+   218→  function renderWorkExperience() {
+   219→    const entries = data.workExperience.filter(e => e.company || e.position);
+   220→    if (entries.length === 0) return null;
+   221→    return (
+   222→      <div style={{ display: 'flex', flexDirection: 'column' as const, gap: entryGap }}>
+   223→        {entries.map((job) => {
+   224→          const dateRange = formatDateRange(job.startDate, job.endDate, job.currentJob);
+   225→          return (
+   226→            <div key={job.id}>
+   227→              <div
+   228→                style={{
+   229→                  display: 'flex',
+   230→                  justifyContent: 'space-between',
+   231→                  alignItems: 'baseline',
+   232→                  gap: '12px',
+   233→                }}
+   234→              >
+   235→                <h3
+   236→                  style={{
+   237→                    fontFamily: s.body.fontFamily,
+   238→                    fontSize: baseSize,
+   239→                    fontWeight: 700,
+   240→                    margin: 0,
+   241→                    color: '#1a1a2e',
+   242→                    lineHeight: 1.3,
+   243→                    letterSpacing: '0.2px',
+   244→                  }}
+   245→                >
+   246→                  {job.position}
+   247→                  {job.company && (
+   248→                    <span style={{ color: accentColor, fontWeight: 500, fontFamily: s.body.fontFamily }}>
+   249→                      {' '}| {job.company}
+   250→                    </span>
+   251→                  )}
+   252→                </h3>
+   253→                {dateRange && (
+   254→                  <span
+   255→                    style={{
+   256→                      fontFamily: s.body.fontFamily,
+   257→                      fontSize: smallSize,
+   258→                      color: '#6b7280',
+   259→                      whiteSpace: 'nowrap' as const,
+   260→                      flexShrink: 0,
+   261→                      letterSpacing: '0.3px',
+   262→                    }}
+   263→                  >
+   264→                    {dateRange}
+   265→                  </span>
+   266→                )}
+   267→              </div>
+   268→              {job.location && (
+   269→                <p
+   270→                  style={{
+   271→                    fontFamily: s.body.fontFamily,
+   272→                    fontSize: smallSize,
+   273→                    color: '#9ca3af',
+   274→                    margin: '3px 0 0 0',
+   275→                    lineHeight: 1.3,
+   276→                  }}
+   277→                >
+   278→                  {job.location}
+   279→                </p>
+   280→              )}
+   281→              {(() => {
+   282→                const descLines = job.description ? job.description.split('\n').map(l => l.replace(/^[-\u2022*]\s*/, '').trim()).filter(Boolean) : [];
+   283→                if (descLines.length === 0) return null;
+   284→                return (
+   285→                  <ul style={{ margin: '5px 0 0 0', paddingLeft: '14px', listStyleType: 'disc', color: '#374151' }}>
+   286→                    {descLines.map((line, i) => (
+   287→                      <li
+   288→                        key={i}
+   289→                        style={{
+   290→                          fontFamily: s.body.fontFamily,
+   291→                          fontSize: baseSize,
+   292→                          lineHeight: lineHeight,
+   293→                          marginBottom: i < descLines.length - 1 ? '2px' : '0',
+   294→                        }}
+   295→                      >
+   296→                        {line}
+   297→                      </li>
+   298→                    ))}
+   299→                  </ul>
+   300→                );
+   301→              })()}
+   302→            </div>
+   303→          );
+   304→        })}
+   305→      </div>
+   306→    );
+   307→  }
+   308→
+   309→  function renderEducation() {
+   310→    const entries = data.education.filter(e => e.school || e.degree);
+   311→    if (entries.length === 0) return null;
+   312→    return (
+   313→      <div style={{ display: 'flex', flexDirection: 'column' as const, gap: entryGap }}>
+   314→        {entries.map((edu) => {
+   315→          const dateRange = formatDateRangeRaw(edu.startDate, edu.endDate);
+   316→          return (
+   317→            <div key={edu.id}>
+   318→              <div
+   319→                style={{
+   320→                  display: 'flex',
+   321→                  justifyContent: 'space-between',
+   322→                  alignItems: 'baseline',
+   323→                  gap: '12px',
+   324→                }}
+   325→              >
+   326→                <h3
+   327→                  style={{
+   328→                    fontFamily: s.body.fontFamily,
+   329→                    fontSize: baseSize,
+   330→                    fontWeight: 700,
+   331→                    margin: 0,
+   332→                    color: '#1a1a2e',
+   333→                    lineHeight: 1.3,
+   334→                  }}
+   335→                >
+   336→                  {edu.degree}{edu.fieldOfStudy ? ` in ${edu.fieldOfStudy}` : ''}
+   337→                </h3>
+   338→                {dateRange && (
+   339→                  <span
+   340→                    style={{
+   341→                      fontFamily: s.body.fontFamily,
+   342→                      fontSize: smallSize,
+   343→                      color: '#6b7280',
+   344→                      whiteSpace: 'nowrap' as const,
+   345→                      flexShrink: 0,
+   346→                    }}
+   347→                  >
+   348→                    {dateRange}
+   349→                  </span>
+   350→                )}
+   351→              </div>
+   352→              <p
+   353→                style={{
+   354→                  fontFamily: s.body.fontFamily,
+   355→                  fontSize: baseSize,
+   356→                  color: '#6b7280',
+   357→                  margin: '3px 0 0 0',
+   358→                  lineHeight: 1.3,
+   359→                }}
+   360→              >
+   361→                {[edu.school, edu.location].filter(Boolean).join('  |  ')}
+   362→              </p>
+   363→              {edu.grade && (
+   364→                <p
+   365→                  style={{
+   366→                    fontFamily: s.body.fontFamily,
+   367→                    fontSize: smallSize,
+   368→                    color: '#9ca3af',
+   369→                    margin: '2px 0 0 0',
+   370→                    lineHeight: 1.3,
+   371→                  }}
+   372→                >
+   373→                  GPA: {edu.grade}
+   374→                </p>
+   375→              )}
+   376→            </div>
+   377→          );
+   378→        })}
+   379→      </div>
+   380→    );
+   381→  }
+   382→
+   383→  function renderSkills() {
+   384→    if (data.skills.length === 0) return null;
+   385→
+   386→    const technicalSkills = data.skills.filter(sk => sk.type !== 'soft');
+   387→    const softSkills = data.skills.filter(sk => sk.type === 'soft');
+   388→    const hasBoth = technicalSkills.length > 0 && softSkills.length > 0;
+   389→
+   390→    const renderSkillItem = (sk: typeof data.skills[0]) => (
+   391→      <div key={sk.id} style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+   392→        <div
+   393→          style={{
+   394→            width: '18px',
+   395→            height: '0.5px',
+   396→            backgroundColor: accentColor,
+   397→            flexShrink: 0,
+   398→            opacity: 0.6,
+   399→          }}
+   400→        />
+   401→        <span
+   402→          style={{
+   403→            fontFamily: s.body.fontFamily,
+   404→            fontSize: baseSize,
+   405→            color: '#374151',
+   406→            lineHeight: 1.5,
+   407→          }}
+   408→        >
+   409→          {sk.name}
+   410→        </span>
+   411→      </div>
+   412→    );
+   413→
+   414→    const renderSkillColumns = (skills: typeof data.skills) => {
+   415→      const half = Math.ceil(skills.length / 2);
+   416→      const col1 = skills.slice(0, half);
+   417→      const col2 = skills.slice(half);
+   418→      return (
+   419→        <div style={{ display: 'flex', gap: '32px' }}>
+   420→          <div style={{ flex: 1, display: 'flex', flexDirection: 'column' as const, gap: '6px' }}>
+   421→            {col1.map(renderSkillItem)}
+   422→          </div>
+   423→          <div style={{ flex: 1, display: 'flex', flexDirection: 'column' as const, gap: '6px' }}>
+   424→            {col2.map(renderSkillItem)}
+   425→          </div>
+   426→        </div>
+   427→      );
+   428→    };
+   429→
+   430→    const renderSkillGroup = (label: string, skills: typeof data.skills) => (
+   431→      <div>
+   432→        <p
+   433→          style={{
+   434→            fontFamily: s.body.fontFamily,
+   435→            fontSize: smallSize,
+   436→            fontWeight: 600,
+   437→            color: '#9ca3af',
+   438→            textTransform: 'uppercase',
+   439→            letterSpacing: '0.08em',
+   440→            margin: '10px 0 6px 0',
+   441→          }}
+   442→        >
+   443→          {label}
+   444→        </p>
+   445→        {renderSkillColumns(skills)}
+   446→      </div>
+   447→    );
+   448→
+   449→    if (hasBoth) {
+   450→      return (
+   451→        <div>
+   452→          {renderSkillGroup('Technical Skills', technicalSkills)}
+   453→          {renderSkillGroup('Soft Skills', softSkills)}
+   454→        </div>
+   455→      );
+   456→    }
+   457→    return renderSkillColumns(data.skills);
+   458→  }
+   459→
+   460→  function renderProjects() {
+   461→    const entries = data.projects.filter(p => p.name);
+   462→    if (entries.length === 0) return null;
+   463→    return (
+   464→      <div style={{ display: 'flex', flexDirection: 'column' as const, gap: entryGap }}>
+   465→        {entries.map((proj) => (
+   466→          <div key={proj.id}>
+   467→            <div
+   468→              style={{
+   469→                display: 'flex',
+   470→                justifyContent: 'space-between',
+   471→                alignItems: 'baseline',
+   472→                gap: '12px',
+   473→              }}
+   474→            >
+   475→              <h3
+   476→                style={{
+   477→                  fontFamily: s.body.fontFamily,
+   478→                  fontSize: baseSize,
+   479→                  fontWeight: 700,
+   480→                  margin: 0,
+   481→                  color: '#1a1a2e',
+   482→                  lineHeight: 1.3,
+   483→                }}
+   484→              >
+   485→                {proj.name}
+   486→              </h3>
+   487→              {proj.technologies && (
+   488→                <span
+   489→                  style={{
+   490→                    fontFamily: s.body.fontFamily,
+   491→                    fontSize: smallSize,
+   492→                    color: '#6b7280',
+   493→                    whiteSpace: 'nowrap' as const,
+   494→                    flexShrink: 0,
+   495→                  }}
+   496→                >
+   497→                  {proj.technologies}
+   498→                </span>
+   499→              )}
+   500→            </div>
+   501→            {(() => {
+   502→              const descLines = proj.description ? proj.description.split('\n').map(l => l.replace(/^[-\u2022*]\s*/, '').trim()).filter(Boolean) : [];
+   503→              if (descLines.length === 0) return null;
+   504→              return (
+   505→                <ul style={{ margin: '5px 0 0 0', paddingLeft: '14px', listStyleType: 'disc', color: '#374151' }}>
+   506→                  {descLines.map((line, i) => (
+   507→                    <li
+   508→                      key={i}
+   509→                      style={{
+   510→                        fontFamily: s.body.fontFamily,
+   511→                        fontSize: baseSize,
+   512→                        lineHeight: lineHeight,
+   513→                        marginBottom: i < descLines.length - 1 ? '2px' : '0',
+   514→                      }}
+   515→                    >
+   516→                      {line}
+   517→                    </li>
+   518→                  ))}
+   519→                </ul>
+   520→              );
+   521→            })()}
+   522→            {proj.results && (
+   523→              <p
+   524→                style={{
+   525→                  fontFamily: s.body.fontFamily,
+   526→                  fontSize: baseSize,
+   527→                  color: '#374151',
+   528→                  margin: '4px 0 0 0',
+   529→                  lineHeight: lineHeight,
+   530→                  fontStyle: 'italic',
+   531→                }}
+   532→              >
+   533→                {proj.results}
+   534→              </p>
+   535→            )}
+   536→            {proj.liveUrl && (
+   537→              <p
+   538→                style={{
+   539→                  fontFamily: s.body.fontFamily,
+   540→                  fontSize: smallSize,
+   541→                  color: accentColor,
+   542→                  margin: '3px 0 0 0',
+   543→                  lineHeight: 1.3,
+   544→                }}
+   545→              >
+   546→                {proj.liveUrl}
+   547→              </p>
+   548→            )}
+   549→          </div>
+   550→        ))}
+   551→      </div>
+   552→    );
+   553→  }
+   554→
+   555→  function renderCertifications() {
+   556→    const entries = data.certifications.filter(c => c.name);
+   557→    if (entries.length === 0) return null;
+   558→    return (
+   559→      <div style={{ display: 'flex', flexDirection: 'column' as const, gap: smallEntryGap }}>
+   560→        {entries.map((cert) => {
+   561→          const dateStr = formatDate(cert.issueDate);
+   562→          return (
+   563→            <div key={cert.id}>
+   564→              <div
+   565→                style={{
+   566→                  display: 'flex',
+   567→                  justifyContent: 'space-between',
+   568→                  alignItems: 'baseline',
+   569→                  gap: '12px',
+   570→                }}
+   571→              >
+   572→                <h3
+   573→                  style={{
+   574→                    fontFamily: s.body.fontFamily,
+   575→                    fontSize: baseSize,
+   576→                    fontWeight: 700,
+   577→                    margin: 0,
+   578→                    color: '#1a1a2e',
+   579→                    lineHeight: 1.3,
+   580→                  }}
+   581→                >
+   582→                  {cert.name}
+   583→                </h3>
+   584→                {dateStr && (
+   585→                  <span
+   586→                    style={{
+   587→                      fontFamily: s.body.fontFamily,
+   588→                      fontSize: smallSize,
+   589→                      color: '#6b7280',
+   590→                      whiteSpace: 'nowrap' as const,
+   591→                      flexShrink: 0,
+   592→                    }}
+   593→                  >
+   594→                    {dateStr}
+   595→                  </span>
+   596→                )}
+   597→              </div>
+   598→              {cert.issuer && (
+   599→                <p
+   600→                  style={{
+   601→                    fontFamily: s.body.fontFamily,
+   602→                    fontSize: baseSize,
+   603→                    color: '#6b7280',
+   604→                    margin: '3px 0 0 0',
+   605→                    lineHeight: 1.3,
+   606→                  }}
+   607→                >
+   608→                  {cert.issuer}
+   609→                </p>
+   610→              )}
+   611→            </div>
+   612→          );
+   613→        })}
+   614→      </div>
+   615→    );
+   616→  }
+   617→
+   618→  function renderLanguages() {
+   619→    if (data.languages.length === 0) return null;
+   620→    return (
+   621→      <div
+   622→        style={{
+   623→          display: 'flex',
+   624→          flexWrap: 'wrap' as const,
+   625→          gap: '4px 24px',
+   626→        }}
+   627→      >
+   628→        {data.languages.map(lang => (
+   629→          <span
+   630→            key={lang.id}
+   631→            style={{
+   632→              fontFamily: s.body.fontFamily,
+   633→              fontSize: baseSize,
+   634→              color: '#374151',
+   635→              lineHeight: 1.6,
+   636→            }}
+   637→          >
+   638→            {lang.language}
+   639→            <span style={{ color: '#6b7280' }}> — {lang.proficiency}</span>
+   640→          </span>
+   641→        ))}
+   642→      </div>
+   643→    );
+   644→  }
+   645→
+   646→  function renderAwards() {
+   647→    const entries = data.awards.filter(a => a.name);
+   648→    if (entries.length === 0) return null;
+   649→    return (
+   650→      <div style={{ display: 'flex', flexDirection: 'column' as const, gap: smallEntryGap }}>
+   651→        {entries.map((award) => (
+   652→          <div key={award.id}>
+   653→            <div
+   654→              style={{
+   655→                display: 'flex',
+   656→                justifyContent: 'space-between',
+   657→                alignItems: 'baseline',
+   658→                gap: '12px',
+   659→              }}
+   660→            >
+   661→              <h3
+   662→                style={{
+   663→                  fontFamily: s.body.fontFamily,
+   664→                  fontSize: baseSize,
+   665→                  fontWeight: 700,
+   666→                  margin: 0,
+   667→                  color: '#1a1a2e',
+   668→                  lineHeight: 1.3,
+   669→                }}
+   670→              >
+   671→                {award.name}
+   672→              </h3>
+   673→              {award.year && (
+   674→                <span
+   675→                  style={{
+   676→                    fontFamily: s.body.fontFamily,
+   677→                    fontSize: smallSize,
+   678→                    color: '#6b7280',
+   679→                    whiteSpace: 'nowrap' as const,
+   680→                    flexShrink: 0,
+   681→                  }}
+   682→                >
+   683→                  {award.year}
+   684→                </span>
+   685→              )}
+   686→            </div>
+   687→            {award.organization && (
+   688→              <p
+   689→                style={{
+   690→                  fontFamily: s.body.fontFamily,
+   691→                  fontSize: baseSize,
+   692→                  color: '#6b7280',
+   693→                  margin: '3px 0 0 0',
+   694→                  lineHeight: 1.3,
+   695→                }}
+   696→              >
+   697→                {award.organization}
+   698→              </p>
+   699→            )}
+   700→          </div>
+   701→        ))}
+   702→      </div>
+   703→    );
+   704→  }
+   705→
+   706→  function renderVolunteerExperience() {
+   707→    const entries = data.volunteerExperience.filter(v => v.organization);
+   708→    if (entries.length === 0) return null;
+   709→    return (
+   710→      <div style={{ display: 'flex', flexDirection: 'column' as const, gap: entryGap }}>
+   711→        {entries.map((vol) => (
+   712→          <div key={vol.id}>
+   713→            <div
+   714→              style={{
+   715→                display: 'flex',
+   716→                justifyContent: 'space-between',
+   717→                alignItems: 'baseline',
+   718→                gap: '12px',
+   719→              }}
+   720→            >
+   721→              <h3
+   722→                style={{
+   723→                  fontFamily: s.body.fontFamily,
+   724→                  fontSize: baseSize,
+   725→                  fontWeight: 700,
+   726→                  margin: 0,
+   727→                  color: '#1a1a2e',
+   728→                  lineHeight: 1.3,
+   729→                }}
+   730→              >
+   731→                {vol.role}
+   732→                {vol.organization && (
+   733→                  <span style={{ color: accentColor, fontWeight: 500 }}>
+   734→                    {' '}| {vol.organization}
+   735→                  </span>
+   736→                )}
+   737→              </h3>
+   738→            </div>
+   739→            {(() => {
+   740→              const descLines = vol.description ? vol.description.split('\n').map(l => l.replace(/^[-\u2022*]\s*/, '').trim()).filter(Boolean) : [];
+   741→              if (descLines.length === 0) return null;
+   742→              return (
+   743→                <ul style={{ margin: '5px 0 0 0', paddingLeft: '14px', listStyleType: 'disc', color: '#374151' }}>
+   744→                  {descLines.map((line, i) => (
+   745→                    <li
+   746→                      key={i}
+   747→                      style={{
+   748→                        fontFamily: s.body.fontFamily,
+   749→                        fontSize: baseSize,
+   750→                        lineHeight: lineHeight,
+   751→                        marginBottom: i < descLines.length - 1 ? '2px' : '0',
+   752→                      }}
+   753→                    >
+   754→                      {line}
+   755→                    </li>
+   756→                  ))}
+   757→                </ul>
+   758→              );
+   759→            })()}
+   760→          </div>
+   761→        ))}
+   762→      </div>
+   763→    );
+   764→  }
+   765→
+   766→  function renderReferences() {
+   767→    const entries = data.references.filter(r => r.name);
+   768→    if (entries.length === 0) return null;
+   769→    return (
+   770→      <div style={{ display: 'flex', flexDirection: 'column' as const, gap: entryGap }}>
+   771→        {entries.map((ref) => (
+   772→          <div key={ref.id}>
+   773→            <h3
+   774→              style={{
+   775→                fontFamily: s.body.fontFamily,
+   776→                fontSize: baseSize,
+   777→                fontWeight: 700,
+   778→                margin: 0,
+   779→                color: '#1a1a2e',
+   780→                lineHeight: 1.3,
+   781→              }}
+   782→            >
+   783→              {ref.name}
+   784→            </h3>
+   785→            <p
+   786→              style={{
+   787→                fontFamily: s.body.fontFamily,
+   788→                fontSize: baseSize,
+   789→                color: '#6b7280',
+   790→                margin: '3px 0 0 0',
+   791→                lineHeight: 1.3,
+   792→              }}
+   793→            >
+   794→              {[ref.position, ref.company].filter(Boolean).join('  |  ')}
+   795→            </p>
+   796→            {(ref.email || ref.phone) && (
+   797→              <p
+   798→                style={{
+   799→                  fontFamily: s.body.fontFamily,
+   800→                  fontSize: smallSize,
+   801→                  color: '#9ca3af',
+   802→                  margin: '2px 0 0 0',
+   803→                  lineHeight: 1.3,
+   804→                }}
+   805→              >
+   806→                {[ref.email, ref.phone].filter(Boolean).join('  |  ')}
+   807→              </p>
+   808→            )}
+   809→          </div>
+   810→        ))}
+   811→      </div>
+   812→    );
+   813→  }
+   814→
+   815→  function renderAdditionalInfo() {
+   816→    if (!data.additionalInfo.text.trim()) return null;
+   817→    return (
+   818→      <div
+   819→        style={{
+   820→          fontFamily: s.body.fontFamily,
+   821→          fontSize: baseSize,
+   822→          color: '#374151',
+   823→          lineHeight: lineHeight,
+   824→          whiteSpace: 'pre-line' as const,
+   825→        }}
+   826→      >
+   827→        {data.additionalInfo.text}
+   828→      </div>
+   829→    );
+   830→  }
+   831→}

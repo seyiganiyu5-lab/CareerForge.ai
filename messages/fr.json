@@ -1,0 +1,1168 @@
+{
+  "meta": {
+    "title": "CareerForge AI — Plateforme de Carrière Propulsée par l'IA",
+    "description": "Créez des CV aux normes ATS, des lettres de motivation alimentées par l'IA, analysez les offres d'emploi et optimisez vos candidatures avec CareerForge AI."
+  },
+  "nav": {
+    "home": "Accueil",
+    "features": "Fonctionnalités",
+    "templates": "Modèles",
+    "pricing": "Tarifs",
+    "about": "À propos",
+    "faq": "FAQ",
+    "login": "Connexion",
+    "getStarted": "Commencer"
+  },
+  "hero": {
+    "badge": "Plateforme de Carrière Propulsée par l'IA",
+    "title": "CV, Lettres de Motivation & Analyse d'Emploi — Tout en Une Seule Plateforme IA",
+    "description": "Créez des CV aux normes ATS, générez des lettres de motivation, analysez les offres d'emploi et suivez vos candidatures — le tout propulsé par une IA avancée pour accélérer votre carrière.",
+    "primaryCta": "Commencer Gratuitement",
+    "dashboard": {
+      "resumePreview": "Aperçu du CV",
+      "aiScore": "Score IA du CV",
+      "atsScore": "Score ATS",
+      "coverLetter": "Lettre de Motivation",
+      "jobTracker": "Suivi des Candidatures",
+      "pdfExport": "Export PDF",
+      "applications": "candidatures suivies",
+      "score": "score",
+      "excellent": "Excellent",
+      "optimized": "Optimisé"
+    }
+  },
+  "trust": {
+    "heading": "Adopté par les chercheurs d'emploi préparant des candidatures aux normes ATS pour les entreprises leaders du monde entier."
+  },
+  "features": {
+    "badge": "Fonctionnalités Puissantes",
+    "title": "Tout ce Dont Vous Avez Besoin pour une Recherche d'Emploi Réussie",
+    "description": "De la création de CV aux normes ATS et la génération de lettres de motivation à l'analyse d'offres d'emploi et au suivi des candidatures — CareerForge AI est votre boîte à outils complète.",
+    "items": {
+      "aiResumeBuilder": {
+        "title": "Créateur de CV IA",
+        "description": "Créez des CV aux normes ATS en quelques minutes grâce à notre constructeur propulsé par l'IA. Entrez simplement vos informations et laissez l'IA créer le CV parfait qui passe tout système de suivi des candidats."
+      },
+      "aiCoverLetter": {
+        "title": "Générateur de Lettres de Motivation IA",
+        "description": "Générez des lettres de motivation personnalisées et convaincantes, adaptées à chaque candidature. L'IA veille à ce que chaque mot compte et correspond aux exigences de l'emploi."
+      },
+      "atsOptimization": {
+        "title": "Optimisation et Normes ATS",
+        "description": "Assurez-vous que votre CV respecte les normes ATS. Notre IA analyse votre CV par rapport aux exigences de l'emploi et optimise le formatage, les mots-clés et la structure pour une compatibilité maximale."
+      },
+      "resumeTemplates": {
+        "title": "Modèles de CV Testés ATS",
+        "description": "Choisissez parmi plus de 50 modèles professionnels. Chaque modèle est conçu par des experts en carrière et testé contre de vrais systèmes ATS pour une compatibilité garantie."
+      },
+      "aiResumeReview": {
+        "title": "Revue IA de CV et Lettres de Motivation",
+        "description": "Obtenez des retours instantanés et actionnables sur votre CV et votre lettre de motivation. Notre IA identifie les faiblesses et suggère des améliorations pour booster votre taux de réussite."
+      },
+      "jobTracker": {
+        "title": "Suivi des Candidatures",
+        "description": "Suivez toutes vos candidatures en un seul endroit. Surveillez les statuts, planifiez les relances et ne manquez jamais une opportunité grâce à notre tableau de bord intelligent."
+      }
+    }
+  },
+  "about": {
+    "badge": "À Propos",
+    "title": "Conçu pour Donner Force à Votre Parcours Professionnel",
+    "description": "CareerForge AI est une plateforme de carrière complète propulsée par l'IA, conçue pour aider les chercheurs d'emploi à créer des documents de candidature professionnels aux normes ATS et à naviguer le marché du travail moderne en toute confiance.",
+    "mission": {
+      "title": "Notre Mission",
+      "description": "Démocratiser la réussite professionnelle en donnant à chaque chercheur d'emploi accès à des outils propulsés par l'IA qui créent des CV aux normes ATS, des lettres de motivation convaincantes et des analyses d'emploi actionnables — mettant tous sur un pied d'égalité."
+    },
+    "vision": {
+      "title": "Notre Vision",
+      "description": "Devenir la plateforme de carrière de référence mondiale où l'IA et l'expertise ATS s'allient pour aider des millions de professionnels à décrocher leur emploi de rêve plus rapidement et avec moins d'efforts."
+    },
+    "highlights": {
+      "atsStandard": {
+        "title": "Normes ATS",
+        "description": "Chaque document que nous créons respecte les exigences de formatage ATS strictes pour maximiser votre taux de réussite."
+      },
+      "aiPowered": {
+        "title": "Propulsé par l'IA",
+        "description": "Une IA avancée entraînée sur des millions de candidatures réussies crée vos documents avec précision."
+      },
+      "allInOne": {
+        "title": "Plateforme Tout-en-Un",
+        "description": "CV, lettres de motivation, analyse d'emploi et suivi des candidatures — tout en un seul endroit."
+      },
+      "global": {
+        "title": "Portée Mondiale",
+        "description": "Adopté par des chercheurs d'emploi du monde entier postulant dans toutes les industries."
+      }
+    }
+  },
+  "templates": {
+    "badge": "Modèles de CV",
+    "title": "Des Modèles Professionnels qui Attirent l'Attention",
+    "description": "Choisissez parmi notre collection de modèles de CV aux normes ATS, conçus et testés par des experts en carrière.",
+    "items": {
+      "modern": "Moderne",
+      "professional": "Professionnel",
+      "executive": "Exécutif",
+      "minimal": "Minimaliste",
+      "creative": "Créatif",
+      "atsFriendly": "Compatible ATS"
+    },
+    "viewAll": "Voir les Détails"
+  },
+  "aiFeatures": {
+    "badge": "Capacités IA",
+    "title": "Propulsé par une Technologie IA Avancée",
+    "description": "Notre moteur IA est entraîné sur des millions de candidatures réussies et de documents optimisés pour l'ATS afin de vous offrir les meilleurs résultats possibles.",
+    "checklist": {
+      "aiResumeWriting": "Rédaction de CV IA",
+      "aiCoverLetterGen": "Génération de Lettres de Motivation IA",
+      "resumeRewriting": "Réécriture de CV",
+      "atsOptimization": "Optimisation ATS",
+      "keywordSuggestions": "Suggestions de Mots-clés",
+      "grammarImprovements": "Améliorations Grammaticales",
+      "resumeScoring": "Scoring de CV"
+    },
+    "cta": "Essayer les Fonctionnalités IA Gratuitement"
+  },
+  "atsChecker": {
+    "badge": "Vérificateur ATS",
+    "title": "Vérificateur de Conformité aux Normes ATS",
+    "description": "Notre vérificateur ATS propulsé par l'IA analyse votre CV par rapport aux offres d'emploi et aux normes ATS, fournissant des suggestions d'optimisation actionnables pour maximiser votre taux de réussite.",
+    "metrics": {
+      "atsScore": "Score ATS",
+      "formatting": "Formatage",
+      "keywordMatch": "Correspondance des Mots-clés",
+      "missingSkills": "Compétences Manquantes",
+      "suggestions": "Suggestions d'Optimisation",
+      "excellent": "Excellent",
+      "good": "Bon",
+      "needsWork": "À Améliorer",
+      "found": "trouvé(s)",
+      "missing": "manquant(s)",
+      "matched": "Correspondant",
+      "partial": "Partiel",
+      "unmatched": "Non correspondant",
+      "tip1": "Ajoutez plus de verbes d'action pour renforcer vos puces.",
+      "tip2": "Incluez des accomplissements quantifiables pour plus d'impact.",
+      "tip3": "Assurez un formatage de dates cohérent tout au long du document.",
+      "tip4": "Ajoutez des mots-clés pertinents issus de l'offre d'emploi."
+    }
+  },
+  "statistics": {
+    "items": {
+      "templates": {
+        "value": "50+",
+        "label": "Modèles de CV"
+      },
+      "suggestions": {
+        "value": "100+",
+        "label": "Suggestions IA"
+      },
+      "optimization": {
+        "value": "95%",
+        "label": "Conformité ATS"
+      },
+      "access": {
+        "value": "24/7",
+        "label": "Accès Cloud"
+      }
+    }
+  },
+  "testimonials": {
+    "badge": "Témoignages",
+    "title": "Adopté par les Chercheurs d'Emploi du Monde Entier",
+    "description": "Découvrez ce que nos utilisateurs disent de leur expérience avec CareerForge AI.",
+    "items": {
+      "sarah": {
+        "name": "Sarah Johnson",
+        "title": "Ingénieure Logicielle chez Google",
+        "review": "CareerForge AI a complètement transformé ma recherche d'emploi. La fonctionnalité d'optimisation ATS a permis à mon CV de passer tous les filtres. J'ai décroché 5 entretiens la première semaine !",
+        "rating": 5
+      },
+      "michael": {
+        "name": "Michael Chen",
+        "title": "Chef de Produit chez Microsoft",
+        "review": "Le constructeur de CV et de lettres de motivation IA est incroyable. Il a compris mon expérience et a créé des documents de candidature qui ont parfaitement mis en valeur mes accomplissements. Fortement recommandé !",
+        "rating": 5
+      },
+      "emily": {
+        "name": "Emily Rodriguez",
+        "title": "Directrice Marketing chez Deloitte",
+        "review": "J'étais sceptique quant aux outils de carrière IA, mais CareerForge AI a dépassé toutes mes attentes. Le générateur de lettres de motivation et le vérificateur ATS m'ont fait gagner des heures de travail.",
+        "rating": 5
+      }
+    }
+  },
+  "pricing": {
+    "badge": "Tarifs",
+    "title": "Des Tarifs Simples et Transparents",
+    "description": "Choisissez le forfait qui correspond à vos besoins. Commencez gratuitement et évoluez à votre rythme.",
+    "monthly": "Mensuel",
+    "yearly": "Annuel",
+    "yearlyDiscount": "Économisez 20%",
+    "plans": {
+      "free": {
+        "name": "Gratuit",
+        "price": "0",
+        "period": "pour toujours",
+        "description": "Commencez avec les outils essentiels",
+        "features": [
+          "1 CV et 3 Lettres de Motivation",
+          "3 Modèles de CV",
+          "Suggestions IA (5/jour)",
+          "Export PDF",
+          "Vérification ATS de Base"
+        ],
+        "cta": "Commencer Gratuitement"
+      },
+      "pro": {
+        "name": "Pro",
+        "price": "7,99 $",
+        "priceYearly": "79,99 $",
+        "period": "/mois",
+        "periodYearly": "/an",
+        "description": "Pour les chercheurs d'emploi sérieux",
+        "features": [
+          "CV et Lettres de Motivation Illimités",
+          "Tous les Modèles",
+          "Suggestions IA Illimitées",
+          "Analyse d'Offres d'Emploi",
+          "Vérificateur ATS Avancé",
+          "Suivi des Candidatures",
+          "Support Prioritaire"
+        ],
+        "cta": "Essai Pro Gratuit",
+        "popular": "Le Plus Populaire"
+      },
+      "enterprise": {
+        "name": "Entreprise",
+        "price": "",
+        "priceYearly": "",
+        "period": "",
+        "periodYearly": "",
+        "description": "Pour les équipes et organisations",
+        "features": [
+          "Tout dans Pro",
+          "Collaboration d'Équipe",
+          "Marque Personnalisée",
+          "Accès API",
+          "Génération de CV en Lot",
+          "Support Dédié",
+          "Intégration SSO"
+        ],
+        "cta": "Contacter les Ventes"
+      }
+    }
+  },
+  "faq": {
+    "badge": "FAQ",
+    "title": "Questions Fréquemment Posées",
+    "description": "Tout ce que vous devez savoir sur CareerForge AI.",
+    "items": {
+      "q1": {
+        "question": "Qu'est-ce que CareerForge AI ?",
+        "answer": "CareerForge AI est une plateforme de carrière propulsée par l'IA qui vous aide à créer des CV aux normes ATS, à générer des lettres de motivation, à analyser les offres d'emploi, à optimiser pour les systèmes ATS et à suivre vos candidatures — le tout en un seul endroit."
+      },
+      "q2": {
+        "question": "CareerForge AI est-il gratuit ?",
+        "answer": "Oui ! Nous proposons un forfait gratuit généreux qui inclut 1 CV et 3 lettres de motivation avec des modèles de base, des suggestions IA limitées et l'export PDF. Passez à Pro pour un accès illimité à toutes les fonctionnalités."
+      },
+      "q3": {
+        "question": "Que signifie « aux normes ATS » ?",
+        "answer": "ATS signifie Applicant Tracking System — le logiciel que les entreprises utilisent pour filtrer les CV. Notre plateforme garantit que votre CV respecte les normes de formatage ATS, utilise les bons mots-clés et évite les pièges courants qui causent un rejet automatique."
+      },
+      "q4": {
+        "question": "Puis-je télécharger mon CV et ma lettre de motivation en PDF ?",
+        "answer": "Absolument ! Tous les forfaits incluent l'export PDF pour les CV et les lettres de motivation. Vos documents seront formatés parfaitement pour la soumission numérique et l'impression, avec un style cohérent sur tous les appareils."
+      },
+      "q5": {
+        "question": "Comment fonctionne l'analyse d'offre d'emploi ?",
+        "answer": "Notre IA analyse les offres d'emploi pour identifier les exigences clés, les compétences et les mots-clés. Elle les compare ensuite à votre CV pour fournir un score de correspondance et des suggestions spécifiques pour améliorer l'alignement de votre candidature avec le poste."
+      },
+      "q6": {
+        "question": "Puis-je annuler mon abonnement à tout moment ?",
+        "answer": "Oui, vous pouvez annuler votre abonnement à tout moment sans questions. Votre compte restera actif jusqu'à la fin de votre période de facturation en cours, et vous pourrez continuer à utiliser le forfait gratuit par la suite."
+      }
+    }
+  },
+  "cta": {
+    "title": "Prêt à Construire Votre Carrière de Rêve ?",
+    "description": "Rejoignez des milliers de chercheurs d'emploi qui ont déjà transformé leur recherche avec CareerForge AI. Commencez à créer des CV aux normes ATS, des lettres de motivation et plus — entièrement gratuitement.",
+    "button": "Commencer Gratuitement",
+    "note": "Aucune carte de crédit requise. Commencez en quelques secondes.",
+    "newsletterTitle": "Recevez des Conseils de Carrière",
+    "newsletterDescription": "Rejoignez plus de 10 000 professionnels recevant chaque semaine des conseils de CV, des orientations de carrière et des stratégies de recherche d'emploi propulsées par l'IA."
+  },
+  "footer": {
+    "product": {
+      "title": "Produit",
+      "resumeBuilder": "Constructeur de CV",
+      "coverLetterGenerator": "Générateur de Lettres de Motivation",
+      "templates": "Modèles"
+    },
+    "company": {
+      "title": "Entreprise",
+      "about": "À propos",
+      "contact": "Contact"
+    },
+    "resources": {
+      "title": "Ressources",
+      "helpCenter": "Centre d'Aide",
+      "blog": "Blog"
+    },
+    "legal": {
+      "title": "Légal",
+      "privacy": "Politique de Confidentialité",
+      "terms": "Conditions d'Utilisation"
+    },
+    "newsletter": {
+      "title": "Restez Informé",
+      "description": "Recevez les derniers conseils de carrière et mises à jour du produit.",
+      "placeholder": "Entrez votre email",
+      "button": "S'abonner",
+      "success": "Merci pour votre abonnement !"
+    },
+    "copyright": "© 2025 CareerForge AI. Tous droits réservés."
+  },
+  "language": {
+    "en": "EN",
+    "fr": "FR"
+  },
+  "auth": {
+    "common": {
+      "email": "Email",
+      "password": "Mot de passe",
+      "confirmPassword": "Confirmer le mot de passe",
+      "firstName": "Prénom",
+      "lastName": "Nom",
+      "orContinueWith": "ou continuer avec",
+      "continueWith": "Continuer avec",
+      "loading": "Chargement...",
+      "back": "Retour",
+      "next": "Suivant",
+      "submit": "Soumettre",
+      "error": "Erreur",
+      "success": "Succès",
+      "google": "Google",
+      "apple": "Apple"
+    },
+    "login": {
+      "title": "Bon Retour",
+      "subtitle": "Connectez-vous à votre compte CareerForge AI",
+      "emailPlaceholder": "Entrez votre adresse email",
+      "passwordPlaceholder": "Entrez votre mot de passe",
+      "rememberMe": "Se souvenir de moi",
+      "forgotPassword": "Mot de passe oublié ?",
+      "loginButton": "Se Connecter",
+      "loggingIn": "Connexion en cours...",
+      "noAccount": "Vous n'avez pas de compte ?",
+      "createAccount": "Créer un Compte",
+      "alreadyLoggedIn": "Bon retour !",
+      "alreadyLoggedInDesc": "Vous êtes déjà connecté.",
+      "goToDashboard": "Aller au Tableau de Bord",
+      "errors": {
+        "invalidCredentials": "Email ou mot de passe invalide. Veuillez réessayer.",
+        "emailRequired": "L'email est requis",
+        "emailInvalid": "Veuillez entrer une adresse email valide",
+        "passwordRequired": "Le mot de passe est requis",
+        "passwordMinLength": "Le mot de passe doit contenir au moins 8 caractères"
+      }
+    },
+    "signup": {
+      "title": "Créez Votre Compte",
+      "subtitle": "Commencez à construire votre carrière avec des outils propulsés par l'IA",
+      "firstNamePlaceholder": "Entrez votre prénom",
+      "lastNamePlaceholder": "Entrez votre nom",
+      "emailPlaceholder": "Entrez votre adresse email",
+      "passwordPlaceholder": "Créez un mot de passe",
+      "confirmPasswordPlaceholder": "Confirmez votre mot de passe",
+      "agreeToTerms": "J'accepte les",
+      "termsOfService": "Conditions d'Utilisation",
+      "privacyPolicy": "et la",
+      "privacyPolicyLink": "Politique de Confidentialité",
+      "signupButton": "Créer un Compte",
+      "creatingAccount": "Création du compte...",
+      "alreadyLoggedIn": "Bienvenue !",
+      "alreadyLoggedInDesc": "Vous êtes déjà connecté.",
+      "goToDashboard": "Aller au Tableau de Bord",
+      "hasAccount": "Vous avez déjà un compte ?",
+      "signIn": "Se Connecter",
+      "errors": {
+        "firstNameRequired": "Le prénom est requis",
+        "lastNameRequired": "Le nom est requis",
+        "emailRequired": "L'email est requis",
+        "emailInvalid": "Veuillez entrer une adresse email valide",
+        "passwordRequired": "Le mot de passe est requis",
+        "passwordMinLength": "Le mot de passe doit contenir au moins 8 caractères",
+        "passwordUppercase": "Le mot de passe doit contenir au moins une majuscule",
+        "passwordLowercase": "Le mot de passe doit contenir au moins une minuscule",
+        "passwordNumber": "Le mot de passe doit contenir au moins un chiffre",
+        "passwordSpecial": "Le mot de passe doit contenir au moins un caractère spécial",
+        "confirmPasswordRequired": "Veuillez confirmer votre mot de passe",
+        "passwordsDoNotMatch": "Les mots de passe ne correspondent pas",
+        "termsRequired": "Vous devez accepter les Conditions d'Utilisation et la Politique de Confidentialité",
+        "emailAlreadyExists": "Un compte avec cet email existe déjà"
+      }
+    },
+    "passwordStrength": {
+      "veryWeak": "Très Faible",
+      "weak": "Faible",
+      "fair": "Passable",
+      "strong": "Fort",
+      "veryStrong": "Très Fort",
+      "requirements": "Exigences du mot de passe :",
+      "minLength": "Au moins 8 caractères",
+      "uppercase": "Une lettre majuscule",
+      "lowercase": "Une lettre minuscule",
+      "number": "Un chiffre",
+      "specialChar": "Un caractère spécial"
+    },
+    "forgotPassword": {
+      "title": "Réinitialiser Votre Mot de Passe",
+      "subtitle": "Entrez votre email et nous vous enverrons un lien pour réinitialiser votre mot de passe",
+      "emailPlaceholder": "Entrez votre adresse email",
+      "submitButton": "Envoyer le Lien de Réinitialisation",
+      "sending": "Envoi du lien...",
+      "backToLogin": "Retour à la Connexion",
+      "success": {
+        "title": "Vérifiez Votre Email",
+        "subtitle": "Nous avons envoyé un lien de réinitialisation à",
+        "description": "Le lien expirera dans 1 heure. Si vous ne voyez pas l'email, vérifiez votre dossier spam.",
+        "backToLogin": "Retour à la Connexion",
+        "resendLink": "Renvoyer le Lien"
+      },
+      "errors": {
+        "emailRequired": "L'email est requis",
+        "emailInvalid": "Veuillez entrer une adresse email valide",
+        "userNotFound": "Aucun compte trouvé avec cette adresse email"
+      }
+    },
+    "resetPassword": {
+      "title": "Définir un Nouveau Mot de Passe",
+      "subtitle": "Entrez votre nouveau mot de passe ci-dessous",
+      "newPasswordPlaceholder": "Entrez le nouveau mot de passe",
+      "confirmPasswordPlaceholder": "Confirmez le nouveau mot de passe",
+      "submitButton": "Réinitialiser le Mot de Passe",
+      "resetting": "Réinitialisation...",
+      "success": {
+        "title": "Mot de Passe Réinitialisé avec Succès",
+        "subtitle": "Votre mot de passe a été mis à jour. Vous pouvez maintenant vous connecter avec votre nouveau mot de passe.",
+        "signInButton": "Se Connecter"
+      },
+      "errors": {
+        "passwordRequired": "Le mot de passe est requis",
+        "passwordMinLength": "Le mot de passe doit contenir au moins 8 caractères",
+        "confirmPasswordRequired": "Veuillez confirmer votre mot de passe",
+        "passwordsDoNotMatch": "Les mots de passe ne correspondent pas",
+        "invalidOrExpiredToken": "Ce lien de réinitialisation est invalide ou a expiré. Veuillez en demander un nouveau."
+      }
+    },
+    "verifyEmail": {
+      "title": "Vérifiez Votre Email",
+      "subtitle": "Nous avons envoyé un lien de vérification à votre adresse email. Veuillez vérifier votre boîte de réception et cliquer sur le lien pour activer votre compte.",
+      "resendButton": "Renvoyer l'Email de Vérification",
+      "resending": "Renvoi en cours...",
+      "changeEmail": "Changer l'Email",
+      "success": {
+        "title": "Email Vérifié avec Succès",
+        "subtitle": "Votre email a été vérifié. Votre compte est maintenant actif.",
+        "continueButton": "Continuer vers l'Intégration"
+      },
+      "errors": {
+        "invalidToken": "Ce lien de vérification est invalide ou a expiré.",
+        "resendFailed": "Impossible de renvoyer l'email de vérification. Veuillez réessayer.",
+        "resendSuccess": "Email de vérification envoyé avec succès !",
+        "alreadyVerified": "Votre email est déjà vérifié."
+      }
+    },
+    "onboarding": {
+      "stepIndicator": {
+        "step": "Étape"
+      },
+      "welcome": {
+        "title": "Bienvenue sur CareerForge AI !",
+        "subtitle": "Personnalisons votre expérience pour vous aider à atteindre vos objectifs professionnels.",
+        "getStarted": "Commencer"
+      },
+      "personalInfo": {
+        "title": "Informations Personnelles",
+        "subtitle": "Dites-nous un peu sur vous",
+        "firstNamePlaceholder": "Entrez votre prénom",
+        "lastNamePlaceholder": "Entrez votre nom",
+        "countryPlaceholder": "Sélectionnez votre pays",
+        "jobTitlePlaceholder": "ex. Ingénieur Logiciel, Chef de Projet Marketing",
+        "countries": {
+          "select": "Sélectionner un pays",
+          "ci": "Côte d'Ivoire",
+          "sn": "Sénégal",
+          "ml": "Mali",
+          "bf": "Burkina Faso",
+          "cm": "Cameroun",
+          "ne": "Niger",
+          "tg": "Togo",
+          "bj": "Bénin",
+          "gn": "Guinée",
+          "td": "Tchad",
+          "ga": "Gabon",
+          "cg": "Congo",
+          "cd": "RD Congo",
+          "us": "États-Unis",
+          "gb": "Royaume-Uni",
+          "fr": "France",
+          "ca": "Canada",
+          "de": "Allemagne",
+          "ng": "Nigéria",
+          "gh": "Ghana",
+          "ke": "Kenya",
+          "za": "Afrique du Sud",
+          "other": "Autre"
+        },
+        "errors": {
+          "firstNameRequired": "Le prénom est requis",
+          "lastNameRequired": "Le nom est requis",
+          "countryRequired": "Veuillez sélectionner votre pays",
+          "jobTitleRequired": "Le titre professionnel est requis"
+        }
+      },
+      "careerLevel": {
+        "title": "Niveau de Carrière",
+        "subtitle": "Où en êtes-vous dans votre parcours professionnel ?",
+        "student": {
+          "title": "Étudiant",
+          "description": "Actuellement en études et à la recherche de stages ou d'un premier emploi"
+        },
+        "graduate": {
+          "title": "Diplômé",
+          "description": "Récemment diplômé et entrant sur le marché du travail"
+        },
+        "professional": {
+          "title": "Professionnel",
+          "description": "Professionnel expérimenté cherchant à évoluer"
+        },
+        "freelancer": {
+          "title": "Freelance",
+          "description": "Travailleur indépendant à la recherche de nouvelles opportunités"
+        },
+        "careerChanger": {
+          "title": "Réorientation",
+          "description": "En transition vers un nouveau secteur ou poste"
+        },
+        "errors": {
+          "careerLevelRequired": "Veuillez sélectionner votre niveau de carrière"
+        }
+      },
+      "careerGoal": {
+        "title": "Objectif de Carrière",
+        "subtitle": "Que souhaitez-vous accomplir ? (Sélectionnez tout ce qui s'applique)",
+        "buildResume": {
+          "title": "Créer un CV",
+          "description": "Créer un CV professionnel aux normes ATS"
+        },
+        "createCoverLetter": {
+          "title": "Créer une Lettre de Motivation",
+          "description": "Générer des lettres de motivation convaincantes"
+        },
+        "improveResume": {
+          "title": "Améliorer un CV Existant",
+          "description": "Optimiser et améliorer votre CV actuel"
+        },
+        "trackApplications": {
+          "title": "Suivre les Candidatures",
+          "description": "Organiser et suivre votre recherche d'emploi"
+        },
+        "findJobs": {
+          "title": "Trouver des Emplois",
+          "description": "Découvrir des opportunités correspondant à votre profil"
+        },
+        "errors": {
+          "selectAtLeastOne": "Veuillez sélectionner au moins un objectif"
+        }
+      },
+      "finish": {
+        "title": "Vous Êtes Prêt !",
+        "subtitle": "Votre profil est complet. Commençons à construire votre carrière !",
+        "goToDashboard": "Aller au Tableau de Bord",
+        "description": "Vous avez maintenant accès à tous nos outils de carrière propulsés par l'IA. Commencez par créer votre premier CV ou explorez nos modèles."
+      },
+      "skip": "Passer pour l'instant",
+      "errors": {
+        "failed": "Échec de la sauvegarde. Veuillez réessayer."
+      }
+    },
+    "google": {
+      "notConfigured": "La connexion Google n'est pas encore configurée. Veuillez contacter l'administrateur.",
+      "accessDenied": "La connexion Google a été annulée. Vous pouvez réessayer ou utiliser votre email et mot de passe.",
+      "noEmail": "Impossible de récupérer votre email depuis Google. Veuillez réessayer ou vous inscrire par email.",
+      "authFailed": "La connexion Google a échoué. Veuillez réessayer ou utiliser votre email et mot de passe.",
+      "accountLinked": "Votre compte Google a été lié avec succès."
+    },
+    "errors": {
+      "unknown": "Une erreur inattendue s'est produite. Veuillez réessayer.",
+      "network": "Erreur réseau. Veuillez vérifier votre connexion et réessayer.",
+      "sessionExpired": "Votre session a expiré. Veuillez vous reconnecter.",
+      "unauthorized": "Vous n'êtes pas autorisé à effectuer cette action."
+    }
+  },
+  "dashboard": {
+    "sidebar": {
+      "dashboard": "Tableau de Bord",
+      "resumeBuilder": "Constructeur de CV",
+      "myResumes": "Mes CV",
+      "coverLetters": "Lettres de Motivation",
+      "resumeReview": "Revue de CV",
+      "atsChecker": "Vérificateur ATS",
+      "jobTracker": "Suivi des Candidatures",
+      "templates": "Modèles",
+      "profile": "Profil",
+      "billing": "Facturation",
+      "settings": "Paramètres",
+      "helpCenter": "Centre d'Aide",
+      "logout": "Déconnexion",
+      "collapse": "Réduire",
+      "expand": "Développer"
+    },
+    "topNav": {
+      "searchPlaceholder": "Rechercher des CV, lettres de motivation, modèles..."
+    },
+    "notifications": {
+      "title": "Notifications",
+      "markAllRead": "Tout marquer comme lu",
+      "viewAll": "Tout voir",
+      "noNotifications": "Aucune nouvelle notification",
+      "resumeDownloaded": "CV téléchargé avec succès.",
+      "atsImproved": "Votre score ATS s'est amélioré de 12% !",
+      "welcome": "Bienvenue sur CareerForge AI ! Commencez par créer votre premier CV.",
+      "profileComplete": "Complétez votre profil pour de meilleures suggestions IA.",
+      "coverLetterGenerated": "Votre lettre de motivation a été générée."
+    },
+    "userMenu": {
+      "profile": "Mon Profil",
+      "settings": "Paramètres",
+      "billing": "Facturation",
+      "logout": "Déconnexion"
+    },
+    "welcome": {
+      "goodMorning": "Bonjour",
+      "goodAfternoon": "Bon Après-midi",
+      "goodEvening": "Bonsoir",
+      "greeting": "Bon retour, {name}",
+      "message": "Construisons quelque chose qui vous fera embaucher."
+    },
+    "quickActions": {
+      "title": "Actions Rapides",
+      "createResume": {
+        "title": "Créer un CV",
+        "description": "Construisez un CV professionnel aux normes ATS avec l'IA"
+      },
+      "createCoverLetter": {
+        "title": "Créer une Lettre de Motivation",
+        "description": "Générez une lettre de motivation personnalisée en secondes"
+      },
+      "reviewResume": {
+        "title": "Revoir le CV",
+        "description": "Obtenez des retours IA sur votre CV"
+      },
+      "trackApplication": {
+        "title": "Suivre une Candidature",
+        "description": "Organisez et suivez vos candidatures"
+      }
+    },
+    "stats": {
+      "title": "Aperçu",
+      "totalResumes": "Total des CV",
+      "coverLetters": "Lettres de Motivation",
+      "avgAtsScore": "Score ATS Moyen",
+      "applicationsTracked": "Candidatures Suivies",
+      "downloads": "Téléchargements"
+    },
+    "recentDocuments": {
+      "title": "Documents Récents",
+      "name": "Nom du Document",
+      "type": "Type",
+      "lastUpdated": "Dernière Modification",
+      "status": "Statut",
+      "actions": "Actions",
+      "view": "Voir",
+      "edit": "Modifier",
+      "duplicate": "Dupliquer",
+      "delete": "Supprimer",
+      "draft": "Brouillon",
+      "completed": "Terminé",
+      "published": "Publié",
+      "viewAll": "Voir Tous les Documents"
+    },
+    "activity": {
+      "title": "Activité Récente",
+      "createdResume": "Création du CV « {name} »",
+      "generatedCoverLetter": "Génération d'une lettre de motivation pour {company}",
+      "downloadedPdf": "Téléchargement de {name} en PDF",
+      "updatedResume": "Mise à jour du CV « {name} »",
+      "submittedApplication": "Candidature envoyée à {company}",
+      "noActivity": "Aucune activité récente. Commencez par créer votre premier CV !",
+      "viewAll": "Voir Toute l'Activité"
+    },
+    "aiInsights": {
+      "title": "Insights IA",
+      "improveNow": "Améliorer",
+      "insight1": "Votre CV pourrait être amélioré en ajoutant des réalisations mesurables à votre section expérience.",
+      "insight2": "Votre score ATS a augmenté de 12% après la dernière mise à jour. Continuez à optimiser !",
+      "insight3": "Envisagez d'ajouter plus de mots-clés des descriptions d'emploi pour améliorer votre taux de correspondance."
+    },
+    "jobTracker": {
+      "title": "Suivi des Candidatures",
+      "subtitle": "Suivez et gérez vos candidatures",
+      "addJob": "Ajouter",
+      "addFirst": "Ajouter Votre Première Candidature",
+      "noApplications": "Aucune Candidature",
+      "noApplicationsDesc": "Commencez à suivre vos candidatures pour rester organisé.",
+      "noResults": "Aucune candidature ne correspond à votre recherche.",
+      "applied": "Candidatures",
+      "interview": "Entretiens",
+      "offer": "Offres",
+      "rejected": "Refusées",
+      "viewAll": "Voir Toutes les Candidatures",
+      "totalApplications": "Total des Candidatures",
+      "interviewsScheduled": "Entretiens Planifiés",
+      "offersReceived": "Offres Reçues",
+      "responseRate": "Taux de Réponse",
+      "acceptanceRate": "Taux d'Acceptation",
+      "showStats": "Afficher les Stats",
+      "hideStats": "Masquer les Stats",
+      "kanban": "Kanban",
+      "list": "Liste",
+      "calendar": "Calendrier",
+      "search": "Rechercher entreprises, titres, lieux...",
+      "allStatus": "Tous les Statuts",
+      "allWorkMode": "Tous",
+      "allEmploymentType": "Tous",
+      "filters": "Filtres",
+      "clearFilters": "Effacer Tous les Filtres",
+      "edit": "Modifier",
+      "duplicate": "Dupliquer",
+      "archive": "Archiver",
+      "unarchive": "Désarchiver",
+      "delete": "Supprimer",
+      "aiSuggestions": "Suggestions IA",
+      "save": "Enregistrer",
+      "cancel": "Annuler",
+      "addApplication": "Ajouter une Candidature",
+      "editApplication": "Modifier la Candidature",
+      "companyName": "Nom de l'Entreprise",
+      "jobTitle": "Titre du Poste",
+      "jobDescription": "Description du Poste",
+      "jobUrl": "URL de l'Offre",
+      "salary": "Salaire",
+      "location": "Lieu",
+      "employmentType": "Type de Contrat",
+      "workMode": "Mode de Travail",
+      "resumeUsed": "CV Utilisé",
+      "coverLetterUsed": "Lettre Utilisée",
+      "notes": "Notes",
+      "status": "Statut",
+      "importantDates": "Dates Importantes",
+      "appliedAt": "Date de Candidature",
+      "interviewDate": "Date d'Entretien",
+      "followUpDate": "Date de Relance",
+      "deadlineDate": "Date Limite",
+      "offerExpiry": "Expiration de l'Offre",
+      "reminders": "Rappels",
+      "addReminder": "Ajouter un Rappel",
+      "newReminder": "Nouveau Rappel",
+      "reminderTitle": "Titre du rappel",
+      "reminderTypeFollowUp": "Relance",
+      "reminderTypeInterviewPrep": "Préparation Entretien",
+      "reminderTypeDeadline": "Date Limite",
+      "reminderTypeOther": "Autre",
+      "upcomingEvents": "Événements à Venir",
+      "noUpcomingEvents": "Aucun événement à venir",
+      "generateAll": "Tout Générer",
+      "noSuggestions": "Aucune suggestion",
+      "noSuggestionsHint": "Cliquez sur une catégorie ci-dessus pour générer des conseils IA",
+      "tipInterview": "Conseils d'Entretien",
+      "tipResume": "Améliorations du CV",
+      "tipCoverLetter": "Conseils Lettre de Motivation",
+      "tipFollowUp": "Conseils de Relance",
+      "tipNegotiation": "Conseils de Négociation",
+      "statusWishlist": "Souhaits",
+      "statusApplied": "Candidaté",
+      "statusViewed": "Candidature Vue",
+      "statusAssessment": "Évaluation",
+      "statusInterview": "Entretien",
+      "statusFinalInterview": "Entretien Final",
+      "statusOffer": "Offre",
+      "statusAccepted": "Accepté",
+      "statusRejected": "Refusé",
+      "statusWithdrawn": "Retiré",
+      "eventInterview": "Entretien",
+      "eventFollowUp": "Relance",
+      "eventDeadline": "Date Limite",
+      "eventOfferExpiry": "Expiration de l'Offre",
+      "dropHere": "Déposer ici",
+      "noApplicationsInColumn": "Aucune candidature",
+      "daysAgo": "il y a {count} jours",
+      "oneDayAgo": "il y a 1 jour",
+      "today": "aujourd'hui"
+    },
+    "templates": {
+      "title": "Modèles",
+      "preview": "Aperçu",
+      "professional": "Professionnel",
+      "modern": "Moderne",
+      "executive": "Exécutif",
+      "minimal": "Minimaliste",
+      "creative": "Créatif",
+      "atsFriendly": "Compatible ATS",
+      "viewAll": "Voir Tous les Modèles"
+    },
+    "careerTips": {
+      "title": "Conseils Carrière",
+      "readMore": "Lire la Suite",
+      "minRead": "min de lecture",
+      "viewAll": "Voir Tous les Articles",
+      "tip1": {
+        "title": "10 Erreurs de CV ATS Qui Peuvent Vous Coûter l'Entretien",
+        "category": "Conseils CV",
+        "readingTime": "5"
+      },
+      "tip2": {
+        "title": "Comment Écrire une Lettre de Motivation Qui Vous Fait Embaucher",
+        "category": "Lettre de Motivation",
+        "readingTime": "7"
+      },
+      "tip3": {
+        "title": "Le Guide Ultime de la Préparation aux Entretiens d'Emploi",
+        "category": "Entretien",
+        "readingTime": "10"
+      }
+    },
+    "emptyState": {
+      "noResumes": {
+        "title": "Aucun CV pour le moment",
+        "description": "Vous n'avez pas encore créé votre premier CV.",
+        "action": "Créer un CV"
+      },
+      "noCoverLetters": {
+        "title": "Aucune lettre de motivation",
+        "description": "Vous n'avez pas encore créé votre première lettre de motivation.",
+        "action": "Créer une Lettre de Motivation"
+      },
+      "noApplications": {
+        "title": "Aucune candidature suivie",
+        "description": "Commencez à suivre vos candidatures pour rester organisé.",
+        "action": "Suivre une Candidature"
+      }
+    },
+    "comingSoon": {
+      "backToDashboard": "Retour au Tableau de Bord",
+      "resumeBuilder": {
+        "title": "Créateur de CV IA",
+        "description": "Créez des CV professionnels et optimisés pour les ATS avec l'assistance de l'IA. Choisissez parmi des modèles, obtenez des suggestions de contenu intelligentes et exportez en PDF."
+      },
+      "myResumes": {
+        "title": "Mes CV",
+        "description": "Consultez, modifiez et gérez tous vos CV créés. Suivez les versions, dupliquez et téléchargez à tout moment."
+      },
+      "coverLetters": {
+        "title": "Lettres de Motivation",
+        "description": "Générez des lettres de motivation personnalisées pour chaque candidature. L'IA crée du contenu sur mesure basé sur la description de poste."
+      },
+      "resumeReview": {
+        "title": "Revue de CV IA",
+        "description": "Obtenez des retours instantanés alimentés par l'IA sur votre CV. Améliorez le contenu, le formatage et la compatibilité ATS."
+      },
+      "atsChecker": {
+        "title": "Vérificateur de Compatibilité ATS",
+        "description": "Analysez votre CV par rapport aux normes ATS. Obtenez un score de compatibilité et des conseils d'amélioration."
+      },
+      "jobTracker": {
+        "title": "Suivi des Candidatures",
+        "description": "Suivez toutes vos candidatures en un seul endroit. Surveillez le statut, définissez des rappels et analysez votre taux de réussite."
+      },
+      "templates": {
+        "title": "Modèles de CV",
+        "description": "Parcourez notre bibliothèque de modèles de CV professionnels et testés ATS pour chaque niveau de carrière."
+      },
+      "profile": {
+        "title": "Mon Profil",
+        "description": "Gérez vos informations personnelles, vos détails de carrière et vos préférences pour personnaliser votre expérience."
+      },
+      "billing": {
+        "title": "Facturation et Abonnement",
+        "description": "Gérez votre plan d'abonnement, consultez vos factures et mettez à jour vos méthodes de paiement."
+      },
+      "settings": {
+        "title": "Paramètres",
+        "description": "Configurez les paramètres de votre compte, les notifications, la langue, le thème et les préférences de sécurité."
+      }
+    }
+  },
+  "legal": {
+    "navbar": {
+      "privacy": "Politique de Confidentialité",
+      "terms": "Conditions d'Utilisation"
+    },
+    "footer": {
+      "privacy": "Politique de Confidentialité",
+      "terms": "Conditions d'Utilisation",
+      "copyright": "© 2025 CareerForge AI. Tous droits réservés."
+    },
+    "backToHome": "← Retour à l'Accueil",
+    "privacyPolicy": {
+      "title": "Politique de Confidentialité",
+      "lastUpdated": "Dernière mise à jour : 15 juin 2025",
+      "intro": "CareerForge AI (« nous », « notre » ou « nos ») s'engage à protéger votre vie privée. Cette Politique de Confidentialité explique comment nous collectons, utilisons, divulgons et protégeons vos informations lorsque vous utilisez notre plateforme. Veuillez lire cette politique attentivement. En utilisant CareerForge AI, vous acceptez les pratiques décrites dans cette Politique de Confidentialité.",
+      "sections": {
+        "infoWeCollect": {
+          "title": "1. Informations que Nous Collectons",
+          "personal": {
+            "title": "Informations Personnelles",
+            "content": "Nous collectons les informations personnelles que vous fournissez volontairement lors de votre inscription, de l'utilisation de nos services ou de vos communications avec nous. Cela inclut votre nom, adresse email, mot de passe, titre professionnel, niveau de carrière, pays de résidence et toute autre information que vous choisissez de fournir lors de l'intégration ou de l'utilisation de notre plateforme."
+          },
+          "usage": {
+            "title": "Informations d'Utilisation",
+            "content": "Nous collectons automatiquement des informations sur vos interactions avec notre plateforme, notamment les pages visitées, les fonctionnalités utilisées, le temps passé sur chaque fonctionnalité, l'historique de création de documents et les habitudes de navigation. Nous collectons également des informations sur l'appareil telles que le type de navigateur, le système d'exploitation, l'adresse IP et les identifiants de l'appareil."
+          },
+          "documents": {
+            "title": "Données de Documents",
+            "content": "Lorsque vous créez des CV, des lettres de motivation ou d'autres documents, le contenu que vous saisissez est traité par nos systèmes IA. Nous stockons ce contenu pour fournir nos services, améliorer nos modèles IA et vous permettre d'accéder à vos documents et de les modifier. Vos données de documents sont chiffrées au repos et en transit."
+          }
+        },
+        "howWeUse": {
+          "title": "2. Comment Nous Utilisons Vos Informations",
+          "content": "Nous utilisons les informations que nous collectons aux fins suivantes : (a) fournir, maintenir et améliorer nos services ; (b) traiter vos demandes et transactions ; (c) personnaliser votre expérience et fournir du contenu pertinent ; (d) communiquer avec vous concernant votre compte, les mises à jour et les promotions ; (e) surveiller et analyser les habitudes d'utilisation pour améliorer notre plateforme ; (f) détecter, prévenir et résoudre les fraudes, problèmes de sécurité et problèmes techniques ; (g) nous conformer aux obligations légales."
+        },
+        "infoSharing": {
+          "title": "3. Partage et Divulgation des Informations",
+          "content": "Nous ne vendons, n'échangeons ni ne louons vos informations personnelles à des tiers. Nous pouvons partager vos informations dans les circonstances limitées suivantes : (a) avec des prestataires de services qui nous assistent dans l'exploitation de notre plateforme (hébergement, analytique, envoi d'emails) dans le cadre d'accords de confidentialité stricts ; (b) pour nous conformer aux exigences légales, ordonnances judiciaires ou demandes gouvernementales ; (c) pour protéger nos droits, notre vie privée, notre sécurité ou nos biens, ou ceux de nos utilisateurs ou du public ; (d) dans le cadre d'une fusion, acquisition ou vente d'actifs, où vos informations seraient transférées dans le cadre d'une telle transaction."
+        },
+        "dataSecurity": {
+          "title": "4. Sécurité des Données",
+          "content": "Nous mettons en œuvre des mesures de sécurité conformes aux normes de l'industrie pour protéger vos informations personnelles, notamment le chiffrement au repos (AES-256) et en transit (TLS 1.3), des centres de données sécurisés avec accès restreint, des audits de sécurité réguliers et des évaluations de vulnérabilité, des contrôles d'accès et des mécanismes d'authentification, et une surveillance continue des accès non autorisés. Cependant, aucune méthode de transmission sur Internet ou de stockage électronique n'est sûre à 100 %, et nous ne pouvons garantir une sécurité absolue."
+        },
+        "dataRetention": {
+          "title": "5. Conservation des Données",
+          "content": "Nous conservons vos informations personnelles aussi longtemps que votre compte est actif ou tant que nécessaire pour fournir nos services. Si vous supprimez votre compte, nous supprimerons vos informations personnelles dans les 30 jours, sauf si nous sommes tenus de conserver certaines informations par la loi ou à des fins commerciales légitimes. Les données anonymisées et agrégées peuvent être conservées indéfiniment à des fins analytiques."
+        },
+        "yourRights": {
+          "title": "6. Vos Droits (RGPD et Législations Applicables)",
+          "content": "Selon votre localisation, vous pouvez bénéficier des droits suivants concernant vos données personnelles : (a) Droit d'Accès — Vous pouvez demander une copie des données personnelles que nous détenons sur vous. (b) Droit de Rectification — Vous pouvez demander la correction de données inexactes ou incomplètes. (c) Droit à l'Effacement — Vous pouvez demander la suppression de vos données personnelles (« droit à l'oubli »). (d) Droit à la Limitation du Traitement — Vous pouvez demander que nous limitions l'utilisation de vos données. (e) Droit à la Portabilité des Données — Vous pouvez demander vos données dans un format lisible par machine. (f) Droit d'Opposition — Vous pouvez vous opposer à notre traitement de vos données à certaines fins. (g) Droit de Retirer votre Consentement — Vous pouvez retirer votre consentement à tout moment lorsque nous nous appuyons sur le consentement pour traiter vos données. Pour exercer l'un de ces droits, veuillez nous contacter à privacy@careerforge.ai."
+        },
+        "cookies": {
+          "title": "7. Cookies et Technologies de Suivi",
+          "content": "Nous utilisons des cookies et des technologies de suivi similaires pour améliorer votre expérience. Les cookies essentiels sont nécessaires au fonctionnement de la plateforme (authentification, gestion de session, sécurité). Les cookies analytiques nous aident à comprendre comment vous utilisez notre plateforme (données d'utilisation anonymisées). Les cookies de préférence mémorisent vos paramètres (langue, thème, préférences de mise en page). Vous pouvez gérer vos préférences de cookies via les paramètres de votre navigateur ou notre bannière de consentement aux cookies. Veuillez noter que la désactivation de certains cookies peut affecter la fonctionnalité de notre plateforme.",
+          "consent": {
+            "title": "Mécanisme de Consentement aux Cookies",
+            "content": "Lors de votre première visite sur CareerForge AI, nous présentons une bannière de consentement aux cookies qui vous permet de : (a) Accepter tous les cookies ; (b) Accepter uniquement les cookies essentiels ; (c) Personnaliser vos préférences de cookies par catégorie. Votre choix est enregistré et peut être modifié à tout moment via les paramètres de votre compte. Nous respectons vos préférences et ne définissons pas de cookies non essentiels sans votre consentement explicite. La bannière de consentement réapparaîtra si nous introduisons de nouvelles catégories de cookies ou si vos préférences de consentement datent de plus de 12 mois."
+          }
+        },
+        "thirdParty": {
+          "title": "8. Services Tiers",
+          "content": "Notre plateforme peut contenir des liens vers des sites web tiers ou s'intégrer à des services tiers (tels que la connexion Google et la connexion Apple pour l'authentification). Nous ne sommes pas responsables des pratiques de confidentialité de ces services tiers. Nous vous encourageons à lire les politiques de confidentialité de tout service tiers auquel vous accédez via notre plateforme. Lorsque vous utilisez Se Connecter avec Apple, Apple partagera votre nom et votre adresse email avec nous conformément à la politique de confidentialité d'Apple."
+        },
+        "children": {
+          "title": "9. Confidentialité des Enfants",
+          "content": "CareerForge AI n'est pas destiné aux personnes de moins de 16 ans. Nous ne collectons pas sciemment d'informations personnelles auprès d'enfants. Si nous apprenons que nous avons collecté des informations personnelles d'un enfant de moins de 16 ans, nous prendrons des mesures pour supprimer ces informations dans les plus brefs délais."
+        },
+        "international": {
+          "title": "10. Transferts Internationaux de Données",
+          "content": "Vos informations peuvent être transférées et traitées dans des pays autres que votre pays de résidence. Nous veillons à ce que des garanties appropriées soient en place, y compris des Clauses Contractuelles Types approuvées par la Commission Européenne, pour protéger vos données lors des transferts internationaux."
+        },
+        "changes": {
+          "title": "11. Modifications de cette Politique de Confidentialité",
+          "content": "Nous pouvons mettre à jour cette Politique de Confidentialité de temps à autre. Nous vous informerons de tout changement important en publiant la nouvelle Politique de Confidentialité sur cette page et en mettant à jour la date de « Dernière mise à jour ». Nous pouvons également vous envoyer une notification par email si les changements sont significatifs. Votre utilisation continue de la plateforme après tout changement constitue votre acceptation de la politique mise à jour."
+        },
+        "dataBreach": {
+          "title": "12. Notification de Violation de Données",
+          "content": "En cas de violation de données susceptible de présenter un risque pour vos droits et libertés, nous vous notifierons ainsi que l'autorité de contrôle compétente dans les 72 heures suivant la découverte de la violation, conformément aux lois applicables en matière de protection des données. La notification inclura la nature de la violation, les conséquences probables et les mesures que nous avons prises ou prévoyons de prendre pour remédier à la violation."
+        },
+        "contact": {
+          "title": "13. Nous Contacter",
+          "content": "Si vous avez des questions, des préoccupations ou des demandes concernant cette Politique de Confidentialité ou nos pratiques en matière de données, veuillez nous contacter à : CareerForge AI, Équipe Confidentialité, Email : privacy@careerforge.ai"
+        }
+      }
+    },
+    "termsOfService": {
+      "title": "Conditions d'Utilisation",
+      "lastUpdated": "Dernière mise à jour : 15 juin 2025",
+      "intro": "Ces Conditions d'Utilisation (« Conditions ») régissent votre accès à et votre utilisation de CareerForge AI (« Service »), exploité par CareerForge AI (« nous », « notre » ou « nos »). En accédant au Service ou en l'utilisant, vous acceptez d'être lié par ces Conditions. Si vous n'acceptez pas ces Conditions, veuillez ne pas utiliser notre Service.",
+      "sections": {
+        "acceptance": {
+          "title": "1. Acceptation des Conditions",
+          "content": "En créant un compte, en accédant ou en utilisant CareerForge AI, vous confirmez que vous avez au moins 16 ans et que vous acceptez de vous conformer à ces Conditions d'Utilisation et d'y être lié. Si vous utilisez le Service au nom d'une organisation, vous représentez et garantissez que vous avez l'autorité de lier cette organisation à ces Conditions."
+        },
+        "description": {
+          "title": "2. Description du Service",
+          "content": "CareerForge AI est une plateforme de carrière propulsée par l'IA qui fournit des outils pour créer des CV, des lettres de motivation, analyser des offres d'emploi, optimiser des documents pour les Systèmes de Suivi des Candidats (ATS) et suivre les candidatures. Nous nous réservons le droit de modifier, suspendre ou interrompre toute partie du Service à tout moment, avec un préavis raisonnable lorsque cela est possible."
+        },
+        "registration": {
+          "title": "3. Inscription et Comptes Utilisateur",
+          "content": "Pour accéder à certaines fonctionnalités, vous devez créer un compte. Vous acceptez de : (a) fournir des informations exactes, actuelles et complètes lors de l'inscription ; (b) maintenir et mettre à jour rapidement les informations de votre compte ; (c) maintenir la sécurité de votre mot de passe et accepter tous les risques d'accès non autorisé ; (d) nous notifier immédiatement de toute utilisation non autorisée de votre compte ; (e) ne pas créer de comptes multiples ou utiliser le Service sous une fausse identité."
+        },
+        "acceptableUse": {
+          "title": "4. Utilisation Acceptable",
+          "content": "Vous acceptez de ne pas : (a) utiliser le Service à des fins illégales ou pour promouvoir des activités illégales ; (b) générer du contenu diffamatoire, harcelant, discriminatoire ou nuisible ; (c) fausser votre identité, vos qualifications ou votre expérience dans les documents créés avec nos outils ; (d) tenter de gagner un accès non autorisé à nos systèmes ou aux comptes d'autres utilisateurs ; (e) interférer avec ou perturber l'intégrité ou les performances du Service ; (f) utiliser des moyens automatisés (bots, scrapers) pour accéder au Service sans notre permission ; (g) procéder à l'ingénierie inverse, décompiler ou désassembler tout aspect du Service ; (h) partager vos identifiants de compte avec des tiers."
+        },
+        "intellectualProperty": {
+          "title": "5. Propriété Intellectuelle",
+          "content": "Le Service et son contenu original, ses fonctionnalités et son fonctionnement (à l'exclusion du contenu généré par l'utilisateur) sont la propriété de CareerForge AI et sont protégés par les lois internationales sur le droit d'auteur, les marques commerciales et autres lois sur la propriété intellectuelle. Vous conservez la propriété du contenu que vous créez en utilisant nos outils. En utilisant notre Service, vous nous accordez une licence limitée, non exclusive pour traiter votre contenu aux fins de fournir le Service."
+        },
+        "subscriptions": {
+          "title": "6. Abonnements et Paiements",
+          "content": "Certaines fonctionnalités nécessitent un abonnement payant. En vous abonnant, vous acceptez de : (a) payer tous les frais applicables comme décrit sur notre page de tarifs ; (b) fournir des informations de paiement exactes ; (c) nous autoriser à débiter votre moyen de paiement pour la période d'abonnement sélectionnée. Les abonnements se renouvellent automatiquement à la fin de chaque période de facturation sauf annulation avant la date de renouvellement. Nous proposons des options de facturation mensuelles et annuelles. Les abonnements annuels sont facturés à un taux réduit et ne sont pas remboursables sauf si la loi applicable l'exige."
+        },
+        "cancellation": {
+          "title": "7. Annulation et Remboursements",
+          "content": "Vous pouvez annuler votre abonnement à tout moment via les paramètres de votre compte ou en contactant notre équipe de support. Lors de l'annulation, votre abonnement restera actif jusqu'à la fin de la période de facturation en cours. Nous ne fournissons pas de remboursements pour les périodes de facturation partielles, sauf si la loi applicable l'exige ou comme décrit dans notre politique de remboursement. Les fonctionnalités du forfait gratuit resteront disponibles après l'annulation."
+        },
+        "disclaimer": {
+          "title": "8. Exclusion de Garanties",
+          "content": "Le Service est fourni « EN L'ÉTAT » et « SELON DISPONIBILITÉ ». Nous ne fournissons aucune garantie, expresse ou implicite, concernant le Service, y compris mais sans s'y limiter : (a) le Service sera ininterrompu, ponctuel, sécurisé ou exempt d'erreurs ; (b) les résultats obtenus de l'utilisation du Service seront exacts ou fiables ; (c) le contenu généré par l'IA répondra à vos exigences ou attentes spécifiques. Vous reconnaissez que le contenu généré par l'IA doit être relu et modifié avant utilisation."
+        },
+        "liabilityLimitation": {
+          "title": "9. Limitation de Responsabilité",
+          "content": "Dans la mesure maximale permise par la loi applicable, CareerForge AI ne sera pas responsable des dommages indirects, accessoires, spéciaux, consécutifs ou punitifs, y compris mais sans s'y limiter la perte de profits, de données ou d'opportunités, découlant de ou en relation avec votre utilisation du Service. Notre responsabilité totale ne dépassera pas le montant que vous nous avez payé au cours des douze (12) mois précédant la réclamation."
+        },
+        "indemnification": {
+          "title": "10. Indemnisation",
+          "content": "Vous acceptez d'indemniser, de défendre et de dégager de toute responsabilité CareerForge AI, ses dirigeants, administrateurs, employés, agents et affiliés contre toutes réclamations, responsabilités, dommages, pertes, coûts ou dépenses (y compris les honoraires raisonnables d'avocats) découlant de ou en relation avec : (a) votre utilisation du Service ; (b) votre violation de ces Conditions ; (c) votre violation de tout droit d'un tiers ; (d) tout contenu que vous créez ou soumettez via le Service."
+        },
+        "appleSignIn": {
+          "title": "11. Connexion avec Apple",
+          "content": "CareerForge AI propose l'authentification via Connexion avec Apple. En utilisant Se Connecter avec Apple, vous acceptez les Conditions d'Utilisation d'Apple et reconnaissez que : (a) Apple n'est pas responsable du fonctionnement de notre Service ; (b) Apple n'est pas responsable des réclamations découlant de votre utilisation de notre Service ; (c) votre utilisation de Se Connecter avec Apple est également régie par la Politique de Confidentialité d'Apple ; (d) vous pouvez être amené à vous authentifier via Face ID, Touch ID ou le code de verrouillage de votre appareil Apple ; (e) nous collectons et traitons les données qu'Apple partage avec nous (nom et email) conformément à cette Politique de Confidentialité."
+        },
+        "disputeResolution": {
+          "title": "12. Résolution des Litiges",
+          "content": "Tout litige découlant de ou en relation avec ces Conditions sera résolu comme suit : (a) Résolution Informelle — Vous acceptez de tenter d'abord de résoudre tout litige avec nous en contactant notre équipe de support. Nous tenterons de résoudre le litige dans les 30 jours. (b) Arbitrage Contraignant — Si le litige n'est pas résolu à l'amiable, il sera soumis à un arbitrage contraignant administré selon les règles de l'organe d'arbitrage applicable. L'arbitrage se déroulera en anglais, et la décision de l'arbitre sera finale et exécutoire. (c) Renonciation aux Actions Collectives — Vous acceptez que les procédures de résolution des litiges ne seront menées que sur une base individuelle et non dans le cadre d'une action collective, consolidée ou représentative."
+        },
+        "governingLaw": {
+          "title": "13. Droit Applicable",
+          "content": "Ces Conditions seront régies et interprétées conformément aux lois de la juridiction dans laquelle CareerForge AI est enregistré, sans égard à ses dispositions en matière de conflit de lois. Toute action ou procédure légale non soumise à l'arbitrage sera exclusivement portée devant les tribunaux de cette juridiction, et vous consentez à la compétence personnelle de ces tribunaux."
+        },
+        "changes": {
+          "title": "14. Modifications des Conditions",
+          "content": "Nous nous réservons le droit de modifier ces Conditions à tout moment. Nous vous informerons des changements importants en publiant les Conditions mises à jour sur notre site web et en mettant à jour la date de « Dernière mise à jour ». Pour les changements significatifs, nous vous notifierons également par email au moins 30 jours avant que les changements n'entrent en vigueur. Votre utilisation continue du Service après l'entrée en vigueur des changements constitue une acceptation des Conditions révisées."
+        },
+        "severability": {
+          "title": "15. Divisibilité",
+          "content": "Si une disposition de ces Conditions est jugée inapplicable ou invalide, cette disposition sera limitée ou éliminée dans la mesure minimale nécessaire pour que les dispositions restantes restent en vigueur et en plein effet."
+        },
+        "contact": {
+          "title": "16. Nous Contacter",
+          "content": "Si vous avez des questions concernant ces Conditions d'Utilisation, veuillez nous contacter à : CareerForge AI, Équipe Juridique, Email : legal@careerforge.ai"
+        }
+      }
+    }
+  },
+  "content": {
+    "navbar": {
+      "helpCenter": "Centre d'Aide",
+      "blog": "Blog"
+    },
+    "footer": {
+      "helpCenter": "Centre d'Aide",
+      "blog": "Blog",
+      "privacy": "Politique de Confidentialité",
+      "terms": "Conditions d'Utilisation",
+      "copyright": "© 2025 CareerForge AI. Tous droits réservés."
+    },
+    "search": {
+      "placeholder": "Rechercher des articles...",
+      "noResults": "Aucun résultat trouvé",
+      "resultsFor": "Résultats pour",
+      "clear": "Effacer la recherche"
+    },
+    "breadcrumb": {
+      "home": "Accueil",
+      "helpCenter": "Centre d'Aide",
+      "blog": "Blog",
+      "articles": "Articles"
+    },
+    "toc": {
+      "title": "Table des Matières",
+      "onThisPage": "Sur cette page"
+    },
+    "share": {
+      "title": "Partager cet article",
+      "copyLink": "Copier le lien",
+      "copied": "Copié !"
+    },
+    "feedback": {
+      "question": "Cet article vous a-t-il été utile ?",
+      "yes": "Oui",
+      "no": "Non",
+      "thankYou": "Merci pour votre retour !"
+    },
+    "newsletter": {
+      "title": "Restez en Avance dans Votre Carrière",
+      "description": "Recevez des conseils de CV, des orientations de carrière, des mises à jour sur l'IA et des actualités du produit directement dans votre boîte de réception.",
+      "placeholder": "Entrez votre email",
+      "button": "S'abonner",
+      "privacy": "Nous respectons votre vie privée. Désabonnez-vous à tout moment."
+    },
+    "author": {
+      "otherArticles": "Plus de cet auteur"
+    },
+    "readingTime": "min de lecture"
+  },
+  "newsletterForm": {
+    "placeholder": "Entrez votre adresse email",
+    "button": "S'abonner",
+    "buttonLoading": "Abonnement en cours...",
+    "ariaLabel": "Adresse email",
+    "ariaButton": "S'abonner à la newsletter",
+    "success": {
+      "title": "Merci pour votre abonnement !",
+      "description": "Vous recevrez des conseils de carrière, des astuces pour votre CV et des mises à jour CareerForge AI."
+    },
+    "alreadySubscribed": {
+      "title": "Vous êtes déjà abonné",
+      "description": "Vous êtes déjà dans notre liste. Restez à l'écoute pour du contenu de qualité !"
+    },
+    "reactivated": {
+      "title": "Bon retour !",
+      "description": "Votre abonnement a été réactivé. Vous recevrez notre prochaine mise à jour."
+    },
+    "error": {
+      "title": "Une erreur est survenue",
+      "description": "Veuillez réessayer plus tard."
+    },
+    "rateLimited": {
+      "title": "Trop de requêtes",
+      "description": "Veuillez patienter un instant avant de réessayer."
+    },
+    "validation": {
+      "required": "L'email est obligatoire",
+      "invalid": "Veuillez entrer une adresse email valide",
+      "tooLong": "L'email est trop long"
+    },
+    "privacy": "Nous respectons votre vie privée. Désabonnez-vous à tout moment."
+  },
+  "ai": {
+    "assistant": {
+      "title": "Assistant IA pour CV",
+      "subtitle": "Propulsé par l'IA",
+      "description": "Sélectionnez une action rapide ci-dessous ou tapez une demande personnalisée pour améliorer cette section.",
+      "quickActions": "Actions rapides",
+      "customPrompt": "Ou demandez à l'IA :",
+      "placeholder": "Tapez votre demande... ex. « Rendez ceci plus percutant »",
+      "sendTooltip": "Envoyer (⌘+Entrée)",
+      "results": "Résultats",
+      "noResults": "Aucune suggestion pour le moment",
+      "noResultsHint": "Cliquez sur une action rapide ou tapez une demande personnalisée pour commencer.",
+      "retry": "Réessayer",
+      "apply": "Appliquer",
+      "applyTooltip": "Remplacer le contenu actuel par cette suggestion",
+      "replace": "Remplacer",
+      "replaceTooltip": "Remplacer le contenu actuel",
+      "insertBelow": "Insérer ci-dessous",
+      "insertBelowTooltip": "Ajouter ceci sous le contenu actuel",
+      "copied": "Copié !",
+      "copy": "Copier",
+      "copyTooltip": "Copier dans le presse-papiers",
+      "regenerate": "Régénérer",
+      "regenerateTooltip": "Générer une nouvelle version",
+      "footer": "Le contenu généré par l'IA peut nécessiter une vérification. Vérifiez toujours l'exactitude."
+    }
+  }
+}

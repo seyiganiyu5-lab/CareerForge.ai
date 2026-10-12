@@ -1,0 +1,90 @@
+import type { ResumeData } from '@/types/resume';
+
+export const THUMBNAIL_RESUME_DATA: ResumeData = {
+  personalInfo: {
+    fullName: 'Alex Johnson',
+    professionalTitle: 'Senior Software Engineer',
+    email: 'alex@email.com',
+    phone: '+1 (555) 123-4567',
+    location: 'San Francisco, CA',
+    website: 'alexjohnson.dev',
+    linkedin: 'linkedin.com/in/alexjohnson',
+    github: 'github.com/alexjohnson',
+    portfolio: '',
+  },
+  professionalSummary:
+    'Experienced software engineer with 8+ years building scalable web applications. Passionate about clean code, performance optimization, and mentoring junior developers.',
+  workExperience: [
+    {
+      id: 'w1',
+      company: 'TechCorp Inc.',
+      position: 'Senior Software Engineer',
+      location: 'San Francisco, CA',
+      employmentType: 'Full-time',
+      startDate: '2021-03',
+      endDate: '',
+      currentJob: true,
+      description: 'Led development of microservices architecture serving 2M+ users. Reduced API latency by 40% through optimization.',
+    },
+    {
+      id: 'w2',
+      company: 'StartupXYZ',
+      position: 'Software Engineer',
+      location: 'New York, NY',
+      employmentType: 'Full-time',
+      startDate: '2018-06',
+      endDate: '2021-02',
+      currentJob: false,
+      description: 'Built real-time collaboration features using WebSocket. Implemented CI/CD pipeline reducing deploy time by 60%.',
+    },
+  ],
+  education: [
+    {
+      id: 'e1',
+      school: 'University of California, Berkeley',
+      degree: 'Bachelor of Science',
+      fieldOfStudy: 'Computer Science',
+      location: 'Berkeley, CA',
+      startDate: '2014-09',
+      endDate: '2018-05',
+      grade: '3.8',
+    },
+  ],
+  skills: [
+    { id: 's1', name: 'React', type: 'technical' },
+    { id: 's2', name: 'TypeScript', type: 'technical' },
+    { id: 's3', name: 'Node.js', type: 'technical' },
+    { id: 's4', name: 'Python', type: 'technical' },
+    { id: 's5', name: 'AWS', type: 'technical' },
+    { id: 's6', name: 'PostgreSQL', type: 'technical' },
+    { id: 's7', name: 'Leadership', type: 'soft' },
+    { id: 's8', name: 'Communication', type: 'soft' },
+  ],
+  projects: [
+    {
+      id: 'p1',
+      name: 'Open Source CLI Tool',
+      description: 'A developer productivity tool with 2K+ GitHub stars.',
+      technologies: 'Rust, TOML',
+      githubUrl: 'github.com/alex/cli-tool',
+      liveUrl: '',
+    },
+  ],
+  certifications: [
+    {
+      id: 'c1',
+      name: 'AWS Solutions Architect',
+      issuer: 'Amazon Web Services',
+      issueDate: '2022-06',
+      credentialUrl: '',
+    },
+  ],
+  languages: [
+    { id: 'l1', language: 'English', proficiency: 'Native' },
+    { id: 'l2', language: 'Spanish', proficiency: 'Intermediate' },
+  ],
+  awards: [],
+  volunteerExperience: [],
+  references: [],
+  additionalInfo: { text: '' },
+};
