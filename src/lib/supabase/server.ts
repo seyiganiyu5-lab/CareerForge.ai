@@ -1,19 +1,30 @@
-import { createClient } from '@supabase/supabase-js';
+import { createServerClient } from '@supabase/ssr';
+import { cookies } from 'next/headers';
 
 /**
- * Supabase server-side client for API routes.
- *
- * Uses the anon key directly (no cookie-based auth) since newsletter
- * subscriptions are public operations that don't require user auth.
- *
- * For authenticated user operations, use the cookie-based client from @supabase/ssr.
+ * Supabase client for Server Components and Route Handlers.
+ * Reads and refreshes the user's session from cookies.
  */
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://placeholder.supabase.co';
-const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || 'placeholder-key';
+export async function createClient() {
+  const cookieStore = await cookies();
 
-export const supabaseAdmin = createClient(supabaseUrl, supabaseAnonKey, {
-  auth: {
-    persistSession: false,
-    autoRefreshToken: false,
-  },
-});
+  return createServerClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+    {
+      cookies: {
+        getAll() {
+          return cookieStore.getAll();
+        },
+        setAll(cookiesToSet) {
+          try {
+            cookiesToSet.forEach(({ name, value, options }) => cookieStore.set(name, value, options));
+          } catch {
+            // Called from a Server Component, where cookies are read-only.
+            // The proxy refreshes the session instead.
+          }
+        },
+      },
+    }
+  );
+}

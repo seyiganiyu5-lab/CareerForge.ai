@@ -1,11 +1,11 @@
 /**
  * Newsletter Subscriber Repository
  *
- * Backed by Supabase. Uses the anon-key client for public operations.
- * Table: public.newsletter_subscribers
+ * Stored in the app database (Supabase Postgres) via Prisma.
  */
 
-import { supabaseAdmin } from '@/lib/supabase/server';
+import type { NewsletterSubscriber } from '@prisma/client';
+import { db } from '@/lib/db';
 import type { SubscribeRequest, SubscriberStatus } from '@/types/newsletter';
 
 export interface SubscriberRecord {
@@ -19,20 +19,23 @@ export interface SubscriberRecord {
   created_at: string;
 }
 
-const TABLE = 'newsletter_subscribers';
+function toRecord(row: NewsletterSubscriber): SubscriberRecord {
+  return {
+    ...row,
+    subscribed_at: row.subscribed_at.toISOString(),
+    updated_at: row.updated_at.toISOString(),
+    created_at: row.created_at.toISOString(),
+  };
+}
 
 /**
  * Find a subscriber by email address.
  */
 export async function findByEmail(email: string): Promise<SubscriberRecord | null> {
-  const { data, error } = await supabaseAdmin
-    .from(TABLE)
-    .select('*')
-    .eq('email', email.toLowerCase())
-    .maybeSingle();
-
-  if (error || !data) return null;
-  return data as SubscriberRecord;
+  const row = await db.newsletterSubscriber.findUnique({
+    where: { email: email.toLowerCase() },
+  });
+  return row ? toRecord(row) : null;
 }
 
 /**
@@ -41,19 +44,15 @@ export async function findByEmail(email: string): Promise<SubscriberRecord | nul
 export async function createSubscriber(
   data: SubscribeRequest
 ): Promise<SubscriberRecord> {
-  const { data: row, error } = await supabaseAdmin
-    .from(TABLE)
-    .insert({
+  const row = await db.newsletterSubscriber.create({
+    data: {
       email: data.email.toLowerCase().trim(),
       language: data.language,
       source: data.source,
       status: 'active',
-    })
-    .select()
-    .single();
-
-  if (error) throw new Error(`Failed to create subscriber: ${error.message}`);
-  return row as SubscriberRecord;
+    },
+  });
+  return toRecord(row);
 }
 
 /**
@@ -63,19 +62,11 @@ export async function reactivateSubscriber(
   id: string,
   source: SubscribeRequest['source']
 ): Promise<SubscriberRecord> {
-  const { data: row, error } = await supabaseAdmin
-    .from(TABLE)
-    .update({
-      status: 'active',
-      subscribed_at: new Date().toISOString(),
-      source,
-    })
-    .eq('id', id)
-    .select()
-    .single();
-
-  if (error) throw new Error(`Failed to reactivate subscriber: ${error.message}`);
-  return row as SubscriberRecord;
+  const row = await db.newsletterSubscriber.update({
+    where: { id },
+    data: { status: 'active', subscribed_at: new Date(), source },
+  });
+  return toRecord(row);
 }
 
 /**
@@ -86,28 +77,18 @@ export async function updateSubscriberStatus(
   id: string,
   status: SubscriberStatus
 ): Promise<SubscriberRecord> {
-  const { data: row, error } = await supabaseAdmin
-    .from(TABLE)
-    .update({ status })
-    .eq('id', id)
-    .select()
-    .single();
-
-  if (error) throw new Error(`Failed to update subscriber: ${error.message}`);
-  return row as SubscriberRecord;
+  const row = await db.newsletterSubscriber.update({
+    where: { id },
+    data: { status },
+  });
+  return toRecord(row);
 }
 
 /**
  * Get subscriber count by status (for admin/analytics).
  */
 export async function getSubscriberCount(): Promise<number> {
-  const { count, error } = await supabaseAdmin
-    .from(TABLE)
-    .select('*', { count: 'exact', head: true })
-    .eq('status', 'active');
-
-  if (error) throw new Error(`Failed to count subscribers: ${error.message}`);
-  return count ?? 0;
+  return db.newsletterSubscriber.count({ where: { status: 'active' } });
 }
 
 /**
@@ -116,13 +97,9 @@ export async function getSubscriberCount(): Promise<number> {
 export async function getSubscribersByLanguage(
   language: string
 ): Promise<SubscriberRecord[]> {
-  const { data, error } = await supabaseAdmin
-    .from(TABLE)
-    .select('*')
-    .eq('status', 'active')
-    .eq('language', language)
-    .order('subscribed_at', { ascending: false });
-
-  if (error) throw new Error(`Failed to fetch subscribers: ${error.message}`);
-  return (data ?? []) as SubscriberRecord[];
+  const rows = await db.newsletterSubscriber.findMany({
+    where: { status: 'active', language },
+    orderBy: { subscribed_at: 'desc' },
+  });
+  return rows.map(toRecord);
 }

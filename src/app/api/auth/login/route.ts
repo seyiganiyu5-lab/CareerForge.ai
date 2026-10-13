@@ -1,73 +1,49 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { db } from '@/lib/db';
-import { sanitizeInput, validateEmail, verifyPassword, createToken } from '@/lib/auth/utils';
-import { stripPasswordHash } from '@/lib/auth/helpers';
+import { createClient } from '@/lib/supabase/server';
+import { ensureProfile, toPublicUser } from '@/lib/auth/profile';
+import { validateEmail } from '@/lib/auth/utils';
 import type { AuthResponse, LoginCredentials } from '@/lib/auth/types';
+
+function fail(error: string, status: number, extra?: Partial<AuthResponse>) {
+  return NextResponse.json({ success: false, error, ...extra } satisfies AuthResponse, { status });
+}
 
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-    const { email, password, rememberMe } = body as LoginCredentials;
+    const { email, password } = body as LoginCredentials;
 
-    // Validate required fields
     if (!email || !password) {
-      const response: AuthResponse = { success: false, error: 'Email and password are required' };
-      return NextResponse.json(response, { status: 400, headers: { 'Content-Type': 'application/json' } });
+      return fail('Email and password are required', 400);
     }
 
-    // Sanitize and validate email
-    const sanitizedEmail = sanitizeInput(email.trim().toLowerCase());
-    if (!validateEmail(sanitizedEmail)) {
-      const response: AuthResponse = { success: false, error: 'Invalid email format' };
-      return NextResponse.json(response, { status: 400, headers: { 'Content-Type': 'application/json' } });
+    const normalizedEmail = email.trim().toLowerCase();
+    if (!validateEmail(normalizedEmail)) {
+      return fail('Invalid email format', 400);
     }
 
-    // Find user by email
-    const user = await db.user.findUnique({ where: { email: sanitizedEmail } });
-    if (!user) {
-      const response: AuthResponse = { success: false, error: 'Invalid email or password' };
-      return NextResponse.json(response, { status: 401, headers: { 'Content-Type': 'application/json' } });
-    }
-
-    // Verify password
-    // Google OAuth users have empty password_hash — reject email/password login
-    if (!user.password_hash) {
-      const response: AuthResponse = { success: false, error: 'This account uses Google sign-in. Please use the Google button to sign in.' };
-      return NextResponse.json(response, { status: 401, headers: { 'Content-Type': 'application/json' } });
-    }
-
-    const isPasswordValid = await verifyPassword(password, user.password_hash);
-    if (!isPasswordValid) {
-      const response: AuthResponse = { success: false, error: 'Invalid email or password' };
-      return NextResponse.json(response, { status: 401, headers: { 'Content-Type': 'application/json' } });
-    }
-
-    // Create JWT token
-    const token = await createToken({ userId: user.id, email: user.email });
-
-    // Set cookie
-    const maxAge = rememberMe ? 30 * 24 * 60 * 60 : 7 * 24 * 60 * 60; // 30 days or 7 days in seconds
-    const response = NextResponse.json(
-      {
-        success: true,
-        user: stripPasswordHash(user as unknown as Record<string, unknown>),
-        message: !user.email_verified ? 'Login successful. Please verify your email address.' : 'Login successful.',
-      } satisfies AuthResponse,
-      { status: 200, headers: { 'Content-Type': 'application/json' } }
-    );
-
-    response.cookies.set('cf-auth-token', token, {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
-      sameSite: 'lax',
-      path: '/',
-      maxAge,
+    const supabase = await createClient();
+    const { data, error } = await supabase.auth.signInWithPassword({
+      email: normalizedEmail,
+      password,
     });
 
-    return response;
+    if (error) {
+      if (error.code === 'email_not_confirmed') {
+        return fail('Please confirm your email first. Check your inbox for the link.', 403, {
+          needsVerification: true,
+        });
+      }
+      if (error.status === 429) {
+        return fail('Too many attempts. Please wait a minute and try again.', 429);
+      }
+      return fail('Invalid email or password', 401);
+    }
+
+    const profile = await ensureProfile(data.user);
+    return NextResponse.json({ success: true, user: toPublicUser(profile) } satisfies AuthResponse);
   } catch (error) {
     console.error('Login error:', error);
-    const response: AuthResponse = { success: false, error: 'An unexpected error occurred during login' };
-    return NextResponse.json(response, { status: 500, headers: { 'Content-Type': 'application/json' } });
+    return fail('An unexpected error occurred during login', 500);
   }
 }

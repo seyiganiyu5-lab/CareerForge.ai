@@ -1,57 +1,44 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { db } from '@/lib/db';
-import { sanitizeInput, validateEmail } from '@/lib/auth/utils';
-import { generateToken } from '@/lib/auth/helpers';
+import { createClient } from '@/lib/supabase/server';
+import { getSiteUrl } from '@/lib/auth/profile';
+import { validateEmail } from '@/lib/auth/utils';
 import type { PasswordResetResponse } from '@/lib/auth/types';
 
 export async function POST(request: NextRequest) {
   try {
-    const body = await request.json();
-    const { email } = body as { email?: string };
+    const { email } = (await request.json()) as { email?: string };
 
-    // Validate email field
     if (!email) {
-      const response: PasswordResetResponse = { success: false, error: 'Email is required' };
-      return NextResponse.json(response, { status: 400, headers: { 'Content-Type': 'application/json' } });
+      return NextResponse.json({ success: false, error: 'Email is required' } satisfies PasswordResetResponse, { status: 400 });
     }
 
-    const sanitizedEmail = sanitizeInput(email.trim().toLowerCase());
-
-    if (!validateEmail(sanitizedEmail)) {
-      const response: PasswordResetResponse = { success: false, error: 'Invalid email format' };
-      return NextResponse.json(response, { status: 400, headers: { 'Content-Type': 'application/json' } });
+    const normalizedEmail = email.trim().toLowerCase();
+    if (!validateEmail(normalizedEmail)) {
+      return NextResponse.json({ success: false, error: 'Invalid email format' } satisfies PasswordResetResponse, { status: 400 });
     }
 
-    // Find user by email
-    const user = await db.user.findUnique({ where: { email: sanitizedEmail } });
+    const supabase = await createClient();
+    const { error } = await supabase.auth.resetPasswordForEmail(normalizedEmail, {
+      redirectTo: `${getSiteUrl(request)}/auth/confirm?next=/reset-password`,
+    });
 
-    if (user) {
-      // Generate reset token and set expiration to 1 hour from now
-      const resetToken = generateToken();
-      const resetTokenExpires = new Date(Date.now() + 60 * 60 * 1000); // 1 hour
-
-      await db.user.update({
-        where: { id: user.id },
-        data: {
-          reset_token: resetToken,
-          reset_token_expires: resetTokenExpires,
-        },
-      });
-
-      // In production, you would send an email with the reset link here.
-      console.log(`Password reset token for ${sanitizedEmail}: ${resetToken}`);
+    if (error?.status === 429) {
+      return NextResponse.json(
+        { success: false, error: 'Too many requests. Please wait a minute and try again.' } satisfies PasswordResetResponse,
+        { status: 429 }
+      );
+    }
+    if (error) {
+      console.error('Forgot password error:', error);
     }
 
-    // Always return success for security (don't reveal whether email exists)
-    const response: PasswordResetResponse = {
+    // Same answer whether or not the account exists, so emails can't be probed
+    return NextResponse.json({
       success: true,
       message: 'If an account with that email exists, a password reset link has been sent.',
-    };
-
-    return NextResponse.json(response, { status: 200, headers: { 'Content-Type': 'application/json' } });
+    } satisfies PasswordResetResponse);
   } catch (error) {
     console.error('Forgot password error:', error);
-    const response: PasswordResetResponse = { success: false, error: 'An unexpected error occurred' };
-    return NextResponse.json(response, { status: 500, headers: { 'Content-Type': 'application/json' } });
+    return NextResponse.json({ success: false, error: 'An unexpected error occurred' } satisfies PasswordResetResponse, { status: 500 });
   }
 }

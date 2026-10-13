@@ -1,17 +1,8 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  typescript: {
-    ignoreBuildErrors: true,
-  },
   reactStrictMode: false,
   skipTrailingSlashRedirect: true,
-  // IMPORTANT: Next.js compares hostnames (not full URLs) against allowedDevOrigins
-  allowedDevOrigins: [
-    // The preview panel's hostname (no protocol/port)
-    "preview-chat-bf92592a-d901-426a-94aa-be52e28ea402.space-z.ai",
-    "localhost",
-    "127.0.0.1",
-  ],
+  allowedDevOrigins: ["localhost", "127.0.0.1"],
   experimental: {
     optimizePackageImports: [
       'lucide-react',
@@ -60,8 +51,6 @@ const nextConfig = {
           '**/dev.log',
           '**/*.log',
           '**/upload/**',
-          '**/tool-results/**',
-          '**/agent-ctx/**',
           '**/node_modules/.cache/**',
         ],
       };

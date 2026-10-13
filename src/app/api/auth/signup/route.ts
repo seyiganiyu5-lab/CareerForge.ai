@@ -1,117 +1,98 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { db } from '@/lib/db';
-import { sanitizeInput, validateEmail, validatePasswordStrength, hashPassword, createToken } from '@/lib/auth/utils';
-import { generateToken, stripPasswordHash } from '@/lib/auth/helpers';
-import { initializeUsage } from '@/lib/subscription/service';
-import type { AuthResponse, SignupData, CareerGoal } from '@/lib/auth/types';
+import { createClient } from '@/lib/supabase/server';
+import { ensureProfile, toPublicUser, getSiteUrl } from '@/lib/auth/profile';
+import { sanitizeInput, validateEmail, validatePasswordStrength } from '@/lib/auth/utils';
+import type { AuthResponse, SignupData } from '@/lib/auth/types';
+
+function fail(error: string, status: number) {
+  return NextResponse.json({ success: false, error } satisfies AuthResponse, { status });
+}
 
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
     const { firstName, lastName, email, password, confirmPassword, agreeToTerms } = body as SignupData;
 
-    // Validate required fields
     if (!firstName || !lastName || !email || !password || !confirmPassword) {
-      const response: AuthResponse = { success: false, error: 'All fields are required' };
-      return NextResponse.json(response, { status: 400, headers: { 'Content-Type': 'application/json' } });
+      return fail('All fields are required', 400);
     }
-
-    // Validate terms agreement
     if (!agreeToTerms) {
-      const response: AuthResponse = { success: false, error: 'You must agree to the terms and conditions' };
-      return NextResponse.json(response, { status: 400, headers: { 'Content-Type': 'application/json' } });
+      return fail('You must agree to the terms and conditions', 400);
     }
 
-    // Sanitize inputs
     const sanitizedFirstName = sanitizeInput(firstName);
     const sanitizedLastName = sanitizeInput(lastName);
-    const sanitizedEmail = sanitizeInput(email.trim().toLowerCase());
+    const normalizedEmail = email.trim().toLowerCase();
 
-    // Validate email format
-    if (!validateEmail(sanitizedEmail)) {
-      const response: AuthResponse = { success: false, error: 'Invalid email format' };
-      return NextResponse.json(response, { status: 400, headers: { 'Content-Type': 'application/json' } });
+    if (!validateEmail(normalizedEmail)) {
+      return fail('Invalid email format', 400);
     }
-
-    // Validate name lengths
     if (sanitizedFirstName.length < 1 || sanitizedFirstName.length > 50) {
-      const response: AuthResponse = { success: false, error: 'First name must be between 1 and 50 characters' };
-      return NextResponse.json(response, { status: 400, headers: { 'Content-Type': 'application/json' } });
+      return fail('First name must be between 1 and 50 characters', 400);
     }
     if (sanitizedLastName.length < 1 || sanitizedLastName.length > 50) {
-      const response: AuthResponse = { success: false, error: 'Last name must be between 1 and 50 characters' };
-      return NextResponse.json(response, { status: 400, headers: { 'Content-Type': 'application/json' } });
+      return fail('Last name must be between 1 and 50 characters', 400);
     }
-
-    // Validate password strength
-    const strength = validatePasswordStrength(password);
-    if (strength.score < 60) {
-      const response: AuthResponse = {
-        success: false,
-        error: 'Password is too weak. It must meet at least 3 of the following: 8+ characters, uppercase, lowercase, number, special character.',
-      };
-      return NextResponse.json(response, { status: 400, headers: { 'Content-Type': 'application/json' } });
+    if (validatePasswordStrength(password).score < 60) {
+      return fail(
+        'Password is too weak. It must meet at least 3 of the following: 8+ characters, uppercase, lowercase, number, special character.',
+        400
+      );
     }
-
-    // Check passwords match
     if (password !== confirmPassword) {
-      const response: AuthResponse = { success: false, error: 'Passwords do not match' };
-      return NextResponse.json(response, { status: 400, headers: { 'Content-Type': 'application/json' } });
+      return fail('Passwords do not match', 400);
     }
 
-    // Check if email already exists
-    const existingUser = await db.user.findUnique({ where: { email: sanitizedEmail } });
-    if (existingUser) {
-      const response: AuthResponse = { success: false, error: 'An account with this email already exists' };
-      return NextResponse.json(response, { status: 409, headers: { 'Content-Type': 'application/json' } });
-    }
-
-    // Hash password
-    const hashedPassword = await hashPassword(password);
-
-    // Generate verification token
-    const verificationToken = generateToken();
-
-    // Create user
-    const user = await db.user.create({
-      data: {
-        email: sanitizedEmail,
-        first_name: sanitizedFirstName,
-        last_name: sanitizedLastName,
-        password_hash: hashedPassword,
-        verification_token: verificationToken,
+    const supabase = await createClient();
+    const { data, error } = await supabase.auth.signUp({
+      email: normalizedEmail,
+      password,
+      options: {
+        emailRedirectTo: `${getSiteUrl(request)}/auth/confirm?next=${encodeURIComponent('/verify-email?verified=1')}`,
+        data: { first_name: sanitizedFirstName, last_name: sanitizedLastName },
       },
     });
 
-    // Initialize free plan subscription + usage
-    await initializeUsage(user.id).catch(err => {
-      console.error('Failed to initialize usage for user:', err);
-    });
+    if (error) {
+      if (error.code === 'user_already_exists') {
+        return fail('An account with this email already exists', 409);
+      }
+      if (error.code === 'weak_password') {
+        return fail(error.message, 400);
+      }
+      if (error.status === 429) {
+        return fail('Too many attempts. Please wait a minute and try again.', 429);
+      }
+      console.error('Signup error:', error);
+      return fail('An unexpected error occurred during signup', 500);
+    }
 
-    // Create JWT and set cookie so the user is logged in immediately
-    const token = await createToken({ userId: user.id, email: user.email });
+    // With email confirmation on, Supabase hides existing accounts by returning
+    // a user without identities instead of an error.
+    if (!data.user || data.user.identities?.length === 0) {
+      return fail('An account with this email already exists', 409);
+    }
 
-    const response = NextResponse.json(
-      {
-        success: true,
-        user: stripPasswordHash(user as unknown as Record<string, unknown>),
-        message: 'Account created successfully.',
-      } satisfies AuthResponse,
-      { status: 201, headers: { 'Content-Type': 'application/json' } }
+    const profile = await ensureProfile(data.user);
+
+    // No session means the user must confirm their email first
+    if (!data.session) {
+      return NextResponse.json(
+        {
+          success: true,
+          needsVerification: true,
+          message: 'Check your email to confirm your account.',
+        } satisfies AuthResponse,
+        { status: 201 }
+      );
+    }
+
+    return NextResponse.json(
+      { success: true, user: toPublicUser(profile), message: 'Account created successfully.' } satisfies AuthResponse,
+      { status: 201 }
     );
-
-    response.cookies.set('cf-auth-token', token, {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
-      sameSite: 'lax',
-      path: '/',
-      maxAge: 7 * 24 * 60 * 60, // 7 days
-    });
-
-    return response;
   } catch (error) {
     console.error('Signup error:', error);
-    const response: AuthResponse = { success: false, error: 'An unexpected error occurred during signup' };
-    return NextResponse.json(response, { status: 500, headers: { 'Content-Type': 'application/json' } });
+    return fail('An unexpected error occurred during signup', 500);
   }
 }

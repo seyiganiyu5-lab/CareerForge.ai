@@ -20,7 +20,7 @@ import { MoreHorizontal } from 'lucide-react';
 import { getStatusConfig, formatDate } from './status-config';
 import type { JobApplication } from '@/hooks/use-job-tracker';
 
-type SortField = 'company_name' | 'job_title' | 'status' | 'location' | 'salary' | 'work_mode' | 'applied_at';
+type SortField = 'company_name' | 'job_title' | 'status' | 'location' | 'salary' | 'work_mode' | 'applied_at' | 'updated_at';
 type SortDir = 'asc' | 'desc';
 
 interface ListViewProps {
@@ -54,8 +54,8 @@ export function ListView({ applications, onEdit, onDuplicate, onArchive, onDelet
 
   const sorted = useMemo(() => {
     return [...applications].sort((a, b) => {
-      const aVal = (a as Record<string, unknown>)[sortField] ?? '';
-      const bVal = (b as Record<string, unknown>)[sortField] ?? '';
+      const aVal = (a as unknown as Record<string, unknown>)[sortField] ?? '';
+      const bVal = (b as unknown as Record<string, unknown>)[sortField] ?? '';
       const aStr = String(aVal).toLowerCase();
       const bStr = String(bVal).toLowerCase();
       if (aStr < bStr) return sortDir === 'asc' ? -1 : 1;

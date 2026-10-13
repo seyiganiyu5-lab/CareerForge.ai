@@ -152,9 +152,10 @@ function resumeDataToText(data: ResumeData): string {
   if (data.education?.length) {
     parts.push('Education');
     for (const edu of data.education) {
-      if (edu.degree) parts.push(`- ${edu.degree} at ${edu.institution || 'Unknown'}`);
+      const degree = [edu.degree, edu.fieldOfStudy].filter(Boolean).join(' in ');
+      if (degree || edu.school) parts.push(`- ${degree || 'Studies'} at ${edu.school || 'Unknown'}`);
       if (edu.startDate) parts.push(`  ${edu.startDate} - ${edu.endDate || 'Present'}`);
-      if (edu.description) parts.push(`  ${edu.description}`);
+      if (edu.grade) parts.push(`  Grade: ${edu.grade}`);
     }
   }
 

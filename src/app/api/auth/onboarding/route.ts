@@ -1,26 +1,21 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/lib/db';
-import { sanitizeInput, verifyToken } from '@/lib/auth/utils';
-import { stripPasswordHash } from '@/lib/auth/helpers';
+import { sanitizeInput } from '@/lib/auth/utils';
+import { toPublicUser } from '@/lib/auth/profile';
+import { getAuthUser } from '@/lib/subscription/auth-helpers';
 import type { AuthResponse, OnboardingData } from '@/lib/auth/types';
 
 export async function POST(request: NextRequest) {
   try {
     // Verify authentication
-    const token = request.cookies.get('cf-auth-token')?.value;
-    if (!token) {
-      const response: AuthResponse = { success: false, error: 'unauthorized' };
-      return NextResponse.json(response, { status: 401, headers: { 'Content-Type': 'application/json' } });
-    }
-
-    const payload = await verifyToken(token);
-    if (!payload) {
+    const authUser = await getAuthUser();
+    if (!authUser) {
       const response: AuthResponse = { success: false, error: 'unauthorized' };
       return NextResponse.json(response, { status: 401, headers: { 'Content-Type': 'application/json' } });
     }
 
     // Find user
-    const existingUser = await db.user.findUnique({ where: { id: payload.userId } });
+    const existingUser = await db.user.findUnique({ where: { id: authUser.userId } });
     if (!existingUser) {
       const response: AuthResponse = { success: false, error: 'unauthorized' };
       return NextResponse.json(response, { status: 401, headers: { 'Content-Type': 'application/json' } });
@@ -63,7 +58,7 @@ export async function POST(request: NextRequest) {
 
     const response: AuthResponse = {
       success: true,
-      user: stripPasswordHash(updatedUser as unknown as Record<string, unknown>),
+      user: toPublicUser(updatedUser),
       message: 'Onboarding completed successfully.',
     };
 

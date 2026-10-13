@@ -1,7 +1,7 @@
 'use client';
 
 import { useRouter } from 'next/navigation';
-import { motion } from 'framer-motion';
+import { motion, type Variants } from 'framer-motion';
 import { Sparkles, Lock } from 'lucide-react';
 import {
   Dialog,
@@ -20,7 +20,7 @@ interface UpgradeModalProps {
   onClose?: () => void;
 }
 
-const contentVariants = {
+const contentVariants: Variants = {
   hidden: { opacity: 0, scale: 0.92, y: 20 },
   visible: {
     opacity: 1,
@@ -36,7 +36,7 @@ const contentVariants = {
   },
 };
 
-const iconContainerVariants = {
+const iconContainerVariants: Variants = {
   hidden: { scale: 0, rotate: -180 },
   visible: {
     scale: 1,

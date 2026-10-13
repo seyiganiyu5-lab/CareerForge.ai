@@ -3,16 +3,16 @@ generator client {
 }
 
 datasource db {
-  provider = "sqlite"
-  url      = env("DATABASE_URL")
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
 }
 
 model User {
-  id                    String    @id @default(cuid())
+  id                    String    @id @default(cuid())  // Same id as the Supabase Auth user
   email                 String    @unique
   first_name            String?
   last_name             String?
-  password_hash         String?   @default("")
   auth_provider         String    @default("email")
   google_id             String?   @unique
   google_picture_url    String?
@@ -24,9 +24,6 @@ model User {
   theme                 String    @default("system")
   email_verified        Boolean   @default(false)
   onboarding_completed  Boolean   @default(false)
-  verification_token    String?
-  reset_token           String?
-  reset_token_expires   DateTime?
   created_at            DateTime  @default(now())
   updated_at            DateTime  @updatedAt
 
@@ -41,7 +38,7 @@ model User {
 
 model Plan {
   id            String   @id @default(cuid())
-  name          String                        // free, pro, enterprise
+  name          String   @unique              // free, pro, enterprise
   display_name  String                        // Free, Pro, Enterprise
   price_monthly Int      @default(0)
   price_yearly  Int      @default(0)
@@ -115,7 +112,7 @@ model Payment {
   currency                String    @default("USD")
   status                  String    @default("pending")  // pending, successful, failed, refunded
   transaction_reference   String?
-  flutterwave_transaction_id String?
+  flutterwave_transaction_id String?  @unique
   payment_method          String?
   paid_at                 DateTime?
   created_at              DateTime  @default(now())

@@ -55,7 +55,7 @@ interface KeywordMatchResult {
 
 interface AiAnalysis {
   grammarIssues: { message: string; suggestion: string }[];
-  suggestions: { message: string; priority: 'high' | 'medium' | 'low' };
+  suggestions: { message: string; priority: 'high' | 'medium' | 'low' }[];
   strengths: string[];
   weaknesses: string[];
 }

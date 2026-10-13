@@ -1,6 +1,6 @@
 'use client';
 
-import { motion } from 'framer-motion';
+import { motion, type Variants } from 'framer-motion';
 import { useTranslations } from '@/i18n/provider';
 import { FileText, Mail, ShieldCheck, Layout, Star, Briefcase } from 'lucide-react';
 
@@ -24,7 +24,7 @@ const containerVariants = {
   },
 };
 
-const cardVariants = {
+const cardVariants: Variants = {
   hidden: { opacity: 0, y: 30 },
   visible: {
     opacity: 1,

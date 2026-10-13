@@ -35,7 +35,11 @@ export const PREMIUM_FEATURES: FeatureKey[] = [
 ];
 
 // Feature to usage field mapping
-export const FEATURE_USAGE_MAP: Record<string, keyof import('@prisma/client').UserUsage | null> = {
+type UserUsage = import('@prisma/client').UserUsage;
+/** The numeric counter columns on UserUsage */
+export type UsageCounter = { [K in keyof UserUsage]: UserUsage[K] extends number ? K : never }[keyof UserUsage];
+
+export const FEATURE_USAGE_MAP: Record<string, UsageCounter | null> = {
   [FEATURE_KEYS.CREATE_RESUME]: 'resume_count',
   [FEATURE_KEYS.CREATE_COVER_LETTER]: 'cover_letter_count',
   [FEATURE_KEYS.PDF_EXPORT]: 'exports_count',

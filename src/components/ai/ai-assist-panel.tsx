@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useCallback, useRef, useEffect, type ElementType } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion, AnimatePresence, type Variants } from 'framer-motion';
 import {
   Sparkles,
   Send,
@@ -153,7 +153,7 @@ const LOADING_MESSAGES = [
 // Framer Motion variants
 // ---------------------------------------------------------------------------
 
-const resultVariants = {
+const resultVariants: Variants = {
   hidden: { opacity: 0, y: 12 },
   visible: { opacity: 1, y: 0, transition: { duration: 0.3, ease: 'easeOut' } },
   exit: { opacity: 0, y: -8, transition: { duration: 0.2, ease: 'easeIn' } },

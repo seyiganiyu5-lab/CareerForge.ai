@@ -27,6 +27,16 @@ export async function getUserPlan(userId: string) {
     });
   }
 
+  // Paid plans are bought one period at a time: once the period ends,
+  // the user drops back to Free until they pay again.
+  if (
+    subscription.plan.name !== 'free' &&
+    subscription.current_period_end &&
+    subscription.current_period_end < new Date()
+  ) {
+    subscription = await downgradeToFree(userId);
+  }
+
   // Ensure user has a usage record
   const existingUsage = await db.userUsage.findUnique({ where: { user_id: userId } });
   if (!existingUsage) {
@@ -283,7 +293,10 @@ export async function upgradeSubscription(
  * Cancel a user's subscription (keep active until end of billing period).
  */
 export async function cancelSubscription(userId: string) {
-  const subscription = await db.subscription.findUnique({ where: { user_id: userId } });
+  const subscription = await db.subscription.findUnique({
+    where: { user_id: userId },
+    include: { plan: true },
+  });
   if (!subscription) throw new Error('No subscription found');
 
   if (subscription.plan.name === 'free') {

@@ -132,6 +132,7 @@ export const COVER_LETTER_SECTIONS = [
   'sender-info',
   'recipient-info',
   'job-details',
+  'ai-generate',
   'content',
   'customization',
 ] as const;

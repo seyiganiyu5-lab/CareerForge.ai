@@ -55,7 +55,7 @@ export async function POST(
     const safeTitle = (resume.title || 'resume').replace(/[^a-zA-Z0-9\s-_]/g, '').replace(/\s+/g, '_');
     const filename = `${safeTitle}.docx`;
 
-    return new NextResponse(buffer, {
+    return new NextResponse(new Uint8Array(buffer), {
       status: 200,
       headers: {
         'Content-Type': 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',

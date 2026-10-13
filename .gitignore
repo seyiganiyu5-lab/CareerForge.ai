@@ -32,6 +32,7 @@ yarn-error.log*
 
 # env files (can opt-in for committing if needed)
 .env*
+!.env.example
 
 # vercel
 .vercel
@@ -52,3 +53,17 @@ prompt
 server.log
 # Skills directory
 /skills/.env
+
+# local database & runtime files
+/db/*.db
+/db/*.db-journal
+*.pid
+auth-state.json
+/upload/
+
+# dev screenshots & AI-tool leftovers
+/*.png
+/screenshots/
+/tool-results/
+/agent-ctx/
+*.bak

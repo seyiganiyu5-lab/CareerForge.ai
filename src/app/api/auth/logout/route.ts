@@ -1,28 +1,13 @@
-import { NextRequest, NextResponse } from 'next/server';
-import type { AuthResponse } from '@/lib/auth/types';
+import { NextResponse } from 'next/server';
+import { createClient } from '@/lib/supabase/server';
 
-export async function POST(_request: NextRequest) {
+export async function POST() {
   try {
-    const response = NextResponse.json(
-      {
-        success: true,
-        message: 'Logged out successfully',
-      } satisfies AuthResponse,
-      { status: 200, headers: { 'Content-Type': 'application/json' } }
-    );
-
-    response.cookies.set('cf-auth-token', '', {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
-      sameSite: 'lax',
-      path: '/',
-      maxAge: 0,
-    });
-
-    return response;
+    const supabase = await createClient();
+    await supabase.auth.signOut();
+    return NextResponse.json({ success: true, message: 'Logged out successfully' });
   } catch (error) {
     console.error('Logout error:', error);
-    const body: AuthResponse = { success: false, error: 'An unexpected error occurred during logout' };
-    return NextResponse.json(body, { status: 500, headers: { 'Content-Type': 'application/json' } });
+    return NextResponse.json({ success: false, error: 'Failed to log out' }, { status: 500 });
   }
 }

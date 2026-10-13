@@ -38,7 +38,7 @@ export async function exportToPDF({
 }: ExportPDFOptions): Promise<void> {
   // ── Handle ESM/CJS interop ──────────────────────────────────────
   // html2pdf.js is a CJS module; the default export may be nested under .default
-  const mod = html2pdf as { default?: unknown; [key: string]: unknown };
+  const mod = html2pdf as unknown as { default?: unknown; [key: string]: unknown };
   const html2pdfFn: () => { set: (o: object) => { from: (el: HTMLElement) => { save: () => Promise<void> } } } =
     typeof html2pdf === 'function'
       ? (html2pdf as unknown as typeof html2pdfFn)

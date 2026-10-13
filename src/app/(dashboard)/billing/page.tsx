@@ -258,6 +258,39 @@ export default function BillingPage() {
     fetchAllData();
   }, [fetchAllData]);
 
+  // Flutterwave sends the user back here with ?status=...&tx_ref=...&transaction_id=...
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const txRef = params.get('tx_ref');
+    if (!txRef) return;
+    window.history.replaceState(null, '', window.location.pathname);
+
+    if (params.get('status') === 'cancelled') {
+      toast.info('Payment was cancelled. You have not been charged.');
+      return;
+    }
+
+    (async () => {
+      try {
+        const res = await fetch('/api/payments/verify', {
+          method: 'POST',
+          credentials: 'include',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ tx_ref: txRef, transaction_id: params.get('transaction_id') }),
+        });
+        const data = await res.json();
+        if (data.success) {
+          toast.success('Payment received. Your plan has been upgraded!');
+          await fetchAllData();
+        } else {
+          toast.error(data.error || 'We could not confirm your payment. If you were charged, please contact support.');
+        }
+      } catch {
+        toast.error('We could not confirm your payment. Please refresh the page.');
+      }
+    })();
+  }, [fetchAllData]);
+
   // Handlers
   const handleUpgrade = async (planId: string, planDisplayName: string) => {
     setUpgrading(planId);

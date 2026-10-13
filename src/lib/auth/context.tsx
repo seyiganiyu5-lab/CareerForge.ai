@@ -1,15 +1,14 @@
 'use client';
 
 import React, { createContext, useContext, useState, useCallback, useEffect, useRef } from 'react';
-import type { AuthState, AuthResponse, LoginCredentials, SignupData, OnboardingData } from './types';
+import type { AuthState, AuthResponse, LoginCredentials, SignupData, OnboardingData, PasswordResetResponse } from './types';
 
 interface AuthContextType extends AuthState {
   login: (credentials: LoginCredentials) => Promise<AuthResponse>;
   signup: (data: SignupData) => Promise<AuthResponse>;
   logout: () => Promise<void>;
   forgotPassword: (email: string) => Promise<{ success: boolean; message?: string; error?: string }>;
-  resetPassword: (token: string, password: string) => Promise<{ success: boolean; message?: string; error?: string }>;
-  verifyEmail: (token: string) => Promise<{ success: boolean; message?: string; error?: string }>;
+  resetPassword: (password: string) => Promise<{ success: boolean; message?: string; error?: string }>;
   resendVerification: (email: string) => Promise<{ success: boolean; message?: string; error?: string }>;
   completeOnboarding: (data: OnboardingData) => Promise<AuthResponse>;
   googleSignIn: () => void;
@@ -116,28 +115,21 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }, []);
 
   const forgotPassword = useCallback(async (email: string) => {
-    return fetchAPI('/api/auth/forgot-password', {
+    return fetchAPI<PasswordResetResponse>('/api/auth/forgot-password', {
       method: 'POST',
       body: JSON.stringify({ email }),
     });
   }, []);
 
-  const resetPassword = useCallback(async (token: string, password: string) => {
-    return fetchAPI('/api/auth/reset-password', {
+  const resetPassword = useCallback(async (password: string) => {
+    return fetchAPI<PasswordResetResponse>('/api/auth/reset-password', {
       method: 'POST',
-      body: JSON.stringify({ token, password }),
-    });
-  }, []);
-
-  const verifyEmail = useCallback(async (token: string) => {
-    return fetchAPI('/api/auth/verify-email', {
-      method: 'POST',
-      body: JSON.stringify({ token }),
+      body: JSON.stringify({ password }),
     });
   }, []);
 
   const resendVerification = useCallback(async (email: string) => {
-    return fetchAPI('/api/auth/verify-email', {
+    return fetchAPI<PasswordResetResponse>('/api/auth/verify-email', {
       method: 'PUT',
       body: JSON.stringify({ email }),
     });
@@ -167,7 +159,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         logout,
         forgotPassword,
         resetPassword,
-        verifyEmail,
         resendVerification,
         completeOnboarding,
         googleSignIn,

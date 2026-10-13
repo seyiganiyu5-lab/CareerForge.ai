@@ -206,7 +206,7 @@ export async function POST(_request: NextRequest, { params }: Params) {
     const { Packer } = await import('docx');
     const buffer = await Packer.toBuffer(doc);
 
-    return new NextResponse(buffer, {
+    return new NextResponse(new Uint8Array(buffer), {
       headers: {
         'Content-Type': 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
         'Content-Disposition': `attachment; filename="cover-letter-${(data.companyName || 'draft').toLowerCase().replace(/\s+/g, '-')}.docx"`,
