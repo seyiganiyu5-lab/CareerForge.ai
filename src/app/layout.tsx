@@ -26,7 +26,7 @@ export const metadata: Metadata = {
   description: "Create ATS-standard resumes, AI-powered cover letters, analyze job listings, and optimize your entire job application with CareerForge AI.",
   keywords: ["resume builder", "AI resume", "cover letter", "ATS optimization", "ATS standards", "job analysis", "job application", "career platform"],
   icons: {
-    icon: "https://z-cdn.chatglm.cn/z-ai/static/logo.svg",
+    icon: "/logo.svg",
   },
 };
 

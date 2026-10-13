@@ -1,58 +1,88 @@
 import { db } from '@/lib/db';
-import { FEATURE_KEYS, FEATURE_USAGE_MAP, type FeatureKey } from './features';
+import { FEATURE_USAGE_MAP, type FeatureKey } from './features';
+
+// Plans and their feature limits rarely change, so keep them in memory
+// briefly instead of reading them on every request.
+const PLAN_CACHE_MS = 60_000;
+let planCache: { at: number; plans: ReturnType<typeof fetchPlans> } | null = null;
+
+function fetchPlans() {
+  return db.plan.findMany({
+    include: { plan_features: true },
+    orderBy: { sort_order: 'asc' },
+  });
+}
+
+function getPlansCached(fresh = false) {
+  if (fresh || !planCache || Date.now() - planCache.at > PLAN_CACHE_MS) {
+    const plans = fetchPlans();
+    planCache = { at: Date.now(), plans };
+    plans.catch(() => { planCache = null; });
+  }
+  return planCache.plans;
+}
+
+async function findPlan(planId: string) {
+  const plan = (await getPlansCached()).find(p => p.id === planId);
+  return plan ?? (await getPlansCached(true)).find(p => p.id === planId);
+}
 
 /**
- * Get a user's effective plan (defaults to Free if no subscription exists).
- * Creates a default subscription + usage record on first access.
+ * Load everything needed for plan and usage checks — subscription, plan,
+ * plan features and usage counters — in a single parallel round trip.
+ * Creates the Free subscription / usage row on first access and drops
+ * expired paid plans back to Free.
  */
-export async function getUserPlan(userId: string) {
-  // Ensure user has a subscription (default to Free)
-  let subscription = await db.subscription.findUnique({
-    where: { user_id: userId },
-    include: { plan: true },
-  });
+export async function loadAccount(userId: string) {
+  let [subscriptionRow, usage, plans] = await Promise.all([
+    db.subscription.findUnique({ where: { user_id: userId } }),
+    db.userUsage.findUnique({ where: { user_id: userId } }),
+    getPlansCached(),
+  ]);
 
-  if (!subscription) {
-    const freePlan = await db.plan.findFirst({ where: { name: 'free' } });
+  if (!subscriptionRow) {
+    const freePlan = plans.find(p => p.name === 'free');
     if (!freePlan) throw new Error('Free plan not found in database');
 
-    subscription = await db.subscription.create({
+    subscriptionRow = await db.subscription.create({
       data: {
         user_id: userId,
         plan_id: freePlan.id,
         status: 'active',
         billing_cycle: 'monthly',
       },
-      include: { plan: true },
     });
   }
+
+  const plan = await findPlan(subscriptionRow.plan_id);
+  if (!plan) throw new Error('Plan not found');
 
   // Paid plans are bought one period at a time: once the period ends,
   // the user drops back to Free until they pay again.
   if (
-    subscription.plan.name !== 'free' &&
-    subscription.current_period_end &&
-    subscription.current_period_end < new Date()
+    plan.name !== 'free' &&
+    subscriptionRow.current_period_end &&
+    subscriptionRow.current_period_end < new Date()
   ) {
-    subscription = await downgradeToFree(userId);
+    await downgradeToFree(userId);
+    return loadAccount(userId);
   }
 
-  // Ensure user has a usage record
-  const existingUsage = await db.userUsage.findUnique({ where: { user_id: userId } });
-  if (!existingUsage) {
-    await db.userUsage.create({ data: { user_id: userId } });
+  if (!usage) {
+    usage = await db.userUsage.create({ data: { user_id: userId } });
   }
 
-  return subscription;
+  const subscription = { ...subscriptionRow, plan };
+  return { subscription, features: plan.plan_features, usage };
 }
 
+export type Account = Awaited<ReturnType<typeof loadAccount>>;
+
 /**
- * Get plan features for a specific plan ID.
+ * Get a user's effective plan (defaults to Free if no subscription exists).
  */
-export async function getPlanFeatures(planId: string) {
-  return db.planFeature.findMany({
-    where: { plan_id: planId },
-  });
+export async function getUserPlan(userId: string) {
+  return (await loadAccount(userId)).subscription;
 }
 
 /**
@@ -69,43 +99,29 @@ export async function canAccess(
   used: number;
   planName: string;
 }> {
-  const subscription = await getUserPlan(userId);
-  const features = await getPlanFeatures(subscription.plan_id);
-
+  const { subscription, features, usage } = await loadAccount(userId);
+  const planName = subscription.plan.name;
   const feature = features.find(f => f.feature_key === featureKey);
 
   // Feature not configured for this plan = not allowed
   if (!feature || !feature.enabled) {
     return {
       allowed: false,
-      reason: subscription.plan.name === 'free' ? 'upgrade_required' : 'feature_not_available',
+      reason: planName === 'free' ? 'upgrade_required' : 'feature_not_available',
       limit: 0,
       used: 0,
-      planName: subscription.plan.name,
+      planName,
     };
   }
 
   // Unlimited access
   if (feature.limit_value === -1) {
-    return {
-      allowed: true,
-      limit: -1,
-      used: 0,
-      planName: subscription.plan.name,
-    };
+    return { allowed: true, limit: -1, used: 0, planName };
   }
 
   // Check usage limit
   const usageField = FEATURE_USAGE_MAP[featureKey];
-  let used = 0;
-
-  if (usageField) {
-    const usage = await db.userUsage.findUnique({ where: { user_id: userId } });
-    if (usage) {
-      used = usage[usageField] ?? 0;
-    }
-  }
-
+  const used = usageField ? usage[usageField] ?? 0 : 0;
   const allowed = used < feature.limit_value;
 
   return {
@@ -113,7 +129,7 @@ export async function canAccess(
     reason: allowed ? undefined : 'limit_reached',
     limit: feature.limit_value,
     used,
-    planName: subscription.plan.name,
+    planName,
   };
 }
 
@@ -145,20 +161,15 @@ export async function checkAndIncrementUsage(
 
 /**
  * Get current usage for a user.
- * Optimized: reuses getUserPlan which already ensures usage record exists,
- * and fetches usage in a single query (already created by getUserPlan).
  */
-export async function getUserUsage(userId: string) {
-  const subscription = await getUserPlan(userId);
-  // getUserPlan already ensures the usage record exists
-  const usage = await db.userUsage.findUniqueOrThrow({ where: { user_id: userId } });
-  const features = await getPlanFeatures(subscription.plan_id);
+export async function getUserUsage(userId: string, preloaded?: Account) {
+  const { subscription, features, usage } = preloaded ?? (await loadAccount(userId));
 
   const featureUsage: Record<string, { limit: number; used: number; enabled: boolean }> = {};
 
   for (const feature of features) {
     const usageField = FEATURE_USAGE_MAP[feature.feature_key];
-    const used = usage && usageField ? (usage[usageField] ?? 0) : 0;
+    const used = usageField ? usage[usageField] ?? 0 : 0;
 
     featureUsage[feature.feature_key] = {
       limit: feature.limit_value,
@@ -180,30 +191,20 @@ export async function getUserUsage(userId: string) {
       billing_cycle: subscription.billing_cycle,
     },
     usage: featureUsage,
-    raw: usage ?? {
-      resume_count: 0,
-      cover_letter_count: 0,
-      ai_requests: 0,
-      resume_reviews: 0,
-      exports_count: 0,
-      ats_checks: 0,
-    },
+    raw: usage,
   };
 }
 
 /**
- * Batch check feature access for multiple features in a single DB round-trip.
- * Avoids the N+1 problem of calling canAccess() in a loop.
+ * Check access to several features at once.
  */
 export async function canAccessBatch(
   userId: string,
-  featureKeys: FeatureKey[]
+  featureKeys: FeatureKey[],
+  preloaded?: Account
 ): Promise<Record<string, boolean>> {
-  const subscription = await getUserPlan(userId);
-  const features = await getPlanFeatures(subscription.plan_id);
-  const usage = await db.userUsage.findUnique({ where: { user_id: userId } });
+  const { features, usage } = preloaded ?? (await loadAccount(userId));
 
-  // Build a lookup map for O(1) feature lookup
   const featureMap = new Map(features.map(f => [f.feature_key, f]));
 
   const result: Record<string, boolean> = {};
@@ -218,7 +219,7 @@ export async function canAccessBatch(
       continue;
     }
     const usageField = FEATURE_USAGE_MAP[key];
-    const used = usage && usageField ? (usage[usageField] ?? 0) : 0;
+    const used = usageField ? usage[usageField] ?? 0 : 0;
     result[key] = used < feature.limit_value;
   }
 
@@ -229,11 +230,7 @@ export async function canAccessBatch(
  * Get all active plans with their features.
  */
 export async function getPlans() {
-  return db.plan.findMany({
-    where: { is_active: true },
-    include: { plan_features: true },
-    orderBy: { sort_order: 'asc' },
-  });
+  return (await getPlansCached()).filter(p => p.is_active);
 }
 
 /**
