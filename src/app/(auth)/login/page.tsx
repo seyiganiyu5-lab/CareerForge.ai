@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import { useSearchParams } from 'next/navigation';
 import Link from 'next/link';
-import { motion } from 'framer-motion';
+import { motion, type Variants } from 'framer-motion';
 import { Loader2, AlertCircle } from 'lucide-react';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod/v4';
@@ -35,7 +35,7 @@ const staggerContainer = {
   },
 };
 
-const staggerItem = {
+const staggerItem: Variants = {
   hidden: { opacity: 0, y: 12 },
   show: { opacity: 1, y: 0, transition: { duration: 0.35, ease: 'easeOut' } },
 };
@@ -68,7 +68,7 @@ export default function LoginPage() {
   const loginSchema = z.object({
     email: z.email(t('errors.emailInvalid')),
     password: z.string().min(1, t('errors.passwordRequired')),
-    rememberMe: z.boolean().default(false),
+    rememberMe: z.boolean(),
   });
 
   type LoginFormValues = z.infer<typeof loginSchema>;

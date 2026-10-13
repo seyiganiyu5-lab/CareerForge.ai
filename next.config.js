@@ -1,8 +1,5 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  typescript: {
-    ignoreBuildErrors: true,
-  },
   reactStrictMode: false,
   skipTrailingSlashRedirect: true,
   allowedDevOrigins: ["localhost", "127.0.0.1"],

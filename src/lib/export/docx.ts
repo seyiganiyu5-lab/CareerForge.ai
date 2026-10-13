@@ -550,7 +550,7 @@ export async function generateDocxBlob(data: ResumeData): Promise<Buffer> {
  * Convert a docx Document to an ArrayBuffer using Packer.
  * The docx library's Packer is async and returns a Blob or ArrayBuffer.
  */
-async function doc_to_buffer(doc: Document): Promise<ArrayBuffer> {
+async function doc_to_buffer(doc: Document): Promise<Buffer> {
   // Dynamic import to avoid bundling issues
   const { Packer } = await import('docx');
   return Packer.toBuffer(doc);

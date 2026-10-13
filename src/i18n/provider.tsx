@@ -5,6 +5,8 @@ import { NextIntlClientProvider, useTranslations as useNextIntlTranslations } fr
 import type { MessageKeys, Messages } from 'next-intl';
 import { Locale, defaultLocale, locales } from '@/i18n/config';
 
+export type { Locale };
+
 // Static imports — avoids webpack dynamic-chunk issues with JSON files
 import enMessages from '../../messages/en.json';
 import frMessages from '../../messages/fr.json';

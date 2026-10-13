@@ -1,6 +1,6 @@
 'use client';
 
-import { motion } from 'framer-motion';
+import { motion, type Variants } from 'framer-motion';
 import { useTranslations } from '@/i18n/provider';
 import Link from 'next/link';
 import { ArrowRight, FileText, Sparkles, CheckCircle2, Mail, ListChecks, Download } from 'lucide-react';
@@ -17,7 +17,7 @@ const containerVariants = {
   },
 };
 
-const itemVariants = {
+const itemVariants: Variants = {
   hidden: { opacity: 0, y: 20 },
   visible: {
     opacity: 1,
@@ -26,7 +26,7 @@ const itemVariants = {
   },
 };
 
-const cardVariants = {
+const cardVariants: Variants = {
   hidden: { opacity: 0, y: 30, scale: 0.95 },
   visible: (i: number) => ({
     opacity: 1,
@@ -40,7 +40,16 @@ const cardVariants = {
   }),
 };
 
-const dashboardCards = [
+interface DashboardCard {
+  translationKey: string;
+  score?: string;
+  icon: typeof FileText;
+  colorClass: string;
+  floatClass: string;
+  size: string;
+}
+
+const dashboardCards: DashboardCard[] = [
   {
     translationKey: 'resumePreview',
     icon: FileText,
@@ -85,7 +94,7 @@ const dashboardCards = [
     floatClass: 'animate-float',
     size: 'col-span-2 row-span-1',
   },
-] as const;
+];
 
 export default function Hero() {
   const t = useTranslations('hero');

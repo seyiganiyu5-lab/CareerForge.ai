@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion, AnimatePresence, type Variants } from 'framer-motion';
 import {
   Sparkles,
   Palette,
@@ -113,7 +113,7 @@ const templates: Template[] = [
 
 // ─── Animation Variants ────────────────────────────────────────
 
-const panelVariants = {
+const panelVariants: Variants = {
   hidden: { opacity: 0, x: 20 },
   visible: {
     opacity: 1,
@@ -127,7 +127,7 @@ const panelVariants = {
   },
 };
 
-const contentVariants = {
+const contentVariants: Variants = {
   hidden: { opacity: 0, y: 8 },
   visible: {
     opacity: 1,

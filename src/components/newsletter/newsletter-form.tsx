@@ -3,6 +3,7 @@
 import { useCallback, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
+import type { z } from 'zod';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Send, Loader2, CheckCircle2, AlertCircle, Mail } from 'lucide-react';
 import { cn } from '@/lib/utils';
@@ -48,7 +49,7 @@ export default function NewsletterForm({
     handleSubmit,
     reset,
     formState: { errors },
-  } = useForm<SubscribeFormValues>({
+  } = useForm<z.input<typeof subscribeSchema>, unknown, SubscribeFormValues>({
     resolver: zodResolver(subscribeSchema),
     defaultValues: {
       email: '',

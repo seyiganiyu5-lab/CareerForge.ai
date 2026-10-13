@@ -544,15 +544,12 @@ export default function ResumeWorkspace() {
   }, [aiPanelParams, setResumeData]);
 
   const handleAiRestore = useCallback((text: string, section: string) => {
-    handleAiApply({ section, content: '', field: aiPanelParams?.field, itemId: aiPanelParams?.itemId });
-    // Use a timeout to let the panel open, then apply the text
-    setTimeout(() => {
-      setResumeData(prev => {
-        const next = { ...prev };
-        if (section === 'professionalSummary') next.professionalSummary = text;
-        return next;
-      });
-    }, 100);
+    // Restore into the field the AI panel is open for
+    if (aiPanelParams?.section === section) {
+      handleAiApply(text);
+    } else if (section === 'professionalSummary') {
+      setResumeData(prev => ({ ...prev, professionalSummary: text }));
+    }
   }, [aiPanelParams, handleAiApply, setResumeData]);
 
   // Check subscription status for template gating

@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { motion } from 'framer-motion';
+import { motion, type Variants } from 'framer-motion';
 import { GraduationCap, Award, Briefcase, Laptop, ArrowLeftRight, ArrowLeft, ArrowRight } from 'lucide-react';
 import { useTranslations } from '@/i18n/provider';
 import type { CareerLevel } from '@/lib/auth/types';
@@ -45,7 +45,7 @@ export default function CareerLevelStep({ onNext, onBack, initialValue }: Career
     },
   };
 
-  const staggerItem = {
+  const staggerItem: Variants = {
     hidden: { opacity: 0, y: 16, scale: 0.97 },
     show: { opacity: 1, y: 0, scale: 1, transition: { duration: 0.35, ease: 'easeOut' } },
   };

@@ -65,6 +65,7 @@ export const THUMBNAIL_RESUME_DATA: ResumeData = {
       id: 'p1',
       name: 'Open Source CLI Tool',
       description: 'A developer productivity tool with 2K+ GitHub stars.',
+      results: 'Adopted by 300+ teams; cut setup time by 60%.',
       technologies: 'Rust, TOML',
       githubUrl: 'github.com/alex/cli-tool',
       liveUrl: '',

@@ -119,7 +119,7 @@ function reorderEducationFirst(sections: SectionKey[]): SectionKey[] {
   const summaryIdx = without.indexOf('professionalSummary');
   const insertAt = summaryIdx >= 0 ? summaryIdx + 1 : 0;
 
-  const result = [...without];
+  const result: SectionKey[] = [...without];
   result.splice(insertAt, 0, 'education');
 
   // Insert workExperience right after education
@@ -261,27 +261,6 @@ function renderEducation(data: TemplateComponentProps['data'], customization: Te
             {edu.grade && <span style={{ fontWeight: 600, color: '#374151' }}>GPA: {edu.grade}</span>}
           </p>
 
-          {/* Description / coursework / achievements as bullet points */}
-          {(() => {
-            const descLines = edu.description ? splitBullets(edu.description) : [];
-            if (descLines.length === 0) return null;
-            return (
-              <ul style={{ margin: '5px 0 0 0', paddingLeft: '14px', listStyleType: 'disc', color: '#374151' }}>
-                {descLines.map((line, i) => (
-                  <li
-                    key={i}
-                    style={{
-                      fontSize: `${fs}px`,
-                      lineHeight: customization.lineHeight,
-                      marginBottom: i < descLines.length - 1 ? '2px' : '0',
-                    }}
-                  >
-                    {line}
-                  </li>
-                ))}
-              </ul>
-            );
-          })()}
         </div>
       ))}
     </div>
@@ -369,8 +348,8 @@ function renderSkills(data: TemplateComponentProps['data'], customization: Templ
       <div
         className="grid grid-cols-2"
         style={{
-          gapX: '16px',
-          gapY: `${3 * customization.sectionSpacing}px`,
+          columnGap: '16px',
+          rowGap: `${3 * customization.sectionSpacing}px`,
         }}
       >
         {[leftCol, rightCol].map((col, colIdx) => (
@@ -412,8 +391,8 @@ function renderSkills(data: TemplateComponentProps['data'], customization: Templ
     <div
       className="grid grid-cols-2"
       style={{
-        gapX: '16px',
-        gapY: `${3 * customization.sectionSpacing}px`,
+        columnGap: '16px',
+        rowGap: `${3 * customization.sectionSpacing}px`,
         marginTop: `${6 * customization.sectionSpacing}px`,
       }}
     >
