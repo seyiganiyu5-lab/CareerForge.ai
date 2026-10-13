@@ -2,13 +2,15 @@
  * Server-side auth helper: get the signed-in user for an API route.
  */
 import { createClient } from '@/lib/supabase/server';
-import { ensureProfile } from '@/lib/auth/profile';
 
 export async function getAuthUser(_request?: Request) {
   const supabase = await createClient();
-  const { data: { user }, error } = await supabase.auth.getUser();
-  if (error || !user) return null;
+  // Verifies the session token locally (no network trip on projects using
+  // Supabase JWT signing keys). The user's profile row is created at
+  // sign-in and on every app load via /api/auth/session.
+  const { data, error } = await supabase.auth.getClaims();
+  const claims = data?.claims;
+  if (error || !claims?.sub) return null;
 
-  await ensureProfile(user);
-  return { userId: user.id, email: user.email! };
+  return { userId: claims.sub, email: (claims.email as string) ?? '' };
 }

@@ -51,7 +51,7 @@ const NAV_ITEMS: NavItem[] = [
   { key: 'profile', icon: User, href: '/profile', section: 'account' },
   { key: 'billing', icon: CreditCard, href: '/billing', section: 'account' },
   { key: 'settings', icon: Settings, href: '/settings', section: 'account' },
-  { key: 'helpCenter', icon: HelpCircle, href: '/help/help', section: 'account' },
+  { key: 'helpCenter', icon: HelpCircle, href: '/help', section: 'account' },
 ];
 
 interface SidebarProps {
