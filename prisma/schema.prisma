@@ -112,7 +112,7 @@ model Payment {
   currency                String    @default("USD")
   status                  String    @default("pending")  // pending, successful, failed, refunded
   transaction_reference   String?
-  flutterwave_transaction_id String?
+  flutterwave_transaction_id String?  @unique
   payment_method          String?
   paid_at                 DateTime?
   created_at              DateTime  @default(now())

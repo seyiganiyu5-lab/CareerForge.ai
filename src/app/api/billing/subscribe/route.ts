@@ -1,12 +1,16 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { randomBytes } from 'crypto';
 import { getAuthUser } from '@/lib/subscription/auth-helpers';
-import { upgradeSubscription } from '@/lib/subscription/service';
+import { getUserPlan, upgradeSubscription } from '@/lib/subscription/service';
+import { isPaymentsConfigured } from '@/lib/billing/flutterwave';
+import { getSiteUrl } from '@/lib/auth/profile';
 
 /**
  * POST /api/billing/subscribe
- * Initialize a subscription upgrade.
+ * Start a plan upgrade.
  * - If Flutterwave is configured: creates a payment link for the user to complete.
- * - If Flutterwave is NOT configured (dev/demo): directly upgrades the user.
+ * - If not, and running `npm run dev`: upgrades directly so paid features can be tested.
+ * - If not, on a live site: refuses, so nobody gets a paid plan for free.
  */
 export async function POST(request: NextRequest) {
   try {
@@ -21,37 +25,53 @@ export async function POST(request: NextRequest) {
     if (!planId) {
       return NextResponse.json({ success: false, error: 'Plan ID is required' }, { status: 400 });
     }
+    if (billingCycle !== 'monthly' && billingCycle !== 'yearly') {
+      return NextResponse.json({ success: false, error: 'Invalid billing cycle' }, { status: 400 });
+    }
 
     const { db } = await import('@/lib/db');
     const plan = await db.plan.findUnique({ where: { id: planId } });
-    if (!plan) {
+    if (!plan || !plan.is_active) {
       return NextResponse.json({ success: false, error: 'Plan not found' }, { status: 404 });
     }
 
-    // Check if user already has this plan
-    const currentSub = await db.subscription.findUnique({
-      where: { user_id: auth.userId },
-      include: { plan: true },
-    });
+    // Free is reached by cancelling; plans without a price (Enterprise) are sold by contact
+    const price = billingCycle === 'yearly' ? plan.price_yearly : plan.price_monthly;
+    if (plan.name === 'free' || price <= 0) {
+      return NextResponse.json(
+        { success: false, error: 'This plan cannot be bought online. Please contact us.' },
+        { status: 400 }
+      );
+    }
 
-    if (currentSub?.plan_id === planId && currentSub.status === 'active') {
+    // Check if user already has this plan (getUserPlan also expires ended periods)
+    const currentSub = await getUserPlan(auth.userId);
+
+    if (currentSub.plan_id === planId && currentSub.status === 'active') {
       return NextResponse.json({ success: false, error: 'You are already on this plan' }, { status: 400 });
     }
 
-    // ── Dev / Demo mode: directly upgrade without payment gateway ──
-    if (!process.env.FLUTTERWAVE_SECRET_KEY) {
-      console.log(`[billing] Direct upgrade (no payment gateway) for ${auth.email} → ${plan.name}`);
+    if (!isPaymentsConfigured() && process.env.NODE_ENV === 'production') {
+      return NextResponse.json(
+        { success: false, error: 'Payments are not available yet. Please try again later.' },
+        { status: 503 }
+      );
+    }
+
+    // ── Local development only: upgrade without a payment gateway ──
+    if (!isPaymentsConfigured()) {
+      console.log(`[billing] Dev-mode upgrade (no payment) for ${auth.email} → ${plan.name}`);
 
       const updated = await upgradeSubscription(
         auth.userId,
         planId,
-        billingCycle as 'monthly' | 'yearly'
+        billingCycle
       );
 
       return NextResponse.json({
         success: true,
         direct_upgrade: true,
-        message: `Successfully upgraded to ${plan.display_name} plan!`,
+        message: `Upgraded to ${plan.display_name} (test mode, no payment taken)`,
         subscription: {
           id: updated.id,
           plan: {
@@ -80,10 +100,10 @@ export async function POST(request: NextRequest) {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        tx_ref: `cf_${auth.userId}_${Date.now()}`,
-        amount: (billingCycle === 'yearly' ? plan.price_yearly : plan.price_monthly) / 100,
+        tx_ref: `cf_${Date.now()}_${randomBytes(6).toString('hex')}`,
+        amount: price / 100,
         currency: plan.currency,
-        redirect_url: `${process.env.NEXT_PUBLIC_APP_URL || ''}/billing?payment=verify`,
+        redirect_url: `${getSiteUrl(request)}/billing`,
         customer: {
           email: auth.email,
         },
