@@ -42,9 +42,9 @@ export function PersonalInfoForm({ resumeData, setResumeData }: PersonalInfoForm
         {t('personalInfoDescription')}
       </p>
 
-      <div className="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2">
+      <div className="mt-4 grid grid-cols-1 gap-4 @md:grid-cols-2">
         {fields.map((field) => (
-          <div key={field.key} className={field.key === 'fullName' ? 'sm:col-span-2' : ''}>
+          <div key={field.key} className={field.key === 'fullName' ? '@md:col-span-2' : ''}>
             <Label htmlFor={field.key} className="font-body">
               {field.label}
               {field.required && <span className="ml-1 text-destructive">*</span>}

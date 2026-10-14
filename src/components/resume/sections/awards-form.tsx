@@ -63,8 +63,8 @@ export function AwardsForm({ resumeData, setResumeData }: AwardsFormProps) {
           <Card key={item.id} className="relative py-4 transition-shadow hover:shadow-md">
             <CardContent>
               <div className="flex items-center gap-4">
-                <div className="flex-1 grid grid-cols-1 gap-4 sm:grid-cols-3">
-                  <div className="sm:col-span-2">
+                <div className="flex-1 grid grid-cols-1 gap-4 @lg:grid-cols-3">
+                  <div className="@lg:col-span-2">
                     <Label className="font-body">{t('awardName')}</Label>
                     <Input
                       value={item.name}
