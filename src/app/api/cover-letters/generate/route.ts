@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getAuthUser } from '@/lib/subscription/auth-helpers';
-import { checkAndIncrementUsage } from '@/lib/subscription/service';
+import { checkAndIncrementUsage, recordUsage } from '@/lib/subscription/service';
+import { generateText, parseJsonReply, isAIConfigured, AIError, AI_NOT_CONFIGURED_MESSAGE } from '@/lib/ai/client';
 import { FEATURE_KEYS } from '@/lib/subscription/features';
 import { db } from '@/lib/db';
 import type { ToneType } from '@/types/cover-letter';
@@ -13,7 +14,12 @@ export async function POST(request: NextRequest) {
     }
 
     // Check usage limit
-    const access = await checkAndIncrementUsage(auth.userId, FEATURE_KEYS.AI_COVER_LETTER);
+    if (!isAIConfigured()) {
+      return NextResponse.json({ success: false, error: AI_NOT_CONFIGURED_MESSAGE }, { status: 503 });
+    }
+
+    // A use is only counted once the AI replies
+    const access = await checkAndIncrementUsage(auth.userId, FEATURE_KEYS.AI_COVER_LETTER, false);
     if (!access.allowed) {
       if (access.reason === 'limit_reached') {
         return NextResponse.json(
@@ -146,24 +152,19 @@ Respond ONLY with a valid JSON object with these exact fields (no additional tex
   "signOff": "Sincerely,"
 }`;
 
-    // Call AI SDK
-    const ZAI = (await import('z-ai-web-dev-sdk')).default;
-    const zai = await ZAI.create();
-    const response = await zai.chat.completions.create({
-      messages: [
+    const raw = await generateText(
+      [
         { role: 'system', content: systemPrompt },
         { role: 'user', content: userPrompt },
       ],
-    });
-
-    const raw = response.choices?.[0]?.message?.content?.trim() || '';
+      { json: true }
+    );
+    await recordUsage(auth.userId, FEATURE_KEYS.AI_COVER_LETTER);
 
     // Try to parse JSON from the response
     let content: { salutation: string; opening: string; body: string; closing: string; signOff: string };
     try {
-      // Strip markdown code fences if present
-      const jsonStr = raw.replace(/```json\n?/g, '').replace(/```\n?/g, '').trim();
-      content = JSON.parse(jsonStr);
+      content = parseJsonReply(raw);
     } catch {
       // Fallback: treat entire response as body text
       content = {
@@ -178,6 +179,9 @@ Respond ONLY with a valid JSON object with these exact fields (no additional tex
     return NextResponse.json({ success: true, content });
   } catch (error) {
     console.error('Cover letter generation error:', error);
+    if (error instanceof AIError) {
+      return NextResponse.json({ success: false, error: error.userMessage }, { status: error.status });
+    }
     return NextResponse.json(
       { success: false, error: 'Failed to generate cover letter. Please try again.' },
       { status: 500 },

@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getAuthUser } from '@/lib/subscription/auth-helpers';
-import { checkAndIncrementUsage } from '@/lib/subscription/service';
+import { checkAndIncrementUsage, recordUsage } from '@/lib/subscription/service';
+import { generateText, isAIConfigured, AIError, AI_NOT_CONFIGURED_MESSAGE } from '@/lib/ai/client';
 import { FEATURE_KEYS } from '@/lib/subscription/features';
 import { db } from '@/lib/db';
 
@@ -25,8 +26,12 @@ export async function POST(request: NextRequest, { params }: Params) {
       return NextResponse.json({ success: false, error: 'Unauthorized' }, { status: 401 });
     }
 
-    // Check AI usage limit
-    const access = await checkAndIncrementUsage(auth.userId, FEATURE_KEYS.AI_REQUESTS);
+    if (!isAIConfigured()) {
+      return NextResponse.json({ success: false, error: AI_NOT_CONFIGURED_MESSAGE }, { status: 503 });
+    }
+
+    // Check AI usage limit (a use is only counted once the AI replies)
+    const access = await checkAndIncrementUsage(auth.userId, FEATURE_KEYS.AI_REQUESTS, false);
     if (!access.allowed) {
       if (access.reason === 'limit_reached') {
         return NextResponse.json(
@@ -67,10 +72,8 @@ Company: ${application.company_name}${application.job_description ? `\nJob Descr
 
     const extraContext = body.context ? `\nAdditional Context: ${body.context}` : '';
 
-    const suggestions: AiSuggestion[] = [];
-
-    // Generate suggestions for each type
-    for (const type of requestedTypes) {
+    // Generate suggestions for all requested types at the same time
+    const suggestions: AiSuggestion[] = await Promise.all(requestedTypes.map(async (type) => {
       let prompt = '';
       let systemPrompt = 'You are a career coach and job search expert. Provide actionable, specific, and concise advice. Respond in a clear, structured format with bullet points or numbered lists. Keep each suggestion to 2-4 sentences maximum.';
 
@@ -92,34 +95,19 @@ Company: ${application.company_name}${application.job_description ? `\nJob Descr
           break;
       }
 
-      try {
-        const ZAI = (await import('z-ai-web-dev-sdk')).default;
-        const zai = await ZAI.create();
-        const response = await zai.chat.completions.create({
-          messages: [
-            { role: 'system', content: systemPrompt },
-            { role: 'user', content: prompt },
-          ],
-        });
+      const content = await generateText([
+        { role: 'system', content: systemPrompt },
+        { role: 'user', content: prompt },
+      ]);
 
-        const content = response.choices?.[0]?.message?.content?.trim() || 'No suggestions generated.';
-
-        suggestions.push({
-          id: `ai-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
-          type,
-          content,
-          createdAt: new Date().toISOString(),
-        });
-      } catch (aiError) {
-        console.error(`AI suggestion generation error for type ${type}:`, aiError);
-        suggestions.push({
-          id: `ai-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
-          type,
-          content: 'Failed to generate suggestion. Please try again.',
-          createdAt: new Date().toISOString(),
-        });
-      }
-    }
+      return {
+        id: `ai-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
+        type,
+        content,
+        createdAt: new Date().toISOString(),
+      };
+    }));
+    await recordUsage(auth.userId, FEATURE_KEYS.AI_REQUESTS);
 
     // Store suggestions in the application
     let existingSuggestions: AiSuggestion[] = [];
@@ -140,6 +128,9 @@ Company: ${application.company_name}${application.job_description ? `\nJob Descr
     return NextResponse.json({ success: true, suggestions });
   } catch (error) {
     console.error('AI suggest error:', error);
+    if (error instanceof AIError) {
+      return NextResponse.json({ success: false, error: error.userMessage }, { status: error.status });
+    }
     return NextResponse.json({ success: false, error: 'Failed to generate AI suggestions' }, { status: 500 });
   }
 }

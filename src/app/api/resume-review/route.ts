@@ -1,8 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
-import ZAI from 'z-ai-web-dev-sdk';
+import { generateText, parseJsonReply, isAIConfigured, AIError, AI_NOT_CONFIGURED_MESSAGE } from '@/lib/ai/client';
 import { db } from '@/lib/db';
 import { getAuthUser } from '@/lib/subscription/auth-helpers';
-import { checkAndIncrementUsage } from '@/lib/subscription/service';
+import { checkAndIncrementUsage, recordUsage } from '@/lib/subscription/service';
 import { FEATURE_KEYS } from '@/lib/subscription/features';
 import type { ResumeData } from '@/types/resume';
 
@@ -13,7 +13,12 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ success: false, error: 'Unauthorized' }, { status: 401 });
     }
 
-    const access = await checkAndIncrementUsage(auth.userId, FEATURE_KEYS.AI_RESUME_REVIEW);
+    if (!isAIConfigured()) {
+      return NextResponse.json({ success: false, error: AI_NOT_CONFIGURED_MESSAGE }, { status: 503 });
+    }
+
+    // A use is only counted once the AI replies
+    const access = await checkAndIncrementUsage(auth.userId, FEATURE_KEYS.AI_RESUME_REVIEW, false);
     if (!access.allowed) {
       return NextResponse.json(
         { success: false, error: access.reason === 'limit_reached' ? 'Usage limit reached' : 'Upgrade required', planName: access.planName },
@@ -40,8 +45,6 @@ export async function POST(request: NextRequest) {
     if (!textToAnalyze.trim()) {
       return NextResponse.json({ success: false, error: 'No resume content provided' }, { status: 400 });
     }
-
-    const zai = await ZAI.create();
 
     const prompt = `You are an expert resume reviewer and career coach. Analyze the following resume text and provide a comprehensive review.
 
@@ -99,27 +102,26 @@ Resume text:
 ---
 ${textToAnalyze.substring(0, 8000)}`;
 
-    const completion = await zai.chat.completions.create({
-      model: 'gpt-4o-mini',
-      messages: [
+    const raw = await generateText(
+      [
         { role: 'system', content: 'You are an expert resume reviewer. Always respond with valid JSON only, no markdown fences.' },
         { role: 'user', content: prompt },
       ],
-      temperature: 0.4,
-      max_tokens: 2000,
-    });
+      { temperature: 0.4, json: true }
+    );
 
-    const raw = completion.choices?.[0]?.message?.content?.trim() || '';
-    const cleaned = raw.replace(/```json\n?/g, '').replace(/```\n?/g, '').trim();
-
-    const review = JSON.parse(cleaned) as {
+    const review = parseJsonReply<{
       score: number;
       sections: { name: string; score: number; feedback: string; suggestions: string[] }[];
-    };
+    }>(raw);
+    await recordUsage(auth.userId, FEATURE_KEYS.AI_RESUME_REVIEW);
 
     return NextResponse.json({ success: true, review });
   } catch (error) {
     console.error('Resume review error:', error);
+    if (error instanceof AIError) {
+      return NextResponse.json({ success: false, error: error.userMessage }, { status: error.status });
+    }
     return NextResponse.json({ success: false, error: 'Failed to analyze resume' }, { status: 500 });
   }
 }

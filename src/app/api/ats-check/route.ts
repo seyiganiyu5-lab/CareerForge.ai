@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import ZAI from 'z-ai-web-dev-sdk';
+import { generateText, parseJsonReply, isAIConfigured, AIError } from '@/lib/ai/client';
 import { db } from '@/lib/db';
 import { getAuthUser } from '@/lib/subscription/auth-helpers';
 import { checkAndIncrementUsage } from '@/lib/subscription/service';
@@ -613,7 +613,6 @@ function scoreKeywords(
 // ---------------------------------------------------------------------------
 
 async function runAiAnalysis(resumeText: string): Promise<AiAnalysis> {
-  const zai = await ZAI.create();
 
   const systemPrompt = `You are an expert ATS (Applicant Tracking System) resume analyst. Analyze the given resume text and provide detailed, actionable feedback.
 
@@ -636,21 +635,17 @@ Guidelines:
 - strengths: Highlight 3-5 specific things done well
 - weaknesses: Identify 3-5 specific areas needing improvement`;
 
-  const completion = await zai.chat.completions.create({
-    messages: [
+  const raw = await generateText(
+    [
       { role: 'system', content: systemPrompt },
       { role: 'user', content: `Analyze this resume for ATS optimization:\n\n${resumeText}` },
     ],
-    thinking: { type: 'disabled' },
-  });
-
-  const raw = completion.choices[0]?.message?.content?.trim() ?? '';
+    { json: true }
+  );
 
   // Try to parse the JSON response
   try {
-    // Strip any markdown code fences if present
-    const cleaned = raw.replace(/^```(?:json)?\s*\n?/i, '').replace(/\n?```\s*$/i, '').trim();
-    const parsed = JSON.parse(cleaned) as AiAnalysis;
+    const parsed = parseJsonReply<AiAnalysis>(raw);
 
     // Validate and sanitize
     return {
@@ -792,16 +787,18 @@ export async function POST(request: NextRequest) {
     // 7. AI Analysis for Pro users
     let aiAnalysis: AiAnalysis | undefined;
 
-    if (isPremium && text.length > 0) {
+    // Skipped when AI isn't set up; the scoring above still works
+    if (isPremium && text.length > 0 && isAIConfigured()) {
       try {
         aiAnalysis = await runAiAnalysis(text);
-      } catch {
+      } catch (error) {
+        console.error('ATS AI analysis error:', error);
         // AI analysis failed — still return scoring
         aiAnalysis = {
           grammarIssues: [],
           suggestions: [],
           strengths: ['Resume scoring completed successfully.'],
-          weaknesses: ['AI analysis encountered an issue.'],
+          weaknesses: [error instanceof AIError ? error.userMessage : 'AI analysis encountered an issue.'],
         };
       }
     }

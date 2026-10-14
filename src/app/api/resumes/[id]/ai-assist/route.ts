@@ -1,8 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
-import ZAI from 'z-ai-web-dev-sdk';
+import { generateText, isAIConfigured, AIError, AI_NOT_CONFIGURED_MESSAGE } from '@/lib/ai/client';
 import { db } from '@/lib/db';
 import { getAuthUser } from '@/lib/subscription/auth-helpers';
-import { checkAndIncrementUsage } from '@/lib/subscription/service';
+import { checkAndIncrementUsage, recordUsage } from '@/lib/subscription/service';
 import { FEATURE_KEYS } from '@/lib/subscription/features';
 
 // ---------------------------------------------------------------------------
@@ -589,8 +589,12 @@ export async function POST(
       );
     }
 
-    // 5. Feature gating
-    const usage = await checkAndIncrementUsage(auth.userId, FEATURE_KEYS.AI_RESUME_BUILDER);
+    if (!isAIConfigured()) {
+      return NextResponse.json({ success: false, error: AI_NOT_CONFIGURED_MESSAGE }, { status: 503 });
+    }
+
+    // 5. Feature gating (a use is only counted once the AI replies)
+    const usage = await checkAndIncrementUsage(auth.userId, FEATURE_KEYS.AI_RESUME_BUILDER, false);
     if (!usage.allowed) {
       return NextResponse.json(
         {
@@ -607,24 +611,12 @@ export async function POST(
     // 6. Build the AI prompt
     const { systemPrompt, userMessage } = buildPrompt(section, action, body);
 
-    // 7. Call the AI SDK
-    const zai = await ZAI.create();
-    const completion = await zai.chat.completions.create({
-      messages: [
-        { role: 'assistant', content: systemPrompt },
-        { role: 'user', content: userMessage },
-      ],
-      thinking: { type: 'disabled' },
-    });
-
-    const aiResponse = completion.choices[0]?.message?.content?.trim();
-
-    if (!aiResponse) {
-      return NextResponse.json(
-        { success: false, error: 'Failed to generate suggestion' },
-        { status: 500 }
-      );
-    }
+    // 7. Call the AI
+    const aiResponse = await generateText([
+      { role: 'system', content: systemPrompt },
+      { role: 'user', content: userMessage },
+    ]);
+    await recordUsage(auth.userId, FEATURE_KEYS.AI_RESUME_BUILDER);
 
     // 8. Save to AiHistory
     await db.aiHistory.create({
@@ -653,41 +645,8 @@ export async function POST(
   } catch (error) {
     console.error('[AI Assist] Error:', error);
 
-    // Handle ZAI-specific errors gracefully
-    if (error instanceof Error) {
-      const message = error.message.toLowerCase();
-      if (
-        message.includes('rate limit') ||
-        message.includes('quota') ||
-        message.includes('too many requests')
-      ) {
-        return NextResponse.json(
-          { success: false, error: 'AI service is temporarily unavailable. Please try again in a moment.' },
-          { status: 503 }
-        );
-      }
-
-      if (
-        message.includes('api key') ||
-        message.includes('authentication') ||
-        message.includes('unauthorized')
-      ) {
-        return NextResponse.json(
-          { success: false, error: 'AI service configuration error. Please contact support.' },
-          { status: 500 }
-        );
-      }
-
-      if (
-        message.includes('timeout') ||
-        message.includes('network') ||
-        message.includes('fetch')
-      ) {
-        return NextResponse.json(
-          { success: false, error: 'AI service request timed out. Please try again.' },
-          { status: 504 }
-        );
-      }
+    if (error instanceof AIError) {
+      return NextResponse.json({ success: false, error: error.userMessage }, { status: error.status });
     }
 
     return NextResponse.json(
