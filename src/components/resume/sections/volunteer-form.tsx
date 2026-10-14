@@ -76,7 +76,7 @@ export function VolunteerForm({ resumeData, setResumeData, onAiAssist }: Volunte
                 </Button>
               </div>
 
-              <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+              <div className="grid grid-cols-1 gap-4 @md:grid-cols-2">
                 <div>
                   <Label className="font-body">{t('organization')}</Label>
                   <Input

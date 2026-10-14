@@ -74,7 +74,7 @@ export function EducationForm({ resumeData, setResumeData }: EducationFormProps)
                 </Button>
               </div>
 
-              <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+              <div className="grid grid-cols-1 gap-4 @md:grid-cols-2">
                 <div>
                   <Label className="font-body">{t('school')}</Label>
                   <Input
@@ -95,7 +95,7 @@ export function EducationForm({ resumeData, setResumeData }: EducationFormProps)
                 </div>
               </div>
 
-              <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+              <div className="grid grid-cols-1 gap-4 @md:grid-cols-2">
                 <div>
                   <Label className="font-body">{t('degree')}</Label>
                   <Input
@@ -116,7 +116,7 @@ export function EducationForm({ resumeData, setResumeData }: EducationFormProps)
                 </div>
               </div>
 
-              <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
+              <div className="grid grid-cols-1 gap-4 @lg:grid-cols-3">
                 <div>
                   <Label className="font-body">{t('startDate')}</Label>
                   <Input

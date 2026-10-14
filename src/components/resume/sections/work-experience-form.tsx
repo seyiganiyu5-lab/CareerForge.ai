@@ -94,8 +94,8 @@ export function WorkExperienceForm({ resumeData, setResumeData, onAiAssist }: Wo
                 </Button>
               </div>
 
-              <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
-                <div className="sm:col-span-2">
+              <div className="grid grid-cols-1 gap-4 @lg:grid-cols-3">
+                <div className="@lg:col-span-2">
                   <Label className="font-body">{t('company')}</Label>
                   <Input
                     value={item.company}
@@ -115,7 +115,7 @@ export function WorkExperienceForm({ resumeData, setResumeData, onAiAssist }: Wo
                 </div>
               </div>
 
-              <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+              <div className="grid grid-cols-1 gap-4 @md:grid-cols-2">
                 <div>
                   <Label className="font-body">{t('position')}</Label>
                   <Input
@@ -145,7 +145,7 @@ export function WorkExperienceForm({ resumeData, setResumeData, onAiAssist }: Wo
                 </div>
               </div>
 
-              <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+              <div className="grid grid-cols-1 gap-4 @md:grid-cols-2">
                 <div>
                   <Label className="font-body">{t('startDate')}</Label>
                   <Input

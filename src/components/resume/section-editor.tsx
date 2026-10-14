@@ -62,7 +62,7 @@ export function SectionEditor({ resumeData, setResumeData, activeSection, onAiAs
   };
 
   return (
-    <div className="h-full overflow-y-auto">
+    <div className="@container h-full overflow-y-auto">
       <AnimatePresence mode="wait">
         <motion.div
           key={activeSection}
@@ -70,7 +70,7 @@ export function SectionEditor({ resumeData, setResumeData, activeSection, onAiAs
           animate={{ opacity: 1, x: 0 }}
           exit={{ opacity: 0, x: -10 }}
           transition={{ duration: 0.2, ease: 'easeOut' }}
-          className="p-6 max-w-3xl"
+          className="p-4 @md:p-6 max-w-3xl"
         >
           {renderSection()}
         </motion.div>

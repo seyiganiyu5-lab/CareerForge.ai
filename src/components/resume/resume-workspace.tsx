@@ -92,19 +92,17 @@ const ERROR_KEYS: Record<string, string> = {
 
 // ─── Tablet Detection ─────────────────────────────────────────
 
-const TABLET_BREAKPOINT = 1024;
+// Below this width the live preview moves into a sheet, so the form keeps enough room
+const TABLET_BREAKPOINT = 1280;
 
 function useIsTablet() {
   const [isTablet, setIsTablet] = useState(false);
   useEffect(() => {
-    const update = () => {
-      const w = window.innerWidth;
-      setIsTablet(w >= 768 && w < TABLET_BREAKPOINT);
-    };
     const mql = window.matchMedia(`(min-width: 768px) and (max-width: ${TABLET_BREAKPOINT - 1}px)`);
-    mql.addEventListener('change', () => update());
+    const update = () => setIsTablet(mql.matches);
+    mql.addEventListener('change', update);
     update();
-    return () => mql.removeEventListener('change', () => update());
+    return () => mql.removeEventListener('change', update);
   }, []);
   return isTablet;
 }
@@ -195,7 +193,7 @@ function ResumeHeader({
   };
 
   return (
-    <div className="flex h-12 items-center gap-2 border-b border-border/50 px-4 shrink-0">
+    <div className="@container flex h-12 items-center gap-2 border-b border-border/50 px-4 shrink-0">
       {/* Title */}
       <div className="flex items-center gap-2 min-w-0 flex-1">
         {editing ? (
@@ -236,10 +234,11 @@ function ResumeHeader({
         variant="ghost"
         size="sm"
         onClick={onOpenGallery}
+        title={t('templates')}
         className="hidden md:inline-flex items-center gap-1.5 text-muted-foreground h-8"
       >
         <LayoutTemplate className="size-3.5" />
-        <span className="font-body text-xs">{t('templates')}</span>
+        <span className="hidden @4xl:inline font-body text-xs">{t('templates')}</span>
       </Button>
 
       {/* Customize button */}
@@ -247,17 +246,18 @@ function ResumeHeader({
         variant="ghost"
         size="sm"
         onClick={onOpenCustomization}
+        title={t('customize')}
         className="hidden md:inline-flex items-center gap-1.5 text-muted-foreground h-8"
       >
         <Settings2 className="size-3.5" />
-        <span className="font-body text-xs">{t('customize')}</span>
+        <span className="hidden @4xl:inline font-body text-xs">{t('customize')}</span>
       </Button>
 
       {/* Preview button (tablet) */}
       {showPreviewButton && onTogglePreview && (
-        <Button variant="ghost" size="sm" onClick={onTogglePreview} className="flex items-center gap-1.5 text-muted-foreground h-8">
+        <Button variant="ghost" size="sm" onClick={onTogglePreview} title={tc('preview')} className="flex items-center gap-1.5 text-muted-foreground h-8">
           <Eye className="size-4" />
-          <span className="font-body text-xs">{tc('preview')}</span>
+          <span className="hidden @4xl:inline font-body text-xs">{tc('preview')}</span>
         </Button>
       )}
 
@@ -292,7 +292,12 @@ function ResumeHeader({
           ) : (
             <Download className="size-3.5" />
           )}
-          {downloading ? t('exporting') : t('downloadPdf')}
+          {downloading ? t('exporting') : (
+            <>
+              <span className="@4xl:hidden">PDF</span>
+              <span className="hidden @4xl:inline">{t('downloadPdf')}</span>
+            </>
+          )}
         </Button>
       )}
 
@@ -871,7 +876,7 @@ export default function ResumeWorkspace() {
 
           {/* Right preview (desktop only) */}
           {!isTablet && (
-            <div className="w-[440px] shrink-0 border-l border-border/50" style={{ contain: 'layout style' }}>
+            <div className="w-[360px] 2xl:w-[440px] shrink-0 border-l border-border/50" style={{ contain: 'layout style' }}>
               <PreviewContainer customization={customization}>
                 {previewContent}
               </PreviewContainer>

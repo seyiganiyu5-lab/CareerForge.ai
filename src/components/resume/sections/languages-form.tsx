@@ -79,7 +79,7 @@ export function LanguagesForm({ resumeData, setResumeData }: LanguagesFormProps)
           <Card key={item.id} className="relative py-4 transition-shadow hover:shadow-md">
             <CardContent>
               <div className="flex items-center gap-4">
-                <div className="flex-1 grid grid-cols-1 gap-4 sm:grid-cols-2">
+                <div className="flex-1 grid grid-cols-1 gap-4 @md:grid-cols-2">
                   <div>
                     <Label className="font-body">{t('language')}</Label>
                     <Input

@@ -74,7 +74,7 @@ export function CertificationsForm({ resumeData, setResumeData }: Certifications
                 </Button>
               </div>
 
-              <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+              <div className="grid grid-cols-1 gap-4 @md:grid-cols-2">
                 <div>
                   <Label className="font-body">{t('certificateName')}</Label>
                   <Input
@@ -95,7 +95,7 @@ export function CertificationsForm({ resumeData, setResumeData }: Certifications
                 </div>
               </div>
 
-              <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+              <div className="grid grid-cols-1 gap-4 @md:grid-cols-2">
                 <div>
                   <Label className="font-body">{t('issueDate')}</Label>
                   <Input
