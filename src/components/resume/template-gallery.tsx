@@ -15,6 +15,7 @@ import { getAllTemplates, isTemplateFree } from '@/lib/templates/registry';
 import { createDefaultCustomization } from '@/lib/templates/defaults';
 import { THUMBNAIL_RESUME_DATA } from '@/lib/templates/sample-data';
 import type { TemplateId, TemplateCustomization } from '@/types/template';
+import { useTranslations } from '@/i18n/provider';
 
 // Lazy thumbnail renderer
 const TemplateThumbnail = lazy(() =>
@@ -39,8 +40,9 @@ interface TemplateGalleryProps {
 }
 
 function AtsStars({ rating }: { rating: number }) {
+  const t = useTranslations('app.resumeEditor');
   return (
-    <div className="flex items-center gap-0.5" aria-label={`ATS rating: ${rating}/5`}>
+    <div className="flex items-center gap-0.5" aria-label={t('atsRatingAria', { rating })}>
       {Array.from({ length: 5 }).map((_, i) => (
         <Star
           key={i}
@@ -79,6 +81,8 @@ function TemplateCard({
   onPreview: () => void;
   onUpgradeRequest: () => void;
 }) {
+  const t = useTranslations('app.resumeEditor');
+  const tc = useTranslations('app.common');
   const isLocked = tier === 'pro' && !isProUser;
   const customization = createDefaultCustomization(templateId);
 
@@ -114,16 +118,16 @@ function TemplateCard({
           {isLocked ? (
             <Badge className="bg-black/70 text-white text-[10px] border-0 font-body gap-1 backdrop-blur-sm shadow-sm">
               <Lock className="size-2.5" />
-              Pro
+              {tc('pro')}
             </Badge>
           ) : isCurrent ? (
             <Badge className="bg-emerald-600 text-white text-[10px] border-0 font-body gap-1 shadow-sm">
               <Check className="size-2.5" />
-              Active
+              {t('active')}
             </Badge>
           ) : (
             <Badge className="bg-emerald-50 text-emerald-700 dark:bg-emerald-900/40 dark:text-emerald-400 text-[10px] border-0 font-body shadow-sm">
-              Free
+              {t('free')}
             </Badge>
           )}
         </div>
@@ -137,7 +141,7 @@ function TemplateCard({
             className="text-white hover:bg-white/20 font-body text-xs gap-1.5 h-8"
           >
             <Eye className="size-3.5" />
-            Preview
+            {tc('preview')}
           </Button>
           {isLocked ? (
             <Button
@@ -146,7 +150,7 @@ function TemplateCard({
               className="bg-amber-500 hover:bg-amber-600 text-white font-body text-xs gap-1.5 h-8"
             >
               <Zap className="size-3.5" />
-              Upgrade
+              {tc('upgrade')}
             </Button>
           ) : (
             <Button
@@ -155,7 +159,7 @@ function TemplateCard({
               className="bg-white text-gray-900 hover:bg-gray-100 font-body text-xs gap-1.5 h-8 font-medium"
             >
               <Check className="size-3.5" />
-              Use Template
+              {t('useTemplate')}
             </Button>
           )}
         </div>
@@ -185,6 +189,12 @@ export function TemplateGallery({
   open,
   onOpenChange,
 }: TemplateGalleryProps) {
+  const t = useTranslations('app.resumeEditor');
+  const tc = useTranslations('app.common');
+  const describe = (id: TemplateId, original: string) => {
+    const key = `tpl_${id}_desc`;
+    return t.has(key) ? t(key) : original;
+  };
   const [previewTemplateId, setPreviewTemplateId] = useState<TemplateId | null>(null);
   const templates = getAllTemplates();
   const previewTemplate = templates.find(t => t.id === previewTemplateId);
@@ -199,10 +209,10 @@ export function TemplateGallery({
             <div className="flex items-start justify-between gap-4">
               <div>
                 <DialogTitle className="font-heading text-xl text-foreground">
-                  Choose a Template
+                  {t('chooseATemplate')}
                 </DialogTitle>
                 <p className="text-sm text-muted-foreground font-body mt-1.5">
-                  Select a professional template. Switch anytime — your data stays the same.
+                  {t('galleryDescription')}
                 </p>
               </div>
               <Button
@@ -210,6 +220,7 @@ export function TemplateGallery({
                 size="icon"
                 onClick={() => onOpenChange(false)}
                 className="size-8 shrink-0 -mt-1 -mr-2"
+                aria-label={tc('close')}
               >
                 <X className="size-4" />
               </Button>
@@ -223,7 +234,7 @@ export function TemplateGallery({
                   key={template.id}
                   templateId={template.id}
                   name={template.name}
-                  description={template.description}
+                  description={describe(template.id, template.description)}
                   atsRating={template.atsRating}
                   tier={template.tier}
                   isCurrent={template.id === currentTemplateId}
@@ -256,7 +267,7 @@ export function TemplateGallery({
                 <div className="flex items-center gap-3 mt-1.5">
                   {previewTemplate && <AtsStars rating={previewTemplate.atsRating} />}
                   <span className="text-xs text-muted-foreground font-body">
-                    {previewTemplate?.description}
+                    {previewTemplate && describe(previewTemplate.id, previewTemplate.description)}
                   </span>
                 </div>
               </div>
@@ -265,6 +276,7 @@ export function TemplateGallery({
                 size="icon"
                 onClick={() => setPreviewTemplateId(null)}
                 className="size-8 shrink-0 -mt-1 -mr-2"
+                aria-label={tc('close')}
               >
                 <X className="size-4" />
               </Button>
@@ -302,7 +314,7 @@ export function TemplateGallery({
               onClick={() => setPreviewTemplateId(null)}
               className="font-body"
             >
-              Cancel
+              {tc('cancel')}
             </Button>
             {previewTemplateId && !isTemplateFree(previewTemplateId) && !isProUser ? (
               <Button
@@ -313,7 +325,7 @@ export function TemplateGallery({
                 className="font-body"
               >
                 <Zap className="size-4 mr-1.5" />
-                Upgrade to Use
+                {t('upgradeToUse')}
               </Button>
             ) : (
               previewTemplateId && (
@@ -326,7 +338,7 @@ export function TemplateGallery({
                   className="font-body"
                 >
                   <Check className="size-4 mr-1.5" />
-                  Use This Template
+                  {t('useThisTemplate')}
                 </Button>
               )
             )}

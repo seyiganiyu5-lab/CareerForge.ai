@@ -62,7 +62,7 @@ export function useResume(): UseResumeReturn {
       setLoading(true);
       const res = await fetch(`/api/resumes/${id}`, { credentials: 'include' });
       if (!res.ok) {
-        setError('Failed to load resume');
+        setError('load_failed');
         return;
       }
       const data = await res.json();
@@ -98,7 +98,7 @@ export function useResume(): UseResumeReturn {
         lastSavedTemplateRef.current = data.resume.template || 'ats-classic';
       }
     } catch {
-      setError('Network error');
+      setError('network_error');
     } finally {
       setLoading(false);
     }
@@ -322,7 +322,7 @@ export function useResume(): UseResumeReturn {
       }
       return null;
     } catch {
-      setError('Failed to create resume');
+      setError('create_failed');
       return null;
     }
   }, []);

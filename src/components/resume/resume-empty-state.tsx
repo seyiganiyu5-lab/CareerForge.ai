@@ -6,6 +6,7 @@ import { motion } from 'framer-motion';
 import { FileText, Plus, ArrowLeft } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { UpgradeModal } from '@/components/billing/upgrade-modal';
+import { useTranslations } from '@/i18n/provider';
 
 interface ResumeEmptyStateProps {
   error: string | null;
@@ -14,6 +15,8 @@ interface ResumeEmptyStateProps {
 
 export function ResumeEmptyState({ error, onCreateResume }: ResumeEmptyStateProps) {
   const router = useRouter();
+  const t = useTranslations('app.resumeEditor');
+  const tc = useTranslations('app.common');
   const [creating, setCreating] = useState(false);
   const [upgradeOpen, setUpgradeOpen] = useState(error === 'limit_reached');
 
@@ -31,7 +34,7 @@ export function ResumeEmptyState({ error, onCreateResume }: ResumeEmptyStateProp
       <UpgradeModal
         open={upgradeOpen}
         onOpenChange={setUpgradeOpen}
-        featureName="Resume Builder"
+        featureName={t('resumeBuilderFeature')}
       />
     );
   }
@@ -49,11 +52,11 @@ export function ResumeEmptyState({ error, onCreateResume }: ResumeEmptyStateProp
         </div>
 
         <h2 className="font-heading text-2xl font-semibold tracking-tight text-foreground">
-          No Resume Selected
+          {t('emptyTitle')}
         </h2>
 
         <p className="mt-3 font-body text-sm leading-relaxed text-muted-foreground">
-          Select a resume from your list to edit, or create a new one to get started.
+          {t('emptyBody')}
         </p>
 
         <div className="flex items-center gap-3 mt-8">
@@ -63,7 +66,7 @@ export function ResumeEmptyState({ error, onCreateResume }: ResumeEmptyStateProp
             className="font-body"
           >
             <ArrowLeft className="size-4 mr-2" />
-            My Resumes
+            {t('myResumes')}
           </Button>
           <Button
             onClick={handleCreate}
@@ -80,7 +83,7 @@ export function ResumeEmptyState({ error, onCreateResume }: ResumeEmptyStateProp
             ) : (
               <Plus className="size-4" aria-hidden="true" />
             )}
-            {creating ? 'Creating...' : 'New Resume'}
+            {creating ? tc('creating') : t('newResume')}
           </Button>
         </div>
       </motion.div>

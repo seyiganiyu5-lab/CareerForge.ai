@@ -22,6 +22,7 @@ import { SECTIONS, type SectionKey } from '@/types/resume';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Separator } from '@/components/ui/separator';
 import { cn } from '@/lib/utils';
+import { useTranslations } from '@/i18n/provider';
 
 const ICON_MAP: Record<string, LucideIcon> = {
   User,
@@ -57,6 +58,8 @@ export function ResumeSidebar({
   onPreviewClick,
   className,
 }: ResumeSidebarProps) {
+  const t = useTranslations('app.resumeEditor');
+  const tc = useTranslations('app.common');
   return (
     <aside
       className={cn(
@@ -73,14 +76,14 @@ export function ResumeSidebar({
       )}>
         {!collapsed && (
           <span className="font-body text-xs text-muted-foreground truncate">
-            {resumeTitle || 'Untitled Resume'}
+            {resumeTitle || tc('untitledResume')}
           </span>
         )}
       </div>
 
       {/* Section list */}
       <ScrollArea className="flex-1 px-2 py-2">
-        <nav className="flex flex-col gap-0.5" aria-label="Resume sections">
+        <nav className="flex flex-col gap-0.5" aria-label={t('sectionsAria')}>
           {SECTIONS.map((section) => {
             const Icon = ICON_MAP[section.icon];
             const isActive = activeSection === section.key;
@@ -99,12 +102,12 @@ export function ResumeSidebar({
                   collapsed && 'justify-center px-0'
                 )}
                 aria-current={isActive ? 'true' : undefined}
-                title={collapsed ? section.label : undefined}
+                title={collapsed ? t(`section_${section.key}`) : undefined}
               >
                 {Icon && <Icon className={cn('size-4 shrink-0', isActive && 'text-brand')} />}
                 {!collapsed && (
                   <span className="font-body truncate">
-                    {section.label}
+                    {t(`section_${section.key}`)}
                   </span>
                 )}
               </button>
@@ -128,7 +131,7 @@ export function ResumeSidebar({
           >
             <Eye className="size-4 shrink-0" />
             {!collapsed && (
-              <span className="font-body">Preview</span>
+              <span className="font-body">{tc('preview')}</span>
             )}
           </button>
         )}
@@ -140,14 +143,14 @@ export function ResumeSidebar({
             'text-muted-foreground hover:bg-accent hover:text-accent-foreground',
             collapsed && 'justify-center px-0'
           )}
-          aria-label={collapsed ? 'Expand sidebar' : 'Collapse sidebar'}
+          aria-label={collapsed ? t('expandSidebar') : t('collapseSidebar')}
         >
           {collapsed ? (
             <ChevronRight className="size-4" />
           ) : (
             <>
               <ChevronLeft className="size-4" />
-              <span className="font-body">Collapse</span>
+              <span className="font-body">{t('collapse')}</span>
             </>
           )}
         </button>
