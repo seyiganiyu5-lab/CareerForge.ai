@@ -3,6 +3,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { toast } from 'sonner';
+import { useTranslations } from '@/i18n/provider';
 import {
   Sparkles, FileSearch, RefreshCw, CheckCircle2, AlertTriangle,
   ChevronRight, Loader2, ClipboardPaste,
@@ -110,6 +111,7 @@ function ScoreCircle({ score, size = 160 }: { score: number; size?: number }) {
 }
 
 function SectionCard({ section, index }: { section: SectionReview; index: number }) {
+  const t = useTranslations('app.resumeReview');
   const [open, setOpen] = useState(false);
 
   return (
@@ -135,7 +137,7 @@ function SectionCard({ section, index }: { section: SectionReview; index: number
                   variant="outline"
                   className={`text-[10px] ${section.score >= 80 ? 'border-emerald-500/30 text-emerald-600' : section.score >= 60 ? 'border-amber-500/30 text-amber-600' : 'border-red-500/30 text-red-600'}`}
                 >
-                  {section.score >= 80 ? 'Good' : section.score >= 60 ? 'Fair' : 'Needs Work'}
+                  {section.score >= 80 ? t('good') : section.score >= 60 ? t('fair') : t('needsWork')}
                 </Badge>
               </div>
               <Progress value={section.score} className="mt-2 h-1.5" />
@@ -159,13 +161,13 @@ function SectionCard({ section, index }: { section: SectionReview; index: number
               <Separator />
               <div className="p-4 space-y-3">
                 <div>
-                  <h5 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-1.5 font-heading">Feedback</h5>
+                  <h5 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-1.5 font-heading">{t('feedback')}</h5>
                   <p className="text-sm text-foreground/80 font-body leading-relaxed">{section.feedback}</p>
                 </div>
                 <div>
                   <h5 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-1.5 font-heading flex items-center gap-1.5">
                     <AlertTriangle className="w-3 h-3" />
-                    Improvement Suggestions
+                    {t('suggestions')}
                   </h5>
                   <ul className="space-y-1.5">
                     {section.suggestions.map((s, i) => (
@@ -186,6 +188,8 @@ function SectionCard({ section, index }: { section: SectionReview; index: number
 }
 
 function ResumeReviewContent() {
+  const t = useTranslations('app.resumeReview');
+  const tc = useTranslations('app.common');
   const [resumes, setResumes] = useState<ResumeOption[]>([]);
   const [selectedResumeId, setSelectedResumeId] = useState('');
   const [pastedText, setPastedText] = useState('');
@@ -202,7 +206,7 @@ function ResumeReviewContent() {
         setResumes(data.resumes);
       }
     } catch {
-      toast.error('Failed to load resumes');
+      toast.error(t('loadFailed'));
     } finally {
       setIsLoadingResumes(false);
     }
@@ -219,7 +223,7 @@ function ResumeReviewContent() {
     const hasText = inputMode === 'paste' && pastedText.trim();
 
     if (!hasResume && !hasText) {
-      toast.error(inputMode === 'select' ? 'Please select a resume' : 'Please paste your resume text');
+      toast.error(inputMode === 'select' ? t('selectError') : t('pasteError'));
       return;
     }
 
@@ -244,14 +248,14 @@ function ResumeReviewContent() {
       const data = await res.json();
 
       if (!data.success) {
-        toast.error(data.error || 'Analysis failed');
+        toast.error(data.error || t('analysisFailed'));
         return;
       }
 
       setReview(data.review);
-      toast.success('Resume analyzed successfully!');
+      toast.success(t('analyzed'));
     } catch {
-      toast.error('Something went wrong. Please try again.');
+      toast.error(tc('somethingWrong'));
     } finally {
       setIsAnalyzing(false);
     }
@@ -274,10 +278,10 @@ function ResumeReviewContent() {
           <div className="w-9 h-9 rounded-lg bg-brand/10 flex items-center justify-center">
             <Sparkles className="w-5 h-5 text-brand" />
           </div>
-          AI Resume Review
+          {t('title')}
         </h1>
         <p className="text-muted-foreground mt-1.5 font-body text-sm">
-          Get instant, actionable feedback to improve your resume and land more interviews.
+          {t('subtitle')}
         </p>
       </motion.div>
 
@@ -292,9 +296,9 @@ function ResumeReviewContent() {
           >
             <Card>
               <CardHeader className="pb-4">
-                <CardTitle className="text-base font-heading">Select Resume to Analyze</CardTitle>
+                <CardTitle className="text-base font-heading">{t('selectTitle')}</CardTitle>
                 <CardDescription className="font-body text-sm">
-                  Choose a saved resume or paste your resume text directly.
+                  {t('selectSub')}
                 </CardDescription>
               </CardHeader>
               <CardContent className="space-y-4">
@@ -302,11 +306,11 @@ function ResumeReviewContent() {
                   <TabsList className="w-full">
                     <TabsTrigger value="select" className="flex-1 gap-1.5 text-xs sm:text-sm font-body">
                       <FileSearch className="w-3.5 h-3.5" />
-                      Select a Resume
+                      {t('tabSelect')}
                     </TabsTrigger>
                     <TabsTrigger value="paste" className="flex-1 gap-1.5 text-xs sm:text-sm font-body">
                       <ClipboardPaste className="w-3.5 h-3.5" />
-                      Paste Resume Text
+                      {t('tabPaste')}
                     </TabsTrigger>
                   </TabsList>
 
@@ -320,15 +324,15 @@ function ResumeReviewContent() {
                       <div className="text-center py-6">
                         <FileSearch className="w-8 h-8 text-muted-foreground mx-auto mb-2" />
                         <p className="text-sm text-muted-foreground font-body">
-                          No resumes found. Create one first, or paste your text instead.
+                          {t('noResumes')}
                         </p>
                       </div>
                     ) : (
                       <div className="space-y-2">
-                        <Label className="font-body text-sm">Choose a resume</Label>
+                        <Label className="font-body text-sm">{t('chooseResume')}</Label>
                         <Select value={selectedResumeId} onValueChange={setSelectedResumeId}>
                           <SelectTrigger className="w-full font-body">
-                            <SelectValue placeholder="Select a resume..." />
+                            <SelectValue placeholder={t('selectPlaceholder')} />
                           </SelectTrigger>
                           <SelectContent>
                             {resumes.map((r) => (
@@ -344,15 +348,15 @@ function ResumeReviewContent() {
 
                   <TabsContent value="paste" className="mt-4 space-y-3">
                     <div className="space-y-2">
-                      <Label className="font-body text-sm">Resume Text</Label>
+                      <Label className="font-body text-sm">{t('resumeText')}</Label>
                       <Textarea
                         value={pastedText}
                         onChange={(e) => setPastedText(e.target.value)}
-                        placeholder="Paste your resume content here..."
+                        placeholder={t('pastePlaceholder')}
                         className="min-h-[200px] font-body text-sm"
                       />
                       <p className="text-xs text-muted-foreground font-body">
-                        Paste the full text of your resume for the best analysis results.
+                        {t('pasteHint')}
                       </p>
                     </div>
                   </TabsContent>
@@ -368,7 +372,7 @@ function ResumeReviewContent() {
                   ) : (
                     <Sparkles className="w-4 h-4 mr-2" />
                   )}
-                  Analyze Resume
+                  {t('analyze')}
                 </Button>
               </CardContent>
             </Card>
@@ -392,9 +396,9 @@ function ResumeReviewContent() {
                   <Sparkles className="w-10 h-10 text-brand" />
                 </motion.div>
                 <div className="text-center">
-                  <h3 className="font-semibold font-heading">Analyzing Your Resume</h3>
+                  <h3 className="font-semibold font-heading">{t('analyzingTitle')}</h3>
                   <p className="text-sm text-muted-foreground mt-1 font-body">
-                    Our AI is reviewing content quality, formatting, impact, and keywords...
+                    {t('analyzingBody')}
                   </p>
                 </div>
                 <div className="w-48">
@@ -420,14 +424,14 @@ function ResumeReviewContent() {
                   <ScoreCircle score={review.score} />
                   <div className="text-center sm:text-left space-y-2">
                     <h2 className="text-xl font-bold font-heading text-foreground">
-                      Overall Score: {review.score}/100
+                      {t('overallScore', { score: review.score })}
                     </h2>
                     <p className="text-sm text-muted-foreground font-body max-w-sm">
                       {review.score >= 80
-                        ? 'Excellent! Your resume is well-crafted and ready to impress hiring managers.'
+                        ? t('score80')
                         : review.score >= 60
-                          ? 'Good foundation! With a few targeted improvements, your resume can stand out.'
-                          : 'Your resume needs significant improvements. Follow the suggestions below to strengthen it.'}
+                          ? t('score60')
+                          : t('score0')}
                     </p>
                     <Button
                       onClick={handleRegenerate}
@@ -441,7 +445,7 @@ function ResumeReviewContent() {
                       ) : (
                         <RefreshCw className="w-3.5 h-3.5 mr-1.5" />
                       )}
-                      Regenerate
+                      {t('regenerate')}
                     </Button>
                   </div>
                 </div>
@@ -452,7 +456,7 @@ function ResumeReviewContent() {
             <div>
               <h3 className="text-lg font-semibold font-heading mb-3 flex items-center gap-2">
                 <FileSearch className="w-5 h-5 text-brand" />
-                Section Breakdown
+                {t('sectionBreakdown')}
               </h3>
               <ScrollArea className="max-h-[600px]">
                 <div className="space-y-3 pr-2">

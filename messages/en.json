@@ -777,7 +777,17 @@
       "noApplicationsInColumn": "No applications",
       "daysAgo": "{count} days ago",
       "oneDayAgo": "1 day ago",
-      "today": "today"
+      "today": "today",
+      "wm_remote": "Remote",
+      "wm_hybrid": "Hybrid",
+      "wm_onsite": "On-site",
+      "et_fulltime": "Full-time",
+      "et_parttime": "Part-time",
+      "et_contract": "Contract",
+      "et_freelance": "Freelance",
+      "et_internship": "Internship",
+      "clearSearch": "Clear search",
+      "all": "All"
     },
     "templates": {
       "title": "Templates",
@@ -1447,6 +1457,39 @@
       "unlockBody": "Get grammar checking, AI suggestions, strengths/weaknesses analysis, and more with Pro.",
       "runAgain": "Run Another Analysis",
       "proFeatureName": "ATS Checker Pro Analysis"
+    },
+    "resumeReview": {
+      "good": "Good",
+      "fair": "Fair",
+      "needsWork": "Needs Work",
+      "feedback": "Feedback",
+      "suggestions": "Improvement Suggestions",
+      "loadFailed": "Failed to load resumes",
+      "selectError": "Please select a resume",
+      "pasteError": "Please paste your resume text",
+      "analysisFailed": "Analysis failed",
+      "analyzed": "Resume analyzed successfully!",
+      "title": "AI Resume Review",
+      "subtitle": "Get instant, actionable feedback to improve your resume and land more interviews.",
+      "selectTitle": "Select Resume to Analyze",
+      "selectSub": "Choose a saved resume or paste your resume text directly.",
+      "tabSelect": "Select a Resume",
+      "tabPaste": "Paste Resume Text",
+      "noResumes": "No resumes found. Create one first, or paste your text instead.",
+      "chooseResume": "Choose a resume",
+      "selectPlaceholder": "Select a resume...",
+      "resumeText": "Resume Text",
+      "pastePlaceholder": "Paste your resume content here...",
+      "pasteHint": "Paste the full text of your resume for the best analysis results.",
+      "analyze": "Analyze Resume",
+      "analyzingTitle": "Analyzing Your Resume",
+      "analyzingBody": "Our AI is reviewing content quality, formatting, impact, and keywords...",
+      "overallScore": "Overall Score: {score}/100",
+      "score80": "Excellent! Your resume is well-crafted and ready to impress hiring managers.",
+      "score60": "Good foundation! With a few targeted improvements, your resume can stand out.",
+      "score0": "Your resume needs significant improvements. Follow the suggestions below to strengthen it.",
+      "regenerate": "Regenerate",
+      "sectionBreakdown": "Section Breakdown"
     }
   }
 }

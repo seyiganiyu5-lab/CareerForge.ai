@@ -777,7 +777,17 @@
       "noApplicationsInColumn": "Aucune candidature",
       "daysAgo": "il y a {count} jours",
       "oneDayAgo": "il y a 1 jour",
-      "today": "aujourd'hui"
+      "today": "aujourd'hui",
+      "wm_remote": "À distance",
+      "wm_hybrid": "Hybride",
+      "wm_onsite": "Sur site",
+      "et_fulltime": "Temps plein",
+      "et_parttime": "Temps partiel",
+      "et_contract": "Contrat",
+      "et_freelance": "Freelance",
+      "et_internship": "Stage",
+      "clearSearch": "Effacer la recherche",
+      "all": "Tous"
     },
     "templates": {
       "title": "Modèles",
@@ -1447,6 +1457,39 @@
       "unlockBody": "Obtenez la vérification grammaticale, les suggestions IA, l'analyse des points forts et faibles, et plus encore avec Pro.",
       "runAgain": "Lancer une autre analyse",
       "proFeatureName": "Analyse Pro du vérificateur ATS"
+    },
+    "resumeReview": {
+      "good": "Bon",
+      "fair": "Moyen",
+      "needsWork": "À améliorer",
+      "feedback": "Commentaires",
+      "suggestions": "Suggestions d'amélioration",
+      "loadFailed": "Impossible de charger les CV",
+      "selectError": "Veuillez choisir un CV",
+      "pasteError": "Veuillez coller le texte de votre CV",
+      "analysisFailed": "L'analyse a échoué",
+      "analyzed": "CV analysé avec succès !",
+      "title": "Analyse de CV par IA",
+      "subtitle": "Obtenez des conseils immédiats et concrets pour améliorer votre CV et décrocher plus d'entretiens.",
+      "selectTitle": "Choisissez le CV à analyser",
+      "selectSub": "Choisissez un CV enregistré ou collez directement le texte de votre CV.",
+      "tabSelect": "Choisir un CV",
+      "tabPaste": "Coller le texte du CV",
+      "noResumes": "Aucun CV trouvé. Créez-en un d'abord ou collez votre texte.",
+      "chooseResume": "Choisir un CV",
+      "selectPlaceholder": "Sélectionnez un CV...",
+      "resumeText": "Texte du CV",
+      "pastePlaceholder": "Collez ici le contenu de votre CV...",
+      "pasteHint": "Collez le texte complet de votre CV pour une analyse optimale.",
+      "analyze": "Analyser le CV",
+      "analyzingTitle": "Analyse de votre CV",
+      "analyzingBody": "Notre IA examine la qualité du contenu, la mise en forme, l'impact et les mots-clés...",
+      "overallScore": "Score global : {score}/100",
+      "score80": "Excellent ! Votre CV est soigné et prêt à convaincre les recruteurs.",
+      "score60": "De bonnes bases ! Avec quelques améliorations ciblées, votre CV peut se démarquer.",
+      "score0": "Votre CV nécessite des améliorations importantes. Suivez les suggestions ci-dessous pour le renforcer.",
+      "regenerate": "Régénérer",
+      "sectionBreakdown": "Détail par section"
     }
   }
 }
