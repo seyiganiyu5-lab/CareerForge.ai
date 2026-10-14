@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getAuthUser } from '@/lib/subscription/auth-helpers';
-import { checkAndIncrementUsage } from '@/lib/subscription/service';
+import { checkAndIncrementUsage, recordUsage } from '@/lib/subscription/service';
+import { generateText, isAIConfigured, AIError, AI_NOT_CONFIGURED_MESSAGE } from '@/lib/ai/client';
 import { FEATURE_KEYS } from '@/lib/subscription/features';
 import type { AIEditAction } from '@/types/cover-letter';
 
@@ -23,8 +24,12 @@ export async function POST(request: NextRequest, { params }: Params) {
       return NextResponse.json({ success: false, error: 'Unauthorized' }, { status: 401 });
     }
 
-    // Check usage limit
-    const access = await checkAndIncrementUsage(auth.userId, FEATURE_KEYS.AI_COVER_LETTER);
+    if (!isAIConfigured()) {
+      return NextResponse.json({ success: false, error: AI_NOT_CONFIGURED_MESSAGE }, { status: 503 });
+    }
+
+    // Check usage limit (a use is only counted once the AI replies)
+    const access = await checkAndIncrementUsage(auth.userId, FEATURE_KEYS.AI_COVER_LETTER, false);
     if (!access.allowed) {
       if (access.reason === 'limit_reached') {
         return NextResponse.json(
@@ -76,21 +81,18 @@ export async function POST(request: NextRequest, { params }: Params) {
     }
     userPrompt += `Section: ${section}\nText to edit:\n${text}`;
 
-    // Call AI SDK
-    const ZAI = (await import('z-ai-web-dev-sdk')).default;
-    const zai = await ZAI.create();
-    const response = await zai.chat.completions.create({
-      messages: [
-        { role: 'system', content: systemPrompt },
-        { role: 'user', content: userPrompt },
-      ],
-    });
-
-    const result = response.choices?.[0]?.message?.content?.trim() || text;
+    const result = await generateText([
+      { role: 'system', content: systemPrompt },
+      { role: 'user', content: userPrompt },
+    ]);
+    await recordUsage(auth.userId, FEATURE_KEYS.AI_COVER_LETTER);
 
     return NextResponse.json({ success: true, result });
   } catch (error) {
     console.error('AI edit error:', error);
+    if (error instanceof AIError) {
+      return NextResponse.json({ success: false, error: error.userMessage }, { status: error.status });
+    }
     return NextResponse.json(
       { success: false, error: 'Failed to process AI edit. Please try again.' },
       { status: 500 },

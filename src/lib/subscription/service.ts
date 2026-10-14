@@ -160,6 +160,18 @@ export async function checkAndIncrementUsage(
 }
 
 /**
+ * Count one use of a feature (e.g. after an AI request succeeds).
+ */
+export async function recordUsage(userId: string, featureKey: FeatureKey) {
+  const usageField = FEATURE_USAGE_MAP[featureKey];
+  if (!usageField) return;
+  await db.userUsage.update({
+    where: { user_id: userId },
+    data: { [usageField]: { increment: 1 } },
+  });
+}
+
+/**
  * Get current usage for a user.
  */
 export async function getUserUsage(userId: string, preloaded?: Account) {
