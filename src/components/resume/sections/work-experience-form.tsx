@@ -10,6 +10,7 @@ import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
 import { Checkbox } from '@/components/ui/checkbox';
+import { useTranslations } from '@/i18n/provider';
 import {
   Select,
   SelectContent,
@@ -17,6 +18,15 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
+
+const EMPLOYMENT_TYPE_KEYS: Record<string, string> = {
+  'Full-time': 'employmentFullTime',
+  'Part-time': 'employmentPartTime',
+  Contract: 'employmentContract',
+  Freelance: 'employmentFreelance',
+  Internship: 'employmentInternship',
+  'Self-employed': 'employmentSelfEmployed',
+};
 
 interface WorkExperienceFormProps {
   resumeData: ResumeData;
@@ -26,6 +36,7 @@ interface WorkExperienceFormProps {
 
 export function WorkExperienceForm({ resumeData, setResumeData, onAiAssist }: WorkExperienceFormProps) {
   const items = resumeData.workExperience;
+  const t = useTranslations('app.resumeForms');
 
   const addItem = () => {
     setResumeData((prev) => ({
@@ -53,17 +64,17 @@ export function WorkExperienceForm({ resumeData, setResumeData, onAiAssist }: Wo
   return (
     <div className="space-y-1">
       <h3 className="font-heading text-lg font-semibold text-foreground">
-        Work Experience
+        {t('workExperienceTitle')}
       </h3>
       <p className="font-body text-sm text-muted-foreground">
-        List your work history, starting with the most recent position.
+        {t('workExperienceDescription')}
       </p>
 
       <div className="mt-4 space-y-4">
         {items.length === 0 && (
           <div className="rounded-lg border border-dashed p-8 text-center">
             <p className="font-body text-sm text-muted-foreground">
-              No entries yet. Click the button below to add one.
+              {t('noEntries')}
             </p>
           </div>
         )}
@@ -77,7 +88,7 @@ export function WorkExperienceForm({ resumeData, setResumeData, onAiAssist }: Wo
                   size="icon"
                   className="size-8 text-muted-foreground hover:text-destructive"
                   onClick={() => removeItem(item.id)}
-                  aria-label="Delete work experience entry"
+                  aria-label={t('deleteWorkExperience')}
                 >
                   <Trash2 className="size-4" />
                 </Button>
@@ -85,20 +96,20 @@ export function WorkExperienceForm({ resumeData, setResumeData, onAiAssist }: Wo
 
               <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
                 <div className="sm:col-span-2">
-                  <Label className="font-body">Company</Label>
+                  <Label className="font-body">{t('company')}</Label>
                   <Input
                     value={item.company}
                     onChange={(e) => updateItem(item.id, 'company', e.target.value)}
-                    placeholder="Google"
+                    placeholder={t('companyPlaceholder')}
                     className="mt-1.5 font-body"
                   />
                 </div>
                 <div>
-                  <Label className="font-body">Location</Label>
+                  <Label className="font-body">{t('location')}</Label>
                   <Input
                     value={item.location}
                     onChange={(e) => updateItem(item.id, 'location', e.target.value)}
-                    placeholder="Mountain View, CA"
+                    placeholder={t('workLocationPlaceholder')}
                     className="mt-1.5 font-body"
                   />
                 </div>
@@ -106,27 +117,27 @@ export function WorkExperienceForm({ resumeData, setResumeData, onAiAssist }: Wo
 
               <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                 <div>
-                  <Label className="font-body">Position</Label>
+                  <Label className="font-body">{t('position')}</Label>
                   <Input
                     value={item.position}
                     onChange={(e) => updateItem(item.id, 'position', e.target.value)}
-                    placeholder="Senior Software Engineer"
+                    placeholder={t('professionalTitlePlaceholder')}
                     className="mt-1.5 font-body"
                   />
                 </div>
                 <div>
-                  <Label className="font-body">Employment Type</Label>
+                  <Label className="font-body">{t('employmentType')}</Label>
                   <Select
                     value={item.employmentType}
                     onValueChange={(v) => updateItem(item.id, 'employmentType', v)}
                   >
                     <SelectTrigger className="mt-1.5 w-full font-body">
-                      <SelectValue placeholder="Select type" />
+                      <SelectValue placeholder={t('selectType')} />
                     </SelectTrigger>
                     <SelectContent>
                       {EMPLOYMENT_TYPES.map((type) => (
                         <SelectItem key={type} value={type}>
-                          {type}
+                          {EMPLOYMENT_TYPE_KEYS[type] ? t(EMPLOYMENT_TYPE_KEYS[type]) : type}
                         </SelectItem>
                       ))}
                     </SelectContent>
@@ -136,7 +147,7 @@ export function WorkExperienceForm({ resumeData, setResumeData, onAiAssist }: Wo
 
               <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                 <div>
-                  <Label className="font-body">Start Date</Label>
+                  <Label className="font-body">{t('startDate')}</Label>
                   <Input
                     type="month"
                     value={item.startDate}
@@ -145,7 +156,7 @@ export function WorkExperienceForm({ resumeData, setResumeData, onAiAssist }: Wo
                   />
                 </div>
                 <div>
-                  <Label className="font-body">End Date</Label>
+                  <Label className="font-body">{t('endDate')}</Label>
                   <Input
                     type="month"
                     value={item.endDate}
@@ -165,13 +176,13 @@ export function WorkExperienceForm({ resumeData, setResumeData, onAiAssist }: Wo
                   }
                 />
                 <Label htmlFor={`current-${item.id}`} className="font-body text-sm font-normal">
-                  I currently work here
+                  {t('currentlyWorkHere')}
                 </Label>
               </div>
 
               <div>
               <div className="flex items-center justify-between">
-                <Label className="font-body">Description</Label>
+                <Label className="font-body">{t('description')}</Label>
                 <Button
                   type="button"
                   variant="ghost"
@@ -183,7 +194,7 @@ export function WorkExperienceForm({ resumeData, setResumeData, onAiAssist }: Wo
                     itemId: item.id,
                     field: 'description',
                   })}
-                  aria-label="AI Assist"
+                  aria-label={t('aiAssist')}
                 >
                   <Sparkles className="size-4" />
                 </Button>
@@ -191,7 +202,7 @@ export function WorkExperienceForm({ resumeData, setResumeData, onAiAssist }: Wo
                 <Textarea
                   value={item.description}
                   onChange={(e) => updateItem(item.id, 'description', e.target.value)}
-                  placeholder="Describe your responsibilities, achievements, and impact..."
+                  placeholder={t('workDescriptionPlaceholder')}
                   className="mt-1.5 min-h-[100px] resize-y font-body"
                 />
               </div>
@@ -205,7 +216,7 @@ export function WorkExperienceForm({ resumeData, setResumeData, onAiAssist }: Wo
           className="w-full font-body"
         >
           <Plus className="size-4" aria-hidden="true" />
-          Add Experience
+          {t('addExperience')}
         </Button>
       </div>
     </div>

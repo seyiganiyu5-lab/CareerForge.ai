@@ -7,6 +7,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { useTranslations } from '@/i18n/provider';
 
 interface AwardsFormProps {
   resumeData: ResumeData;
@@ -15,6 +16,7 @@ interface AwardsFormProps {
 
 export function AwardsForm({ resumeData, setResumeData }: AwardsFormProps) {
   const items = resumeData.awards;
+  const t = useTranslations('app.resumeForms');
 
   const addItem = () => {
     setResumeData((prev) => ({
@@ -42,17 +44,17 @@ export function AwardsForm({ resumeData, setResumeData }: AwardsFormProps) {
   return (
     <div className="space-y-1">
       <h3 className="font-heading text-lg font-semibold text-foreground">
-        Awards
+        {t('awardsTitle')}
       </h3>
       <p className="font-body text-sm text-muted-foreground">
-        List any awards, honors, or recognition you have received.
+        {t('awardsDescription')}
       </p>
 
       <div className="mt-4 space-y-4">
         {items.length === 0 && (
           <div className="rounded-lg border border-dashed p-8 text-center">
             <p className="font-body text-sm text-muted-foreground">
-              No entries yet. Click the button below to add one.
+              {t('noEntries')}
             </p>
           </div>
         )}
@@ -63,16 +65,16 @@ export function AwardsForm({ resumeData, setResumeData }: AwardsFormProps) {
               <div className="flex items-center gap-4">
                 <div className="flex-1 grid grid-cols-1 gap-4 sm:grid-cols-3">
                   <div className="sm:col-span-2">
-                    <Label className="font-body">Award Name</Label>
+                    <Label className="font-body">{t('awardName')}</Label>
                     <Input
                       value={item.name}
                       onChange={(e) => updateItem(item.id, 'name', e.target.value)}
-                      placeholder="Employee of the Year"
+                      placeholder={t('awardNamePlaceholder')}
                       className="mt-1.5 font-body"
                     />
                   </div>
                   <div>
-                    <Label className="font-body">Year</Label>
+                    <Label className="font-body">{t('year')}</Label>
                     <Input
                       type="number"
                       value={item.year}
@@ -87,18 +89,18 @@ export function AwardsForm({ resumeData, setResumeData }: AwardsFormProps) {
                   size="icon"
                   className="mt-6 size-8 shrink-0 text-muted-foreground hover:text-destructive"
                   onClick={() => removeItem(item.id)}
-                  aria-label="Delete award entry"
+                  aria-label={t('deleteAward')}
                 >
                   <Trash2 className="size-4" />
                 </Button>
               </div>
 
               <div className="mt-4">
-                <Label className="font-body">Organization</Label>
+                <Label className="font-body">{t('organization')}</Label>
                 <Input
                   value={item.organization}
                   onChange={(e) => updateItem(item.id, 'organization', e.target.value)}
-                  placeholder="Acme Corporation"
+                  placeholder={t('awardOrganizationPlaceholder')}
                   className="mt-1.5 font-body"
                 />
               </div>
@@ -112,7 +114,7 @@ export function AwardsForm({ resumeData, setResumeData }: AwardsFormProps) {
           className="w-full font-body"
         >
           <Plus className="size-4" aria-hidden="true" />
-          Add Award
+          {t('addAward')}
         </Button>
       </div>
     </div>

@@ -8,6 +8,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { useTranslations } from '@/i18n/provider';
 import {
   Select,
   SelectContent,
@@ -16,6 +17,14 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 
+const LANGUAGE_LEVEL_KEYS: Record<string, string> = {
+  Native: 'levelNative',
+  Fluent: 'levelFluent',
+  Advanced: 'levelAdvanced',
+  Intermediate: 'levelIntermediate',
+  Beginner: 'levelBeginner',
+};
+
 interface LanguagesFormProps {
   resumeData: ResumeData;
   setResumeData: React.Dispatch<React.SetStateAction<ResumeData>>;
@@ -23,6 +32,7 @@ interface LanguagesFormProps {
 
 export function LanguagesForm({ resumeData, setResumeData }: LanguagesFormProps) {
   const items = resumeData.languages;
+  const t = useTranslations('app.resumeForms');
 
   const addItem = () => {
     setResumeData((prev) => ({
@@ -50,17 +60,17 @@ export function LanguagesForm({ resumeData, setResumeData }: LanguagesFormProps)
   return (
     <div className="space-y-1">
       <h3 className="font-heading text-lg font-semibold text-foreground">
-        Languages
+        {t('languagesTitle')}
       </h3>
       <p className="font-body text-sm text-muted-foreground">
-        List the languages you speak and your proficiency level.
+        {t('languagesDescription')}
       </p>
 
       <div className="mt-4 space-y-4">
         {items.length === 0 && (
           <div className="rounded-lg border border-dashed p-8 text-center">
             <p className="font-body text-sm text-muted-foreground">
-              No entries yet. Click the button below to add one.
+              {t('noEntries')}
             </p>
           </div>
         )}
@@ -71,27 +81,27 @@ export function LanguagesForm({ resumeData, setResumeData }: LanguagesFormProps)
               <div className="flex items-center gap-4">
                 <div className="flex-1 grid grid-cols-1 gap-4 sm:grid-cols-2">
                   <div>
-                    <Label className="font-body">Language</Label>
+                    <Label className="font-body">{t('language')}</Label>
                     <Input
                       value={item.language}
                       onChange={(e) => updateItem(item.id, 'language', e.target.value)}
-                      placeholder="Spanish"
+                      placeholder={t('languagePlaceholder')}
                       className="mt-1.5 font-body"
                     />
                   </div>
                   <div>
-                    <Label className="font-body">Proficiency</Label>
+                    <Label className="font-body">{t('proficiency')}</Label>
                     <Select
                       value={item.proficiency}
                       onValueChange={(v) => updateItem(item.id, 'proficiency', v)}
                     >
                       <SelectTrigger className="mt-1.5 w-full font-body">
-                        <SelectValue placeholder="Select level" />
+                        <SelectValue placeholder={t('selectLevel')} />
                       </SelectTrigger>
                       <SelectContent>
                         {PROFICIENCY_LEVELS.map((level) => (
                           <SelectItem key={level} value={level}>
-                            {level}
+                            {LANGUAGE_LEVEL_KEYS[level] ? t(LANGUAGE_LEVEL_KEYS[level]) : level}
                           </SelectItem>
                         ))}
                       </SelectContent>
@@ -103,7 +113,7 @@ export function LanguagesForm({ resumeData, setResumeData }: LanguagesFormProps)
                   size="icon"
                   className="mt-6 size-8 shrink-0 text-muted-foreground hover:text-destructive"
                   onClick={() => removeItem(item.id)}
-                  aria-label="Delete language entry"
+                  aria-label={t('deleteLanguage')}
                 >
                   <Trash2 className="size-4" />
                 </Button>
@@ -118,7 +128,7 @@ export function LanguagesForm({ resumeData, setResumeData }: LanguagesFormProps)
           className="w-full font-body"
         >
           <Plus className="size-4" aria-hidden="true" />
-          Add Language
+          {t('addLanguage')}
         </Button>
       </div>
     </div>

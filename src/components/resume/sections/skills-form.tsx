@@ -9,6 +9,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { useTranslations } from '@/i18n/provider';
 
 const PROFICIENCY_OPTIONS: { value: SkillProficiency | 'none'; label: string }[] = [
   { value: 'none', label: 'None' },
@@ -20,6 +21,18 @@ const PROFICIENCY_OPTIONS: { value: SkillProficiency | 'none'; label: string }[]
 
 const PROFICIENCY_LABELS = ['Expert', 'Advanced', 'Intermediate', 'Basic'] as const;
 
+const PROFICIENCY_KEYS: Record<string, string> = {
+  Expert: 'levelExpert',
+  Advanced: 'levelAdvanced',
+  Intermediate: 'levelIntermediate',
+  Basic: 'levelBasic',
+};
+
+function useProficiencyLabel() {
+  const t = useTranslations('app.resumeForms');
+  return (value: string) => (PROFICIENCY_KEYS[value] ? t(PROFICIENCY_KEYS[value]) : value);
+}
+
 interface SkillsFormProps {
   resumeData: ResumeData;
   setResumeData: React.Dispatch<React.SetStateAction<ResumeData>>;
@@ -29,6 +42,7 @@ interface SkillsFormProps {
 /* ── Proficiency chip selector (inline toggle group) ─────────── */
 
 function ProficiencySelector({ value, onChange }: { value: string; onChange: (v: string) => void }) {
+  const levelLabel = useProficiencyLabel();
   return (
     <div className="flex items-center gap-1">
       {PROFICIENCY_LABELS.map((label) => (
@@ -42,7 +56,7 @@ function ProficiencySelector({ value, onChange }: { value: string; onChange: (v:
               : 'text-muted-foreground hover:text-foreground hover:bg-accent'
           }`}
         >
-          {label}
+          {levelLabel(label)}
         </button>
       ))}
     </div>
@@ -60,6 +74,8 @@ function ProficiencyPopover({
   currentProficiency?: SkillProficiency;
   onUpdate: (id: string, proficiency: SkillProficiency | undefined) => void;
 }) {
+  const t = useTranslations('app.resumeForms');
+  const levelLabel = useProficiencyLabel();
   const [open, setOpen] = useState(false);
 
   const select = (p: SkillProficiency | undefined) => {
@@ -72,7 +88,7 @@ function ProficiencyPopover({
       <PopoverTrigger asChild>
         <button
           className="ml-0.5 rounded p-0.5 hover:bg-foreground/10 transition-colors text-muted-foreground/40 hover:text-foreground opacity-0 group-hover:opacity-100"
-          aria-label="Change proficiency level"
+          aria-label={t('changeProficiency')}
         >
           <ChevronDown className="size-2.5" />
         </button>
@@ -85,7 +101,7 @@ function ProficiencyPopover({
               !currentProficiency ? 'bg-accent font-medium' : ''
             }`}
           >
-            None
+            {t('levelNone')}
           </button>
           {PROFICIENCY_LABELS.map((level) => (
             <button
@@ -95,7 +111,7 @@ function ProficiencyPopover({
                 currentProficiency === level ? 'bg-accent font-medium' : ''
               }`}
             >
-              {level}
+              {levelLabel(level)}
             </button>
           ))}
         </div>
@@ -120,6 +136,8 @@ function SkillInputGroup({
   onUpdateProficiency,
   placeholder,
   accentColor,
+  addAriaLabel,
+  emptyText,
 }: {
   label: string;
   icon: React.ElementType;
@@ -134,7 +152,11 @@ function SkillInputGroup({
   onUpdateProficiency: (id: string, proficiency: SkillProficiency | undefined) => void;
   placeholder: string;
   accentColor: string;
+  addAriaLabel: string;
+  emptyText: string;
 }) {
+  const t = useTranslations('app.resumeForms');
+  const levelLabel = useProficiencyLabel();
   const filtered = skills.filter((s) => (s.type || 'technical') === skillType);
 
   const handleKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
@@ -167,7 +189,7 @@ function SkillInputGroup({
           size="sm"
           onClick={() => onAdd(inputValue, proficiencyValue !== 'none' ? proficiencyValue : undefined)}
           disabled={!inputValue.trim()}
-          aria-label={`Add ${label.toLowerCase()} skill`}
+          aria-label={addAriaLabel}
           className="shrink-0"
         >
           <Plus className="size-3.5" />
@@ -177,7 +199,7 @@ function SkillInputGroup({
       {/* Proficiency selector (only shown when input has value) */}
       {inputValue.trim() && (
         <div className="flex items-center gap-2 pl-0.5">
-          <span className="text-[11px] text-muted-foreground font-body">Level:</span>
+          <span className="text-[11px] text-muted-foreground font-body">{t('levelLabel')}</span>
           <ProficiencySelector value={proficiencyValue || 'none'} onChange={setProficiencyValue} />
         </div>
       )}
@@ -185,7 +207,7 @@ function SkillInputGroup({
       {/* Skills list */}
       {filtered.length === 0 ? (
         <p className="text-xs text-muted-foreground font-body">
-          No {label.toLowerCase()} added yet. Type above to add one.
+          {emptyText}
         </p>
       ) : (
         <div className="max-h-[220px] overflow-y-auto pr-1 custom-scrollbar">
@@ -199,13 +221,13 @@ function SkillInputGroup({
                 <span>{skill.name}</span>
                 {skill.proficiency && (
                   <span className="text-[10px] text-muted-foreground/60 font-normal ml-0.5">
-                    {skill.proficiency}
+                    {levelLabel(skill.proficiency)}
                   </span>
                 )}
                 <button
                   onClick={() => onRemove(skill.id)}
                   className="ml-1 rounded-full p-0.5 opacity-0 group-hover:opacity-100 hover:bg-foreground/10 transition-all"
-                  aria-label={`Remove ${skill.name}`}
+                  aria-label={t('removeSkill', { name: skill.name })}
                 >
                   <X className="size-3" />
                 </button>
@@ -226,6 +248,7 @@ function SkillInputGroup({
 /* ── Main form ────────────────────────────────────────────────── */
 
 export function SkillsForm({ resumeData, setResumeData, onAiAssist }: SkillsFormProps) {
+  const t = useTranslations('app.resumeForms');
   const [techInput, setTechInput] = useState('');
   const [softInput, setSoftInput] = useState('');
   const [techProficiency, setTechProficiency] = useState('none');
@@ -274,7 +297,7 @@ export function SkillsForm({ resumeData, setResumeData, onAiAssist }: SkillsForm
     <div className="space-y-1">
       <div className="flex items-center justify-between">
         <h3 className="font-heading text-lg font-semibold text-foreground">
-          Skills
+          {t('skillsTitle')}
         </h3>
         <Button
           type="button"
@@ -285,13 +308,13 @@ export function SkillsForm({ resumeData, setResumeData, onAiAssist }: SkillsForm
             section: 'skills',
             content: resumeData.skills.map(s => s.name).join(', '),
           })}
-          aria-label="AI Assist"
+          aria-label={t('aiAssist')}
         >
           <Sparkles className="size-4" />
         </Button>
       </div>
       <p className="font-body text-sm text-muted-foreground">
-        Add your skills. Set proficiency levels to stand out to recruiters.
+        {t('skillsDescription')}
       </p>
 
       <div className="mt-4">
@@ -299,7 +322,7 @@ export function SkillsForm({ resumeData, setResumeData, onAiAssist }: SkillsForm
           <TabsList className="w-full grid grid-cols-2">
             <TabsTrigger value="technical" className="gap-1.5">
               <Code2 className="size-3.5" />
-              Technical
+              {t('technicalTab')}
               {techCount > 0 && (
                 <Badge variant="secondary" className="ml-1 text-xs tabular-nums px-1.5 py-0">
                   {techCount}
@@ -308,7 +331,7 @@ export function SkillsForm({ resumeData, setResumeData, onAiAssist }: SkillsForm
             </TabsTrigger>
             <TabsTrigger value="soft" className="gap-1.5">
               <Heart className="size-3.5" />
-              Soft Skills
+              {t('softSkills')}
               {softCount > 0 && (
                 <Badge variant="secondary" className="ml-1 text-xs tabular-nums px-1.5 py-0">
                   {softCount}
@@ -319,7 +342,7 @@ export function SkillsForm({ resumeData, setResumeData, onAiAssist }: SkillsForm
 
           <TabsContent value="technical" className="mt-4">
             <SkillInputGroup
-              label="Technical Skills"
+              label={t('technicalSkills')}
               icon={Code2}
               skillType="technical"
               skills={skills}
@@ -330,14 +353,16 @@ export function SkillsForm({ resumeData, setResumeData, onAiAssist }: SkillsForm
               onAdd={(name, prof) => addSkill(name, 'technical', prof)}
               onRemove={removeSkill}
               onUpdateProficiency={updateProficiency}
-              placeholder="e.g. JavaScript, Python, React..."
+              placeholder={t('technicalSkillsPlaceholder')}
+              addAriaLabel={t('addTechnicalSkill')}
+              emptyText={t('noTechnicalSkills')}
               accentColor="text-brand"
             />
           </TabsContent>
 
           <TabsContent value="soft" className="mt-4">
             <SkillInputGroup
-              label="Soft Skills"
+              label={t('softSkills')}
               icon={Heart}
               skillType="soft"
               skills={skills}
@@ -348,7 +373,9 @@ export function SkillsForm({ resumeData, setResumeData, onAiAssist }: SkillsForm
               onAdd={(name, prof) => addSkill(name, 'soft', prof)}
               onRemove={removeSkill}
               onUpdateProficiency={updateProficiency}
-              placeholder="e.g. Leadership, Communication..."
+              placeholder={t('softSkillsPlaceholder')}
+              addAriaLabel={t('addSoftSkill')}
+              emptyText={t('noSoftSkills')}
               accentColor="text-pink-500"
             />
           </TabsContent>
