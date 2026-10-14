@@ -75,46 +75,46 @@ interface ResultItem {
 
 const SECTION_ACTIONS: Record<
   string,
-  Array<{ action: string; icon: ElementType; label: string }>
+  Array<{ action: string; icon: ElementType; labelKey: string }>
 > = {
   professionalSummary: [
-    { action: 'generate', icon: Wand2, label: 'Generate' },
-    { action: 'rewrite', icon: RotateCcw, label: 'Rewrite' },
-    { action: 'improve', icon: Lightbulb, label: 'Improve' },
-    { action: 'shorten', icon: Shrink, label: 'Shorten' },
-    { action: 'expand', icon: Expand, label: 'Expand' },
-    { action: 'more_professional', icon: Briefcase, label: 'More Professional' },
-    { action: 'more_technical', icon: Wrench, label: 'More Technical' },
-    { action: 'simplify', icon: Type, label: 'Simplify' },
-    { action: 'keywords', icon: Search, label: 'Keywords' },
-    { action: 'grammar', icon: ShieldCheck, label: 'Grammar Check' },
+    { action: 'generate', icon: Wand2, labelKey: 'actionGenerate' },
+    { action: 'rewrite', icon: RotateCcw, labelKey: 'actionRewrite' },
+    { action: 'improve', icon: Lightbulb, labelKey: 'actionImprove' },
+    { action: 'shorten', icon: Shrink, labelKey: 'actionShorten' },
+    { action: 'expand', icon: Expand, labelKey: 'actionExpand' },
+    { action: 'more_professional', icon: Briefcase, labelKey: 'actionMoreProfessional' },
+    { action: 'more_technical', icon: Wrench, labelKey: 'actionMoreTechnical' },
+    { action: 'simplify', icon: Type, labelKey: 'actionSimplify' },
+    { action: 'keywords', icon: Search, labelKey: 'actionKeywords' },
+    { action: 'grammar', icon: ShieldCheck, labelKey: 'actionGrammarCheck' },
   ],
   workExperience: [
-    { action: 'generate', icon: Wand2, label: 'Generate Bullets' },
-    { action: 'rewrite', icon: RotateCcw, label: 'Rewrite' },
-    { action: 'improve', icon: Lightbulb, label: 'Improve' },
-    { action: 'expand', icon: Expand, label: 'Expand' },
-    { action: 'condense', icon: Shrink, label: 'Condense' },
-    { action: 'achievement', icon: Target, label: 'Achievements' },
-    { action: 'more_professional', icon: Briefcase, label: 'More Professional' },
-    { action: 'more_technical', icon: Wrench, label: 'More Technical' },
-    { action: 'simplify', icon: Type, label: 'Simplify' },
-    { action: 'grammar', icon: ShieldCheck, label: 'Grammar Check' },
+    { action: 'generate', icon: Wand2, labelKey: 'actionGenerateBullets' },
+    { action: 'rewrite', icon: RotateCcw, labelKey: 'actionRewrite' },
+    { action: 'improve', icon: Lightbulb, labelKey: 'actionImprove' },
+    { action: 'expand', icon: Expand, labelKey: 'actionExpand' },
+    { action: 'condense', icon: Shrink, labelKey: 'actionCondense' },
+    { action: 'achievement', icon: Target, labelKey: 'actionAchievements' },
+    { action: 'more_professional', icon: Briefcase, labelKey: 'actionMoreProfessional' },
+    { action: 'more_technical', icon: Wrench, labelKey: 'actionMoreTechnical' },
+    { action: 'simplify', icon: Type, labelKey: 'actionSimplify' },
+    { action: 'grammar', icon: ShieldCheck, labelKey: 'actionGrammarCheck' },
   ],
   education: [
-    { action: 'improve', icon: Lightbulb, label: 'Improve' },
-    { action: 'rewrite', icon: RotateCcw, label: 'Rewrite' },
-    { action: 'grammar', icon: ShieldCheck, label: 'Grammar Check' },
+    { action: 'improve', icon: Lightbulb, labelKey: 'actionImprove' },
+    { action: 'rewrite', icon: RotateCcw, labelKey: 'actionRewrite' },
+    { action: 'grammar', icon: ShieldCheck, labelKey: 'actionGrammarCheck' },
   ],
   skills: [
-    { action: 'skills_suggest', icon: Wand2, label: 'Suggest Skills' },
-    { action: 'improve', icon: Lightbulb, label: 'Improve' },
+    { action: 'skills_suggest', icon: Wand2, labelKey: 'actionSuggestSkills' },
+    { action: 'improve', icon: Lightbulb, labelKey: 'actionImprove' },
   ],
   projects: [
-    { action: 'generate', icon: Wand2, label: 'Generate' },
-    { action: 'improve', icon: Lightbulb, label: 'Improve' },
-    { action: 'achievement', icon: Target, label: 'Achievements' },
-    { action: 'grammar', icon: ShieldCheck, label: 'Grammar Check' },
+    { action: 'generate', icon: Wand2, labelKey: 'actionGenerate' },
+    { action: 'improve', icon: Lightbulb, labelKey: 'actionImprove' },
+    { action: 'achievement', icon: Target, labelKey: 'actionAchievements' },
+    { action: 'grammar', icon: ShieldCheck, labelKey: 'actionGrammarCheck' },
   ],
 };
 
@@ -122,18 +122,18 @@ const SECTION_ACTIONS: Record<
 // Section display names
 // ---------------------------------------------------------------------------
 
-const SECTION_DISPLAY_NAMES: Record<string, string> = {
-  professionalSummary: 'Professional Summary',
-  workExperience: 'Work Experience',
-  education: 'Education',
-  skills: 'Skills',
-  projects: 'Projects',
-  certifications: 'Certifications',
-  languages: 'Languages',
-  awards: 'Awards',
-  volunteerExperience: 'Volunteer Experience',
-  references: 'References',
-  additionalInfo: 'Additional Info',
+const SECTION_DISPLAY_KEYS: Record<string, string> = {
+  professionalSummary: 'sectionProfessionalSummary',
+  workExperience: 'sectionWorkExperience',
+  education: 'sectionEducation',
+  skills: 'sectionSkills',
+  projects: 'sectionProjects',
+  certifications: 'sectionCertifications',
+  languages: 'sectionLanguages',
+  awards: 'sectionAwards',
+  volunteerExperience: 'sectionVolunteerExperience',
+  references: 'sectionReferences',
+  additionalInfo: 'sectionAdditionalInfo',
 };
 
 // ---------------------------------------------------------------------------
@@ -141,12 +141,12 @@ const SECTION_DISPLAY_NAMES: Record<string, string> = {
 // ---------------------------------------------------------------------------
 
 const LOADING_MESSAGES = [
-  'Thinking...',
-  'Generating...',
-  'Improving...',
-  'Analyzing...',
-  'Crafting...',
-  'Polishing...',
+  'loadingThinking',
+  'loadingGenerating',
+  'loadingImproving',
+  'loadingAnalyzing',
+  'loadingCrafting',
+  'loadingPolishing',
 ];
 
 // ---------------------------------------------------------------------------
@@ -177,6 +177,8 @@ export function AiAssistPanel({
 }: AiAssistPanelProps) {
   // ---- i18n ----
   const t = useTranslations('ai.assistant');
+  const ta = useTranslations('app.aiPanel');
+  const tc = useTranslations('app.common');
 
   // ---- State ----
   const [results, setResults] = useState<ResultItem[]>([]);
@@ -187,12 +189,14 @@ export function AiAssistPanel({
   const requestInProgressRef = useRef(false);
 
   const actions = SECTION_ACTIONS[section] ?? [
-    { action: 'improve', icon: Lightbulb, label: 'Improve' },
-    { action: 'rewrite', icon: RotateCcw, label: 'Rewrite' },
-    { action: 'grammar', icon: ShieldCheck, label: 'Grammar Check' },
+    { action: 'improve', icon: Lightbulb, labelKey: 'actionImprove' },
+    { action: 'rewrite', icon: RotateCcw, labelKey: 'actionRewrite' },
+    { action: 'grammar', icon: ShieldCheck, labelKey: 'actionGrammarCheck' },
   ];
 
-  const sectionDisplayName = SECTION_DISPLAY_NAMES[section] ?? section;
+  const sectionDisplayName = SECTION_DISPLAY_KEYS[section]
+    ? ta(SECTION_DISPLAY_KEYS[section])
+    : section;
 
   // ---- Loading message cycling ----
   useEffect(() => {
@@ -268,7 +272,7 @@ export function AiAssistPanel({
             );
             return;
           }
-          throw new Error(data.error || 'Failed to generate suggestion');
+          throw new Error(data.error || ta('generateFailed'));
         }
 
         setResults((prev) =>
@@ -288,7 +292,7 @@ export function AiAssistPanel({
                   error:
                     err instanceof Error
                       ? err.message
-                      : 'An error occurred',
+                      : ta('errorOccurred'),
                 }
               : r,
           ),
@@ -298,7 +302,7 @@ export function AiAssistPanel({
         requestInProgressRef.current = false;
       }
     },
-    [resumeId, section, content, itemId, field, resumeData, onOpenChange],
+    [resumeId, section, content, itemId, field, resumeData, onOpenChange, ta],
   );
 
   // ---- Copy to clipboard ----
@@ -365,7 +369,7 @@ export function AiAssistPanel({
               </div>
               <div>
                 <SheetTitle className="font-heading text-base font-semibold text-foreground">
-                  AI Resume Assistant
+                  {t('title')}
                 </SheetTitle>
                 <p className="mt-0.5 text-xs text-muted-foreground font-body">
                   {t('subtitle') || 'Powered by AI'}
@@ -380,7 +384,7 @@ export function AiAssistPanel({
               onClick={() => handleOpenChange(false)}
             >
               <X className="size-4" />
-              <span className="sr-only">Close</span>
+              <span className="sr-only">{tc('close')}</span>
             </Button>
           </div>
 
@@ -406,7 +410,7 @@ export function AiAssistPanel({
                     className="text-muted-foreground font-body text-[11px]"
                   >
                     {content.length > 50
-                      ? `${content.length} chars`
+                      ? ta('charCount', { count: content.length })
                       : `"${content.slice(0, 50)}${content.length > 50 ? '...' : ''}"`}
                   </Badge>
                 )}
@@ -439,7 +443,7 @@ export function AiAssistPanel({
                         className="group flex items-center gap-2.5 rounded-lg border border-border bg-card px-3 py-2.5 text-left text-sm font-medium text-foreground transition-colors hover:border-brand/40 hover:bg-brand/5 disabled:pointer-events-none disabled:opacity-50 font-body"
                       >
                         <Icon className="size-4 shrink-0 text-muted-foreground transition-colors group-hover:text-brand" />
-                        <span className="truncate">{item.label}</span>
+                        <span className="truncate">{ta(item.labelKey)}</span>
                       </motion.button>
                     );
                   })}
@@ -484,7 +488,7 @@ export function AiAssistPanel({
                       ) : (
                         <Send className="size-4" />
                       )}
-                      <span className="sr-only">Send</span>
+                      <span className="sr-only">{ta('send')}</span>
                     </Button>
                   </TooltipTrigger>
                   <TooltipContent side="left" className="text-xs">
@@ -539,7 +543,7 @@ export function AiAssistPanel({
                         <div className="mb-3 flex items-center gap-2">
                           <Loader2 className="size-4 animate-spin text-brand" />
                           <span className="text-sm font-medium text-brand font-body">
-                            {loadingMessage}
+                            {ta(loadingMessage)}
                           </span>
                         </div>
                         <div className="space-y-2.5">

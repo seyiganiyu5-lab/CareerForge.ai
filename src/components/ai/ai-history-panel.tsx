@@ -7,40 +7,50 @@ import { Badge } from '@/components/ui/badge';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Separator } from '@/components/ui/separator';
+import { useTranslations, useLocale } from '@/i18n/provider';
 
 interface AiHistoryPanelProps {
   resumeId: string;
   onRestore: (text: string, section: string, action: string) => void;
 }
 
-const SECTION_LABELS: Record<string, string> = {
-  professionalSummary: 'Professional Summary',
-  workExperience: 'Work Experience',
-  education: 'Education',
-  skills: 'Skills',
-  projects: 'Projects',
-  certifications: 'Certifications',
-  languages: 'Languages',
-  awards: 'Awards',
-  volunteerExperience: 'Volunteer',
-  references: 'References',
-  additionalInfo: 'Additional Info',
+const SECTION_LABEL_KEYS: Record<string, string> = {
+  professionalSummary: 'sectionProfessionalSummary',
+  workExperience: 'sectionWorkExperience',
+  education: 'sectionEducation',
+  skills: 'sectionSkills',
+  projects: 'sectionProjects',
+  certifications: 'sectionCertifications',
+  languages: 'sectionLanguages',
+  awards: 'sectionAwards',
+  volunteerExperience: 'sectionVolunteer',
+  references: 'sectionReferences',
+  additionalInfo: 'sectionAdditionalInfo',
 };
 
-function formatRelativeTime(dateStr: string): string {
+function formatRelativeTime(
+  dateStr: string,
+  t: (key: string, values?: Record<string, number>) => string,
+  tc: (key: string, values?: Record<string, number>) => string,
+  dateLocale: string,
+): string {
   const now = Date.now();
   const then = new Date(dateStr).getTime();
   const diffMs = now - then;
   const diffS = Math.floor(diffMs / 1000);
-  if (diffS < 60) return `${diffS}s ago`;
+  if (diffS < 60) return t('secondsAgo', { count: diffS });
   const diffM = Math.floor(diffS / 60);
-  if (diffM < 60) return `${diffM}m ago`;
+  if (diffM < 60) return tc('minutesAgo', { count: diffM });
   const diffH = Math.floor(diffM / 60);
-  if (diffH < 24) return `${diffH}h ago`;
-  return new Date(dateStr).toLocaleDateString();
+  if (diffH < 24) return tc('hoursAgo', { count: diffH });
+  return new Date(dateStr).toLocaleDateString(dateLocale);
 }
 
 export function AiHistoryPanel({ resumeId, onRestore }: AiHistoryPanelProps) {
+  const t = useTranslations('app.aiPanel');
+  const tc = useTranslations('app.common');
+  const { locale } = useLocale();
+  const dateLocale = locale === 'fr' ? 'fr-FR' : 'en-US';
   const [history, setHistory] = useState<Array<{
     id: string;
     section: string;
@@ -107,7 +117,7 @@ export function AiHistoryPanel({ resumeId, onRestore }: AiHistoryPanelProps) {
               className="relative gap-2 rounded-full shadow-md bg-background/90 backdrop-blur-sm border-border/60 hover:bg-accent/80"
             >
               <History className="h-4 w-4" />
-              <span className="hidden sm:inline text-xs">AI History</span>
+              <span className="hidden sm:inline text-xs">{t('historyTitle')}</span>
               {history.length > 0 && (
                 <Badge
                   variant="secondary"
@@ -137,7 +147,7 @@ export function AiHistoryPanel({ resumeId, onRestore }: AiHistoryPanelProps) {
               <div className="flex items-center gap-2">
                 <Sparkles className="h-4 w-4 text-primary" />
                 <h2 className="text-sm font-semibold font-heading">
-                  AI History
+                  {t('historyTitle')}
                 </h2>
                 {history.length > 0 && (
                   <Badge variant="secondary" className="h-5 px-1.5 text-[10px] font-semibold rounded-full">
@@ -154,7 +164,7 @@ export function AiHistoryPanel({ resumeId, onRestore }: AiHistoryPanelProps) {
                     className="h-7 px-2 text-xs text-muted-foreground hover:text-destructive"
                   >
                     <Trash2 className="h-3 w-3 mr-1" />
-                    Clear
+                    {t('historyClear')}
                   </Button>
                 )}
                 <Button
@@ -162,6 +172,7 @@ export function AiHistoryPanel({ resumeId, onRestore }: AiHistoryPanelProps) {
                   size="icon"
                   onClick={() => setExpanded(false)}
                   className="h-7 w-7 text-muted-foreground"
+                  aria-label={tc('close')}
                 >
                   <X className="h-4 w-4" />
                 </Button>
@@ -194,10 +205,10 @@ export function AiHistoryPanel({ resumeId, onRestore }: AiHistoryPanelProps) {
                       <Sparkles className="h-5 w-5 text-muted-foreground" />
                     </div>
                     <p className="text-sm font-medium text-muted-foreground font-body">
-                      No AI suggestions yet
+                      {t('historyEmpty')}
                     </p>
                     <p className="text-xs text-muted-foreground/70 mt-1 font-body">
-                      Use the AI assist panel to generate content
+                      {t('historyEmptyHint')}
                     </p>
                   </div>
                 ) : (
@@ -216,7 +227,7 @@ export function AiHistoryPanel({ resumeId, onRestore }: AiHistoryPanelProps) {
                             variant="outline"
                             className="text-[10px] px-1.5 py-0 h-5 font-normal text-muted-foreground border-border/60 shrink-0"
                           >
-                            {SECTION_LABELS[item.section] ?? item.section}
+                            {SECTION_LABEL_KEYS[item.section] ? t(SECTION_LABEL_KEYS[item.section]) : item.section}
                           </Badge>
                           <span className="text-xs font-medium text-foreground/80 font-body">
                             {item.action}
@@ -227,7 +238,7 @@ export function AiHistoryPanel({ resumeId, onRestore }: AiHistoryPanelProps) {
                               className="text-[10px] px-1.5 py-0 h-5 font-medium bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20 shrink-0"
                             >
                               <Check className="h-2.5 w-2.5 mr-0.5" />
-                              Applied
+                              {t('historyApplied')}
                             </Badge>
                           )}
                         </div>
@@ -239,7 +250,7 @@ export function AiHistoryPanel({ resumeId, onRestore }: AiHistoryPanelProps) {
                         <div className="flex items-center justify-between">
                           <span className="flex items-center gap-1 text-[10px] text-muted-foreground/60">
                             <Clock className="h-3 w-3" />
-                            {formatRelativeTime(item.created_at)}
+                            {formatRelativeTime(item.created_at, t, tc, dateLocale)}
                           </span>
                           <Button
                             variant="ghost"
@@ -248,7 +259,7 @@ export function AiHistoryPanel({ resumeId, onRestore }: AiHistoryPanelProps) {
                             className="h-6 px-2 text-[11px] gap-1 text-muted-foreground hover:text-primary opacity-0 group-hover:opacity-100 transition-opacity"
                           >
                             <RotateCcw className="h-3 w-3" />
-                            Restore
+                            {t('historyRestore')}
                           </Button>
                         </div>
                       </motion.div>

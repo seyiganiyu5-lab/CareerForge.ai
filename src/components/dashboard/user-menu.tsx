@@ -18,6 +18,7 @@ import { cn } from '@/lib/utils';
 
 export default function UserMenu() {
   const t = useTranslations('dashboard.userMenu');
+  const tm = useTranslations('app.misc');
   const router = useRouter();
   const { user, logout } = useAuth();
 
@@ -38,7 +39,7 @@ export default function UserMenu() {
             'flex items-center gap-2 rounded-lg px-2 py-1.5 hover:bg-accent transition-colors',
             'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring'
           )}
-          aria-label="User menu"
+          aria-label={tm('userMenu')}
         >
           <Avatar className="h-8 w-8">
             <AvatarFallback className="bg-brand/10 text-brand text-xs font-semibold font-body">
@@ -46,7 +47,7 @@ export default function UserMenu() {
             </AvatarFallback>
           </Avatar>
           <span className="hidden md:block text-sm font-medium font-body text-foreground max-w-[120px] truncate">
-            {user?.first_name || 'User'}
+            {user?.first_name || tm('userFallback')}
           </span>
           <ChevronDown className="hidden md:block w-3.5 h-3.5 text-muted-foreground" />
         </button>

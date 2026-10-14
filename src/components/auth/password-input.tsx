@@ -5,6 +5,7 @@ import { Eye, EyeOff } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
+import { useTranslations } from '@/i18n/provider';
 
 interface PasswordInputProps {
   value: string;
@@ -30,6 +31,7 @@ export default function PasswordInput({
   onFocus,
 }: PasswordInputProps) {
   const [showPassword, setShowPassword] = useState(false);
+  const t = useTranslations('app.misc');
 
   return (
     <div className="relative">
@@ -52,7 +54,7 @@ export default function PasswordInput({
         className="absolute right-0 top-0 h-full px-3 hover:bg-transparent text-muted-foreground hover:text-foreground"
         onClick={() => setShowPassword(!showPassword)}
         tabIndex={-1}
-        aria-label={showPassword ? 'Hide password' : 'Show password'}
+        aria-label={showPassword ? t('hidePassword') : t('showPassword')}
       >
         {showPassword ? (
           <EyeOff className="w-4 h-4" />

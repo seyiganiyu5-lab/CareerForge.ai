@@ -8,6 +8,7 @@ import { UpgradeModal } from '@/components/billing/upgrade-modal';
 import type { FeatureKey } from '@/lib/subscription/features';
 import { FEATURE_DISPLAY_INFO } from '@/lib/subscription/features';
 import { useUsage } from '@/lib/usage/context';
+import { useTranslations } from '@/i18n/provider';
 
 interface FeatureGateProps {
   featureKey: string;
@@ -18,8 +19,9 @@ interface FeatureGateProps {
 
 export function FeatureGate({ featureKey, children, fallback, onAccessDenied }: FeatureGateProps) {
   const { data: usageData, isLoading, canAccess } = useUsage();
+  const tf = useTranslations('app.features');
 
-  const featureLabel = FEATURE_DISPLAY_INFO[featureKey]?.label ?? featureKey;
+  const featureLabel = FEATURE_DISPLAY_INFO[featureKey] ? tf(featureKey) : featureKey;
 
   // Use shared context — no separate API call needed
   // During loading, show skeleton
@@ -49,29 +51,30 @@ export function FeatureGate({ featureKey, children, fallback, onAccessDenied }: 
 // Separate component for the locked state to avoid re-rendering the provider
 function LockedCard({ featureLabel, onAccessDenied }: { featureLabel: string; onAccessDenied?: () => void }) {
   const [modalOpen, setModalOpen] = useState(false);
+  const t = useTranslations('app.billingUi');
 
   return (
     <>
-      <Card className="border-dashed" role="region" aria-label={`${featureLabel} - Premium feature locked`}>
+      <Card className="border-dashed" role="region" aria-label={t('lockedAria', { feature: featureLabel })}>
         <CardContent className="flex flex-col items-center justify-center gap-4 py-10 text-center">
           <div className="flex size-14 items-center justify-center rounded-full bg-brand/10">
             <Lock className="size-6 text-brand" aria-hidden="true" />
           </div>
           <div>
             <h3 className="font-heading text-base font-semibold">
-              Premium Feature
+              {t('premiumFeature')}
             </h3>
             <p className="mt-1 font-body text-sm text-muted-foreground">
-              This feature requires a Pro plan
+              {t('requiresPro')}
             </p>
           </div>
           <Button
             onClick={() => { setModalOpen(true); onAccessDenied?.(); }}
             className="bg-brand text-white hover:bg-brand/90 focus-visible:ring-brand/50"
-            aria-label={`Upgrade to Pro to access ${featureLabel}`}
+            aria-label={t('upgradeToProAccessAria', { feature: featureLabel })}
           >
             <Lock className="size-4" aria-hidden="true" />
-            Upgrade to Pro
+            {t('upgradeToPro')}
           </Button>
         </CardContent>
       </Card>
@@ -86,8 +89,9 @@ function LockedCard({ featureLabel, onAccessDenied }: { featureLabel: string; on
 }
 
 function FeatureGateSkeleton() {
+  const t = useTranslations('app.billingUi');
   return (
-    <Card role="status" aria-label="Loading feature access check">
+    <Card role="status" aria-label={t('loadingAccessCheck')}>
       <CardContent className="flex flex-col items-center gap-4 py-10">
         <div className="size-14 rounded-full bg-muted animate-pulse" aria-hidden="true" />
         <div className="flex flex-col items-center gap-2">

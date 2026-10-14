@@ -14,6 +14,7 @@ import { Button } from '@/components/ui/button';
 import { Progress } from '@/components/ui/progress';
 import { Skeleton } from '@/components/ui/skeleton';
 import { useUsage } from '@/lib/usage/context';
+import { useTranslations } from '@/i18n/provider';
 
 interface SubscriptionData {
   id: string;
@@ -44,9 +45,13 @@ const PLAN_BADGE_STYLES: Record<string, string> = {
 export default function SubscriptionCard() {
   const router = useRouter();
   const { data: usageData, isLoading } = useUsage();
+  const t = useTranslations('app.billingUi');
+  const tb = useTranslations('app.billing');
 
   const planName = usageData?.planName ?? 'free';
-  const planDisplayName = planName === 'free' ? 'Free' : planName.charAt(0).toUpperCase() + planName.slice(1);
+  const planDisplayName = ['free', 'pro', 'enterprise'].includes(planName)
+    ? tb(`planName_${planName}`)
+    : planName.charAt(0).toUpperCase() + planName.slice(1);
   const isFree = planName === 'free';
 
   const resumeCount = usageData?.raw?.resume_count ?? 0;
@@ -66,11 +71,11 @@ export default function SubscriptionCard() {
 
   return (
     <div>
-      <Card role="region" aria-label="Subscription overview">
+      <Card role="region" aria-label={t('subscriptionOverview')}>
         <CardHeader className="pb-0">
           <div className="flex items-center justify-between">
             <CardTitle className="font-heading text-base">
-              Your Plan
+              {t('yourPlan')}
             </CardTitle>
             <Badge
               variant="outline"
@@ -90,7 +95,7 @@ export default function SubscriptionCard() {
                   <div className="mb-1.5 flex items-center justify-between">
                     <span className="flex items-center gap-1.5 font-body text-sm text-muted-foreground">
                       <FileText className="size-3.5" aria-hidden="true" />
-                      Resumes
+                      {t('resumes')}
                     </span>
                     <span className="font-body text-xs font-medium tabular-nums">
                       {resumeCount}/{resumeLimit}
@@ -99,7 +104,7 @@ export default function SubscriptionCard() {
                   <Progress
                     value={resumePercent}
                     className={`h-2 ${resumePercent >= 100 ? '[&>[data-slot=progress-indicator]]:bg-destructive' : '[&>[data-slot=progress-indicator]]:bg-brand'}`}
-                    aria-label={`Resumes used: ${resumeCount} of ${resumeLimit}`}
+                    aria-label={t('resumesUsedAria', { count: resumeCount, limit: resumeLimit })}
                   />
                 </div>
 
@@ -107,7 +112,7 @@ export default function SubscriptionCard() {
                   <div className="mb-1.5 flex items-center justify-between">
                     <span className="flex items-center gap-1.5 font-body text-sm text-muted-foreground">
                       <Mail className="size-3.5" aria-hidden="true" />
-                      Cover Letters
+                      {t('coverLetters')}
                     </span>
                     <span className="font-body text-xs font-medium tabular-nums">
                       {coverLetterCount}/{coverLetterLimit}
@@ -116,7 +121,7 @@ export default function SubscriptionCard() {
                   <Progress
                     value={coverLetterPercent}
                     className={`h-2 ${coverLetterPercent >= 100 ? '[&>[data-slot=progress-indicator]]:bg-destructive' : '[&>[data-slot=progress-indicator]]:bg-brand'}`}
-                    aria-label={`Cover letters used: ${coverLetterCount} of ${coverLetterLimit}`}
+                    aria-label={t('coverLettersUsedAria', { count: coverLetterCount, limit: coverLetterLimit })}
                   />
                 </div>
               </div>
@@ -125,8 +130,8 @@ export default function SubscriptionCard() {
               <div className="rounded-lg bg-brand/5 px-4 py-3 dark:bg-brand/10">
                 <p className="font-body text-sm text-muted-foreground">
                   {resumePercent >= 100 || coverLetterPercent >= 100
-                    ? 'You\'ve reached your free limit. Upgrade for unlimited access.'
-                    : 'Upgrade for unlimited docs, AI tools, and more.'}
+                    ? t('limitReached')
+                    : t('upgradeHint')}
                 </p>
               </div>
             </>
@@ -137,7 +142,7 @@ export default function SubscriptionCard() {
                   <Crown className="size-3 text-emerald" aria-hidden="true" />
                 </div>
                 <p className="font-body text-sm font-medium text-emerald">
-                  {planDisplayName === 'Enterprise' ? 'Enterprise plan active' : 'Pro plan active'}
+                  {planName === 'enterprise' ? t('enterpriseActive') : t('proActive')}
                 </p>
               </div>
             </div>
@@ -149,10 +154,10 @@ export default function SubscriptionCard() {
             <Button
               onClick={handleAction}
               className="w-full bg-brand text-white hover:bg-brand/90 focus-visible:ring-brand/50"
-              aria-label="Upgrade your subscription plan"
+              aria-label={t('upgradeAria')}
             >
               <Crown className="size-4" aria-hidden="true" />
-              Upgrade
+              {tb('upgrade')}
               <ArrowRight className="size-4" aria-hidden="true" />
             </Button>
           ) : (
@@ -160,10 +165,10 @@ export default function SubscriptionCard() {
               variant="outline"
               onClick={handleAction}
               className="w-full font-body"
-              aria-label="Manage your subscription settings"
+              aria-label={t('manageAria')}
             >
               <Settings2 className="size-4" aria-hidden="true" />
-              Manage Subscription
+              {t('manageSubscription')}
             </Button>
           )}
         </CardFooter>
@@ -173,8 +178,9 @@ export default function SubscriptionCard() {
 }
 
 function SubscriptionCardSkeleton() {
+  const t = useTranslations('app.billingUi');
   return (
-    <Card role="status" aria-label="Loading subscription information">
+    <Card role="status" aria-label={t('loadingSubscription')}>
       <CardHeader className="pb-0">
         <div className="flex items-center justify-between">
           <Skeleton className="h-5 w-24" aria-hidden="true" />

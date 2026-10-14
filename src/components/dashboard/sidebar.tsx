@@ -66,6 +66,7 @@ const NavItemComponent = React.memo(function NavItemComponent({
   collapsed,
   isActive,
   t,
+  proLabel,
   onLogout,
   showProBadge,
 }: {
@@ -73,6 +74,7 @@ const NavItemComponent = React.memo(function NavItemComponent({
   collapsed: boolean;
   isActive: boolean;
   t: (key: string) => string;
+  proLabel: string;
   onLogout?: () => void;
   showProBadge: boolean;
 }) {
@@ -109,7 +111,7 @@ const NavItemComponent = React.memo(function NavItemComponent({
               variant="secondary"
               className="bg-brand/15 text-brand hover:bg-brand/20 text-[10px] px-1.5 py-0 h-4 font-semibold font-body"
             >
-              Pro
+              {proLabel}
             </Badge>
           )}
         </span>
@@ -130,7 +132,7 @@ const NavItemComponent = React.memo(function NavItemComponent({
                   variant="secondary"
                   className="bg-brand/15 text-brand text-[10px] px-1.5 py-0 h-4 font-semibold font-body"
                 >
-                  Pro
+                  {proLabel}
                 </Badge>
               )}
             </span>
@@ -152,6 +154,8 @@ const SECTIONS = [
 
 export default function Sidebar({ collapsed, onToggle, pathname }: SidebarProps) {
   const t = useTranslations('dashboard.sidebar');
+  const tc = useTranslations('app.common');
+  const tm = useTranslations('app.misc');
   const { logout } = useAuth();
   const { data: usageData, isLoading: usageLoading } = useUsage();
 
@@ -182,7 +186,7 @@ export default function Sidebar({ collapsed, onToggle, pathname }: SidebarProps)
 
       {/* Navigation */}
       <ScrollArea className="flex-1 px-3 py-3">
-        <nav className="flex flex-col gap-1" aria-label="Main navigation">
+        <nav className="flex flex-col gap-1" aria-label={tm('mainNavigation')}>
           {SECTIONS.map((section, si) => (
             <React.Fragment key={section.key}>
               {si > 0 && <Separator className="my-2" />}
@@ -193,6 +197,7 @@ export default function Sidebar({ collapsed, onToggle, pathname }: SidebarProps)
                   collapsed={collapsed}
                   isActive={pathname === item.href || pathname.startsWith(item.href + '/')}
                   t={t}
+                  proLabel={tc('pro')}
                   showProBadge={showProBadge}
                 />
               ))}
@@ -210,6 +215,7 @@ export default function Sidebar({ collapsed, onToggle, pathname }: SidebarProps)
           collapsed={collapsed}
           isActive={false}
           t={t}
+          proLabel={tc('pro')}
           showProBadge={showProBadge}
           onLogout={logout}
         />
