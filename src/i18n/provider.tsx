@@ -1,6 +1,6 @@
 'use client';
 
-import React, { createContext, useContext, useCallback, useSyncExternalStore } from 'react';
+import React, { createContext, useContext, useCallback, useEffect, useSyncExternalStore } from 'react';
 import { NextIntlClientProvider, useTranslations as useNextIntlTranslations } from 'next-intl';
 import type { MessageKeys, Messages } from 'next-intl';
 import { Locale, defaultLocale, locales } from '@/i18n/config';
@@ -63,18 +63,30 @@ function subscribe(callback: () => void): () => void {
   return () => listeners.delete(callback);
 }
 
+function writeLocaleCookie(locale: Locale) {
+  if (typeof document !== 'undefined') {
+    document.cookie = `cf-locale=${locale}; path=/; max-age=31536000; samesite=lax`;
+  }
+}
+
 function emitChange() {
   listeners.forEach(l => l());
 }
 
 export function LocaleProvider({ children }: { children: React.ReactNode }) {
   const locale = useSyncExternalStore(subscribe, getSnapshot, getServerSnapshot);
+
+  // Let the server know the language too (used to make the AI reply in it)
+  useEffect(() => {
+    writeLocaleCookie(locale);
+  }, [locale]);
   const messages = getMessages(locale);
 
   const setLocale = useCallback((newLocale: Locale) => {
     if (typeof window !== 'undefined') {
       localStorage.setItem('cf-locale', newLocale);
     }
+    writeLocaleCookie(newLocale);
     cachedLocale = newLocale;
     emitChange();
   }, []);

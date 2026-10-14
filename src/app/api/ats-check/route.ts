@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { generateText, parseJsonReply, isAIConfigured, AIError } from '@/lib/ai/client';
+import { getRequestLocale, replyLanguageInstruction, type AiLocale } from '@/lib/ai/locale';
 import { db } from '@/lib/db';
 import { getAuthUser } from '@/lib/subscription/auth-helpers';
 import { checkAndIncrementUsage } from '@/lib/subscription/service';
@@ -612,7 +613,7 @@ function scoreKeywords(
 // AI Analysis (Pro only)
 // ---------------------------------------------------------------------------
 
-async function runAiAnalysis(resumeText: string): Promise<AiAnalysis> {
+async function runAiAnalysis(resumeText: string, locale: AiLocale): Promise<AiAnalysis> {
 
   const systemPrompt = `You are an expert ATS (Applicant Tracking System) resume analyst. Analyze the given resume text and provide detailed, actionable feedback.
 
@@ -633,7 +634,7 @@ Guidelines:
 - grammarIssues: Find 0-5 real grammar, spelling, or phrasing issues
 - suggestions: Provide 3-6 actionable improvement suggestions with priority levels
 - strengths: Highlight 3-5 specific things done well
-- weaknesses: Identify 3-5 specific areas needing improvement`;
+- weaknesses: Identify 3-5 specific areas needing improvement${replyLanguageInstruction(locale)}`;
 
   const raw = await generateText(
     [
@@ -663,8 +664,8 @@ Guidelines:
     return {
       grammarIssues: [],
       suggestions: [],
-      strengths: ['Resume content was received and processed.'],
-      weaknesses: ['Unable to generate detailed AI analysis at this time.'],
+      strengths: [locale === 'fr' ? 'Le contenu du CV a bien été reçu et traité.' : 'Resume content was received and processed.'],
+      weaknesses: [locale === 'fr' ? "Impossible de générer une analyse IA détaillée pour le moment." : 'Unable to generate detailed AI analysis at this time.'],
     };
   }
 }
@@ -790,7 +791,7 @@ export async function POST(request: NextRequest) {
     // Skipped when AI isn't set up; the scoring above still works
     if (isPremium && text.length > 0 && isAIConfigured()) {
       try {
-        aiAnalysis = await runAiAnalysis(text);
+        aiAnalysis = await runAiAnalysis(text, getRequestLocale(request));
       } catch (error) {
         console.error('ATS AI analysis error:', error);
         // AI analysis failed — still return scoring

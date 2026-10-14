@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { generateText, parseJsonReply, isAIConfigured, AIError, AI_NOT_CONFIGURED_MESSAGE } from '@/lib/ai/client';
+import { getRequestLocale, replyLanguageInstruction } from '@/lib/ai/locale';
 import { db } from '@/lib/db';
 import { getAuthUser } from '@/lib/subscription/auth-helpers';
 import { checkAndIncrementUsage, recordUsage } from '@/lib/subscription/service';
@@ -104,7 +105,7 @@ ${textToAnalyze.substring(0, 8000)}`;
 
     const raw = await generateText(
       [
-        { role: 'system', content: 'You are an expert resume reviewer. Always respond with valid JSON only, no markdown fences.' },
+        { role: 'system', content: 'You are an expert resume reviewer. Always respond with valid JSON only, no markdown fences.' + replyLanguageInstruction(getRequestLocale(request)) },
         { role: 'user', content: prompt },
       ],
       { temperature: 0.4, json: true }

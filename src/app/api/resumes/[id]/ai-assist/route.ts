@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { generateText, isAIConfigured, AIError, AI_NOT_CONFIGURED_MESSAGE } from '@/lib/ai/client';
+import { getRequestLocale, contentLanguageInstruction } from '@/lib/ai/locale';
 import { db } from '@/lib/db';
 import { getAuthUser } from '@/lib/subscription/auth-helpers';
 import { checkAndIncrementUsage, recordUsage } from '@/lib/subscription/service';
@@ -613,7 +614,7 @@ export async function POST(
 
     // 7. Call the AI
     const aiResponse = await generateText([
-      { role: 'system', content: systemPrompt },
+      { role: 'system', content: systemPrompt + contentLanguageInstruction(getRequestLocale(request)) },
       { role: 'user', content: userMessage },
     ]);
     await recordUsage(auth.userId, FEATURE_KEYS.AI_RESUME_BUILDER);
