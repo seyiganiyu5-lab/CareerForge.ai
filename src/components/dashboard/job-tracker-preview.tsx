@@ -1,19 +1,48 @@
 'use client';
 
+import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { useTranslations } from '@/i18n/provider';
 import { Send, UserCheck, Trophy, XCircle, ArrowRight, Briefcase } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
-const JOB_STATS = [
-  { key: 'applied', value: 24, icon: Send, color: 'text-sky-600 dark:text-sky-400', bg: 'bg-sky-500/10' },
-  { key: 'interview', value: 8, icon: UserCheck, color: 'text-violet', bg: 'bg-violet/10' },
-  { key: 'offer', value: 3, icon: Trophy, color: 'text-emerald-600 dark:text-emerald-400', bg: 'bg-emerald-500/10' },
-  { key: 'rejected', value: 5, icon: XCircle, color: 'text-rose-500', bg: 'bg-rose-500/10' },
-];
+interface JobStats {
+  total: number;
+  applied: number;
+  offersReceived: number;
+  accepted: number;
+  rejected: number;
+  byStatus?: Record<string, number>;
+}
+
+const STAT_STYLES = [
+  { key: 'applied', icon: Send, color: 'text-sky-600 dark:text-sky-400', bg: 'bg-sky-500/10' },
+  { key: 'interview', icon: UserCheck, color: 'text-violet', bg: 'bg-violet/10' },
+  { key: 'offer', icon: Trophy, color: 'text-emerald-600 dark:text-emerald-400', bg: 'bg-emerald-500/10' },
+  { key: 'rejected', icon: XCircle, color: 'text-rose-500', bg: 'bg-rose-500/10' },
+] as const;
+
+function statValue(key: (typeof STAT_STYLES)[number]['key'], stats: JobStats): number {
+  switch (key) {
+    case 'applied': return stats.applied;
+    case 'interview': return (stats.byStatus?.interview ?? 0) + (stats.byStatus?.final_interview ?? 0);
+    case 'offer': return stats.offersReceived + stats.accepted;
+    case 'rejected': return stats.rejected;
+  }
+}
 
 export default function JobTrackerPreview() {
   const t = useTranslations('dashboard.jobTracker');
+  const [stats, setStats] = useState<JobStats | null>(null);
+
+  useEffect(() => {
+    fetch('/api/job-tracker/stats', { credentials: 'include' })
+      .then(r => r.json())
+      .then(data => {
+        if (data.success) setStats(data.stats);
+      })
+      .catch(() => {});
+  }, []);
 
   return (
     <section aria-label={t('title')}>
@@ -38,7 +67,7 @@ export default function JobTrackerPreview() {
         className="rounded-xl border border-border/50 bg-card shadow-sm overflow-hidden opacity-0 animate-[slideUpLg_0.5s_ease-out_0.3s_forwards]"
       >
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-px bg-border/50">
-          {JOB_STATS.map((stat, i) => {
+          {STAT_STYLES.map((stat, i) => {
             const Icon = stat.icon;
             return (
               <div
@@ -49,7 +78,9 @@ export default function JobTrackerPreview() {
                 <div className={cn('flex items-center justify-center w-8 h-8 rounded-lg mb-2', stat.bg)}>
                   <Icon className={cn('w-4 h-4', stat.color)} />
                 </div>
-                <p className="text-2xl font-bold font-heading text-foreground">{stat.value}</p>
+                <p className="text-2xl font-bold font-heading text-foreground">
+                  {stats ? statValue(stat.key, stats) : <span className="inline-block w-6 h-6 rounded bg-muted animate-pulse align-middle" />}
+                </p>
                 <p className="text-xs text-muted-foreground mt-0.5 font-body">{t(stat.key)}</p>
               </div>
             );
@@ -57,7 +88,7 @@ export default function JobTrackerPreview() {
         </div>
         <div className="px-4 py-3 border-t border-border/50 flex items-center justify-between">
           <p className="text-xs text-muted-foreground font-body">
-            {t('totalApplications')}: <span className="font-medium text-foreground">40</span>
+            {t('totalApplications')}: <span className="font-medium text-foreground">{stats ? stats.total : '–'}</span>
           </p>
           <Link
             href="/job-tracker"

@@ -1,21 +1,42 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
+import Link from 'next/link';
 import { useTranslations } from '@/i18n/provider';
+import { useUsage } from '@/lib/usage/context';
 import { Sparkles, ArrowRight } from 'lucide-react';
 
-const INSIGHT_KEYS = ['insight1', 'insight2', 'insight3'] as const;
+type Tip = { key: string; href: string };
 
+const GENERAL_TIPS: Tip[] = [
+  { key: 'tipAchievements', href: '/resume-builder' },
+  { key: 'tipKeywords', href: '/ats-checker' },
+  { key: 'tipTailor', href: '/cover-letters' },
+];
+
+/** Tips based on what the user has done so far, then general advice. */
 export default function AIInsights() {
   const t = useTranslations('dashboard.aiInsights');
+  const { data } = useUsage();
   const [index, setIndex] = useState(0);
+
+  const tips = useMemo(() => {
+    const raw = data?.raw;
+    const personal: Tip[] = [];
+    if (raw && raw.resume_count === 0) personal.push({ key: 'tipFirstResume', href: '/resume-builder' });
+    if (raw && raw.cover_letter_count === 0) personal.push({ key: 'tipFirstCoverLetter', href: '/cover-letters' });
+    if (raw && raw.ats_checks === 0) personal.push({ key: 'tipFirstAtsCheck', href: '/ats-checker' });
+    return [...personal, ...GENERAL_TIPS];
+  }, [data]);
 
   useEffect(() => {
     const interval = setInterval(() => {
-      setIndex(prev => (prev + 1) % INSIGHT_KEYS.length);
+      setIndex(prev => (prev + 1) % tips.length);
     }, 6000);
     return () => clearInterval(interval);
-  }, []);
+  }, [tips.length]);
+
+  const tip = tips[index % tips.length];
 
   return (
     <section
@@ -34,26 +55,29 @@ export default function AIInsights() {
             key={index}
             className="text-sm text-muted-foreground font-body leading-relaxed mb-4 animate-[slideInRight_0.4s_ease-out_forwards]"
           >
-            {t(INSIGHT_KEYS[index])}
+            {t(tip.key)}
           </p>
           <div className="flex items-center justify-between">
             {/* Dots indicator */}
             <div className="flex items-center gap-1.5">
-              {INSIGHT_KEYS.map((_, i) => (
+              {tips.map((_, i) => (
                 <button
                   key={i}
                   onClick={() => setIndex(i)}
                   className={`w-1.5 h-1.5 rounded-full transition-all ${
-                    i === index ? 'bg-brand w-4' : 'bg-border'
+                    i === index % tips.length ? 'bg-brand w-4' : 'bg-border'
                   }`}
-                  aria-label={`Insight ${i + 1}`}
+                  aria-label={`Tip ${i + 1}`}
                 />
               ))}
             </div>
-            <button className="inline-flex items-center gap-1.5 text-sm font-medium text-brand hover:text-brand/80 font-body transition-colors group">
+            <Link
+              href={tip.href}
+              className="inline-flex items-center gap-1.5 text-sm font-medium text-brand hover:text-brand/80 font-body transition-colors group"
+            >
               {t('improveNow')}
               <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-0.5 transition-transform" />
-            </button>
+            </Link>
           </div>
         </div>
       </div>
