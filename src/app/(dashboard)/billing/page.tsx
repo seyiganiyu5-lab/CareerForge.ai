@@ -4,6 +4,7 @@ import { useState, useEffect, useCallback } from 'react';
 import { toast } from 'sonner';
 import { FadeInUp, ScaleIn, FadeIn, StaggerItem } from '@/lib/motion';
 import { useAuth } from '@/lib/auth/context';
+import { useLocale, useTranslations } from '@/i18n/provider';
 import { FEATURE_DISPLAY_INFO, FEATURE_KEYS } from '@/lib/subscription/features';
 import {
   Card,
@@ -106,9 +107,9 @@ function getPlanTier(planName: string): number {
   return idx >= 0 ? idx : 0;
 }
 
-function formatPrice(cents: number, currency: string = 'USD'): string {
+function formatPrice(cents: number, currency: string = 'USD', locale = 'en-US'): string {
   const amount = cents / 100;
-  return new Intl.NumberFormat('en-US', {
+  return new Intl.NumberFormat(locale, {
     style: 'currency',
     currency,
     minimumFractionDigits: 2,
@@ -116,26 +117,22 @@ function formatPrice(cents: number, currency: string = 'USD'): string {
   }).format(amount);
 }
 
-function formatDate(dateStr: string | null): string {
-  if (!dateStr) return 'N/A';
-  return new Date(dateStr).toLocaleDateString('en-US', {
+function formatDate(dateStr: string | null, locale = 'en-US', notAvailable = 'N/A'): string {
+  if (!dateStr) return notAvailable;
+  return new Date(dateStr).toLocaleDateString(locale, {
     year: 'numeric',
     month: 'long',
     day: 'numeric',
   });
 }
 
-function formatShortDate(dateStr: string | null): string {
+function formatShortDate(dateStr: string | null, locale = 'en-US'): string {
   if (!dateStr) return '—';
-  return new Date(dateStr).toLocaleDateString('en-US', {
+  return new Date(dateStr).toLocaleDateString(locale, {
     year: 'numeric',
     month: 'short',
     day: 'numeric',
   });
-}
-
-function getFeatureLabel(key: string): string {
-  return FEATURE_DISPLAY_INFO[key]?.label ?? key.replace(/_/g, ' ');
 }
 
 function getFeatureLimitText(feature: PlanFeature): string {
@@ -211,6 +208,17 @@ function EmptyState({ icon: Icon, title, description }: { icon: React.ElementTyp
 
 export default function BillingPage() {
   useAuth(); // ensures session is active
+  const t = useTranslations('app.billing');
+  const tc = useTranslations('app.common');
+  const tf = useTranslations('app.features');
+  const { locale } = useLocale();
+  const numLocale = locale === 'fr' ? 'fr-FR' : 'en-US';
+  const fmtPrice = (cents: number, currency?: string) => formatPrice(cents, currency, numLocale);
+  const fmtDate = (d: string | null) => formatDate(d, numLocale, t('notAvailable'));
+  const fmtShortDate = (d: string | null) => formatShortDate(d, numLocale);
+  const planLabel = (name: string, fallback: string) => (['free', 'pro', 'enterprise'].includes(name.toLowerCase()) ? t(`planName_${name.toLowerCase()}`) : fallback);
+  const planDesc = (name: string, fallback: string) => (['free', 'pro', 'enterprise'].includes(name.toLowerCase()) ? t(`planDesc_${name.toLowerCase()}`) : fallback);
+  const getFeatureLabel = (key: string) => (FEATURE_DISPLAY_INFO[key] ? tf(key) : key.replace(/_/g, ' '));
 
   // State
   const [loading, setLoading] = useState(true);
@@ -248,7 +256,7 @@ export default function BillingPage() {
       }
       if (paymentsRes.success) setPayments(paymentsRes.payments || []);
     } catch {
-      toast.error('Failed to load billing data');
+      toast.error(t('loadFailed'));
     } finally {
       setLoading(false);
     }
@@ -266,7 +274,7 @@ export default function BillingPage() {
     window.history.replaceState(null, '', window.location.pathname);
 
     if (params.get('status') === 'cancelled') {
-      toast.info('Payment was cancelled. You have not been charged.');
+      toast.info(t('paymentCancelled'));
       return;
     }
 
@@ -280,13 +288,13 @@ export default function BillingPage() {
         });
         const data = await res.json();
         if (data.success) {
-          toast.success('Payment received. Your plan has been upgraded!');
+          toast.success(t('paymentReceived'));
           await fetchAllData();
         } else {
-          toast.error(data.error || 'We could not confirm your payment. If you were charged, please contact support.');
+          toast.error(data.error || t('paymentNotConfirmed'));
         }
       } catch {
-        toast.error('We could not confirm your payment. Please refresh the page.');
+        toast.error(t('paymentCheckFailed'));
       }
     })();
   }, [fetchAllData]);
@@ -307,14 +315,14 @@ export default function BillingPage() {
         if (data.payment_link) {
           window.location.href = data.payment_link;
         } else {
-          toast.success(data.message || `Upgraded to ${planDisplayName}!`);
+          toast.success(data.message || t('upgradedTo', { plan: planDisplayName }));
           await fetchAllData();
         }
       } else {
-        toast.error(data.error || 'Upgrade failed');
+        toast.error(data.error || t('upgradeFailed'));
       }
     } catch {
-      toast.error('Something went wrong. Please try again.');
+      toast.error(tc('somethingWrong'));
     } finally {
       setUpgrading(null);
     }
@@ -332,14 +340,14 @@ export default function BillingPage() {
       const data = await res.json();
 
       if (data.success) {
-        toast.success('Successfully downgraded to Free plan');
+        toast.success(t('downgraded'));
         setCancelDialogOpen(false);
         await fetchAllData();
       } else {
-        toast.error(data.error || 'Failed to cancel');
+        toast.error(data.error || t('cancelFailed'));
       }
     } catch {
-      toast.error('Something went wrong. Please try again.');
+      toast.error(tc('somethingWrong'));
     } finally {
       setCancelling(false);
     }
@@ -377,10 +385,10 @@ export default function BillingPage() {
       {/* Page Header */}
       <FadeInUp duration={0.5}>
         <h1 className="text-2xl md:text-3xl font-bold font-heading text-foreground">
-          Billing & Plans
+          {t('title')}
         </h1>
         <p className="text-muted-foreground mt-1 text-sm font-body">
-          Manage your subscription, view usage, and billing history.
+          {t('subtitle')}
         </p>
       </FadeInUp>
 
@@ -398,7 +406,7 @@ export default function BillingPage() {
                 <div>
                   <div className="flex items-center gap-2.5">
                     <h2 className="text-lg font-semibold font-heading text-foreground">
-                      {subscription?.plan.display_name || 'Free Plan'}
+                      {subscription ? planLabel(subscription.plan.name, subscription.plan.display_name) : t('freePlan')}
                     </h2>
                     <Badge
                       variant={isCancelled ? 'destructive' : 'secondary'}
@@ -408,17 +416,15 @@ export default function BillingPage() {
                           : ''
                       }
                     >
-                      {isCancelled ? 'Cancelled' : subscription?.status || 'Active'}
+                      {isCancelled ? t('statusCancelled') : subscription?.status === 'active' || !subscription ? t('statusActive') : subscription.status}
                     </Badge>
                   </div>
                   <p className="text-sm text-muted-foreground font-body mt-0.5">
                     {isFree
-                      ? 'You are on the free plan. Upgrade to unlock premium features.'
+                      ? t('freeNote')
                       : isCancelled && subscription?.current_period_end
-                        ? `Your plan expires on ${formatDate(subscription.current_period_end)}.`
-                        : subscription?.billing_cycle === 'yearly'
-                          ? `Next billing date: ${formatDate(subscription?.current_period_end || null)}`
-                          : `Next billing date: ${formatDate(subscription?.current_period_end || null)}`
+                        ? t('expiresOn', { date: fmtDate(subscription.current_period_end) })
+                        : t('nextBilling', { date: fmtDate(subscription?.current_period_end || null) })
                     }
                   </p>
                 </div>
@@ -437,7 +443,7 @@ export default function BillingPage() {
                       <Loader2 className="w-4 h-4 animate-spin" />
                     ) : (
                       <>
-                        Upgrade
+                        {t('upgrade')}
                         <ArrowRight className="w-4 h-4 ml-1" />
                       </>
                     )}
@@ -448,7 +454,7 @@ export default function BillingPage() {
                     className="font-body rounded-lg"
                     onClick={() => setCancelDialogOpen(true)}
                   >
-                    Change Plan
+                    {t('changePlan')}
                   </Button>
                 )}
               </div>
@@ -462,10 +468,10 @@ export default function BillingPage() {
                 <AlertTriangle className="w-5 h-5 text-amber-600 dark:text-amber-400 shrink-0 mt-0.5" />
                 <div>
                   <p className="text-sm font-medium font-body text-amber-700 dark:text-amber-300">
-                    Your plan expires on {formatDate(subscription.current_period_end)}
+                    {t('expiresOnShort', { date: fmtDate(subscription.current_period_end) })}
                   </p>
                   <p className="text-xs text-amber-600/70 dark:text-amber-400/70 mt-0.5 font-body">
-                    You can continue using premium features until then. Reactivate your plan to avoid losing access.
+                    {t('cancelledWarning')}
                   </p>
                 </div>
               </FadeIn>
@@ -478,19 +484,19 @@ export default function BillingPage() {
                   {
                     key: FEATURE_KEYS.CREATE_RESUME,
                     rawKey: 'resume_count' as const,
-                    label: 'Resumes',
+                    label: tf('CREATE_RESUME'),
                     icon: <FileText className="w-4 h-4" />,
                   },
                   {
                     key: FEATURE_KEYS.CREATE_COVER_LETTER,
                     rawKey: 'cover_letter_count' as const,
-                    label: 'Cover Letters',
+                    label: tf('CREATE_COVER_LETTER'),
                     icon: <FileText className="w-4 h-4" />,
                   },
                   {
                     key: FEATURE_KEYS.PDF_EXPORT,
                     rawKey: 'exports_count' as const,
-                    label: 'PDF Exports',
+                    label: tf('PDF_EXPORT'),
                     icon: <CreditCard className="w-4 h-4" />,
                   },
                 ].map(item => {
@@ -533,24 +539,24 @@ export default function BillingPage() {
             {!isFree && subscription && (
               <div className="mt-6 grid grid-cols-1 sm:grid-cols-3 gap-4">
                 <div className="rounded-lg border border-border bg-background/50 p-4">
-                  <p className="text-xs text-muted-foreground font-body mb-1">Billing Cycle</p>
+                  <p className="text-xs text-muted-foreground font-body mb-1">{t('billingCycle')}</p>
                   <p className="text-sm font-medium font-heading text-foreground capitalize">
-                    {subscription.billing_cycle || 'Monthly'}
+                    {subscription.billing_cycle === 'yearly' ? t('yearly') : t('monthly')}
                   </p>
                 </div>
                 <div className="rounded-lg border border-border bg-background/50 p-4">
-                  <p className="text-xs text-muted-foreground font-body mb-1">Period End</p>
+                  <p className="text-xs text-muted-foreground font-body mb-1">{t('periodEnd')}</p>
                   <p className="text-sm font-medium font-heading text-foreground">
-                    {formatShortDate(subscription.current_period_end)}
+                    {fmtShortDate(subscription.current_period_end)}
                   </p>
                 </div>
                 {subscription.plan.name.toLowerCase() !== 'enterprise' && (
                 <div className="rounded-lg border border-border bg-background/50 p-4">
-                  <p className="text-xs text-muted-foreground font-body mb-1">Plan Price</p>
+                  <p className="text-xs text-muted-foreground font-body mb-1">{t('planPrice')}</p>
                   <p className="text-sm font-medium font-heading text-foreground">
                     {subscription.billing_cycle === 'yearly'
-                      ? `${formatPrice(subscription.plan.price_yearly, subscription.plan.currency)}/yr`
-                      : `${formatPrice(subscription.plan.price_monthly, subscription.plan.currency)}/mo`
+                      ? `${fmtPrice(subscription.plan.price_yearly, subscription.plan.currency)}${t('perYear')}`
+                      : `${fmtPrice(subscription.plan.price_monthly, subscription.plan.currency)}${t('perMonth')}`
                     }
                   </p>
                 </div>
@@ -566,10 +572,10 @@ export default function BillingPage() {
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
           <div>
             <h2 className="text-lg font-semibold font-heading text-foreground">
-              Compare Plans
+              {t('comparePlans')}
             </h2>
             <p className="text-sm text-muted-foreground font-body">
-              Find the plan that works best for you.
+              {t('comparePlansSub')}
             </p>
           </div>
           {/* Monthly / Yearly toggle */}
@@ -579,22 +585,22 @@ export default function BillingPage() {
                 !isYearly ? 'text-foreground' : 'text-muted-foreground'
               }`}
             >
-              Monthly
+              {t('monthly')}
             </span>
             <Switch
               checked={isYearly}
               onCheckedChange={setIsYearly}
-              aria-label="Toggle billing period"
+              aria-label={t('toggleBilling')}
             />
             <span
               className={`text-sm font-medium font-body transition-colors ${
                 isYearly ? 'text-foreground' : 'text-muted-foreground'
               }`}
             >
-              Yearly
+              {t('yearly')}
             </span>
             <Badge className="bg-emerald/10 text-emerald border-emerald/20 text-xs font-body">
-              Save 20%
+              {t('save20')}
             </Badge>
           </div>
         </div>
@@ -627,7 +633,7 @@ export default function BillingPage() {
                 {/* Popular badge */}
                 {isPro && (
                   <span className="absolute -top-3 left-1/2 -translate-x-1/2 bg-brand text-white text-xs font-medium px-3 py-1 rounded-full font-body z-10">
-                    Most Popular
+                    {t('mostPopular')}
                   </span>
                 )}
 
@@ -639,7 +645,7 @@ export default function BillingPage() {
                         {PLAN_ICONS[planName] || <CreditCard className="w-5 h-5" />}
                       </span>
                       <h3 className="text-lg font-bold font-heading text-foreground">
-                        {plan.display_name}
+                        {planLabel(plan.name, plan.display_name)}
                       </h3>
                     </div>
                     {isCurrentPlan && (
@@ -647,24 +653,24 @@ export default function BillingPage() {
                         variant="outline"
                         className="border-brand/30 text-brand text-xs font-body"
                       >
-                        Current Plan
+                        {t('currentPlan')}
                       </Badge>
                     )}
                   </div>
 
                   <p className="text-sm text-muted-foreground font-body mt-1">
-                    {plan.description}
+                    {planDesc(plan.name, plan.description)}
                   </p>
 
                   {/* Price */}
                   <div className="mt-4 flex items-baseline gap-1">
                     {isFreePlan ? (
                       <span className="text-4xl font-bold font-heading text-foreground">
-                        Free
+                        {t('free')}
                       </span>
                     ) : isEnterprise ? (
                       <span className="text-4xl font-bold font-heading text-foreground">
-                        Custom
+                        {t('custom')}
                       </span>
                     ) : (
                       <>
@@ -672,13 +678,13 @@ export default function BillingPage() {
                           key={isYearly ? 'yearly-price' : 'monthly-price'}
                           className="text-4xl font-bold font-heading text-foreground transition-all duration-200"
                         >
-                          {formatPrice(price, plan.currency)}
+                          {fmtPrice(price, plan.currency)}
                         </span>
                         <span
                           key={isYearly ? 'yearly-period' : 'monthly-period'}
                           className="text-muted-foreground text-sm font-body transition-all duration-200"
                         >
-                          {isYearly ? '/yr' : '/mo'}
+                          {isYearly ? t('perYear') : t('perMonth')}
                         </span>
                       </>
                     )}
@@ -691,8 +697,8 @@ export default function BillingPage() {
                       className="text-xs text-muted-foreground font-body mt-1 transition-opacity duration-200"
                     >
                       {isYearly
-                        ? `That's ${formatPrice(Math.round(price / 12), plan.currency)}/mo — billed annually`
-                        : `Or ${formatPrice(plan.price_yearly, plan.currency)}/yr — save ${formatPrice(plan.price_monthly * 12 - plan.price_yearly, plan.currency)}`
+                        ? t('billedAnnually', { price: fmtPrice(Math.round(price / 12), plan.currency) })
+                        : t('orYearly', { price: fmtPrice(plan.price_yearly, plan.currency), savings: fmtPrice(plan.price_monthly * 12 - plan.price_yearly, plan.currency) })
                       }
                     </p>
                   )}
@@ -726,7 +732,7 @@ export default function BillingPage() {
                                 <span className="text-muted-foreground ml-1">({limitText})</span>
                               )}
                               {feature.enabled && limitText === 'Unlimited' && (
-                                <span className="text-emerald ml-1 text-xs">(Unlimited)</span>
+                                <span className="text-emerald ml-1 text-xs">({t('unlimited')})</span>
                               )}
                             </span>
                           </li>
@@ -743,15 +749,15 @@ export default function BillingPage() {
                       className="w-full rounded-lg font-body"
                       disabled
                     >
-                      Current Plan
+                      {t('currentPlan')}
                     </Button>
                   ) : isEnterprise ? (
                     <Button
                       variant="outline"
                       className="w-full rounded-lg font-body"
-                      onClick={() => toast.info('Contact our sales team at sales@careerforge.ai')}
+                      onClick={() => toast.info(t('contactSalesToast'))}
                     >
-                      Contact Sales
+                      {t('contactSales')}
                       <ArrowRight className="w-4 h-4 ml-1" />
                     </Button>
                   ) : isHigher ? (
@@ -768,7 +774,7 @@ export default function BillingPage() {
                         <Loader2 className="w-4 h-4 animate-spin" />
                       ) : (
                         <>
-                          Upgrade to {plan.display_name}
+                          {t('upgradeTo', { plan: planLabel(plan.name, plan.display_name) })}
                           <ArrowRight className="w-4 h-4 ml-1" />
                         </>
                       )}
@@ -779,7 +785,7 @@ export default function BillingPage() {
                       className="w-full rounded-lg font-body text-rose-500 border-rose-500/30 hover:bg-rose-500/5 hover:text-rose-600"
                       onClick={() => setCancelDialogOpen(true)}
                     >
-                      Downgrade
+                      {t('downgrade')}
                     </Button>
                   )}
                 </div>
@@ -796,19 +802,19 @@ export default function BillingPage() {
             <div className="flex items-center gap-2">
               <Receipt className="w-5 h-5 text-muted-foreground" />
               <CardTitle className="font-heading">
-                Payment History
+                {t('paymentHistory')}
               </CardTitle>
             </div>
             <CardDescription className="font-body">
-              View your past transactions and payment details.
+              {t('paymentHistorySub')}
             </CardDescription>
           </CardHeader>
           <CardContent>
             {payments.length === 0 ? (
               <EmptyState
                 icon={Receipt}
-                title="No payment history"
-                description="When you upgrade your plan, your payment history will appear here."
+                title={t('noPayments')}
+                description={t('noPaymentsSub')}
               />
             ) : (
               <div className="overflow-x-auto -mx-6 px-6">
@@ -816,19 +822,19 @@ export default function BillingPage() {
                   <thead>
                     <tr className="border-b border-border">
                       <th className="text-left py-3 px-3 text-xs font-medium text-muted-foreground uppercase tracking-wider">
-                        Date
+                        {t('colDate')}
                       </th>
                       <th className="text-left py-3 px-3 text-xs font-medium text-muted-foreground uppercase tracking-wider">
-                        Plan
+                        {t('colPlan')}
                       </th>
                       <th className="text-left py-3 px-3 text-xs font-medium text-muted-foreground uppercase tracking-wider">
-                        Amount
+                        {t('colAmount')}
                       </th>
                       <th className="text-left py-3 px-3 text-xs font-medium text-muted-foreground uppercase tracking-wider">
-                        Status
+                        {t('colStatus')}
                       </th>
                       <th className="text-left py-3 px-3 text-xs font-medium text-muted-foreground uppercase tracking-wider hidden md:table-cell">
-                        Method
+                        {t('colMethod')}
                       </th>
                     </tr>
                   </thead>
@@ -839,13 +845,13 @@ export default function BillingPage() {
                         className="border-b border-border/50 last:border-0 hover:bg-muted/30 transition-colors"
                       >
                         <td className="py-3.5 px-3 text-foreground">
-                          {formatShortDate(payment.paid_at || payment.created_at)}
+                          {fmtShortDate(payment.paid_at || payment.created_at)}
                         </td>
                         <td className="py-3.5 px-3 text-foreground font-medium">
                           {payment.plan_name}
                         </td>
                         <td className="py-3.5 px-3 text-foreground">
-                          {formatPrice(payment.amount, payment.currency)}
+                          {fmtPrice(payment.amount, payment.currency)}
                         </td>
                         <td className="py-3.5 px-3">
                           <Badge
@@ -863,11 +869,11 @@ export default function BillingPage() {
                             }
                           >
                             {payment.status === 'successful'
-                              ? 'Paid'
+                              ? t('paid')
                               : payment.status === 'pending'
-                                ? 'Pending'
+                                ? t('pending')
                                 : payment.status === 'failed'
-                                  ? 'Failed'
+                                  ? t('failed')
                                   : payment.status.charAt(0).toUpperCase() + payment.status.slice(1)
                             }
                           </Badge>
@@ -890,15 +896,10 @@ export default function BillingPage() {
         <DialogContent>
           <DialogHeader>
             <DialogTitle className="font-heading">
-              Downgrade to Free Plan?
+              {t('downgradeTitle')}
             </DialogTitle>
             <DialogDescription className="font-body">
-              You are about to downgrade from{' '}
-              <span className="font-medium text-foreground">
-                {subscription?.plan.display_name || 'your current plan'}
-              </span>{' '}
-              to the Free plan. This action will take effect immediately and you will
-              lose access to all premium features.
+              {t('downgradeBody', { plan: subscription ? planLabel(subscription.plan.name, subscription.plan.display_name) : t('yourCurrentPlan') })}
             </DialogDescription>
           </DialogHeader>
 
@@ -906,9 +907,7 @@ export default function BillingPage() {
             <div className="flex items-start gap-2">
               <AlertTriangle className="w-4 h-4 text-rose-500 mt-0.5 shrink-0" />
               <p className="text-sm text-rose-700 dark:text-rose-300 font-body">
-                <strong>What you&apos;ll lose:</strong> AI-powered resume builder,
-                AI cover letter generator, ATS checker, job tracker, unlimited exports,
-                and all other premium features.
+                <strong>{t('whatYouLose')}</strong> {t('whatYouLoseList')}
               </p>
             </div>
           </div>
@@ -920,7 +919,7 @@ export default function BillingPage() {
               onClick={() => setCancelDialogOpen(false)}
               disabled={cancelling}
             >
-              Keep Current Plan
+              {t('keepPlan')}
             </Button>
             <Button
               variant="destructive"
@@ -931,7 +930,7 @@ export default function BillingPage() {
               {cancelling ? (
                 <Loader2 className="w-4 h-4 animate-spin" />
               ) : (
-                'Downgrade to Free'
+                t('downgradeToFree')
               )}
             </Button>
           </DialogFooter>

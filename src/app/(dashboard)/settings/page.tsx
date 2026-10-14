@@ -13,6 +13,8 @@ import {
 import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
 import { Skeleton } from '@/components/ui/skeleton';
+import { useLocale, useTranslations } from '@/i18n/provider';
+import type { Locale } from '@/i18n/config';
 import { Label } from '@/components/ui/label';
 import PasswordInput from '@/components/auth/password-input';
 import {
@@ -56,19 +58,15 @@ import {
 // ── Constants ────────────────────────────────────────────────────────────────
 
 const THEME_OPTIONS = [
-  { value: 'light', label: 'Light', icon: Sun },
-  { value: 'dark', label: 'Dark', icon: Moon },
-  { value: 'system', label: 'System', icon: Monitor },
+  { value: 'light', label: 'themeLight', icon: Sun },
+  { value: 'dark', label: 'themeDark', icon: Moon },
+  { value: 'system', label: 'themeSystem', icon: Monitor },
 ] as const;
 
+// Only languages the site has translations for; shown in their own language
 const LANGUAGE_OPTIONS = [
   { value: 'en', label: 'English' },
-  { value: 'fr', label: 'French' },
-  { value: 'es', label: 'Spanish' },
-  { value: 'de', label: 'German' },
-  { value: 'pt', label: 'Portuguese' },
-  { value: 'ar', label: 'Arabic' },
-  { value: 'zh', label: 'Chinese' },
+  { value: 'fr', label: 'Français' },
 ] as const;
 
 type ThemeValue = 'light' | 'dark' | 'system';
@@ -131,6 +129,9 @@ function SettingsSkeleton() {
 // ── Main Component ───────────────────────────────────────────────────────────
 
 export default function SettingsPage() {
+  const t = useTranslations('app.settings');
+  const tc = useTranslations('app.common');
+  const { setLocale } = useLocale();
   const [theme, setTheme] = useState<ThemeValue>('system');
   const [language, setLanguage] = useState('en');
   const [loading, setLoading] = useState(true);
@@ -151,10 +152,10 @@ export default function SettingsPage() {
         setTheme((data.settings.theme as ThemeValue) || 'system');
         setLanguage(data.settings.language || 'en');
       } else {
-        toast.error(data.error || 'Failed to load settings');
+        toast.error(data.error || t('loadFailed'));
       }
     } catch {
-      toast.error('Failed to load settings');
+      toast.error(t('loadFailed'));
     } finally {
       setLoading(false);
     }
@@ -178,12 +179,12 @@ export default function SettingsPage() {
       });
       const data = await res.json();
       if (data.success) {
-        toast.success('Theme updated');
+        toast.success(t('themeUpdated'));
       } else {
-        toast.error(data.error || 'Failed to update theme');
+        toast.error(data.error || t('themeFailed'));
       }
     } catch {
-      toast.error('Failed to update theme');
+      toast.error(t('themeFailed'));
     } finally {
       setThemeUpdating(false);
     }
@@ -192,6 +193,7 @@ export default function SettingsPage() {
   const handleLanguageChange = async (newLang: string) => {
     setLangUpdating(true);
     setLanguage(newLang);
+    if (newLang === 'en' || newLang === 'fr') setLocale(newLang as Locale);
     try {
       const res = await fetch('/api/user/settings', {
         method: 'PUT',
@@ -201,12 +203,12 @@ export default function SettingsPage() {
       });
       const data = await res.json();
       if (data.success) {
-        toast.success('Language updated');
+        toast.success(t('languageUpdated'));
       } else {
-        toast.error(data.error || 'Failed to update language');
+        toast.error(data.error || t('languageFailed'));
       }
     } catch {
-      toast.error('Failed to update language');
+      toast.error(t('languageFailed'));
     } finally {
       setLangUpdating(false);
     }
@@ -220,7 +222,7 @@ export default function SettingsPage() {
 
   const handleChangePassword = async () => {
     if (newPassword !== confirmPassword) {
-      toast.error('The new passwords do not match.');
+      toast.error(t('passwordsDontMatch'));
       return;
     }
     setPasswordSaving(true);
@@ -233,14 +235,14 @@ export default function SettingsPage() {
       });
       const data = await res.json();
       if (data.success) {
-        toast.success('Your password has been changed.');
+        toast.success(t('passwordChanged'));
         setPasswordDialogOpen(false);
         resetPasswordForm();
       } else {
-        toast.error(data.error || 'Failed to change password');
+        toast.error(data.error || t('passwordFailed'));
       }
     } catch {
-      toast.error('Failed to change password');
+      toast.error(t('passwordFailed'));
     } finally {
       setPasswordSaving(false);
     }
@@ -257,13 +259,13 @@ export default function SettingsPage() {
       });
       const data = await res.json();
       if (data.success) {
-        toast.success('Your account has been deleted.');
+        toast.success(t('accountDeleted'));
         window.location.href = '/';
         return;
       }
-      toast.error(data.error || 'Failed to delete account');
+      toast.error(data.error || t('deleteFailed'));
     } catch {
-      toast.error('Failed to delete account');
+      toast.error(t('deleteFailed'));
     }
     setDeleting(false);
   };
@@ -280,10 +282,10 @@ export default function SettingsPage() {
       <FadeInUp className="space-y-1" delay={0}>
         <h1 className="text-2xl font-bold font-heading flex items-center gap-2">
           <Settings className="size-6 text-brand" />
-          Settings
+          {t('title')}
         </h1>
         <p className="text-muted-foreground font-body">
-          Manage your application preferences.
+          {t('subtitle')}
         </p>
       </FadeInUp>
 
@@ -293,10 +295,10 @@ export default function SettingsPage() {
           <CardHeader>
             <CardTitle className="font-heading flex items-center gap-2">
               <Sun className="size-5 text-brand" />
-              Theme
+              {t('theme')}
             </CardTitle>
             <CardDescription className="font-body">
-              Choose how the application looks to you.
+              {t('themeSub')}
             </CardDescription>
           </CardHeader>
           <CardContent>
@@ -326,7 +328,7 @@ export default function SettingsPage() {
                       <Loader2 className="absolute top-2 right-2 size-3 animate-spin text-brand" />
                     )}
                     <Icon className="size-5" />
-                    <span className="text-sm font-medium">{opt.label}</span>
+                    <span className="text-sm font-medium">{t(opt.label)}</span>
                     {isActive && (
                       <div className="absolute -top-1.5 -right-1.5 h-4 w-4 rounded-full bg-brand flex items-center justify-center">
                         <svg
@@ -358,10 +360,10 @@ export default function SettingsPage() {
           <CardHeader>
             <CardTitle className="font-heading flex items-center gap-2">
               <Globe className="size-5 text-brand" />
-              Language
+              {t('language')}
             </CardTitle>
             <CardDescription className="font-body">
-              Select your preferred language for the interface.
+              {t('languageSub')}
             </CardDescription>
           </CardHeader>
           <CardContent>
@@ -378,7 +380,7 @@ export default function SettingsPage() {
                       Updating…
                     </span>
                   ) : (
-                    <SelectValue placeholder="Select language" />
+                    <SelectValue placeholder={t('selectLanguage')} />
                   )}
                 </SelectTrigger>
                 <SelectContent>
@@ -400,10 +402,10 @@ export default function SettingsPage() {
           <CardHeader>
             <CardTitle className="font-heading flex items-center gap-2 text-destructive">
               <Shield className="size-5" />
-              Danger Zone
+              {t('dangerZone')}
             </CardTitle>
             <CardDescription className="font-body">
-              Irreversible and sensitive account actions.
+              {t('dangerZoneSub')}
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
@@ -412,10 +414,10 @@ export default function SettingsPage() {
               <div className="min-w-0">
                 <p className="text-sm font-medium font-body flex items-center gap-2">
                   <KeyRound className="size-4 text-muted-foreground shrink-0" />
-                  Change Password
+                  {t('changePassword')}
                 </p>
                 <p className="text-sm text-muted-foreground font-body pl-6">
-                  Update your account password.
+                  {t('changePasswordSub')}
                 </p>
               </div>
               <Button
@@ -423,7 +425,7 @@ export default function SettingsPage() {
                 onClick={() => setPasswordDialogOpen(true)}
                 className="shrink-0 font-body w-full sm:w-auto"
               >
-                Change Password
+                {t('changePassword')}
               </Button>
               <Dialog
                 open={passwordDialogOpen}
@@ -434,9 +436,9 @@ export default function SettingsPage() {
               >
                 <DialogContent>
                   <DialogHeader>
-                    <DialogTitle className="font-heading">Change Password</DialogTitle>
+                    <DialogTitle className="font-heading">{t('changePassword')}</DialogTitle>
                     <DialogDescription className="font-body">
-                      Enter your current password, then choose a new one.
+                      {t('changePasswordDialog')}
                     </DialogDescription>
                   </DialogHeader>
                   <form
@@ -447,18 +449,18 @@ export default function SettingsPage() {
                     }}
                   >
                     <div className="space-y-2">
-                      <Label htmlFor="current-password" className="font-body">Current password</Label>
+                      <Label htmlFor="current-password" className="font-body">{t('currentPassword')}</Label>
                       <PasswordInput id="current-password" value={currentPassword} onChange={(e) => setCurrentPassword(e.target.value)} />
                     </div>
                     <div className="space-y-2">
-                      <Label htmlFor="new-password" className="font-body">New password</Label>
+                      <Label htmlFor="new-password" className="font-body">{t('newPassword')}</Label>
                       <PasswordInput id="new-password" value={newPassword} onChange={(e) => setNewPassword(e.target.value)} />
                       <p className="text-xs text-muted-foreground font-body">
-                        At least 8 characters, with a mix of upper and lower case letters, numbers or symbols.
+                        {t('passwordHint')}
                       </p>
                     </div>
                     <div className="space-y-2">
-                      <Label htmlFor="confirm-password" className="font-body">Confirm new password</Label>
+                      <Label htmlFor="confirm-password" className="font-body">{t('confirmPassword')}</Label>
                       <PasswordInput id="confirm-password" value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} />
                     </div>
                     <DialogFooter>
@@ -468,7 +470,7 @@ export default function SettingsPage() {
                         className="font-body"
                         onClick={() => setPasswordDialogOpen(false)}
                       >
-                        Cancel
+                        {tc('cancel')}
                       </Button>
                       <Button
                         type="submit"
@@ -476,7 +478,7 @@ export default function SettingsPage() {
                         disabled={passwordSaving || !currentPassword || !newPassword || !confirmPassword}
                       >
                         {passwordSaving && <Loader2 className="size-4 mr-2 animate-spin" />}
-                        Save new password
+                        {t('saveNewPassword')}
                       </Button>
                     </DialogFooter>
                   </form>
@@ -491,10 +493,10 @@ export default function SettingsPage() {
               <div className="min-w-0">
                 <p className="text-sm font-medium font-body flex items-center gap-2">
                   <Trash2 className="size-4 text-destructive shrink-0" />
-                  Delete Account
+                  {t('deleteAccount')}
                 </p>
                 <p className="text-sm text-muted-foreground font-body pl-6">
-                  Permanently delete your account and all associated data.
+                  {t('deleteAccountSub')}
                 </p>
               </div>
               <AlertDialog>
@@ -504,24 +506,21 @@ export default function SettingsPage() {
                     className="shrink-0 font-body w-full sm:w-auto"
                   >
                     <Trash2 className="size-4 mr-2" />
-                    Delete Account
+                    {t('deleteAccount')}
                   </Button>
                 </AlertDialogTrigger>
                 <AlertDialogContent>
                   <AlertDialogHeader>
                     <AlertDialogTitle className="font-heading">
-                      Are you absolutely sure?
+                      {t('deleteConfirmTitle')}
                     </AlertDialogTitle>
                     <AlertDialogDescription className="font-body">
-                      This action cannot be undone. This will permanently delete
-                      your account and all your resumes, cover letters, job
-                      applications and payment history. Any paid plan ends
-                      immediately and is not refunded.
+                      {t('deleteConfirmBody')}
                     </AlertDialogDescription>
                   </AlertDialogHeader>
                   <AlertDialogFooter>
                     <AlertDialogCancel className="font-body">
-                      Cancel
+                      {tc('cancel')}
                     </AlertDialogCancel>
                     <AlertDialogAction
                       onClick={(e) => {
@@ -532,7 +531,7 @@ export default function SettingsPage() {
                       className="font-body bg-destructive text-white hover:bg-destructive/90"
                     >
                       {deleting && <Loader2 className="size-4 mr-2 animate-spin" />}
-                      Yes, delete my account
+                      {t('deleteConfirmYes')}
                     </AlertDialogAction>
                   </AlertDialogFooter>
                 </AlertDialogContent>
