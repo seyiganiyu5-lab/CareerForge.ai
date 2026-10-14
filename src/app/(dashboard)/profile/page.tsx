@@ -4,6 +4,7 @@ import { useState, useEffect, useCallback } from 'react';
 import { toast } from 'sonner';
 import { FadeInUp } from '@/lib/motion';
 import { useAuth } from '@/lib/auth/context';
+import { useLocale, useTranslations } from '@/i18n/provider';
 import type { CareerLevel, CareerGoal } from '@/lib/auth/types';
 import {
   Card,
@@ -73,9 +74,9 @@ interface ProfileData {
 
 // ── Helpers ──────────────────────────────────────────────────────────────────
 
-function formatDate(iso: string): string {
+function formatDate(iso: string, locale = 'en-US'): string {
   const date = new Date(iso);
-  return date.toLocaleDateString('en-US', {
+  return date.toLocaleDateString(locale, {
     year: 'numeric',
     month: 'long',
     day: 'numeric',
@@ -88,13 +89,6 @@ function getInitials(firstName: string | null, lastName: string | null): string 
   return f + l || '?';
 }
 
-function getCareerLevelLabel(value: CareerLevel | null): string {
-  return CAREER_LEVEL_OPTIONS.find((o) => o.value === value)?.label ?? 'Not set';
-}
-
-function getCareerGoalLabel(value: CareerGoal | null): string {
-  return CAREER_GOAL_OPTIONS.find((o) => o.value === value)?.label ?? 'Not set';
-}
 
 // ── Animation ────────────────────────────────────────────────────────────────
 
@@ -134,6 +128,14 @@ function ProfileSkeleton() {
 // ── Main Component ───────────────────────────────────────────────────────────
 
 export default function ProfilePage() {
+  const t = useTranslations('app.profile');
+  const { locale } = useLocale();
+  const levelLabel = (v: string) => t(`level_${v}`);
+  const goalLabel = (v: string) => t(`goal_${v}`);
+  const getCareerLevelLabel = (value: CareerLevel | null) =>
+    value && CAREER_LEVEL_OPTIONS.some((o) => o.value === value) ? levelLabel(value) : t('notSet');
+  const getCareerGoalLabel = (value: CareerGoal | null) =>
+    value && CAREER_GOAL_OPTIONS.some((o) => o.value === value) ? goalLabel(value) : t('notSet');
   const { user: authUser } = useAuth();
   const [profile, setProfile] = useState<ProfileData | null>(null);
   const [loading, setLoading] = useState(true);
@@ -161,10 +163,10 @@ export default function ProfilePage() {
         setCareerLevel(u.career_level ?? '');
         setCareerGoal(u.career_goal ?? '');
       } else {
-        toast.error(data.error || 'Failed to load profile');
+        toast.error(data.error || t('loadFailed'));
       }
     } catch {
-      toast.error('Failed to load profile');
+      toast.error(t('loadFailed'));
     } finally {
       setLoading(false);
     }
@@ -195,12 +197,12 @@ export default function ProfilePage() {
         setProfile((prev) =>
           prev ? { ...prev, ...data.user } : prev
         );
-        toast.success('Profile updated successfully');
+        toast.success(t('updated'));
       } else {
-        toast.error(data.error || 'Failed to update profile');
+        toast.error(data.error || t('updateFailed'));
       }
     } catch {
-      toast.error('Failed to update profile');
+      toast.error(t('updateFailed'));
     } finally {
       setSaving(false);
     }
@@ -216,7 +218,7 @@ export default function ProfilePage() {
     return (
       <div className="max-w-3xl mx-auto text-center py-16">
         <p className="text-muted-foreground font-body">
-          Unable to load profile data.
+          {t('unableToLoad')}
         </p>
       </div>
     );
@@ -238,7 +240,7 @@ export default function ProfilePage() {
           <h1 className="text-2xl font-bold font-heading truncate">
             {profile.first_name || profile.last_name
               ? `${profile.first_name ?? ''} ${profile.last_name ?? ''}`.trim()
-              : 'Your Profile'}
+              : t('yourProfile')}
           </h1>
           <p className="text-muted-foreground font-body text-sm truncate">
             {profile.email}
@@ -251,10 +253,10 @@ export default function ProfilePage() {
         <Card>
           <CardHeader>
             <CardTitle className="font-heading">
-              Edit Profile
+              {t('editProfile')}
             </CardTitle>
             <CardDescription className="font-body">
-              Update your personal information and career details.
+              {t('editProfileSub')}
             </CardDescription>
           </CardHeader>
           <CardContent>
@@ -265,13 +267,13 @@ export default function ProfilePage() {
                   htmlFor="first_name"
                   className="font-body"
                 >
-                  First Name
+                  {t('firstName')}
                 </Label>
                 <div className="relative">
                   <User className="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-muted-foreground" />
                   <Input
                     id="first_name"
-                    placeholder="John"
+                    placeholder={t('phFirstName')}
                     value={firstName}
                     onChange={(e) => setFirstName(e.target.value)}
                     className="pl-9 font-body"
@@ -285,13 +287,13 @@ export default function ProfilePage() {
                   htmlFor="last_name"
                   className="font-body"
                 >
-                  Last Name
+                  {t('lastName')}
                 </Label>
                 <div className="relative">
                   <User className="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-muted-foreground" />
                   <Input
                     id="last_name"
-                    placeholder="Doe"
+                    placeholder={t('phLastName')}
                     value={lastName}
                     onChange={(e) => setLastName(e.target.value)}
                     className="pl-9 font-body"
@@ -305,7 +307,7 @@ export default function ProfilePage() {
                   htmlFor="email"
                   className="font-body"
                 >
-                  Email
+                  {t('email')}
                 </Label>
                 <div className="relative">
                   <Mail className="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-muted-foreground" />
@@ -325,13 +327,13 @@ export default function ProfilePage() {
                   htmlFor="country"
                   className="font-body"
                 >
-                  Country
+                  {t('country')}
                 </Label>
                 <div className="relative">
                   <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-muted-foreground" />
                   <Input
                     id="country"
-                    placeholder="United States"
+                    placeholder={t('phCountry')}
                     value={country}
                     onChange={(e) => setCountry(e.target.value)}
                     className="pl-9 font-body"
@@ -345,13 +347,13 @@ export default function ProfilePage() {
                   htmlFor="job_title"
                   className="font-body"
                 >
-                  Job Title
+                  {t('jobTitle')}
                 </Label>
                 <div className="relative">
                   <Briefcase className="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-muted-foreground" />
                   <Input
                     id="job_title"
-                    placeholder="Software Engineer"
+                    placeholder={t('phJobTitle')}
                     value={jobTitle}
                     onChange={(e) => setJobTitle(e.target.value)}
                     className="pl-9 font-body"
@@ -362,16 +364,16 @@ export default function ProfilePage() {
               {/* Career Level */}
               <div className="space-y-2">
                 <Label className="font-body">
-                  Career Level
+                  {t('careerLevel')}
                 </Label>
                 <Select value={careerLevel} onValueChange={setCareerLevel}>
                   <SelectTrigger className="w-full font-body">
-                    <SelectValue placeholder="Select level" />
+                    <SelectValue placeholder={t('selectLevel')} />
                   </SelectTrigger>
                   <SelectContent>
                     {CAREER_LEVEL_OPTIONS.map((opt) => (
                       <SelectItem key={opt.value} value={opt.value}>
-                        {opt.label}
+                        {levelLabel(opt.value)}
                       </SelectItem>
                     ))}
                   </SelectContent>
@@ -381,16 +383,16 @@ export default function ProfilePage() {
               {/* Career Goal */}
               <div className="space-y-2">
                 <Label className="font-body">
-                  Career Goal
+                  {t('careerGoal')}
                 </Label>
                 <Select value={careerGoal} onValueChange={setCareerGoal}>
                   <SelectTrigger className="w-full font-body">
-                    <SelectValue placeholder="Select goal" />
+                    <SelectValue placeholder={t('selectGoal')} />
                   </SelectTrigger>
                   <SelectContent>
                     {CAREER_GOAL_OPTIONS.map((opt) => (
                       <SelectItem key={opt.value} value={opt.value}>
-                        {opt.label}
+                        {goalLabel(opt.value)}
                       </SelectItem>
                     ))}
                   </SelectContent>
@@ -410,7 +412,7 @@ export default function ProfilePage() {
                 ) : (
                   <Save className="size-4 mr-2" />
                 )}
-                Save Changes
+                {t('saveChanges')}
               </Button>
             </div>
           </CardContent>
@@ -422,10 +424,10 @@ export default function ProfilePage() {
         <Card>
           <CardHeader>
             <CardTitle className="font-heading">
-              Account Information
+              {t('accountInfo')}
             </CardTitle>
             <CardDescription className="font-body">
-              Details about your account and membership.
+              {t('accountInfoSub')}
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
@@ -434,10 +436,10 @@ export default function ProfilePage() {
               <Calendar className="size-4 text-muted-foreground shrink-0" />
               <div className="min-w-0">
                 <p className="text-sm font-medium font-body">
-                  Member Since
+                  {t('memberSince')}
                 </p>
                 <p className="text-sm text-muted-foreground font-body">
-                  {formatDate(profile.created_at)}
+                  {formatDate(profile.created_at, locale === 'fr' ? 'fr-FR' : 'en-US')}
                 </p>
               </div>
             </div>
@@ -449,13 +451,13 @@ export default function ProfilePage() {
               <Shield className="size-4 text-muted-foreground shrink-0" />
               <div className="min-w-0">
                 <p className="text-sm font-medium font-body">
-                  Auth Provider
+                  {t('authProvider')}
                 </p>
                 <p className="text-sm text-muted-foreground font-body capitalize">
                   {profile.auth_provider === 'google'
                     ? 'Google'
                     : profile.auth_provider === 'email'
-                      ? 'Email & Password'
+                      ? t('emailPassword')
                       : profile.auth_provider}
                 </p>
               </div>
@@ -468,16 +470,16 @@ export default function ProfilePage() {
               <Globe className="size-4 text-muted-foreground shrink-0" />
               <div className="min-w-0">
                 <p className="text-sm font-medium font-body">
-                  Email Verified
+                  {t('emailVerified')}
                 </p>
               </div>
               {profile.email_verified ? (
                 <Badge className="bg-emerald/15 text-emerald border-emerald/25 font-body">
-                  Verified
+                  {t('verified')}
                 </Badge>
               ) : (
                 <Badge variant="outline" className="font-body">
-                  Not Verified
+                  {t('notVerified')}
                 </Badge>
               )}
             </div>
@@ -489,7 +491,7 @@ export default function ProfilePage() {
               <Briefcase className="size-4 text-muted-foreground shrink-0" />
               <div className="min-w-0">
                 <p className="text-sm font-medium font-body">
-                  Career Level
+                  {t('careerLevel')}
                 </p>
                 <p className="text-sm text-muted-foreground font-body">
                   {getCareerLevelLabel(profile.career_level)}
@@ -504,7 +506,7 @@ export default function ProfilePage() {
               <Briefcase className="size-4 text-muted-foreground shrink-0" />
               <div className="min-w-0">
                 <p className="text-sm font-medium font-body">
-                  Career Goal
+                  {t('careerGoal')}
                 </p>
                 <p className="text-sm text-muted-foreground font-body">
                   {getCareerGoalLabel(profile.career_goal)}

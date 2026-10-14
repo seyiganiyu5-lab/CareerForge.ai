@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { useTranslations } from '@/i18n/provider';
 import {
   ShieldCheck,
   FileText,
@@ -84,7 +85,8 @@ function ScoreRing({ score, size = 160 }: { score: number; size?: number }) {
   const color = score >= 80 ? 'text-emerald-500' : score >= 60 ? 'text-amber-500' : score >= 40 ? 'text-orange-500' : 'text-red-500';
   const bgColor = score >= 80 ? 'bg-emerald-500/10' : score >= 60 ? 'bg-amber-500/10' : score >= 40 ? 'bg-orange-500/10' : 'bg-red-500/10';
   const strokeColor = score >= 80 ? '#10b981' : score >= 60 ? '#f59e0b' : score >= 40 ? '#f97316' : '#ef4444';
-  const label = score >= 80 ? 'Excellent' : score >= 60 ? 'Good' : score >= 40 ? 'Fair' : 'Needs Work';
+  const t = useTranslations('app.atsChecker');
+  const label = score >= 80 ? t('excellent') : score >= 60 ? t('good') : score >= 40 ? t('fair') : t('needsWork');
 
   return (
     <div className="relative flex items-center justify-center">
@@ -115,14 +117,19 @@ function ScoreRing({ score, size = 160 }: { score: number; size?: number }) {
 
 // ─── Category Bar Component ───────────────────────────────────────
 
-function CategoryBar({ category }: { category: CategoryResult }) {
+const CATEGORY_KEYS = ['contactInfo', 'summary', 'workExperience', 'education', 'skills', 'formatting', 'length', 'keywords'];
+
+function CategoryBar({ category, categoryKey }: { category: CategoryResult; categoryKey: string }) {
+  const t = useTranslations('app.atsChecker');
   const pct = Math.round((category.score / category.maxScore) * 100);
   const color = pct >= 80 ? 'bg-emerald-500' : pct >= 60 ? 'bg-amber-500' : pct >= 40 ? 'bg-orange-500' : 'bg-red-500';
 
   return (
     <div className="space-y-2">
       <div className="flex items-center justify-between">
-        <span className="text-sm font-medium font-body text-foreground">{category.label}</span>
+        <span className="text-sm font-medium font-body text-foreground">
+          {CATEGORY_KEYS.includes(categoryKey) ? t(`cat_${categoryKey}`) : category.label}
+        </span>
         <span className="text-sm font-semibold font-body text-muted-foreground">
           {category.score}/{category.maxScore}
         </span>
@@ -171,6 +178,7 @@ function AnalysisSkeleton() {
 // ─── Main Page ────────────────────────────────────────────────────
 
 export default function AtsCheckerPage() {
+  const t = useTranslations('app.atsChecker');
   const [resumes, setResumes] = useState<ResumeOption[]>([]);
   const [selectedResumeId, setSelectedResumeId] = useState<string>('');
   const [resumeText, setResumeText] = useState('');
@@ -208,7 +216,7 @@ export default function AtsCheckerPage() {
   const handleAnalyze = useCallback(async () => {
     const hasText = inputMode === 'paste' ? resumeText.trim().length > 50 : !!selectedResumeId;
     if (!hasText) {
-      setError('Please select a resume or paste your resume text.');
+      setError(t('errSelect'));
       return;
     }
 
@@ -237,23 +245,23 @@ export default function AtsCheckerPage() {
           setUpgradeOpen(true);
           return;
         }
-        setError(data.error || 'Analysis failed. Please try again.');
+        setError(data.error || t('errFailed'));
         return;
       }
 
       if (data.success) {
         setResult(data);
       } else {
-        setError(data.error || 'Analysis failed.');
+        setError(data.error || t('errFailed'));
       }
     } catch {
-      setError('Network error. Please check your connection and try again.');
+      setError(t('errNetwork'));
     } finally {
       setAnalyzing(false);
     }
-  }, [inputMode, resumeText, selectedResumeId, jobDescription]);
+  }, [inputMode, resumeText, selectedResumeId, jobDescription, t]);
 
-  const categories = result ? Object.values(result.categories) : [];
+  const categories = result ? Object.entries(result.categories) : [];
 
   return (
     <div className="min-h-[calc(100vh-64px)] pb-8">
@@ -266,10 +274,10 @@ export default function AtsCheckerPage() {
             </div>
             <div>
               <h1 className="text-xl sm:text-2xl font-bold font-heading text-foreground">
-                ATS Compatibility Checker
+                {t('title')}
               </h1>
               <p className="text-sm text-muted-foreground font-body">
-                Analyze your resume against ATS standards and get actionable improvement tips
+                {t('subtitle')}
               </p>
             </div>
           </div>
@@ -283,9 +291,9 @@ export default function AtsCheckerPage() {
               {/* Input Section */}
               <Card className="mb-6">
                 <CardHeader className="pb-4">
-                  <CardTitle className="text-base font-heading">Select Your Resume</CardTitle>
+                  <CardTitle className="text-base font-heading">{t('selectResume')}</CardTitle>
                   <CardDescription className="text-sm font-body">
-                    Choose an existing resume or paste your resume text below
+                    {t('selectResumeSub')}
                   </CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-4">
@@ -302,7 +310,7 @@ export default function AtsCheckerPage() {
                             : 'text-muted-foreground hover:text-foreground'
                         )}
                       >
-                        {mode === 'select' ? 'My Resumes' : 'Paste Text'}
+                        {mode === 'select' ? t('modeSelect') : t('modePaste')}
                       </button>
                     ))}
                   </div>
@@ -310,14 +318,14 @@ export default function AtsCheckerPage() {
                   {/* Resume Select */}
                   {inputMode === 'select' ? (
                     <div className="space-y-2">
-                      <Label className="font-body text-sm">Choose a resume</Label>
+                      <Label className="font-body text-sm">{t('chooseResume')}</Label>
                       <Select value={selectedResumeId} onValueChange={setSelectedResumeId}>
                         <SelectTrigger className="font-body">
-                          <SelectValue placeholder="Select a resume..." />
+                          <SelectValue placeholder={t('selectPlaceholder')} />
                         </SelectTrigger>
                         <SelectContent>
                           {resumes.length === 0 ? (
-                            <SelectItem value="__none" disabled>No resumes found</SelectItem>
+                            <SelectItem value="__none" disabled>{t('noResumesFound')}</SelectItem>
                           ) : (
                             resumes.map((r) => (
                               <SelectItem key={r.id} value={r.id} className="font-body">
@@ -329,22 +337,22 @@ export default function AtsCheckerPage() {
                       </Select>
                       {resumes.length === 0 && (
                         <p className="text-xs text-muted-foreground font-body">
-                          No resumes yet.{' '}
-                          <a href="/resume-builder" className="text-brand underline underline-offset-2">Create one first</a>.
+                          {t('noResumesYet')}{' '}
+                          <a href="/resume-builder" className="text-brand underline underline-offset-2">{t('createFirst')}</a>.
                         </p>
                       )}
                     </div>
                   ) : (
                     <div className="space-y-2">
-                      <Label className="font-body text-sm">Paste your resume text</Label>
+                      <Label className="font-body text-sm">{t('pasteLabel')}</Label>
                       <Textarea
                         value={resumeText}
                         onChange={(e) => setResumeText(e.target.value)}
-                        placeholder="Paste your full resume text here..."
+                        placeholder={t('pastePlaceholder')}
                         className="min-h-[200px] font-body text-sm"
                       />
                       <p className="text-xs text-muted-foreground font-body">
-                        {resumeText.trim().length} characters
+                        {t('characters', { count: resumeText.trim().length })}
                       </p>
                     </div>
                   )}
@@ -356,17 +364,17 @@ export default function AtsCheckerPage() {
                 <CardHeader className="pb-4">
                   <div className="flex items-center gap-2">
                     <Briefcase className="w-4 h-4 text-muted-foreground" />
-                    <CardTitle className="text-base font-heading">Job Description (Optional)</CardTitle>
+                    <CardTitle className="text-base font-heading">{t('jobDesc')}</CardTitle>
                   </div>
                   <CardDescription className="text-sm font-body">
-                    Paste a job description to get keyword matching analysis
+                    {t('jobDescSub')}
                   </CardDescription>
                 </CardHeader>
                 <CardContent>
                   <Textarea
                     value={jobDescription}
                     onChange={(e) => setJobDescription(e.target.value)}
-                    placeholder="Paste the job description here for keyword analysis..."
+                    placeholder={t('jobDescPlaceholder')}
                     className="min-h-[120px] font-body text-sm"
                   />
                 </CardContent>
@@ -396,12 +404,12 @@ export default function AtsCheckerPage() {
                   {analyzing ? (
                     <>
                       <Loader2 className="w-4 h-4 animate-spin" />
-                      Analyzing Resume...
+                      {t('analyzing')}
                     </>
                   ) : (
                     <>
                       <Zap className="w-4 h-4" />
-                      Analyze Resume
+                      {t('analyze')}
                       <ChevronRight className="w-4 h-4" />
                     </>
                   )}
@@ -411,11 +419,11 @@ export default function AtsCheckerPage() {
               {/* Pro badge notice — only show after subscription data loads to prevent flash */}
               {subLoaded && !isPremium && (
                 <p className="text-center text-xs text-muted-foreground mt-3 font-body">
-                  Basic scoring is free.{' '}
+                  {t('basicFree')}{' '}
                   <button onClick={() => setUpgradeOpen(true)} className="text-brand hover:underline">
-                    Upgrade to Pro
+                    {t('upgradeToPro')}
                   </button>{' '}
-                  for AI-powered grammar, suggestions, and detailed analysis.
+                  {t('proExtras')}
                 </p>
               )}
             </motion.div>
@@ -439,22 +447,22 @@ export default function AtsCheckerPage() {
                     <div className="flex-1 text-center sm:text-left space-y-4">
                       <div>
                         <h2 className="text-lg font-bold font-heading text-foreground">
-                          ATS Compatibility Score
+                          {t('scoreTitle')}
                         </h2>
                         <p className="text-sm text-muted-foreground font-body mt-1">
                           {result.score >= 80
-                            ? 'Great job! Your resume is well-optimized for ATS systems.'
+                            ? t('score80')
                             : result.score >= 60
-                              ? 'Your resume has a good foundation. A few improvements can make a big difference.'
+                              ? t('score60')
                               : result.score >= 40
-                                ? 'Your resume needs some work to pass ATS screening. Focus on the areas below.'
-                                : 'Your resume has significant ATS issues. Address the critical areas first.'}
+                                ? t('score40')
+                                : t('score0')}
                         </p>
                       </div>
                       {result.isPremium && (
                         <Badge className="bg-emerald-100 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-400 text-xs font-medium border-0">
                           <Sparkles className="w-3 h-3 mr-1" />
-                          Pro Analysis
+                          {t('proAnalysis')}
                         </Badge>
                       )}
                     </div>
@@ -467,12 +475,12 @@ export default function AtsCheckerPage() {
                 <CardHeader>
                   <CardTitle className="text-base font-heading flex items-center gap-2">
                     <Target className="w-4 h-4 text-muted-foreground" />
-                    Category Breakdown
+                    {t('categoryBreakdown')}
                   </CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-5">
-                  {categories.map((cat) => (
-                    <CategoryBar key={cat.label} category={cat} />
+                  {categories.map(([key, cat]) => (
+                    <CategoryBar key={key} categoryKey={key} category={cat} />
                   ))}
                 </CardContent>
               </Card>
@@ -483,10 +491,10 @@ export default function AtsCheckerPage() {
                   <CardHeader>
                     <CardTitle className="text-base font-heading flex items-center gap-2">
                       <Lightbulb className="w-4 h-4 text-amber-500" />
-                      Keyword Match Analysis
+                      {t('keywordMatch')}
                     </CardTitle>
                     <CardDescription className="text-sm font-body">
-                      {Math.round(result.keywordMatch.matchRate * 100)}% of job keywords found in your resume
+                      {t('keywordRate', { percent: Math.round(result.keywordMatch.matchRate * 100) })}
                     </CardDescription>
                   </CardHeader>
                   <CardContent className="space-y-4">
@@ -494,7 +502,7 @@ export default function AtsCheckerPage() {
                       <div>
                         <p className="text-sm font-medium font-body mb-2 text-emerald-600 dark:text-emerald-400">
                           <CheckCircle2 className="w-3.5 h-3.5 inline mr-1" />
-                          Found ({result.keywordMatch.matched.length})
+                          {t('found', { count: result.keywordMatch.matched.length })}
                         </p>
                         <div className="flex flex-wrap gap-2">
                           {result.keywordMatch.matched.map((kw) => (
@@ -509,7 +517,7 @@ export default function AtsCheckerPage() {
                       <div>
                         <p className="text-sm font-medium font-body mb-2 text-red-600 dark:text-red-400">
                           <XCircle className="w-3.5 h-3.5 inline mr-1" />
-                          Missing ({result.keywordMatch.missing.length})
+                          {t('missing', { count: result.keywordMatch.missing.length })}
                         </p>
                         <div className="flex flex-wrap gap-2">
                           {result.keywordMatch.missing.map((kw) => (
@@ -532,7 +540,7 @@ export default function AtsCheckerPage() {
                     <Card>
                       <CardHeader className="pb-3">
                         <CardTitle className="text-base font-heading flex items-center gap-2 text-emerald-600 dark:text-emerald-400">
-                          <Star className="w-4 h-4" /> Strengths
+                          <Star className="w-4 h-4" /> {t('strengths')}
                         </CardTitle>
                       </CardHeader>
                       <CardContent>
@@ -546,14 +554,14 @@ export default function AtsCheckerPage() {
                             ))}
                           </ul>
                         ) : (
-                          <p className="text-sm text-muted-foreground font-body">No specific strengths identified.</p>
+                          <p className="text-sm text-muted-foreground font-body">{t('noStrengths')}</p>
                         )}
                       </CardContent>
                     </Card>
                     <Card>
                       <CardHeader className="pb-3">
                         <CardTitle className="text-base font-heading flex items-center gap-2 text-amber-600 dark:text-amber-400">
-                          <AlertTriangle className="w-4 h-4" /> Areas to Improve
+                          <AlertTriangle className="w-4 h-4" /> {t('improve')}
                         </CardTitle>
                       </CardHeader>
                       <CardContent>
@@ -567,7 +575,7 @@ export default function AtsCheckerPage() {
                             ))}
                           </ul>
                         ) : (
-                          <p className="text-sm text-muted-foreground font-body">No major weaknesses found.</p>
+                          <p className="text-sm text-muted-foreground font-body">{t('noWeaknesses')}</p>
                         )}
                       </CardContent>
                     </Card>
@@ -579,10 +587,10 @@ export default function AtsCheckerPage() {
                       <CardHeader>
                         <CardTitle className="text-base font-heading flex items-center gap-2">
                           <Lightbulb className="w-4 h-4 text-amber-500" />
-                          AI-Powered Suggestions
+                          {t('aiSuggestions')}
                         </CardTitle>
                         <CardDescription className="text-sm font-body">
-                          Smart recommendations to improve your resume
+                          {t('aiSuggestionsSub')}
                         </CardDescription>
                       </CardHeader>
                       <CardContent className="space-y-3">
@@ -597,7 +605,7 @@ export default function AtsCheckerPage() {
                                 s.priority === 'low' && 'bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-400',
                               )}
                             >
-                              {s.priority.toUpperCase()}
+                              {t(`priority_${s.priority}`)}
                             </Badge>
                             <p className="text-sm font-body text-foreground leading-relaxed">{s.message}</p>
                           </div>
@@ -612,7 +620,7 @@ export default function AtsCheckerPage() {
                       <CardHeader>
                         <CardTitle className="text-base font-heading flex items-center gap-2">
                           <AlertTriangle className="w-4 h-4 text-red-500" />
-                          Grammar & Style Issues
+                          {t('grammar')}
                         </CardTitle>
                       </CardHeader>
                       <CardContent className="space-y-3">
@@ -642,14 +650,14 @@ export default function AtsCheckerPage() {
                     </div>
                     <div className="flex-1 text-center sm:text-left">
                       <h3 className="font-semibold font-heading text-foreground">
-                        Unlock Full AI Analysis
+                        {t('unlockTitle')}
                       </h3>
                       <p className="text-sm text-muted-foreground font-body mt-1">
-                        Get grammar checking, AI suggestions, strengths/weaknesses analysis, and more with Pro.
+                        {t('unlockBody')}
                       </p>
                     </div>
                     <Button onClick={() => setUpgradeOpen(true)} className="shrink-0 font-body">
-                      Upgrade to Pro
+                      {t('upgradeToPro')}
                     </Button>
                   </CardContent>
                 </Card>
@@ -663,7 +671,7 @@ export default function AtsCheckerPage() {
                   className="gap-2 font-body"
                 >
                   <ArrowLeft className="w-4 h-4" />
-                  Run Another Analysis
+                  {t('runAgain')}
                 </Button>
               </div>
             </motion.div>
@@ -675,7 +683,7 @@ export default function AtsCheckerPage() {
         open={upgradeOpen}
         onOpenChange={setUpgradeOpen}
         onClose={() => setUpgradeOpen(false)}
-        featureName="ATS Checker Pro Analysis"
+        featureName={t('proFeatureName')}
       />
     </div>
   );
