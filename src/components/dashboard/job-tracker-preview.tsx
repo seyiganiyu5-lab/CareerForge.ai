@@ -33,6 +33,7 @@ function statValue(key: (typeof STAT_STYLES)[number]['key'], stats: JobStats): n
 
 export default function JobTrackerPreview() {
   const t = useTranslations('dashboard.jobTracker');
+  const tu = useTranslations('app.jobTrackerUi');
   const [stats, setStats] = useState<JobStats | null>(null);
 
   useEffect(() => {
@@ -94,7 +95,7 @@ export default function JobTrackerPreview() {
             href="/job-tracker"
             className="text-xs font-medium text-brand hover:text-brand/80 font-body transition-colors inline-flex items-center gap-1 group"
           >
-            Open Tracker
+            {tu('openTracker')}
             <ArrowRight className="w-3 h-3 group-hover:translate-x-0.5 transition-transform" />
           </Link>
         </div>

@@ -25,6 +25,7 @@ const CAREER_GOALS: { key: CareerGoal; icon: React.ElementType; translationKey: 
 export default function CareerGoalStep({ onNext, onBack, initialValues }: CareerGoalStepProps) {
   const t = useTranslations('auth.onboarding.careerGoal');
   const tCommon = useTranslations('auth.common');
+  const tm = useTranslations('app.misc');
   const [selected, setSelected] = useState<CareerGoal[]>(initialValues || []);
 
   function toggleGoal(goal: CareerGoal) {
@@ -136,7 +137,7 @@ export default function CareerGoalStep({ onNext, onBack, initialValues }: Career
             exit={{ opacity: 0, height: 0 }}
             className="text-xs text-muted-foreground font-body text-center mt-3"
           >
-            {selected.length} {selected.length === 1 ? 'selected' : 'selected'}
+            {tm('selectedCount', { count: selected.length })}
           </motion.p>
         )}
       </AnimatePresence>

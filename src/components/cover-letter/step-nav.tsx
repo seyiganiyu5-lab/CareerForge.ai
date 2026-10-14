@@ -11,6 +11,7 @@ import {
   Check,
 } from 'lucide-react';
 import type { CoverLetterSectionKey } from '@/types/cover-letter';
+import { useTranslations } from '@/i18n/provider';
 
 interface StepNavProps {
   activeStep: number;
@@ -19,17 +20,18 @@ interface StepNavProps {
 }
 
 const STEPS = [
-  { key: 'sender-info' as CoverLetterSectionKey, label: 'Personal Info', shortLabel: 'Personal', icon: User, description: 'Your contact details' },
-  { key: 'recipient-info' as CoverLetterSectionKey, label: 'Recipient', shortLabel: 'Recipient', icon: Building2, description: 'Who you\'re writing to' },
-  { key: 'job-details' as CoverLetterSectionKey, label: 'Job Details', shortLabel: 'Job', icon: Briefcase, description: 'Position information' },
-  { key: 'ai-generate' as CoverLetterSectionKey, label: 'AI Generate', shortLabel: 'AI', icon: Wand2, description: 'Let AI write it' },
-  { key: 'content' as CoverLetterSectionKey, label: 'Letter Content', shortLabel: 'Content', icon: PenLine, description: 'Edit your letter' },
-  { key: 'customization' as CoverLetterSectionKey, label: 'Design', shortLabel: 'Design', icon: Eye, description: 'Style & formatting' },
+  { key: 'sender-info' as CoverLetterSectionKey, labelKey: 'stepPersonalInfo', shortLabelKey: 'stepPersonalShort', icon: User, descriptionKey: 'stepPersonalDesc' },
+  { key: 'recipient-info' as CoverLetterSectionKey, labelKey: 'stepRecipient', shortLabelKey: 'stepRecipientShort', icon: Building2, descriptionKey: 'stepRecipientDesc' },
+  { key: 'job-details' as CoverLetterSectionKey, labelKey: 'stepJobDetails', shortLabelKey: 'stepJobShort', icon: Briefcase, descriptionKey: 'stepJobDesc' },
+  { key: 'ai-generate' as CoverLetterSectionKey, labelKey: 'stepAiGenerate', shortLabelKey: 'stepAiShort', icon: Wand2, descriptionKey: 'stepAiDesc' },
+  { key: 'content' as CoverLetterSectionKey, labelKey: 'stepContent', shortLabelKey: 'stepContentShort', icon: PenLine, descriptionKey: 'stepContentDesc' },
+  { key: 'customization' as CoverLetterSectionKey, labelKey: 'stepDesign', shortLabelKey: 'stepDesignShort', icon: Eye, descriptionKey: 'stepDesignDesc' },
 ];
 
 export { STEPS };
 
 export function StepNav({ activeStep, onStepChange, isMobile }: StepNavProps) {
+  const t = useTranslations('app.coverLetterEditor');
   return (
     <div className="relative w-full max-w-full overflow-hidden">
       {/* Scroll container — mobile shows thin scrollbar as a cue, desktop hides it */}
@@ -89,16 +91,16 @@ export function StepNav({ activeStep, onStepChange, isMobile }: StepNavProps) {
                   <div className="flex flex-col">
                     {/* Full label on wide screens, short label on medium screens */}
                     <span className={`font-medium leading-tight hidden xl:inline ${isActive ? 'text-brand' : ''} text-[11px]`}>
-                      {step.label}
+                      {t(step.labelKey)}
                     </span>
                     <span className={`font-medium leading-tight xl:hidden ${isActive ? 'text-brand' : ''} text-[11px]`}>
-                      {step.shortLabel}
+                      {t(step.shortLabelKey)}
                     </span>
                   </div>
                 )}
                 {isMobile && (
                   <span className={`font-medium leading-tight text-center ${isActive ? 'text-brand' : 'text-muted-foreground'} text-[9px]`}>
-                    {step.shortLabel}
+                    {t(step.shortLabelKey)}
                   </span>
                 )}
               </button>

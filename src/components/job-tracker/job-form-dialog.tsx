@@ -15,6 +15,8 @@ import {
 } from '@/components/ui/select';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { STATUSES, EMPLOYMENT_TYPES, WORK_MODES } from './status-config';
+import { useJobLabels } from './use-job-labels';
+import { useTranslations } from '@/i18n/provider';
 import type { JobApplication, Reminder } from '@/hooks/use-job-tracker';
 
 interface JobFormDialogProps {
@@ -52,10 +54,10 @@ const EMPTY_FORM = {
 };
 
 const REMINDER_TYPES = [
-  { value: 'follow_up', label: 'Follow-up' },
-  { value: 'interview_prep', label: 'Interview Prep' },
-  { value: 'deadline', label: 'Deadline' },
-  { value: 'other', label: 'Other' },
+  { value: 'follow_up', labelKey: 'reminderTypeFollowUp' },
+  { value: 'interview_prep', labelKey: 'reminderTypeInterviewPrep' },
+  { value: 'deadline', labelKey: 'reminderTypeDeadline' },
+  { value: 'other', labelKey: 'reminderTypeOther' },
 ];
 
 function buildFormFromApp(app: JobApplication | null) {
@@ -82,6 +84,10 @@ function buildFormFromApp(app: JobApplication | null) {
 }
 
 export function JobFormDialog({ open, onOpenChange, editingApplication, onSave, addReminder }: JobFormDialogProps) {
+  const t = useTranslations('dashboard.jobTracker');
+  const tu = useTranslations('app.jobTrackerUi');
+  const tc = useTranslations('app.common');
+  const labels = useJobLabels();
   const [form, setForm] = useState(() => buildFormFromApp(editingApplication));
   const [saving, setSaving] = useState(false);
   const [showReminderForm, setShowReminderForm] = useState(false);
@@ -146,7 +152,7 @@ export function JobFormDialog({ open, onOpenChange, editingApplication, onSave, 
       <DialogContent className="sm:max-w-lg max-h-[90vh]">
         <DialogHeader>
           <DialogTitle className="font-heading">
-            {editingApplication ? 'Edit Application' : 'Add Application'}
+            {editingApplication ? t('editApplication') : t('addApplication')}
           </DialogTitle>
         </DialogHeader>
 
@@ -155,25 +161,25 @@ export function JobFormDialog({ open, onOpenChange, editingApplication, onSave, 
             {/* Main Info */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               <div className="space-y-1.5 sm:col-span-2">
-                <Label className="font-body text-xs">Company Name *</Label>
+                <Label className="font-body text-xs">{t('companyName')} *</Label>
                 <Input
                   value={form.company_name}
                   onChange={e => set('company_name', e.target.value)}
-                  placeholder="e.g. Google"
+                  placeholder={tu('companyPlaceholder')}
                   className="font-body text-sm h-9"
                 />
               </div>
               <div className="space-y-1.5 sm:col-span-2">
-                <Label className="font-body text-xs">Job Title *</Label>
+                <Label className="font-body text-xs">{t('jobTitle')} *</Label>
                 <Input
                   value={form.job_title}
                   onChange={e => set('job_title', e.target.value)}
-                  placeholder="e.g. Senior Software Engineer"
+                  placeholder={tu('jobTitlePlaceholder')}
                   className="font-body text-sm h-9"
                 />
               </div>
               <div className="space-y-1.5">
-                <Label className="font-body text-xs">Status</Label>
+                <Label className="font-body text-xs">{t('status')}</Label>
                 <Select value={form.status} onValueChange={v => set('status', v)}>
                   <SelectTrigger className="font-body text-sm h-9">
                     <SelectValue />
@@ -181,32 +187,32 @@ export function JobFormDialog({ open, onOpenChange, editingApplication, onSave, 
                   <SelectContent>
                     {STATUSES.map(s => (
                       <SelectItem key={s.key} value={s.key} className="font-body text-sm">
-                        {s.label}
+                        {labels.status(s.key, s.label)}
                       </SelectItem>
                     ))}
                   </SelectContent>
                 </Select>
               </div>
               <div className="space-y-1.5">
-                <Label className="font-body text-xs">Salary</Label>
+                <Label className="font-body text-xs">{t('salary')}</Label>
                 <Input
                   value={form.salary}
                   onChange={e => set('salary', e.target.value)}
-                  placeholder="e.g. $120k-$150k"
+                  placeholder={tu('salaryPlaceholder')}
                   className="font-body text-sm h-9"
                 />
               </div>
               <div className="space-y-1.5">
-                <Label className="font-body text-xs">Location</Label>
+                <Label className="font-body text-xs">{t('location')}</Label>
                 <Input
                   value={form.location}
                   onChange={e => set('location', e.target.value)}
-                  placeholder="e.g. San Francisco, CA"
+                  placeholder={tu('locationPlaceholder')}
                   className="font-body text-sm h-9"
                 />
               </div>
               <div className="space-y-1.5">
-                <Label className="font-body text-xs">Job URL</Label>
+                <Label className="font-body text-xs">{t('jobUrl')}</Label>
                 <Input
                   value={form.job_url}
                   onChange={e => set('job_url', e.target.value)}
@@ -215,27 +221,27 @@ export function JobFormDialog({ open, onOpenChange, editingApplication, onSave, 
                 />
               </div>
               <div className="space-y-1.5">
-                <Label className="font-body text-xs">Employment Type</Label>
+                <Label className="font-body text-xs">{t('employmentType')}</Label>
                 <Select value={form.employment_type} onValueChange={v => set('employment_type', v)}>
                   <SelectTrigger className="font-body text-sm h-9">
-                    <SelectValue placeholder="Select..." />
+                    <SelectValue placeholder={tu('selectPlaceholder')} />
                   </SelectTrigger>
                   <SelectContent>
-                    {EMPLOYMENT_TYPES.map(t => (
-                      <SelectItem key={t} value={t} className="font-body text-sm">{t}</SelectItem>
+                    {EMPLOYMENT_TYPES.map(et => (
+                      <SelectItem key={et} value={et} className="font-body text-sm">{labels.employmentType(et)}</SelectItem>
                     ))}
                   </SelectContent>
                 </Select>
               </div>
               <div className="space-y-1.5">
-                <Label className="font-body text-xs">Work Mode</Label>
+                <Label className="font-body text-xs">{t('workMode')}</Label>
                 <Select value={form.work_mode} onValueChange={v => set('work_mode', v)}>
                   <SelectTrigger className="font-body text-sm h-9">
-                    <SelectValue placeholder="Select..." />
+                    <SelectValue placeholder={tu('selectPlaceholder')} />
                   </SelectTrigger>
                   <SelectContent>
                     {WORK_MODES.map(m => (
-                      <SelectItem key={m} value={m} className="font-body text-sm">{m}</SelectItem>
+                      <SelectItem key={m} value={m} className="font-body text-sm">{labels.workMode(m)}</SelectItem>
                     ))}
                   </SelectContent>
                 </Select>
@@ -244,11 +250,11 @@ export function JobFormDialog({ open, onOpenChange, editingApplication, onSave, 
 
             {/* Description */}
             <div className="space-y-1.5">
-              <Label className="font-body text-xs">Job Description</Label>
+              <Label className="font-body text-xs">{t('jobDescription')}</Label>
               <Textarea
                 value={form.job_description}
                 onChange={e => set('job_description', e.target.value)}
-                placeholder="Paste the job description here..."
+                placeholder={tu('jobDescriptionPlaceholder')}
                 className="font-body text-sm min-h-[80px]"
               />
             </div>
@@ -256,20 +262,20 @@ export function JobFormDialog({ open, onOpenChange, editingApplication, onSave, 
             {/* Documents Used */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               <div className="space-y-1.5">
-                <Label className="font-body text-xs">Resume Used</Label>
+                <Label className="font-body text-xs">{t('resumeUsed')}</Label>
                 <Input
                   value={form.resume_used}
                   onChange={e => set('resume_used', e.target.value)}
-                  placeholder="Name of resume"
+                  placeholder={tu('resumeUsedPlaceholder')}
                   className="font-body text-sm h-9"
                 />
               </div>
               <div className="space-y-1.5">
-                <Label className="font-body text-xs">Cover Letter Used</Label>
+                <Label className="font-body text-xs">{t('coverLetterUsed')}</Label>
                 <Input
                   value={form.cover_letter_used}
                   onChange={e => set('cover_letter_used', e.target.value)}
-                  placeholder="Name of cover letter"
+                  placeholder={tu('coverLetterUsedPlaceholder')}
                   className="font-body text-sm h-9"
                 />
               </div>
@@ -277,11 +283,11 @@ export function JobFormDialog({ open, onOpenChange, editingApplication, onSave, 
 
             {/* Notes */}
             <div className="space-y-1.5">
-              <Label className="font-body text-xs">Notes</Label>
+              <Label className="font-body text-xs">{t('notes')}</Label>
               <Textarea
                 value={form.notes}
                 onChange={e => set('notes', e.target.value)}
-                placeholder="Any additional notes..."
+                placeholder={tu('notesPlaceholder')}
                 className="font-body text-sm min-h-[60px]"
               />
             </div>
@@ -291,7 +297,7 @@ export function JobFormDialog({ open, onOpenChange, editingApplication, onSave, 
               <div>
                 <div className="flex items-center gap-2 mb-2">
                   <Bell className="w-3.5 h-3.5 text-muted-foreground" />
-                  <span className="text-xs font-medium font-heading">Reminders</span>
+                  <span className="text-xs font-medium font-heading">{t('reminders')}</span>
                 </div>
                 {!showReminderForm ? (
                   <Button
@@ -300,12 +306,12 @@ export function JobFormDialog({ open, onOpenChange, editingApplication, onSave, 
                     className="text-xs font-body gap-1 h-8"
                     onClick={() => setShowReminderForm(true)}
                   >
-                    <Plus className="w-3 h-3" /> Add Reminder
+                    <Plus className="w-3 h-3" /> {t('addReminder')}
                   </Button>
                 ) : (
                   <div className="p-3 rounded-lg border border-border space-y-2">
                     <div className="flex items-center justify-between">
-                      <span className="text-xs font-medium font-heading">New Reminder</span>
+                      <span className="text-xs font-medium font-heading">{t('newReminder')}</span>
                       <Button variant="ghost" size="sm" className="h-6 w-6 p-0" onClick={() => setShowReminderForm(false)}>
                         <X className="w-3 h-3" />
                       </Button>
@@ -313,7 +319,7 @@ export function JobFormDialog({ open, onOpenChange, editingApplication, onSave, 
                     <Input
                       value={reminderForm.title}
                       onChange={e => setReminderForm(f => ({ ...f, title: e.target.value }))}
-                      placeholder="Reminder title"
+                      placeholder={t('reminderTitle')}
                       className="font-body text-sm h-8"
                     />
                     <div className="grid grid-cols-2 gap-2">
@@ -328,8 +334,8 @@ export function JobFormDialog({ open, onOpenChange, editingApplication, onSave, 
                           <SelectValue />
                         </SelectTrigger>
                         <SelectContent>
-                          {REMINDER_TYPES.map(t => (
-                            <SelectItem key={t.value} value={t.value} className="font-body text-sm">{t.label}</SelectItem>
+                          {REMINDER_TYPES.map(rt => (
+                            <SelectItem key={rt.value} value={rt.value} className="font-body text-sm">{t(rt.labelKey)}</SelectItem>
                           ))}
                         </SelectContent>
                       </Select>
@@ -341,7 +347,7 @@ export function JobFormDialog({ open, onOpenChange, editingApplication, onSave, 
                       disabled={savingReminder || !reminderForm.title.trim() || !reminderForm.date}
                     >
                       {savingReminder ? <Loader2 className="w-3 h-3 animate-spin mr-1" /> : null}
-                      Add
+                      {tc('add')}
                     </Button>
                   </div>
                 )}
@@ -352,10 +358,10 @@ export function JobFormDialog({ open, onOpenChange, editingApplication, onSave, 
 
             {/* Important Dates */}
             <div>
-              <span className="text-xs font-medium font-heading mb-3 block">Important Dates</span>
+              <span className="text-xs font-medium font-heading mb-3 block">{t('importantDates')}</span>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div className="space-y-1.5">
-                  <Label className="font-body text-xs">Applied At</Label>
+                  <Label className="font-body text-xs">{t('appliedAt')}</Label>
                   <Input
                     type="date"
                     value={form.applied_at}
@@ -364,7 +370,7 @@ export function JobFormDialog({ open, onOpenChange, editingApplication, onSave, 
                   />
                 </div>
                 <div className="space-y-1.5">
-                  <Label className="font-body text-xs">Interview Date</Label>
+                  <Label className="font-body text-xs">{t('interviewDate')}</Label>
                   <Input
                     type="date"
                     value={form.interview_date}
@@ -373,7 +379,7 @@ export function JobFormDialog({ open, onOpenChange, editingApplication, onSave, 
                   />
                 </div>
                 <div className="space-y-1.5">
-                  <Label className="font-body text-xs">Follow-up Date</Label>
+                  <Label className="font-body text-xs">{t('followUpDate')}</Label>
                   <Input
                     type="date"
                     value={form.follow_up_date}
@@ -382,7 +388,7 @@ export function JobFormDialog({ open, onOpenChange, editingApplication, onSave, 
                   />
                 </div>
                 <div className="space-y-1.5">
-                  <Label className="font-body text-xs">Deadline Date</Label>
+                  <Label className="font-body text-xs">{t('deadlineDate')}</Label>
                   <Input
                     type="date"
                     value={form.deadline_date}
@@ -391,7 +397,7 @@ export function JobFormDialog({ open, onOpenChange, editingApplication, onSave, 
                   />
                 </div>
                 <div className="space-y-1.5 sm:col-span-2">
-                  <Label className="font-body text-xs">Offer Expiry</Label>
+                  <Label className="font-body text-xs">{t('offerExpiry')}</Label>
                   <Input
                     type="date"
                     value={form.offer_expiry}
@@ -406,7 +412,7 @@ export function JobFormDialog({ open, onOpenChange, editingApplication, onSave, 
 
         <DialogFooter className="gap-2">
           <Button variant="outline" onClick={() => onOpenChange(false)} className="font-body text-sm">
-            Cancel
+            {tc('cancel')}
           </Button>
           <Button
             onClick={async () => {
@@ -417,7 +423,7 @@ export function JobFormDialog({ open, onOpenChange, editingApplication, onSave, 
             className="bg-brand hover:bg-brand/90 text-white font-body text-sm"
           >
             {saving && <Loader2 className="w-4 h-4 animate-spin mr-1.5" />}
-            {editingApplication ? 'Save Changes' : 'Add Application'}
+            {editingApplication ? t('save') : t('addApplication')}
           </Button>
         </DialogFooter>
       </DialogContent>

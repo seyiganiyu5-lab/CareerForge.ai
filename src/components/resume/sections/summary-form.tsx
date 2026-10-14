@@ -5,6 +5,7 @@ import type { ResumeData } from '@/types/resume';
 import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
 import { Button } from '@/components/ui/button';
+import { useTranslations } from '@/i18n/provider';
 
 interface SummaryFormProps {
   resumeData: ResumeData;
@@ -16,20 +17,21 @@ const MAX_CHARS = 2000;
 
 export function SummaryForm({ resumeData, setResumeData, onAiAssist }: SummaryFormProps) {
   const value = resumeData.professionalSummary;
+  const t = useTranslations('app.resumeForms');
 
   return (
     <div className="space-y-1">
       <h3 className="font-heading text-lg font-semibold text-foreground">
-        Professional Summary
+        {t('summaryTitle')}
       </h3>
       <p className="font-body text-sm text-muted-foreground">
-        Write a brief overview of your professional background and career objectives.
+        {t('summaryDescription')}
       </p>
 
       <div className="mt-4">
         <div className="flex items-center justify-between">
           <Label htmlFor="professionalSummary" className="font-body">
-            Summary
+            {t('summaryLabel')}
           </Label>
           <Button
             type="button"
@@ -40,7 +42,7 @@ export function SummaryForm({ resumeData, setResumeData, onAiAssist }: SummaryFo
               section: 'professionalSummary',
               content: resumeData.professionalSummary,
             })}
-            aria-label="AI Assist"
+            aria-label={t('aiAssist')}
           >
             <Sparkles className="size-4" />
           </Button>
@@ -54,13 +56,13 @@ export function SummaryForm({ resumeData, setResumeData, onAiAssist }: SummaryFo
               professionalSummary: e.target.value,
             }))
           }
-          placeholder="A results-driven software engineer with 5+ years of experience building scalable web applications..."
+          placeholder={t('summaryPlaceholder')}
           className="mt-1.5 min-h-[200px] resize-y font-body"
           maxLength={MAX_CHARS}
         />
         <div className="mt-1.5 flex justify-end">
           <span className="font-body text-xs text-muted-foreground">
-            {value.length} / {MAX_CHARS} characters
+            {t('charCount', { count: value.length, max: MAX_CHARS })}
           </span>
         </div>
       </div>

@@ -39,6 +39,7 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { UpgradeModal } from '@/components/billing/upgrade-modal';
+import { useLocale, useTranslations } from '@/i18n/provider';
 
 interface CoverLetterItem {
   id: string;
@@ -53,6 +54,9 @@ interface CoverLetterItem {
 // Replaced framer-motion fadeUp variants with CSS animation components from @/lib/motion
 
 export default function CoverLettersPage() {
+  const t = useTranslations('app.coverLetters');
+  const tc = useTranslations('app.common');
+  const { locale } = useLocale();
   const router = useRouter();
   const [letters, setLetters] = useState<CoverLetterItem[]>([]);
   const [loading, setLoading] = useState(true);
@@ -85,7 +89,7 @@ export default function CoverLettersPage() {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         credentials: 'include',
-        body: JSON.stringify({ title: 'Untitled Cover Letter' }),
+        body: JSON.stringify({ title: tc('untitledCoverLetter') }),
       });
       const data = await res.json();
       if (data.success) {
@@ -93,10 +97,10 @@ export default function CoverLettersPage() {
       } else if (data.error === 'limit_reached') {
         setShowUpgrade(true);
       } else {
-        toast.error(data.error || 'Failed to create');
+        toast.error(data.error || t('createFailed'));
       }
     } catch {
-      toast.error('Failed to create cover letter');
+      toast.error(t('createFailed'));
     } finally {
       setCreating(false);
     }
@@ -111,9 +115,9 @@ export default function CoverLettersPage() {
     try {
       await fetch(`/api/cover-letters/${deleteId}`, { method: 'DELETE', credentials: 'include' });
       setLetters((prev) => prev.filter((l) => l.id !== deleteId));
-      toast.success('Cover letter deleted');
+      toast.success(t('deleted'));
     } catch {
-      toast.error('Failed to delete');
+      toast.error(t('deleteFailed'));
     } finally {
       setDeleteDialogOpen(false);
       setDeleteId(null);
@@ -126,12 +130,12 @@ export default function CoverLettersPage() {
       const data = await res.json();
       if (data.success) {
         setLetters((prev) => [data.coverLetter, ...prev]);
-        toast.success('Duplicated!');
+        toast.success(t('duplicated'));
       } else if (data.error === 'limit_reached') {
         setShowUpgrade(true);
       }
     } catch {
-      toast.error('Failed to duplicate');
+      toast.error(t('duplicateFailed'));
     }
   };
 
@@ -141,7 +145,7 @@ export default function CoverLettersPage() {
 
   const formatDate = (dateStr: string) => {
     try {
-      return new Date(dateStr).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+      return new Date(dateStr).toLocaleDateString(locale === 'fr' ? 'fr-FR' : 'en-US', { month: 'short', day: 'numeric', year: 'numeric' });
     } catch {
       return dateStr;
     }
@@ -157,16 +161,16 @@ export default function CoverLettersPage() {
           </div>
           <div>
             <h1 className="text-2xl sm:text-3xl font-bold tracking-tight font-heading">
-              Cover Letters
+              {t('title')}
             </h1>
             <p className="text-muted-foreground mt-1 font-body">
-              Create and manage AI-powered cover letters
+              {t('subtitle')}
             </p>
           </div>
         </div>
         <Button onClick={handleCreate} disabled={creating} className="bg-brand hover:bg-brand/90 text-white font-body gap-2 shrink-0">
           {creating ? <Loader2 className="w-4 h-4 animate-spin" /> : <Plus className="w-4 h-4" />}
-          <span className="hidden sm:inline">New Letter</span>
+          <span className="hidden sm:inline">{t('newLetter')}</span>
         </Button>
       </FadeInUp>
 
@@ -178,7 +182,7 @@ export default function CoverLettersPage() {
             <Input
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              placeholder="Search cover letters..."
+              placeholder={t('searchPlaceholder')}
               className="pl-10 font-body text-sm"
             />
           </div>
@@ -222,13 +226,13 @@ export default function CoverLettersPage() {
                       </DropdownMenuTrigger>
                       <DropdownMenuContent align="end" className="w-40">
                         <DropdownMenuItem className="font-body text-sm gap-2" onClick={(e) => { e.stopPropagation(); handleEdit(letter.id); }}>
-                          <Eye className="w-3.5 h-3.5" /> Edit
+                          <Eye className="w-3.5 h-3.5" /> {tc('edit')}
                         </DropdownMenuItem>
                         <DropdownMenuItem className="font-body text-sm gap-2" onClick={(e) => { e.stopPropagation(); handleDuplicate(letter.id); }}>
-                          <Copy className="w-3.5 h-3.5" /> Duplicate
+                          <Copy className="w-3.5 h-3.5" /> {tc('duplicate')}
                         </DropdownMenuItem>
                         <DropdownMenuItem className="font-body text-sm gap-2 text-destructive" onClick={(e) => { e.stopPropagation(); setDeleteId(letter.id); setDeleteDialogOpen(true); }}>
-                          <Trash2 className="w-3.5 h-3.5" /> Delete
+                          <Trash2 className="w-3.5 h-3.5" /> {tc('delete')}
                         </DropdownMenuItem>
                       </DropdownMenuContent>
                     </DropdownMenu>
@@ -238,10 +242,10 @@ export default function CoverLettersPage() {
                       {letter.template}
                     </Badge>
                     <Badge variant="secondary" className="text-[10px] px-1.5 py-0 font-body">
-                      {letter.language === 'fr' ? 'French' : 'English'}
+                      {letter.language === 'fr' ? t('languageFrench') : t('languageEnglish')}
                     </Badge>
                     <Badge variant="secondary" className={`text-[10px] px-1.5 py-0 font-body ${letter.status === 'completed' ? 'bg-emerald-100 text-emerald-700' : ''}`}>
-                      {letter.status}
+                      {letter.status === 'completed' ? t('statusCompleted') : letter.status === 'draft' ? t('statusDraft') : letter.status}
                     </Badge>
                   </div>
                 </CardContent>
@@ -260,17 +264,17 @@ export default function CoverLettersPage() {
                 <Mail className="w-8 h-8 text-muted-foreground" />
               </div>
               <h3 className="text-lg font-semibold font-heading mb-2">
-                {search ? 'No Results Found' : 'No Cover Letters Yet'}
+                {search ? t('noResultsTitle') : t('emptyTitle')}
               </h3>
               <p className="text-muted-foreground max-w-md font-body text-sm leading-relaxed">
                 {search
-                  ? 'Try a different search term.'
-                  : 'Create your first AI-powered cover letter tailored to any job application.'}
+                  ? t('noResultsBody')
+                  : t('emptyBody')}
               </p>
               {!search && (
                 <Button onClick={handleCreate} disabled={creating} className="mt-6 gap-2 bg-brand hover:bg-brand/90 text-white font-body">
                   {creating ? <Loader2 className="w-4 h-4 animate-spin" /> : <Sparkles className="w-4 h-4" />}
-                  Create Your First Cover Letter
+                  {t('createFirst')}
                 </Button>
               )}
             </CardContent>
@@ -282,12 +286,12 @@ export default function CoverLettersPage() {
       <Dialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
         <DialogContent className="font-body">
           <DialogHeader>
-            <DialogTitle>Delete Cover Letter</DialogTitle>
-            <DialogDescription>Are you sure? This cannot be undone.</DialogDescription>
+            <DialogTitle>{t('deleteTitle')}</DialogTitle>
+            <DialogDescription>{t('deleteBody')}</DialogDescription>
           </DialogHeader>
           <DialogFooter>
-            <Button variant="outline" onClick={() => setDeleteDialogOpen(false)} className="font-body">Cancel</Button>
-            <Button variant="destructive" onClick={handleDelete} className="font-body">Delete</Button>
+            <Button variant="outline" onClick={() => setDeleteDialogOpen(false)} className="font-body">{tc('cancel')}</Button>
+            <Button variant="destructive" onClick={handleDelete} className="font-body">{tc('delete')}</Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>

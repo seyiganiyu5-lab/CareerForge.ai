@@ -22,6 +22,7 @@ import {
 import { createDefaultCustomization } from '@/lib/templates/defaults';
 import type { TemplateId } from '@/types/template';
 import { cn } from '@/lib/utils';
+import { useTranslations } from '@/i18n/provider';
 
 interface CustomizationPanelProps {
   customization: TemplateCustomization;
@@ -98,6 +99,7 @@ export function CustomizationPanel({
   onChange,
   onClose,
 }: CustomizationPanelProps) {
+  const t = useTranslations('app.resumeEditor');
   const update = <K extends keyof TemplateCustomization>(
     key: K,
     value: TemplateCustomization[K]
@@ -113,7 +115,7 @@ export function CustomizationPanel({
     <div className="h-full flex flex-col bg-card">
       <div className="flex items-center justify-between px-4 py-3 border-b border-border/50 shrink-0">
         <h3 className="text-sm font-semibold font-heading text-foreground">
-          Customize
+          {t('customize')}
         </h3>
         <div className="flex items-center gap-1">
           <Button
@@ -123,7 +125,7 @@ export function CustomizationPanel({
             className="text-xs text-muted-foreground hover:text-foreground font-body h-7 gap-1 px-2"
           >
             <RotateCcw className="size-3" />
-            Reset
+            {t('reset')}
           </Button>
           {onClose && (
             <Button
@@ -131,7 +133,7 @@ export function CustomizationPanel({
               size="icon"
               onClick={onClose}
               className="size-7 text-muted-foreground hover:text-foreground"
-              aria-label="Close customization panel"
+              aria-label={t('closeCustomizationAria')}
             >
               <X className="size-4" />
             </Button>
@@ -142,10 +144,10 @@ export function CustomizationPanel({
       <ScrollArea className="flex-1 overflow-hidden">
         <div>
           {/* Colors */}
-          <Section title="Colors" icon={Palette}>
+          <Section title={t('colors')} icon={Palette}>
             <div className="space-y-2">
               <Label className="text-xs font-body text-muted-foreground">
-                Accent Color
+                {t('accentColor')}
               </Label>
               <div className="flex flex-wrap gap-2">
                 {ACCENT_PRESETS.map(preset => (
@@ -159,8 +161,8 @@ export function CustomizationPanel({
                         : 'border-transparent'
                     )}
                     style={{ backgroundColor: preset.value }}
-                    title={preset.label}
-                    aria-label={`Accent color: ${preset.label}`}
+                    title={t(`color_${preset.label}`)}
+                    aria-label={t('accentColorAria', { color: t(`color_${preset.label}`) })}
                   />
                 ))}
                 <label className="relative size-7 rounded-full border-2 border-dashed border-muted-foreground/40 flex items-center justify-center cursor-pointer hover:border-muted-foreground/70 transition-colors">
@@ -170,7 +172,7 @@ export function CustomizationPanel({
                     value={customization.accentColor}
                     onChange={(e) => update('accentColor', e.target.value)}
                     className="absolute inset-0 opacity-0 cursor-pointer"
-                    aria-label="Custom accent color"
+                    aria-label={t('customAccentColorAria')}
                   />
                 </label>
               </div>
@@ -178,11 +180,11 @@ export function CustomizationPanel({
           </Section>
 
           {/* Typography */}
-          <Section title="Typography" icon={Type}>
+          <Section title={t('typography')} icon={Type}>
             <div className="space-y-3">
               <div className="space-y-1.5">
                 <Label className="text-xs font-body text-muted-foreground">
-                  Body Font
+                  {t('bodyFont')}
                 </Label>
                 <Select
                   value={customization.primaryFont}
@@ -202,7 +204,7 @@ export function CustomizationPanel({
               </div>
               <div className="space-y-1.5">
                 <Label className="text-xs font-body text-muted-foreground">
-                  Heading Font
+                  {t('headingFont')}
                 </Label>
                 <Select
                   value={customization.headingFont}
@@ -221,7 +223,7 @@ export function CustomizationPanel({
                 </Select>
               </div>
               <SliderField
-                label="Font Size"
+                label={t('fontSize')}
                 value={customization.fontSize}
                 min={0.8}
                 max={1.4}
@@ -230,7 +232,7 @@ export function CustomizationPanel({
                 suffix="×"
               />
               <SliderField
-                label="Line Height"
+                label={t('lineHeight')}
                 value={customization.lineHeight}
                 min={1.2}
                 max={2.0}
@@ -241,11 +243,11 @@ export function CustomizationPanel({
           </Section>
 
           {/* Layout */}
-          <Section title="Layout" icon={Maximize}>
+          <Section title={t('layout')} icon={Maximize}>
             <div className="space-y-3">
               <div className="space-y-1.5">
                 <Label className="text-xs font-body text-muted-foreground">
-                  Header Alignment
+                  {t('headerAlignment')}
                 </Label>
                 <div className="flex gap-1">
                   {(['left', 'center', 'right'] as const).map(align => (
@@ -259,13 +261,13 @@ export function CustomizationPanel({
                           : 'border-border hover:bg-accent text-muted-foreground'
                       )}
                     >
-                      {align}
+                      {t(`align_${align}`)}
                     </button>
                   ))}
                 </div>
               </div>
               <SliderField
-                label="Page Margins"
+                label={t('pageMargins')}
                 value={customization.pageMargins}
                 min={30}
                 max={80}
@@ -274,7 +276,7 @@ export function CustomizationPanel({
                 suffix="px"
               />
               <SliderField
-                label="Section Spacing"
+                label={t('sectionSpacing')}
                 value={customization.sectionSpacing}
                 min={0.5}
                 max={2.0}
@@ -284,7 +286,7 @@ export function CustomizationPanel({
               />
               <div className="flex items-center justify-between">
                 <Label className="text-xs font-body text-muted-foreground">
-                  Section Dividers
+                  {t('sectionDividers')}
                 </Label>
                 <button
                   role="switch"
@@ -305,7 +307,7 @@ export function CustomizationPanel({
               </div>
               <div className="space-y-1.5">
                 <Label className="text-xs font-body text-muted-foreground">
-                  Page Size
+                  {t('pageSize')}
                 </Label>
                 <div className="flex gap-1">
                   {(['a4', 'letter'] as const).map(size => (

@@ -4,6 +4,7 @@ import { useState, useEffect, useCallback, useRef } from 'react';
 import type { CoverLetterData, CoverLetterTemplateId, CoverLetterCustomization, AutosaveStatus } from '@/types/cover-letter';
 import { createDefaultCoverLetterData } from '@/types/cover-letter';
 import { createDefaultCustomization } from '@/lib/cover-letter/template-registry';
+import { useTranslations } from '@/i18n/provider';
 
 interface UseCoverLetterReturn {
   data: CoverLetterData;
@@ -47,6 +48,8 @@ const AUTOSAVE_RETRIES = 2;
 const AUTOSAVE_RETRY_DELAY = 1500;
 
 export function useCoverLetter(): UseCoverLetterReturn {
+  const t = useTranslations('app.coverLetterEditor');
+  const tc = useTranslations('app.common');
   const [data, setData] = useState<CoverLetterData>(createDefaultCoverLetterData());
   const [letterId, setLetterId] = useState<string | null>(null);
   const [title, setTitleState] = useState('');
@@ -380,11 +383,11 @@ export function useCoverLetter(): UseCoverLetterReturn {
         }));
         return { success: true, content: json.content };
       }
-      return { success: false, error: json.error || 'Generation failed' };
+      return { success: false, error: json.error || t('generationFailed') };
     } catch {
-      return { success: false, error: 'Network error' };
+      return { success: false, error: tc('networkError') };
     }
-  }, []);
+  }, [t, tc]);
 
   const aiEdit = useCallback(async (params: {
     action: string;
@@ -394,7 +397,7 @@ export function useCoverLetter(): UseCoverLetterReturn {
     tone?: string;
     language?: string;
   }) => {
-    if (!letterId) return { success: false, error: 'No cover letter selected' };
+    if (!letterId) return { success: false, error: t('noLetterSelected') };
     try {
       const res = await fetch(`/api/cover-letters/${letterId}/ai-edit`, {
         method: 'POST',
@@ -410,11 +413,11 @@ export function useCoverLetter(): UseCoverLetterReturn {
         }
         return { success: true, result: json.result };
       }
-      return { success: false, error: json.error || 'AI edit failed' };
+      return { success: false, error: json.error || t('aiEditFailed') };
     } catch {
-      return { success: false, error: 'Network error' };
+      return { success: false, error: tc('networkError') };
     }
-  }, [letterId, data]);
+  }, [letterId, data, t, tc]);
 
   return {
     data, letterId, title, templateId, customization,

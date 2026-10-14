@@ -7,6 +7,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { useTranslations } from '@/i18n/provider';
 
 interface CertificationsFormProps {
   resumeData: ResumeData;
@@ -15,6 +16,7 @@ interface CertificationsFormProps {
 
 export function CertificationsForm({ resumeData, setResumeData }: CertificationsFormProps) {
   const items = resumeData.certifications;
+  const t = useTranslations('app.resumeForms');
 
   const addItem = () => {
     setResumeData((prev) => ({
@@ -42,17 +44,17 @@ export function CertificationsForm({ resumeData, setResumeData }: Certifications
   return (
     <div className="space-y-1">
       <h3 className="font-heading text-lg font-semibold text-foreground">
-        Certifications
+        {t('certificationsTitle')}
       </h3>
       <p className="font-body text-sm text-muted-foreground">
-        List your professional certifications and credentials.
+        {t('certificationsDescription')}
       </p>
 
       <div className="mt-4 space-y-4">
         {items.length === 0 && (
           <div className="rounded-lg border border-dashed p-8 text-center">
             <p className="font-body text-sm text-muted-foreground">
-              No entries yet. Click the button below to add one.
+              {t('noEntries')}
             </p>
           </div>
         )}
@@ -66,7 +68,7 @@ export function CertificationsForm({ resumeData, setResumeData }: Certifications
                   size="icon"
                   className="size-8 text-muted-foreground hover:text-destructive"
                   onClick={() => removeItem(item.id)}
-                  aria-label="Delete certification entry"
+                  aria-label={t('deleteCertification')}
                 >
                   <Trash2 className="size-4" />
                 </Button>
@@ -74,7 +76,7 @@ export function CertificationsForm({ resumeData, setResumeData }: Certifications
 
               <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                 <div>
-                  <Label className="font-body">Certificate Name</Label>
+                  <Label className="font-body">{t('certificateName')}</Label>
                   <Input
                     value={item.name}
                     onChange={(e) => updateItem(item.id, 'name', e.target.value)}
@@ -83,7 +85,7 @@ export function CertificationsForm({ resumeData, setResumeData }: Certifications
                   />
                 </div>
                 <div>
-                  <Label className="font-body">Issuer</Label>
+                  <Label className="font-body">{t('issuer')}</Label>
                   <Input
                     value={item.issuer}
                     onChange={(e) => updateItem(item.id, 'issuer', e.target.value)}
@@ -95,7 +97,7 @@ export function CertificationsForm({ resumeData, setResumeData }: Certifications
 
               <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                 <div>
-                  <Label className="font-body">Issue Date</Label>
+                  <Label className="font-body">{t('issueDate')}</Label>
                   <Input
                     type="month"
                     value={item.issueDate}
@@ -104,7 +106,7 @@ export function CertificationsForm({ resumeData, setResumeData }: Certifications
                   />
                 </div>
                 <div>
-                  <Label className="font-body">Credential URL</Label>
+                  <Label className="font-body">{t('credentialUrl')}</Label>
                   <Input
                     type="url"
                     value={item.credentialUrl}
@@ -124,7 +126,7 @@ export function CertificationsForm({ resumeData, setResumeData }: Certifications
           className="w-full font-body"
         >
           <Plus className="size-4" aria-hidden="true" />
-          Add Certification
+          {t('addCertification')}
         </Button>
       </div>
     </div>

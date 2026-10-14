@@ -25,6 +25,7 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import type { CoverLetterData, AIEditAction } from '@/types/cover-letter';
+import { useTranslations } from '@/i18n/provider';
 
 interface LetterContentSectionProps {
   data: CoverLetterData;
@@ -36,20 +37,20 @@ interface LetterContentSectionProps {
 }
 
 const CONTENT_FIELDS = [
-  { key: 'salutation', label: 'Salutation', placeholder: 'Dear Hiring Manager,', rows: 1, aiEnabled: false },
-  { key: 'opening', label: 'Opening Paragraph', placeholder: 'Write a compelling opening that hooks the reader...', rows: 4, aiEnabled: true },
-  { key: 'body', label: 'Body Paragraph', placeholder: 'Describe your relevant skills, experiences, and achievements...', rows: 6, aiEnabled: true },
-  { key: 'closing', label: 'Closing Paragraph', placeholder: 'Reiterate your interest and include a call to action...', rows: 4, aiEnabled: true },
-  { key: 'signOff', label: 'Sign Off', placeholder: 'Sincerely,', rows: 1, aiEnabled: false },
+  { key: 'salutation', labelKey: 'fieldSalutation', placeholderKey: 'fieldSalutationPlaceholder', rows: 1, aiEnabled: false },
+  { key: 'opening', labelKey: 'fieldOpening', placeholderKey: 'fieldOpeningPlaceholder', rows: 4, aiEnabled: true },
+  { key: 'body', labelKey: 'fieldBody', placeholderKey: 'fieldBodyPlaceholder', rows: 6, aiEnabled: true },
+  { key: 'closing', labelKey: 'fieldClosing', placeholderKey: 'fieldClosingPlaceholder', rows: 4, aiEnabled: true },
+  { key: 'signOff', labelKey: 'fieldSignOff', placeholderKey: 'fieldSignOffPlaceholder', rows: 1, aiEnabled: false },
 ] as const;
 
-const AI_ACTIONS: { action: AIEditAction; label: string; icon: React.ElementType }[] = [
-  { action: 'rewrite', label: 'AI Rewrite', icon: Sparkles },
-  { action: 'expand', label: 'Expand', icon: ChevronDown },
-  { action: 'shorten', label: 'Shorten', icon: ChevronUp },
-  { action: 'improve_grammar', label: 'Fix Grammar', icon: CheckCircle2 },
-  { action: 'improve_tone', label: 'Better Tone', icon: MessageSquare },
-  { action: 'regenerate_section', label: 'Regenerate', icon: Wand2 },
+const AI_ACTIONS: { action: AIEditAction; labelKey: string; icon: React.ElementType }[] = [
+  { action: 'rewrite', labelKey: 'aiRewrite', icon: Sparkles },
+  { action: 'expand', labelKey: 'aiExpand', icon: ChevronDown },
+  { action: 'shorten', labelKey: 'aiShorten', icon: ChevronUp },
+  { action: 'improve_grammar', labelKey: 'aiFixGrammar', icon: CheckCircle2 },
+  { action: 'improve_tone', labelKey: 'aiBetterTone', icon: MessageSquare },
+  { action: 'regenerate_section', labelKey: 'aiRegenerate', icon: Wand2 },
 ];
 
 export function LetterContentSection({
@@ -60,7 +61,9 @@ export function LetterContentSection({
   aiLoading,
   loadingSection,
 }: LetterContentSectionProps) {
+  const t = useTranslations('app.coverLetterEditor');
   const [expandedField, setExpandedField] = useState<string | null>('opening');
+  const aiActions = AI_ACTIONS.map(({ action, labelKey, icon }) => ({ action, label: t(labelKey), icon }));
 
   const getWordCount = (text: string) => {
     return text.trim() ? text.trim().split(/\s+/).length : 0;
@@ -69,10 +72,10 @@ export function LetterContentSection({
   return (
     <SectionCard
       icon={<PenLine className="w-4 h-4" />}
-      title="Letter Content"
-      description="Write or edit each section of your cover letter"
+      title={t('letterContentTitle')}
+      description={t('letterContentDescription')}
       defaultOpen={true}
-      aiActions={AI_ACTIONS}
+      aiActions={aiActions}
       onAIAction={(action) => {
         // Apply to the currently expanded content field that supports AI
         const targetField = expandedField && CONTENT_FIELDS.find(f => f.key === expandedField && f.aiEnabled);
@@ -84,7 +87,7 @@ export function LetterContentSection({
       loadingSection={loadingSection}
     >
       <div className="space-y-4">
-        {CONTENT_FIELDS.map(({ key, label, placeholder, rows, aiEnabled }) => {
+        {CONTENT_FIELDS.map(({ key, labelKey, placeholderKey, rows, aiEnabled }) => {
           const value = data[key as keyof CoverLetterData] as string;
           const isExpanded = expandedField === key;
 
@@ -110,12 +113,12 @@ export function LetterContentSection({
                   >
                     <ChevronRight className="w-3 h-3 text-muted-foreground" />
                   </motion.div>
-                  <Label className="text-xs font-medium cursor-pointer">{label}</Label>
+                  <Label className="text-xs font-medium cursor-pointer">{t(labelKey)}</Label>
                 </div>
                 <div className="flex items-center gap-2">
                   {value && (
                     <Badge variant="secondary" className="text-[9px] h-4 px-1.5 font-normal">
-                      {getWordCount(value)} words
+                      {t('wordsCount', { count: getWordCount(value) })}
                     </Badge>
                   )}
                   {/* Per-field AI actions */}
@@ -133,7 +136,7 @@ export function LetterContentSection({
                         </Button>
                       </DropdownMenuTrigger>
                       <DropdownMenuContent align="end" className="w-44">
-                        {AI_ACTIONS.map(({ action, label: al, icon: Icon }) => (
+                        {aiActions.map(({ action, label: al, icon: Icon }) => (
                           <DropdownMenuItem
                             key={action}
                             className="text-xs gap-2 cursor-pointer"
@@ -168,7 +171,7 @@ export function LetterContentSection({
                     <Textarea
                       value={value}
                       onChange={(e) => onChange({ [key]: e.target.value })}
-                      placeholder={placeholder}
+                      placeholder={t(placeholderKey)}
                       className="text-sm bg-background border-border/40 focus:border-brand/50 transition-colors resize-y"
                       rows={rows}
                     />

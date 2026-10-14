@@ -8,6 +8,7 @@ import {
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
+import { useTranslations } from '@/i18n/provider';
 
 // ---------------------------------------------------------------------------
 // Template Data
@@ -15,6 +16,7 @@ import { Badge } from '@/components/ui/badge';
 
 interface TemplateCard {
   id: string;
+  i18nKey: string;
   name: string;
   description: string;
   tier: 'Free' | 'Pro';
@@ -25,6 +27,7 @@ interface TemplateCard {
 const TEMPLATES: TemplateCard[] = [
   {
     id: 'modern-minimal',
+    i18nKey: 'modern',
     name: 'Modern',
     description: 'Clean, contemporary design with bold headings and generous whitespace.',
     tier: 'Free',
@@ -33,6 +36,7 @@ const TEMPLATES: TemplateCard[] = [
   },
   {
     id: 'ats-classic',
+    i18nKey: 'professional',
     name: 'Professional',
     description: 'Traditional, ATS-friendly layout trusted by recruiters worldwide.',
     tier: 'Free',
@@ -41,6 +45,7 @@ const TEMPLATES: TemplateCard[] = [
   },
   {
     id: 'executive',
+    i18nKey: 'executive',
     name: 'Executive',
     description: 'Sophisticated design for senior leaders and C-suite professionals.',
     tier: 'Pro',
@@ -49,6 +54,7 @@ const TEMPLATES: TemplateCard[] = [
   },
   {
     id: 'chronological',
+    i18nKey: 'minimal',
     name: 'Minimal',
     description: 'Sleek, stripped-back layout that lets your experience speak.',
     tier: 'Free',
@@ -57,6 +63,7 @@ const TEMPLATES: TemplateCard[] = [
   },
   {
     id: 'tech-professional',
+    i18nKey: 'creative',
     name: 'Creative',
     description: 'Eye-catching layout with a modern edge for creative industries.',
     tier: 'Pro',
@@ -65,6 +72,7 @@ const TEMPLATES: TemplateCard[] = [
   },
   {
     id: 'ats-classic',
+    i18nKey: 'atsFriendly',
     name: 'ATS-Friendly',
     description: 'Optimized for applicant tracking systems with maximum keyword visibility.',
     tier: 'Free',
@@ -137,6 +145,8 @@ function TemplatePreview({ template }: { template: TemplateCard }) {
 
 export default function TemplatesPage() {
   const router = useRouter();
+  const t = useTranslations('app.templatesPage');
+  const tc = useTranslations('app.common');
 
   const handleUseTemplate = (templateId: string) => {
     router.push(`/resume-builder?template=${templateId}`);
@@ -150,10 +160,10 @@ export default function TemplatesPage() {
           <div className="w-9 h-9 rounded-lg bg-brand/10 flex items-center justify-center">
             <LayoutTemplate className="w-5 h-5 text-brand" />
           </div>
-          Templates Gallery
+          {t('title')}
         </h1>
         <p className="text-muted-foreground mt-1.5 font-body text-sm">
-          Choose from our collection of professionally designed resume templates.
+          {t('subtitle')}
         </p>
       </FadeInUp>
 
@@ -186,7 +196,7 @@ export default function TemplatesPage() {
                 <div className="p-4 flex flex-col flex-1">
                   <div className="flex items-center gap-2 mb-1.5">
                     <h3 className="font-semibold font-heading text-sm">
-                      {template.name}
+                      {t(`${template.i18nKey}Name`)}
                     </h3>
                     <Badge
                       variant="outline"
@@ -197,12 +207,12 @@ export default function TemplatesPage() {
                       }`}
                     >
                       {template.tier === 'Pro' && <Crown className="w-2.5 h-2.5 mr-0.5" />}
-                      {template.tier}
+                      {template.tier === 'Pro' ? tc('pro') : t('free')}
                     </Badge>
                   </div>
 
                   <p className="text-xs text-muted-foreground font-body leading-relaxed mb-3 flex-1">
-                    {template.description}
+                    {t(`${template.i18nKey}Desc`)}
                   </p>
 
                   <Button
@@ -212,7 +222,7 @@ export default function TemplatesPage() {
                     className="w-full gap-1.5 font-body text-xs group-hover:bg-brand group-hover:text-white group-hover:border-brand transition-colors duration-200"
                   >
                     <Eye className="w-3.5 h-3.5" />
-                    Use Template
+                    {t('useTemplate')}
                     <ArrowRight className="w-3 h-3 ml-auto" />
                   </Button>
                 </div>
@@ -226,7 +236,7 @@ export default function TemplatesPage() {
       <FadeIn delay={0.5} duration={0.4} className="text-center">
         <p className="text-xs text-muted-foreground font-body">
           <FileText className="w-3 h-3 inline mr-1" />
-          All templates are fully customizable. You can change colors, fonts, and layout at any time.
+          {t('customizableNote')}
         </p>
       </FadeIn>
     </div>

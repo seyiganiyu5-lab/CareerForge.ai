@@ -17,6 +17,7 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import type { AIEditAction } from '@/types/cover-letter';
+import { useTranslations } from '@/i18n/provider';
 
 interface SectionCardProps {
   icon: React.ReactNode;
@@ -41,6 +42,7 @@ export function SectionCard({
   loadingSection,
   children,
 }: SectionCardProps) {
+  const t = useTranslations('app.coverLetterEditor');
   const [isOpen, setIsOpen] = useState(defaultOpen);
 
   return (
@@ -78,7 +80,7 @@ export function SectionCard({
                       onClick={(e) => e.stopPropagation()}
                     >
                       <Sparkles className="w-3 h-3" />
-                      <span className="hidden sm:inline">AI</span>
+                      <span className="hidden sm:inline">{t('aiShort')}</span>
                       {aiLoading && loadingSection === title && (
                         <Loader2 className="w-3 h-3 animate-spin" />
                       )}

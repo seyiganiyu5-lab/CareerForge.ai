@@ -22,6 +22,8 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { FeatureGate } from '@/components/billing/feature-gate';
 import { useJobTracker, type JobApplication, type AiSuggestion } from '@/hooks/use-job-tracker';
 import { STATUSES, WORK_MODES, EMPLOYMENT_TYPES } from '@/components/job-tracker/status-config';
+import { useJobLabels } from '@/components/job-tracker/use-job-labels';
+import { useTranslations } from '@/i18n/provider';
 import { KanbanBoard } from '@/components/job-tracker/kanban-board';
 import { ListView } from '@/components/job-tracker/list-view';
 import { CalendarView } from '@/components/job-tracker/calendar-view';
@@ -43,6 +45,7 @@ function StatsCards({ stats, collapsed, onToggle }: {
   collapsed: boolean;
   onToggle: () => void;
 }) {
+  const t = useTranslations('dashboard.jobTracker');
   if (!stats) {
     return (
       <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3">
@@ -54,11 +57,11 @@ function StatsCards({ stats, collapsed, onToggle }: {
   }
 
   const cards = [
-    { label: 'Total Applications', value: stats.total, icon: FileText, color: 'text-brand', bgColor: 'bg-brand/10' },
-    { label: 'Interviews Scheduled', value: stats.interviewsScheduled, icon: TrendingUp, color: 'text-amber-600', bgColor: 'bg-amber-100 dark:bg-amber-900/40' },
-    { label: 'Offers Received', value: stats.offersReceived, icon: Award, color: 'text-emerald-600', bgColor: 'bg-emerald-100 dark:bg-emerald-900/40' },
-    { label: 'Response Rate', value: `${stats.responseRate}%`, icon: Percent, color: 'text-violet-600', bgColor: 'bg-violet-100 dark:bg-violet-900/40' },
-    { label: 'Acceptance Rate', value: `${stats.acceptanceRate}%`, icon: Award, color: 'text-green-600', bgColor: 'bg-green-100 dark:bg-green-900/40' },
+    { label: t('totalApplications'), value: stats.total, icon: FileText, color: 'text-brand', bgColor: 'bg-brand/10' },
+    { label: t('interviewsScheduled'), value: stats.interviewsScheduled, icon: TrendingUp, color: 'text-amber-600', bgColor: 'bg-amber-100 dark:bg-amber-900/40' },
+    { label: t('offersReceived'), value: stats.offersReceived, icon: Award, color: 'text-emerald-600', bgColor: 'bg-emerald-100 dark:bg-emerald-900/40' },
+    { label: t('responseRate'), value: `${stats.responseRate}%`, icon: Percent, color: 'text-violet-600', bgColor: 'bg-violet-100 dark:bg-violet-900/40' },
+    { label: t('acceptanceRate'), value: `${stats.acceptanceRate}%`, icon: Award, color: 'text-green-600', bgColor: 'bg-green-100 dark:bg-green-900/40' },
   ];
 
   return (
@@ -67,7 +70,7 @@ function StatsCards({ stats, collapsed, onToggle }: {
         onClick={onToggle}
         className="flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground transition-colors font-body mb-2 w-full justify-end"
       >
-        {collapsed ? 'Show Stats' : 'Hide Stats'}
+        {collapsed ? t('showStats') : t('hideStats')}
         {collapsed ? <ChevronDown className="w-3 h-3" /> : <ChevronUp className="w-3 h-3" />}
       </button>
       <AnimatePresence>
@@ -107,6 +110,7 @@ function StatsCards({ stats, collapsed, onToggle }: {
 // ---------------------------------------------------------------------------
 
 function EmptyState({ onAdd }: { onAdd: () => void }) {
+  const t = useTranslations('dashboard.jobTracker');
   return (
     <FadeInUp
       className="flex flex-col items-center justify-center py-16 px-4 text-center"
@@ -115,14 +119,14 @@ function EmptyState({ onAdd }: { onAdd: () => void }) {
         <Briefcase className="w-9 h-9 text-brand" />
       </div>
       <h3 className="text-lg font-semibold font-heading mb-1.5">
-        No Applications Yet
+        {t('noApplications')}
       </h3>
       <p className="text-sm text-muted-foreground max-w-sm mb-5 font-body">
-        Start tracking your job applications to stay organized and monitor your progress.
+        {t('noApplicationsDesc')}
       </p>
       <Button onClick={onAdd} className="bg-brand hover:bg-brand/90 text-white font-body gap-2">
         <Plus className="w-4 h-4" />
-        Add Your First Application
+        {t('addFirst')}
       </Button>
     </FadeInUp>
   );
@@ -133,10 +137,11 @@ function EmptyState({ onAdd }: { onAdd: () => void }) {
 // ---------------------------------------------------------------------------
 
 function NoResults() {
+  const t = useTranslations('dashboard.jobTracker');
   return (
     <FadeIn className="text-center py-12">
       <Search className="w-8 h-8 text-muted-foreground mx-auto mb-2" />
-      <p className="text-sm text-muted-foreground font-body">No applications match your search.</p>
+      <p className="text-sm text-muted-foreground font-body">{t('noResults')}</p>
     </FadeIn>
   );
 }
@@ -146,6 +151,8 @@ function NoResults() {
 // ---------------------------------------------------------------------------
 
 function JobTrackerContent() {
+  const t = useTranslations('dashboard.jobTracker');
+  const labels = useJobLabels();
   const {
     filteredApplications, loading, stats, calendarEvents,
     filters, setFilters, fetchCalendar,
@@ -229,7 +236,7 @@ function JobTrackerContent() {
           </div>
           <div>
             <h1 className="text-2xl font-bold font-heading text-foreground flex items-center gap-2">
-              Job Tracker
+              {t('title')}
               {totalCount > 0 && (
                 <Badge variant="secondary" className="text-xs font-body">
                   {totalCount}
@@ -237,7 +244,7 @@ function JobTrackerContent() {
               )}
             </h1>
             <p className="text-muted-foreground text-sm font-body hidden sm:block">
-              Track and manage your job applications
+              {t('subtitle')}
             </p>
           </div>
         </div>
@@ -247,7 +254,7 @@ function JobTrackerContent() {
           className="bg-brand hover:bg-brand/90 text-white font-body gap-2 shrink-0"
         >
           <Plus className="w-4 h-4" />
-          Add Job
+          {t('addJob')}
         </Button>
       </FadeInUp>
 
@@ -269,9 +276,9 @@ function JobTrackerContent() {
             <div className="flex items-center border border-border rounded-lg p-0.5 shrink-0">
               {(
                 [
-                  { key: 'kanban', icon: LayoutGrid, label: 'Kanban' },
-                  { key: 'list', icon: List, label: 'List' },
-                  { key: 'calendar', icon: Calendar, label: 'Calendar' },
+                  { key: 'kanban', icon: LayoutGrid, label: t('kanban') },
+                  { key: 'list', icon: List, label: t('list') },
+                  { key: 'calendar', icon: Calendar, label: t('calendar') },
                 ] as const
               ).map(v => (
                 <Button
@@ -296,14 +303,14 @@ function JobTrackerContent() {
               <Input
                 value={filters.search}
                 onChange={e => updateFilters({ search: e.target.value })}
-                placeholder="Search companies, titles, locations..."
+                placeholder={t('search')}
                 className="pl-9 pr-8 font-body text-sm h-9"
               />
               {filters.search && (
                 <button
                   onClick={() => updateFilters({ search: '' })}
                   className="absolute right-2.5 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
-                  aria-label="Clear search"
+                  aria-label={t('clearSearch')}
                 >
                   <X className="w-3.5 h-3.5" />
                 </button>
@@ -315,13 +322,13 @@ function JobTrackerContent() {
               {/* Status Filter */}
               <Select value={filters.status} onValueChange={v => updateFilters({ status: v })}>
                 <SelectTrigger className="w-[130px] font-body text-xs h-9">
-                  <SelectValue placeholder="All Status" />
+                  <SelectValue placeholder={t('allStatus')} />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="all" className="font-body text-xs">All Status</SelectItem>
+                  <SelectItem value="all" className="font-body text-xs">{t('allStatus')}</SelectItem>
                   {STATUSES.map(s => (
                     <SelectItem key={s.key} value={s.key} className="font-body text-xs">
-                      {s.label}
+                      {labels.status(s.key, s.label)}
                     </SelectItem>
                   ))}
                 </SelectContent>
@@ -332,35 +339,35 @@ function JobTrackerContent() {
                 <PopoverTrigger asChild>
                   <Button variant="outline" size="sm" className="h-9 text-xs font-body gap-1.5">
                     <Filter className="w-3.5 h-3.5" />
-                    <span className="hidden md:inline">Filters</span>
+                    <span className="hidden md:inline">{t('filters')}</span>
                   </Button>
                 </PopoverTrigger>
                 <PopoverContent className="w-64 p-3" align="end">
                   <div className="space-y-3">
                     <div className="space-y-1.5">
-                      <label className="text-xs font-medium font-heading">Work Mode</label>
+                      <label className="text-xs font-medium font-heading">{t('workMode')}</label>
                       <Select value={filters.workMode} onValueChange={v => updateFilters({ workMode: v })}>
                         <SelectTrigger className="font-body text-xs h-8">
-                          <SelectValue placeholder="All" />
+                          <SelectValue placeholder={t('all')} />
                         </SelectTrigger>
                         <SelectContent>
-                          <SelectItem value="all" className="font-body text-xs">All</SelectItem>
+                          <SelectItem value="all" className="font-body text-xs">{t('all')}</SelectItem>
                           {WORK_MODES.map(m => (
-                            <SelectItem key={m} value={m} className="font-body text-xs">{m}</SelectItem>
+                            <SelectItem key={m} value={m} className="font-body text-xs">{labels.workMode(m)}</SelectItem>
                           ))}
                         </SelectContent>
                       </Select>
                     </div>
                     <div className="space-y-1.5">
-                      <label className="text-xs font-medium font-heading">Employment Type</label>
+                      <label className="text-xs font-medium font-heading">{t('employmentType')}</label>
                       <Select value={filters.employmentType} onValueChange={v => updateFilters({ employmentType: v })}>
                         <SelectTrigger className="font-body text-xs h-8">
-                          <SelectValue placeholder="All" />
+                          <SelectValue placeholder={t('all')} />
                         </SelectTrigger>
                         <SelectContent>
-                          <SelectItem value="all" className="font-body text-xs">All</SelectItem>
-                          {EMPLOYMENT_TYPES.map(t => (
-                            <SelectItem key={t} value={t} className="font-body text-xs">{t}</SelectItem>
+                          <SelectItem value="all" className="font-body text-xs">{t('all')}</SelectItem>
+                          {EMPLOYMENT_TYPES.map(et => (
+                            <SelectItem key={et} value={et} className="font-body text-xs">{labels.employmentType(et)}</SelectItem>
                           ))}
                         </SelectContent>
                       </Select>
@@ -371,7 +378,7 @@ function JobTrackerContent() {
                       className="w-full text-xs font-body h-7"
                       onClick={() => updateFilters({ workMode: 'all', employmentType: 'all', status: 'all', search: '' })}
                     >
-                      Clear All Filters
+                      {t('clearFilters')}
                     </Button>
                   </div>
                 </PopoverContent>

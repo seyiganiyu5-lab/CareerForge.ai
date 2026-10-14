@@ -3,6 +3,8 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
+import { useTranslations } from '@/i18n/provider';
+import { useRelativeTime } from '@/i18n/use-relative-time';
 import {
   Plus,
   FileText,
@@ -58,21 +60,6 @@ const TEMPLATE_NAMES: Record<string, string> = {
   'graduate': 'Graduate',
 };
 
-function formatDate(dateStr: string): string {
-  const d = new Date(dateStr);
-  const now = new Date();
-  const diffMs = now.getTime() - d.getTime();
-  const diffMins = Math.floor(diffMs / 60000);
-  const diffHours = Math.floor(diffMs / 3600000);
-  const diffDays = Math.floor(diffMs / 86400000);
-
-  if (diffMins < 1) return 'Just now';
-  if (diffMins < 60) return `${diffMins}m ago`;
-  if (diffHours < 24) return `${diffHours}h ago`;
-  if (diffDays < 7) return `${diffDays}d ago`;
-  return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
-}
-
 function ResumeCard({
   resume,
   onEdit,
@@ -84,6 +71,8 @@ function ResumeCard({
   onDuplicate: () => void;
   onDelete: () => void;
 }) {
+  const tc = useTranslations('app.common');
+  const formatDate = useRelativeTime();
   const templateName = TEMPLATE_NAMES[resume.template] || resume.template;
   const statusColors: Record<string, string> = {
     draft: 'bg-amber-100 text-amber-700 dark:bg-amber-900/40 dark:text-amber-400',
@@ -107,7 +96,7 @@ function ResumeCard({
           </div>
           <div className="min-w-0">
             <h3 className="font-heading text-sm font-semibold text-foreground truncate">
-              {resume.title || 'Untitled Resume'}
+              {resume.title || tc('untitledResume')}
             </h3>
             <div className="flex items-center gap-1.5 mt-0.5">
               <LayoutTemplate className="size-3 text-muted-foreground" />
@@ -124,14 +113,14 @@ function ResumeCard({
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end" className="w-44" onClick={(e) => e.stopPropagation()}>
             <DropdownMenuItem onClick={onEdit}>
-              <Pencil className="size-4" /> Edit
+              <Pencil className="size-4" /> {tc('edit')}
             </DropdownMenuItem>
             <DropdownMenuItem onClick={onDuplicate}>
-              <Copy className="size-4" /> Duplicate
+              <Copy className="size-4" /> {tc('duplicate')}
             </DropdownMenuItem>
             <DropdownMenuSeparator />
             <DropdownMenuItem variant="destructive" onClick={onDelete}>
-              <Trash2 className="size-4" /> Delete
+              <Trash2 className="size-4" /> {tc('delete')}
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
@@ -144,7 +133,7 @@ function ResumeCard({
           <span className="text-[11px] font-body">{formatDate(resume.updated_at)}</span>
         </div>
         <Badge className={`${statusColor} text-[10px] border-0 font-body px-2 py-0 h-5`}>
-          {resume.status === 'draft' ? 'Draft' : resume.status === 'completed' ? 'Completed' : 'Published'}
+          {resume.status === 'draft' ? tc('draft') : resume.status === 'completed' ? tc('completed') : tc('published')}
         </Badge>
       </div>
     </motion.div>
@@ -152,6 +141,8 @@ function ResumeCard({
 }
 
 export default function ResumeBuilderPage() {
+  const t = useTranslations('app.resumeBuilder');
+  const tc = useTranslations('app.common');
   const router = useRouter();
   const [resumes, setResumes] = useState<ResumeListItem[]>([]);
   const [loading, setLoading] = useState(true);
@@ -174,13 +165,13 @@ export default function ResumeBuilderPage() {
           return;
         }
       }
-      setError('Failed to load resumes');
+      setError(t('loadFailed'));
     } catch {
-      setError('Network error');
+      setError(tc('networkError'));
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [t, tc]);
 
   useEffect(() => { fetchResumes(); }, [fetchResumes]);
 
@@ -191,7 +182,7 @@ export default function ResumeBuilderPage() {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         credentials: 'include',
-        body: JSON.stringify({ title: 'Untitled Resume' }),
+        body: JSON.stringify({ title: tc('untitledResume') }),
       });
       const data = await res.json();
       if (data.success) {
@@ -202,7 +193,7 @@ export default function ResumeBuilderPage() {
         setUpgradeOpen(true);
       }
     } catch {
-      setError('Failed to create resume');
+      setError(t('createFailed'));
     }
     setCreating(false);
   };
@@ -254,10 +245,10 @@ export default function ResumeBuilderPage() {
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
           <div>
             <h1 className="font-heading text-xl font-bold text-foreground">
-              Resume Builder
+              {t('title')}
             </h1>
             <p className="text-sm text-muted-foreground font-body mt-1">
-              Create, edit, and manage your professional resumes.
+              {t('subtitle')}
             </p>
           </div>
           <Button
@@ -270,7 +261,7 @@ export default function ResumeBuilderPage() {
             ) : (
               <Plus className="size-4 mr-2" />
             )}
-            {creating ? 'Creating...' : 'New Resume'}
+            {creating ? tc('creating') : t('newResume')}
           </Button>
         </div>
       </div>
@@ -281,7 +272,7 @@ export default function ResumeBuilderPage() {
           <div className="flex items-center justify-center h-64">
             <div className="text-center">
               <p className="text-sm text-destructive font-body mb-3">{error}</p>
-              <Button variant="outline" onClick={fetchResumes} className="font-body">Try Again</Button>
+              <Button variant="outline" onClick={fetchResumes} className="font-body">{tc('tryAgain')}</Button>
             </div>
           </div>
         ) : loading ? (
@@ -315,10 +306,10 @@ export default function ResumeBuilderPage() {
                 <>
                   <Search className="size-10 text-muted-foreground/40 mx-auto mb-4" />
                   <h3 className="font-heading text-lg font-semibold text-foreground mb-2">
-                    No resumes found
+                    {t('noResultsTitle')}
                   </h3>
                   <p className="text-sm text-muted-foreground font-body">
-                    No resumes match &quot;{search}&quot;. Try a different search.
+                    {t('noResultsBody', { search })}
                   </p>
                 </>
               ) : (
@@ -327,14 +318,14 @@ export default function ResumeBuilderPage() {
                     <FileText className="size-7 text-muted-foreground/60" />
                   </div>
                   <h3 className="font-heading text-lg font-semibold text-foreground mb-2">
-                    No resumes yet
+                    {t('emptyTitle')}
                   </h3>
                   <p className="text-sm text-muted-foreground font-body mb-6">
-                    Create your first professional resume and land your dream job.
+                    {t('emptyBody')}
                   </p>
                   <Button onClick={handleCreate} disabled={creating} className="bg-brand text-white hover:bg-brand/90 font-body">
                     {creating ? <Loader2 className="size-4 animate-spin mr-2" /> : <Plus className="size-4 mr-2" />}
-                    {creating ? 'Creating...' : 'Create Resume'}
+                    {creating ? tc('creating') : t('createResume')}
                   </Button>
                 </>
               )}
@@ -348,7 +339,7 @@ export default function ResumeBuilderPage() {
                 <div className="relative">
                   <Search className="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-muted-foreground" />
                   <Input
-                    placeholder="Search resumes..."
+                    placeholder={t('searchPlaceholder')}
                     value={search}
                     onChange={(e) => setSearch(e.target.value)}
                     className="pl-9 h-9 text-sm font-body"
@@ -376,7 +367,7 @@ export default function ResumeBuilderPage() {
               <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/20">
                 <div className="flex items-center gap-2 bg-card border border-border rounded-lg px-4 py-3 shadow-lg">
                   <Loader2 className="size-4 animate-spin text-brand" />
-                  <span className="text-sm font-body">Duplicating...</span>
+                  <span className="text-sm font-body">{tc('duplicating')}</span>
                 </div>
               </div>
             )}
@@ -388,22 +379,22 @@ export default function ResumeBuilderPage() {
       <Dialog open={!!deleteTarget} onOpenChange={(open) => { if (!open) setDeleteTarget(null); }}>
         <DialogContent className="sm:max-w-md">
           <DialogHeader>
-            <DialogTitle className="font-heading">Delete Resume</DialogTitle>
+            <DialogTitle className="font-heading">{t('deleteTitle')}</DialogTitle>
             <DialogDescription className="font-body">
-              Are you sure you want to delete &quot;{deleteTarget?.title || 'Untitled Resume'}&quot;? This action cannot be undone.
+              {t('deleteBody', { title: deleteTarget?.title || tc('untitledResume') })}
             </DialogDescription>
           </DialogHeader>
           <DialogFooter className="gap-2 sm:gap-0">
-            <Button variant="outline" onClick={() => setDeleteTarget(null)} className="font-body">Cancel</Button>
+            <Button variant="outline" onClick={() => setDeleteTarget(null)} className="font-body">{tc('cancel')}</Button>
             <Button variant="destructive" onClick={handleDelete} disabled={deleting} className="font-body">
               {deleting ? <Loader2 className="size-4 animate-spin mr-2" /> : null}
-              {deleting ? 'Deleting...' : 'Delete'}
+              {deleting ? tc('deleting') : tc('delete')}
             </Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
 
-      <UpgradeModal open={upgradeOpen} onOpenChange={setUpgradeOpen} featureName="Resume Builder" />
+      <UpgradeModal open={upgradeOpen} onOpenChange={setUpgradeOpen} featureName={t('title')} />
     </div>
   );
 }

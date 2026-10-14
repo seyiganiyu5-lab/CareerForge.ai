@@ -82,6 +82,14 @@ const SIDEBAR_ICON_MAP: Record<string, ElementType> = {
   Award, Globe, Trophy, Heart, Users, FileText,
 };
 
+// ─── Error Keys ───────────────────────────────────────────────
+
+const ERROR_KEYS: Record<string, string> = {
+  load_failed: 'errorLoadFailed',
+  network_error: 'errorNetwork',
+  create_failed: 'errorCreateFailed',
+};
+
 // ─── Tablet Detection ─────────────────────────────────────────
 
 const TABLET_BREAKPOINT = 1024;
@@ -104,6 +112,8 @@ function useIsTablet() {
 // ─── Autosave Indicator ─────────────────────────────────────────
 
 function AutosaveIndicator({ status }: { status: AutosaveStatus }) {
+  const t = useTranslations('app.resumeEditor');
+  const tc = useTranslations('app.common');
   if (status === 'idle') return null;
   return (
     <AnimatePresence mode="wait">
@@ -118,19 +128,19 @@ function AutosaveIndicator({ status }: { status: AutosaveStatus }) {
         {status === 'saving' && (
           <>
             <Loader2 className="size-3 animate-spin text-muted-foreground" />
-            <span className="text-muted-foreground">Saving...</span>
+            <span className="text-muted-foreground">{tc('saving')}</span>
           </>
         )}
         {status === 'saved' && (
           <>
             <CheckCircle2 className="size-3 text-emerald-500" />
-            <span className="text-emerald-600 dark:text-emerald-400">Saved</span>
+            <span className="text-emerald-600 dark:text-emerald-400">{tc('saved')}</span>
           </>
         )}
         {status === 'error' && (
           <>
             <AlertCircle className="size-3 text-destructive" />
-            <span className="text-destructive">Save failed</span>
+            <span className="text-destructive">{t('saveFailed')}</span>
           </>
         )}
       </motion.span>
@@ -163,6 +173,8 @@ function ResumeHeader({
   onTogglePreview, onOpenGallery, onOpenCustomization, onDownload, downloading,
   onDownloadDocx, downloadingDocx, isProUser, showPreviewButton,
 }: ResumeHeaderProps) {
+  const t = useTranslations('app.resumeEditor');
+  const tc = useTranslations('app.common');
   const [editing, setEditing] = useState(false);
   const [editValue, setEditValue] = useState(title);
   const inputRef = useRef<HTMLInputElement>(null);
@@ -202,10 +214,10 @@ function ResumeHeader({
           <button
             onClick={() => setEditing(true)}
             className="flex items-center gap-1.5 min-w-0 group"
-            aria-label="Edit resume title"
+            aria-label={t('editTitleAria')}
           >
             <span className="font-heading text-sm font-semibold text-foreground truncate">
-              {title || 'Untitled Resume'}
+              {title || tc('untitledResume')}
             </span>
             <Pencil className="size-3.5 text-muted-foreground opacity-0 group-hover:opacity-100 transition-opacity shrink-0" />
           </button>
@@ -227,7 +239,7 @@ function ResumeHeader({
         className="hidden md:inline-flex items-center gap-1.5 text-muted-foreground h-8"
       >
         <LayoutTemplate className="size-3.5" />
-        <span className="font-body text-xs">Templates</span>
+        <span className="font-body text-xs">{t('templates')}</span>
       </Button>
 
       {/* Customize button */}
@@ -238,14 +250,14 @@ function ResumeHeader({
         className="hidden md:inline-flex items-center gap-1.5 text-muted-foreground h-8"
       >
         <Settings2 className="size-3.5" />
-        <span className="font-body text-xs">Customize</span>
+        <span className="font-body text-xs">{t('customize')}</span>
       </Button>
 
       {/* Preview button (tablet) */}
       {showPreviewButton && onTogglePreview && (
         <Button variant="ghost" size="sm" onClick={onTogglePreview} className="flex items-center gap-1.5 text-muted-foreground h-8">
           <Eye className="size-4" />
-          <span className="font-body text-xs">Preview</span>
+          <span className="font-body text-xs">{tc('preview')}</span>
         </Button>
       )}
 
@@ -263,7 +275,7 @@ function ResumeHeader({
           ) : (
             <FileDown className="size-3.5" />
           )}
-          {downloadingDocx ? 'Exporting...' : 'DOCX'}
+          {downloadingDocx ? t('exporting') : 'DOCX'}
         </Button>
       )}
       {/* Download PDF button */}
@@ -280,7 +292,7 @@ function ResumeHeader({
           ) : (
             <Download className="size-3.5" />
           )}
-          {downloading ? 'Exporting...' : 'Download PDF'}
+          {downloading ? t('exporting') : t('downloadPdf')}
         </Button>
       )}
 
@@ -289,42 +301,42 @@ function ResumeHeader({
         <DropdownMenuTrigger asChild>
           <Button variant="ghost" size="icon" className="size-8">
             <MoreVertical className="size-4" />
-            <span className="sr-only">Resume actions</span>
+            <span className="sr-only">{t('resumeActions')}</span>
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end" className="w-52">
           <DropdownMenuItem onClick={() => setEditing(true)}>
-            <PencilLine className="size-4" /> Rename
+            <PencilLine className="size-4" /> {t('rename')}
           </DropdownMenuItem>
           <DropdownMenuItem onClick={onOpenGallery}>
-            <LayoutTemplate className="size-4" /> Change Template
+            <LayoutTemplate className="size-4" /> {t('changeTemplate')}
           </DropdownMenuItem>
           <DropdownMenuItem onClick={onOpenCustomization}>
-            <Settings2 className="size-4" /> Customize Design
+            <Settings2 className="size-4" /> {t('customizeDesign')}
           </DropdownMenuItem>
           {onDownload && (
             <>
               <DropdownMenuSeparator />
               <DropdownMenuItem onClick={onDownload} disabled={downloading}>
                 {downloading ? <Loader2 className="size-4 animate-spin" /> : <Download className="size-4" />}
-                {downloading ? 'Exporting...' : 'Download PDF'}
+                {downloading ? t('exporting') : t('downloadPdf')}
               </DropdownMenuItem>
             </>
           )}
           {onDownloadDocx && isProUser && (
             <DropdownMenuItem onClick={onDownloadDocx} disabled={downloadingDocx}>
               {downloadingDocx ? <Loader2 className="size-4 animate-spin" /> : <FileDown className="size-4" />}
-              {downloadingDocx ? 'Exporting...' : 'Download DOCX'}
+              {downloadingDocx ? t('exporting') : t('downloadDocx')}
               <span className="ml-auto text-[10px] bg-blue-100 dark:bg-blue-900/40 text-blue-700 dark:text-blue-300 px-1.5 py-0.5 rounded font-medium">PRO</span>
             </DropdownMenuItem>
           )}
           <DropdownMenuSeparator />
           <DropdownMenuItem onClick={onDuplicate}>
-            <Copy className="size-4" /> Duplicate
+            <Copy className="size-4" /> {tc('duplicate')}
           </DropdownMenuItem>
           <DropdownMenuSeparator />
           <DropdownMenuItem variant="destructive" onClick={onDelete}>
-            <Trash2 className="size-4" /> Delete
+            <Trash2 className="size-4" /> {tc('delete')}
           </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
@@ -337,11 +349,13 @@ function ResumeHeader({
 type MobileTab = 'editor' | 'preview' | 'templates' | 'customize';
 
 function MobileTabBar({ activeTab, onTabChange }: { activeTab: MobileTab; onTabChange: (tab: MobileTab) => void }) {
+  const t = useTranslations('app.resumeEditor');
+  const tc = useTranslations('app.common');
   const tabs: { key: MobileTab; icon: ElementType; label: string }[] = [
-    { key: 'editor', icon: PenLine, label: 'Editor' },
-    { key: 'preview', icon: Eye, label: 'Preview' },
-    { key: 'templates', icon: LayoutTemplate, label: 'Templates' },
-    { key: 'customize', icon: Settings2, label: 'Design' },
+    { key: 'editor', icon: PenLine, label: t('tabEditor') },
+    { key: 'preview', icon: Eye, label: tc('preview') },
+    { key: 'templates', icon: LayoutTemplate, label: t('templates') },
+    { key: 'customize', icon: Settings2, label: t('tabDesign') },
   ];
   return (
     <div className="flex h-14 shrink-0 border-t border-border/50 bg-card/80 backdrop-blur-sm">
@@ -367,18 +381,20 @@ function MobileTabBar({ activeTab, onTabChange }: { activeTab: MobileTab; onTabC
 // ─── Delete Dialog ──────────────────────────────────────────────
 
 function DeleteDialog({ open, onOpenChange, onConfirm }: { open: boolean; onOpenChange: (o: boolean) => void; onConfirm: () => void }) {
+  const t = useTranslations('app.resumeEditor');
+  const tc = useTranslations('app.common');
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
-          <DialogTitle className="font-heading">Delete Resume</DialogTitle>
+          <DialogTitle className="font-heading">{t('deleteTitle')}</DialogTitle>
           <DialogDescription className="font-body">
-            Are you sure you want to delete this resume? This action cannot be undone.
+            {t('deleteBody')}
           </DialogDescription>
         </DialogHeader>
         <DialogFooter className="gap-2 sm:gap-0">
-          <Button variant="outline" onClick={() => onOpenChange(false)} className="font-body">Cancel</Button>
-          <Button variant="destructive" onClick={onConfirm} className="font-body">Delete</Button>
+          <Button variant="outline" onClick={() => onOpenChange(false)} className="font-body">{tc('cancel')}</Button>
+          <Button variant="destructive" onClick={onConfirm} className="font-body">{tc('delete')}</Button>
         </DialogFooter>
       </DialogContent>
     </Dialog>
@@ -388,9 +404,10 @@ function DeleteDialog({ open, onOpenChange, onConfirm }: { open: boolean; onOpen
 // ─── Mobile Section Nav ─────────────────────────────────────────
 
 function MobileSectionNav({ activeSection, onSectionChange }: { activeSection: SectionKey; onSectionChange: (s: SectionKey) => void }) {
+  const t = useTranslations('app.resumeEditor');
   return (
     <div className="w-14 shrink-0 border-r border-border/50 bg-card/50 overflow-y-auto">
-      <nav className="flex flex-col gap-0.5 p-1.5" aria-label="Resume sections">
+      <nav className="flex flex-col gap-0.5 p-1.5" aria-label={t('sectionsAria')}>
         {SECTIONS.map(section => {
           const Icon = SIDEBAR_ICON_MAP[section.icon];
           return (
@@ -400,7 +417,7 @@ function MobileSectionNav({ activeSection, onSectionChange }: { activeSection: S
               className={`flex items-center justify-center rounded-lg p-2 transition-all duration-200 ${
                 activeSection === section.key ? 'bg-brand/10 text-brand' : 'text-muted-foreground hover:bg-accent'
               }`}
-              title={section.label}
+              title={t(`section_${section.key}`)}
             >
               {Icon && <Icon className="size-4" />}
             </button>
@@ -440,7 +457,8 @@ export default function ResumeWorkspace() {
   // AI Assistant state
   const [aiPanelOpen, setAiPanelOpen] = useState(false);
   const [aiPanelParams, setAiPanelParams] = useState<{ section: string; content: string; itemId?: string; field?: string } | null>(null);
-  const t = useTranslations('ai.assistant');
+  const t = useTranslations('app.resumeEditor');
+  const tc = useTranslations('app.common');
 
   // Listen for AI limit-reached events
   useEffect(() => {
@@ -583,7 +601,7 @@ export default function ResumeWorkspace() {
         <div className="flex flex-col items-center gap-4">
           <Skeleton className="size-10 rounded-full" />
           <Skeleton className="h-5 w-40" />
-          <p className="font-body text-sm text-muted-foreground">Loading resume...</p>
+          <p className="font-body text-sm text-muted-foreground">{t('loadingResume')}</p>
         </div>
       </div>
     );
@@ -600,8 +618,8 @@ export default function ResumeWorkspace() {
       <div className="h-[calc(100vh-64px)] flex items-center justify-center">
         <div className="flex flex-col items-center gap-4 text-center">
           <AlertCircle className="size-10 text-destructive" />
-          <p className="font-body text-sm text-muted-foreground">{error}</p>
-          <Button variant="outline" onClick={createResume}>Try Again</Button>
+          <p className="font-body text-sm text-muted-foreground">{ERROR_KEYS[error] ? t(ERROR_KEYS[error]) : error}</p>
+          <Button variant="outline" onClick={createResume}>{tc('tryAgain')}</Button>
         </div>
       </div>
     );
@@ -741,10 +759,10 @@ export default function ResumeWorkspace() {
             {mobileTab === 'templates' && (
               <motion.div key="templates" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.2 }} className="absolute inset-0 overflow-y-auto bg-card">
                 <div className="p-4 space-y-3">
-                  <h3 className="text-base font-semibold font-heading">Choose Template</h3>
-                  <p className="text-xs text-muted-foreground font-body">Switch templates instantly. Your data stays the same.</p>
+                  <h3 className="text-base font-semibold font-heading">{t('chooseTemplate')}</h3>
+                  <p className="text-xs text-muted-foreground font-body">{t('switchTemplatesHint')}</p>
                   <Button onClick={() => { setGalleryOpen(true); }} className="w-full font-body">
-                    <LayoutTemplate className="size-4 mr-2" /> Browse All Templates
+                    <LayoutTemplate className="size-4 mr-2" /> {t('browseAllTemplates')}
                   </Button>
                 </div>
               </motion.div>
@@ -765,7 +783,7 @@ export default function ResumeWorkspace() {
           open={galleryOpen} onOpenChange={setGalleryOpen}
         />
         <DeleteDialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen} onConfirm={handleDelete} />
-        <UpgradeModal open={upgradeOpen} onOpenChange={setUpgradeOpen} onClose={() => setUpgradeOpen(false)} featureName="AI Resume Assistant" />
+        <UpgradeModal open={upgradeOpen} onOpenChange={setUpgradeOpen} onClose={() => setUpgradeOpen(false)} featureName={t('aiResumeAssistant')} />
 
         {/* AI Assist Panel (mobile) */}
         {aiPanelParams && resumeId && (
@@ -865,7 +883,7 @@ export default function ResumeWorkspace() {
       {/* Customization Sheet (side panel) */}
       <Sheet open={customizationOpen} onOpenChange={setCustomizationOpen}>
         <SheetContent side="right" className="w-[320px] max-w-[320px] p-0 gap-0 overflow-hidden [&>button:last-child]:hidden">
-          <SheetTitle className="sr-only">Customize Design</SheetTitle>
+          <SheetTitle className="sr-only">{t('customizeDesign')}</SheetTitle>
           <CustomizationPanel
             customization={customization}
             templateId={templateId}
@@ -879,7 +897,7 @@ export default function ResumeWorkspace() {
       <Sheet open={previewSheetOpen} onOpenChange={setPreviewSheetOpen}>
         <SheetContent side="right" className="w-[90vw] sm:max-w-lg p-0">
           <SheetHeader className="p-4 pb-0">
-            <SheetTitle className="font-heading">Resume Preview</SheetTitle>
+            <SheetTitle className="font-heading">{t('resumePreview')}</SheetTitle>
           </SheetHeader>
           <PreviewContainer customization={customization}>
             {previewContent}
@@ -895,7 +913,7 @@ export default function ResumeWorkspace() {
       />
 
       <DeleteDialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen} onConfirm={handleDelete} />
-      <UpgradeModal open={upgradeOpen} onOpenChange={setUpgradeOpen} onClose={() => setUpgradeOpen(false)} featureName="AI Resume Assistant" />
+      <UpgradeModal open={upgradeOpen} onOpenChange={setUpgradeOpen} onClose={() => setUpgradeOpen(false)} featureName={t('aiResumeAssistant')} />
 
       {/* AI Assist Panel */}
       {aiPanelParams && resumeId && (

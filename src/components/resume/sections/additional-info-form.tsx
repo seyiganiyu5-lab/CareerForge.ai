@@ -5,6 +5,7 @@ import type { ResumeData } from '@/types/resume';
 import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
 import { Button } from '@/components/ui/button';
+import { useTranslations } from '@/i18n/provider';
 
 interface AdditionalInfoFormProps {
   resumeData: ResumeData;
@@ -14,20 +15,21 @@ interface AdditionalInfoFormProps {
 
 export function AdditionalInfoForm({ resumeData, setResumeData, onAiAssist }: AdditionalInfoFormProps) {
   const value = resumeData.additionalInfo.text;
+  const t = useTranslations('app.resumeForms');
 
   return (
     <div className="space-y-1">
       <h3 className="font-heading text-lg font-semibold text-foreground">
-        Additional Information
+        {t('additionalInfoTitle')}
       </h3>
       <p className="font-body text-sm text-muted-foreground">
-        Add any additional information that does not fit in other sections, such as hobbies, interests, or publications.
+        {t('additionalInfoDescription')}
       </p>
 
       <div className="mt-4">
         <div className="flex items-center justify-between">
           <Label htmlFor="additionalInfo" className="font-body">
-            Additional Details
+            {t('additionalDetails')}
           </Label>
           <Button
             type="button"
@@ -38,7 +40,7 @@ export function AdditionalInfoForm({ resumeData, setResumeData, onAiAssist }: Ad
               section: 'additionalInfo',
               content: resumeData.additionalInfo.text,
             })}
-            aria-label="AI Assist"
+            aria-label={t('aiAssist')}
           >
             <Sparkles className="size-4" />
           </Button>
@@ -52,7 +54,7 @@ export function AdditionalInfoForm({ resumeData, setResumeData, onAiAssist }: Ad
               additionalInfo: { text: e.target.value },
             }))
           }
-          placeholder="Publications, conferences, hobbies, or any other relevant information..."
+          placeholder={t('additionalInfoPlaceholder')}
           className="mt-1.5 min-h-[200px] resize-y font-body"
         />
       </div>

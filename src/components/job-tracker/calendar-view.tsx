@@ -9,6 +9,7 @@ import { Badge } from '@/components/ui/badge';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { cn } from '@/lib/utils';
 import type { CalendarEvent } from '@/hooks/use-job-tracker';
+import { useTranslations, useLocale } from '@/i18n/provider';
 
 interface CalendarViewProps {
   calendarEvents: CalendarEvent[];
@@ -33,6 +34,15 @@ function getFirstDayOfMonth(year: number, month: number) {
 export function CalendarView({ calendarEvents, fetchCalendar }: CalendarViewProps) {
   const [currentDate, setCurrentDate] = useState(new Date());
   const [selectedDate, setSelectedDate] = useState<string | null>(null);
+  const t = useTranslations('dashboard.jobTracker');
+  const tu = useTranslations('app.jobTrackerUi');
+  const { locale } = useLocale();
+  const dateLocale = locale === 'fr' ? 'fr-FR' : 'en-US';
+  // Localized short weekday names, Sunday first (Jan 1 2023 was a Sunday)
+  const weekdays = useMemo(
+    () => Array.from({ length: 7 }, (_, i) => new Date(2023, 0, 1 + i).toLocaleDateString(dateLocale, { weekday: 'short' })),
+    [dateLocale]
+  );
 
   const year = currentDate.getFullYear();
   const month = currentDate.getMonth();
@@ -87,7 +97,7 @@ export function CalendarView({ calendarEvents, fetchCalendar }: CalendarViewProp
       .slice(0, 10);
   }, [calendarEvents]);
 
-  const monthLabel = currentDate.toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
+  const monthLabel = currentDate.toLocaleDateString(dateLocale, { month: 'long', year: 'numeric' });
 
   // Build calendar grid
   const cells: (number | null)[] = [];
@@ -114,7 +124,7 @@ export function CalendarView({ calendarEvents, fetchCalendar }: CalendarViewProp
 
           {/* Day headers */}
           <div className="grid grid-cols-7 mb-1">
-            {['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map(d => (
+            {weekdays.map(d => (
               <div key={d} className="text-center text-[10px] font-medium text-muted-foreground font-heading py-1">
                 {d}
               </div>
@@ -180,7 +190,7 @@ export function CalendarView({ calendarEvents, fetchCalendar }: CalendarViewProp
                 className="mt-3 pt-3 border-t border-border"
               >
                 <p className="text-xs font-medium font-heading mb-2">
-                  Events on {new Date(selectedDate + 'T00:00:00').toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
+                  {tu('eventsOn', { date: new Date(selectedDate + 'T00:00:00').toLocaleDateString(dateLocale, { month: 'short', day: 'numeric' }) })}
                 </p>
                 <div className="space-y-1.5">
                   {selectedEvents.map(ev => {
@@ -208,11 +218,11 @@ export function CalendarView({ calendarEvents, fetchCalendar }: CalendarViewProp
       {/* Upcoming Events Sidebar */}
       <Card className="hidden lg:block">
         <CardContent className="p-4">
-          <h3 className="text-sm font-semibold font-heading mb-3">Upcoming Events</h3>
+          <h3 className="text-sm font-semibold font-heading mb-3">{t('upcomingEvents')}</h3>
           <ScrollArea className="max-h-[400px]">
             {upcomingEvents.length === 0 ? (
               <p className="text-xs text-muted-foreground font-body py-8 text-center">
-                No upcoming events
+                {t('noUpcomingEvents')}
               </p>
             ) : (
               <div className="space-y-2">
@@ -229,7 +239,7 @@ export function CalendarView({ calendarEvents, fetchCalendar }: CalendarViewProp
                             <p className="text-muted-foreground font-body">{ev.companyName}</p>
                           )}
                           <p className="text-muted-foreground font-body mt-0.5">
-                            {new Date(ev.date).toLocaleDateString('en-US', {
+                            {new Date(ev.date).toLocaleDateString(dateLocale, {
                               month: 'short', day: 'numeric',
                             })}
                           </p>

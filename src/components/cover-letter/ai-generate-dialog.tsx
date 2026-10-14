@@ -30,6 +30,23 @@ import {
 } from '@/components/ui/select';
 import { TONE_OPTIONS, LANGUAGE_OPTIONS } from '@/types/cover-letter';
 import type { ToneType } from '@/types/cover-letter';
+import { useTranslations } from '@/i18n/provider';
+
+const toPascal = (value: string) =>
+  value.split(/[^A-Za-z0-9]+/).filter(Boolean).map((w) => w.charAt(0).toUpperCase() + w.slice(1)).join('');
+
+/** Translated display labels for tone/language/template options (values stay unchanged). */
+export function useCoverLetterOptionLabels() {
+  const t = useTranslations('app.coverLetterEditor');
+  const lookup = (key: string, fallback: string) => (t.has(key) ? t(key) : fallback);
+  return {
+    tone: (value: string, fallback: string = value) => lookup(`tone${toPascal(value)}`, fallback),
+    language: (value: string, fallback: string = value) => lookup(`language${toPascal(value)}`, fallback),
+    template: (name: string) => lookup(`template${name.replace(/[^A-Za-z]/g, '')}`, name),
+    tag: (tag: string) => lookup(`tag${tag.replace(/[^A-Za-z]/g, '')}`, tag),
+    color: (label: string) => lookup(`color${label.replace(/[^A-Za-z]/g, '')}`, label),
+  };
+}
 
 interface AIGenerateDialogProps {
   open: boolean;
@@ -47,6 +64,9 @@ interface AIGenerateDialogProps {
 }
 
 export function AIGenerateDialog({ open, onOpenChange, onGenerate, isGenerating }: AIGenerateDialogProps) {
+  const t = useTranslations('app.coverLetterEditor');
+  const tc = useTranslations('app.common');
+  const labels = useCoverLetterOptionLabels();
   const [jobTitle, setJobTitle] = useState('');
   const [companyName, setCompanyName] = useState('');
   const [hiringManager, setHiringManager] = useState('');
@@ -96,10 +116,10 @@ export function AIGenerateDialog({ open, onOpenChange, onGenerate, isGenerating 
               <div className="flex items-center justify-center w-8 h-8 rounded-lg bg-brand text-white shadow-md shadow-brand/30">
                 <Sparkles className="w-4 h-4" />
               </div>
-              Generate with AI
+              {t('generateWithAI')}
             </DialogTitle>
             <DialogDescription className="text-sm mt-1">
-              Fill in the details and AI will write a professional cover letter for you.
+              {t('aiDialogDescription')}
             </DialogDescription>
           </DialogHeader>
         </div>
@@ -109,28 +129,28 @@ export function AIGenerateDialog({ open, onOpenChange, onGenerate, isGenerating 
           <div className="grid grid-cols-2 gap-3">
             <div className="space-y-1.5">
               <Label className="text-xs font-medium">
-                Job Title <span className="text-destructive">*</span>
+                {t('jobTitle')} <span className="text-destructive">*</span>
               </Label>
               <div className="relative">
                 <Briefcase className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
                 <Input
                   value={jobTitle}
                   onChange={(e) => setJobTitle(e.target.value)}
-                  placeholder="Senior Developer"
+                  placeholder={t('jobTitlePlaceholderShort')}
                   className="pl-10 h-9 text-sm bg-muted/30 border-border/50"
                 />
               </div>
             </div>
             <div className="space-y-1.5">
               <Label className="text-xs font-medium">
-                Company Name <span className="text-destructive">*</span>
+                {t('companyName')} <span className="text-destructive">*</span>
               </Label>
               <div className="relative">
                 <Building2 className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
                 <Input
                   value={companyName}
                   onChange={(e) => setCompanyName(e.target.value)}
-                  placeholder="Acme Corp"
+                  placeholder={t('companyPlaceholderShort')}
                   className="pl-10 h-9 text-sm bg-muted/30 border-border/50"
                 />
               </div>
@@ -139,61 +159,61 @@ export function AIGenerateDialog({ open, onOpenChange, onGenerate, isGenerating 
 
           <div className="space-y-1.5">
             <Label className="text-xs font-medium">
-              Hiring Manager <span className="text-muted-foreground font-normal">(optional)</span>
+              {t('hiringManager')} <span className="text-muted-foreground font-normal">{t('optional')}</span>
             </Label>
             <Input
               value={hiringManager}
               onChange={(e) => setHiringManager(e.target.value)}
-              placeholder="Jane Smith"
+              placeholder={t('hiringManagerPlaceholderShort')}
               className="h-9 text-sm bg-muted/30 border-border/50"
             />
           </div>
 
           <div className="space-y-1.5">
             <Label className="text-xs font-medium">
-              Job Description <span className="text-destructive">*</span>
+              {t('jobDescription')} <span className="text-destructive">*</span>
             </Label>
             <Textarea
               value={jobDescription}
               onChange={(e) => setJobDescription(e.target.value)}
-              placeholder="Paste the full job description..."
+              placeholder={t('jobDescriptionPlaceholderShort')}
               className="min-h-[100px] text-sm bg-muted/30 border-border/50 resize-y"
             />
           </div>
 
           <div className="grid grid-cols-3 gap-3">
             <div className="space-y-1.5">
-              <Label className="text-xs font-medium">Tone</Label>
+              <Label className="text-xs font-medium">{t('tone')}</Label>
               <Select value={tone} onValueChange={(v) => setTone(v as ToneType)}>
                 <SelectTrigger className="h-9 text-sm bg-muted/30 border-border/50">
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                  {TONE_OPTIONS.map((t) => (
-                    <SelectItem key={t.value} value={t.value} className="text-xs">{t.label}</SelectItem>
+                  {TONE_OPTIONS.map((o) => (
+                    <SelectItem key={o.value} value={o.value} className="text-xs">{labels.tone(o.value, o.label)}</SelectItem>
                   ))}
                 </SelectContent>
               </Select>
             </div>
             <div className="space-y-1.5">
-              <Label className="text-xs font-medium">Language</Label>
+              <Label className="text-xs font-medium">{t('language')}</Label>
               <Select value={language} onValueChange={(v) => setLanguage(v as 'en' | 'fr')}>
                 <SelectTrigger className="h-9 text-sm bg-muted/30 border-border/50">
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
                   {LANGUAGE_OPTIONS.map((l) => (
-                    <SelectItem key={l.value} value={l.value} className="text-xs">{l.label}</SelectItem>
+                    <SelectItem key={l.value} value={l.value} className="text-xs">{labels.language(l.value, l.label)}</SelectItem>
                   ))}
                 </SelectContent>
               </Select>
             </div>
             <div className="space-y-1.5">
-              <Label className="text-xs font-medium">Resume</Label>
+              <Label className="text-xs font-medium">{t('resume')}</Label>
               <Select value={resumeId} onValueChange={setResumeId}>
                 <SelectTrigger className="h-9 text-sm bg-muted/30 border-border/50">
                   <SelectValue
-                    placeholder={resumesLoading ? 'Loading...' : resumes.length === 0 ? 'None' : 'Choose...'}
+                    placeholder={resumesLoading ? tc('loading') : resumes.length === 0 ? t('resumeNone') : t('resumeChoose')}
                   />
                 </SelectTrigger>
                 <SelectContent>
@@ -214,7 +234,7 @@ export function AIGenerateDialog({ open, onOpenChange, onGenerate, isGenerating 
             className="text-sm"
             disabled={isGenerating}
           >
-            Cancel
+            {tc('cancel')}
           </Button>
           <Button
             onClick={handleGenerate}
@@ -228,12 +248,12 @@ export function AIGenerateDialog({ open, onOpenChange, onGenerate, isGenerating 
                 className="flex items-center gap-2"
               >
                 <Loader2 className="w-4 h-4 animate-spin" />
-                Generating...
+                {t('generating')}
               </motion.div>
             ) : (
               <div className="flex items-center gap-2">
                 <Sparkles className="w-4 h-4" />
-                Generate Cover Letter
+                {t('generateCoverLetter')}
               </div>
             )}
           </Button>

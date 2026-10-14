@@ -17,7 +17,9 @@ import {
   DropdownMenuSeparator, DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { MoreHorizontal } from 'lucide-react';
-import { getStatusConfig, formatDate } from './status-config';
+import { getStatusConfig } from './status-config';
+import { useJobLabels } from './use-job-labels';
+import { useTranslations, useLocale } from '@/i18n/provider';
 import type { JobApplication } from '@/hooks/use-job-tracker';
 
 type SortField = 'company_name' | 'job_title' | 'status' | 'location' | 'salary' | 'work_mode' | 'applied_at' | 'updated_at';
@@ -42,6 +44,16 @@ function SortIcon({ field, sortField, sortDir }: { field: SortField; sortField: 
 export function ListView({ applications, onEdit, onDuplicate, onArchive, onDelete, onAiSuggest }: ListViewProps) {
   const [sortField, setSortField] = useState<SortField>('updated_at');
   const [sortDir, setSortDir] = useState<SortDir>('desc');
+  const t = useTranslations('dashboard.jobTracker');
+  const tu = useTranslations('app.jobTrackerUi');
+  const tc = useTranslations('app.common');
+  const labels = useJobLabels();
+  const { locale } = useLocale();
+
+  const formatDate = (dateStr: string | null | undefined) => {
+    if (!dateStr) return '—';
+    return new Date(dateStr).toLocaleDateString(locale === 'fr' ? 'fr-FR' : 'en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+  };
 
   const toggleSort = (field: SortField) => {
     if (sortField === field) {
@@ -71,27 +83,27 @@ export function ListView({ applications, onEdit, onDuplicate, onArchive, onDelet
           <TableHeader>
             <TableRow>
               <TableHead className="font-heading text-xs cursor-pointer select-none" onClick={() => toggleSort('company_name')}>
-                <span className="inline-flex items-center">Company <SortIcon field="company_name" sortField={sortField} sortDir={sortDir} /></span>
+                <span className="inline-flex items-center">{tu('colCompany')} <SortIcon field="company_name" sortField={sortField} sortDir={sortDir} /></span>
               </TableHead>
               <TableHead className="font-heading text-xs cursor-pointer select-none" onClick={() => toggleSort('job_title')}>
-                <span className="inline-flex items-center">Title <SortIcon field="job_title" sortField={sortField} sortDir={sortDir} /></span>
+                <span className="inline-flex items-center">{tu('colTitle')} <SortIcon field="job_title" sortField={sortField} sortDir={sortDir} /></span>
               </TableHead>
               <TableHead className="font-heading text-xs cursor-pointer select-none" onClick={() => toggleSort('status')}>
-                <span className="inline-flex items-center">Status <SortIcon field="status" sortField={sortField} sortDir={sortDir} /></span>
+                <span className="inline-flex items-center">{t('status')} <SortIcon field="status" sortField={sortField} sortDir={sortDir} /></span>
               </TableHead>
               <TableHead className="font-heading text-xs hidden lg:table-cell cursor-pointer select-none" onClick={() => toggleSort('location')}>
-                <span className="inline-flex items-center">Location <SortIcon field="location" sortField={sortField} sortDir={sortDir} /></span>
+                <span className="inline-flex items-center">{t('location')} <SortIcon field="location" sortField={sortField} sortDir={sortDir} /></span>
               </TableHead>
               <TableHead className="font-heading text-xs hidden md:table-cell cursor-pointer select-none" onClick={() => toggleSort('salary')}>
-                <span className="inline-flex items-center">Salary <SortIcon field="salary" sortField={sortField} sortDir={sortDir} /></span>
+                <span className="inline-flex items-center">{t('salary')} <SortIcon field="salary" sortField={sortField} sortDir={sortDir} /></span>
               </TableHead>
               <TableHead className="font-heading text-xs hidden xl:table-cell cursor-pointer select-none" onClick={() => toggleSort('work_mode')}>
-                <span className="inline-flex items-center">Work Mode <SortIcon field="work_mode" sortField={sortField} sortDir={sortDir} /></span>
+                <span className="inline-flex items-center">{t('workMode')} <SortIcon field="work_mode" sortField={sortField} sortDir={sortDir} /></span>
               </TableHead>
               <TableHead className="font-heading text-xs hidden md:table-cell cursor-pointer select-none" onClick={() => toggleSort('applied_at')}>
-                <span className="inline-flex items-center">Applied <SortIcon field="applied_at" sortField={sortField} sortDir={sortDir} /></span>
+                <span className="inline-flex items-center">{t('applied')} <SortIcon field="applied_at" sortField={sortField} sortDir={sortDir} /></span>
               </TableHead>
-              <TableHead className="font-heading text-xs text-right">Actions</TableHead>
+              <TableHead className="font-heading text-xs text-right">{tu('colActions')}</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -130,14 +142,14 @@ export function ListView({ applications, onEdit, onDuplicate, onArchive, onDelet
                         variant="outline"
                         className={`text-[11px] ${statusConfig.bgLight} ${statusConfig.borderLight} ${statusConfig.textLight} border`}
                       >
-                        {statusConfig.label}
+                        {labels.status(app.status, statusConfig.label)}
                       </Badge>
                     </TableCell>
                     <TableCell className="hidden lg:table-cell text-sm text-muted-foreground font-body">{app.location || '—'}</TableCell>
                     <TableCell className="hidden md:table-cell text-sm text-muted-foreground font-body">{app.salary || '—'}</TableCell>
                     <TableCell className="hidden xl:table-cell">
                       {app.work_mode ? (
-                        <Badge variant="outline" className="text-[10px] font-body">{app.work_mode}</Badge>
+                        <Badge variant="outline" className="text-[10px] font-body">{labels.workMode(app.work_mode)}</Badge>
                       ) : '—'}
                     </TableCell>
                     <TableCell className="hidden md:table-cell text-sm text-muted-foreground font-body">
@@ -161,24 +173,24 @@ export function ListView({ applications, onEdit, onDuplicate, onArchive, onDelet
                           </DropdownMenuTrigger>
                           <DropdownMenuContent align="end" className="w-48">
                             <DropdownMenuItem onClick={(e) => { e.stopPropagation(); onEdit(app); }}>
-                              <Edit className="w-4 h-4 mr-2" /> Edit
+                              <Edit className="w-4 h-4 mr-2" /> {tc('edit')}
                             </DropdownMenuItem>
                             <DropdownMenuItem onClick={(e) => { e.stopPropagation(); onDuplicate(app.id); }}>
-                              <Copy className="w-4 h-4 mr-2" /> Duplicate
+                              <Copy className="w-4 h-4 mr-2" /> {tc('duplicate')}
                             </DropdownMenuItem>
                             <DropdownMenuItem onClick={(e) => { e.stopPropagation(); onArchive(app.id); }}>
-                              <Archive className="w-4 h-4 mr-2" /> {app.is_archived ? 'Unarchive' : 'Archive'}
+                              <Archive className="w-4 h-4 mr-2" /> {app.is_archived ? t('unarchive') : t('archive')}
                             </DropdownMenuItem>
                             <DropdownMenuSeparator />
                             <DropdownMenuItem onClick={(e) => { e.stopPropagation(); onAiSuggest(app.id); }}>
-                              <Sparkles className="w-4 h-4 mr-2" /> AI Suggestions
+                              <Sparkles className="w-4 h-4 mr-2" /> {t('aiSuggestions')}
                             </DropdownMenuItem>
                             <DropdownMenuSeparator />
                             <DropdownMenuItem
                               onClick={(e) => { e.stopPropagation(); onDelete(app.id); }}
                               className="text-red-600 focus:text-red-600"
                             >
-                              <Trash2 className="w-4 h-4 mr-2" /> Delete
+                              <Trash2 className="w-4 h-4 mr-2" /> {tc('delete')}
                             </DropdownMenuItem>
                           </DropdownMenuContent>
                         </DropdownMenu>

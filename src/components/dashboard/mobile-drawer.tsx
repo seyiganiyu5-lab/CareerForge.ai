@@ -37,6 +37,7 @@ interface MobileDrawerProps {
 
 export default function MobileDrawer({ open, onClose, pathname }: MobileDrawerProps) {
   const t = useTranslations('dashboard.sidebar');
+  const tm = useTranslations('app.misc');
   const { logout } = useAuth();
 
   return (
@@ -57,7 +58,7 @@ export default function MobileDrawer({ open, onClose, pathname }: MobileDrawerPr
         <Separator />
 
         <ScrollArea className="flex-1 px-3 py-3">
-          <nav className="flex flex-col gap-1">
+          <nav className="flex flex-col gap-1" aria-label={tm('mobileNavigation')}>
             {DRAWER_ITEMS.map(item => {
               const Icon = item.icon;
               const isActive = pathname === item.href || pathname.startsWith(item.href + '/');

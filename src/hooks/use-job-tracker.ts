@@ -2,6 +2,7 @@
 
 import { useState, useCallback, useEffect } from 'react';
 import { toast } from 'sonner';
+import { useTranslations } from '@/i18n/provider';
 
 export interface JobApplication {
   id: string;
@@ -77,6 +78,8 @@ interface Filters {
 }
 
 export function useJobTracker() {
+  const tu = useTranslations('app.jobTrackerUi');
+  const tc = useTranslations('app.common');
   const [applications, setApplications] = useState<JobApplication[]>([]);
   const [loading, setLoading] = useState(true);
   const [stats, setStats] = useState<DashboardStats | null>(null);
@@ -100,14 +103,14 @@ export function useJobTracker() {
       if (data.success) {
         setApplications(data.applications);
       } else {
-        if (data.error !== 'Unauthorized') toast.error(data.error || 'Failed to fetch');
+        if (data.error !== 'Unauthorized') toast.error(data.error || tu('failedToFetch'));
       }
     } catch {
-      toast.error('Network error');
+      toast.error(tc('networkError'));
     } finally {
       setLoading(false);
     }
-  }, [filters.search, filters.status]);
+  }, [filters.search, filters.status, tu, tc]);
 
   // Fetch stats
   const fetchStats = useCallback(async () => {
@@ -149,19 +152,19 @@ export function useJobTracker() {
       });
       const result = await res.json();
       if (result.success) {
-        toast.success('Application added');
+        toast.success(tu('applicationAdded'));
         fetchApplications();
         fetchStats();
         return result.application;
       } else {
-        toast.error(result.error || 'Failed to create');
+        toast.error(result.error || tu('failedToCreate'));
         return null;
       }
     } catch {
-      toast.error('Network error');
+      toast.error(tc('networkError'));
       return null;
     }
-  }, [fetchApplications, fetchStats]);
+  }, [fetchApplications, fetchStats, tu, tc]);
 
   // Update
   const updateApplication = useCallback(async (id: string, data: Record<string, unknown>) => {
@@ -173,19 +176,19 @@ export function useJobTracker() {
       });
       const result = await res.json();
       if (result.success) {
-        toast.success('Application updated');
+        toast.success(tu('applicationUpdated'));
         fetchApplications();
         fetchStats();
         return result.application;
       } else {
-        toast.error(result.error || 'Failed to update');
+        toast.error(result.error || tu('failedToUpdate'));
         return null;
       }
     } catch {
-      toast.error('Network error');
+      toast.error(tc('networkError'));
       return null;
     }
-  }, [fetchApplications, fetchStats]);
+  }, [fetchApplications, fetchStats, tu, tc]);
 
   // Delete
   const deleteApplication = useCallback(async (id: string) => {
@@ -193,19 +196,19 @@ export function useJobTracker() {
       const res = await fetch(`/api/job-tracker/${id}`, { method: 'DELETE' });
       const result = await res.json();
       if (result.success) {
-        toast.success('Application deleted');
+        toast.success(tu('applicationDeleted'));
         fetchApplications();
         fetchStats();
         return true;
       } else {
-        toast.error(result.error || 'Failed to delete');
+        toast.error(result.error || tu('failedToDelete'));
         return false;
       }
     } catch {
-      toast.error('Network error');
+      toast.error(tc('networkError'));
       return false;
     }
-  }, [fetchApplications, fetchStats]);
+  }, [fetchApplications, fetchStats, tu, tc]);
 
   // Archive
   const archiveApplication = useCallback(async (id: string) => {
@@ -213,7 +216,7 @@ export function useJobTracker() {
       const res = await fetch(`/api/job-tracker/${id}/archive`, { method: 'PATCH' });
       const result = await res.json();
       if (result.success) {
-        toast.success(result.application.is_archived ? 'Application archived' : 'Application unarchived');
+        toast.success(result.application.is_archived ? tu('applicationArchived') : tu('applicationUnarchived'));
         fetchApplications();
         fetchStats();
         return true;
@@ -222,7 +225,7 @@ export function useJobTracker() {
     } catch {
       return false;
     }
-  }, [fetchApplications, fetchStats]);
+  }, [fetchApplications, fetchStats, tu]);
 
   // Duplicate
   const duplicateApplication = useCallback(async (id: string) => {
@@ -230,19 +233,19 @@ export function useJobTracker() {
       const res = await fetch(`/api/job-tracker/${id}/duplicate`, { method: 'POST' });
       const result = await res.json();
       if (result.success) {
-        toast.success('Application duplicated');
+        toast.success(tu('applicationDuplicated'));
         fetchApplications();
         fetchStats();
         return result.application;
       } else {
-        toast.error(result.error || 'Failed to duplicate');
+        toast.error(result.error || tu('failedToDuplicate'));
         return null;
       }
     } catch {
-      toast.error('Network error');
+      toast.error(tc('networkError'));
       return null;
     }
-  }, [fetchApplications, fetchStats]);
+  }, [fetchApplications, fetchStats, tu, tc]);
 
   // Change status (for Kanban)
   const changeStatus = useCallback(async (id: string, status: string) => {
@@ -261,16 +264,16 @@ export function useJobTracker() {
         fetchStats();
         return true;
       } else {
-        toast.error(result.error || 'Failed to update status');
+        toast.error(result.error || tu('failedToUpdateStatus'));
         fetchApplications();
         return false;
       }
     } catch {
-      toast.error('Network error');
+      toast.error(tc('networkError'));
       fetchApplications();
       return false;
     }
-  }, [fetchApplications, fetchStats]);
+  }, [fetchApplications, fetchStats, tu, tc]);
 
   // Reminders
   const fetchReminders = useCallback(async (id: string): Promise<Reminder[]> => {
@@ -338,16 +341,16 @@ export function useJobTracker() {
       const data = await res.json();
       if (data.success) return data.suggestions;
       if (data.error === 'limit_reached') {
-        toast.error('AI usage limit reached. Upgrade your plan for more.');
+        toast.error(tu('aiLimitReached'));
       } else {
-        toast.error(data.error || 'Failed to generate suggestions');
+        toast.error(data.error || tu('failedToGenerateSuggestions'));
       }
       return null;
     } catch {
-      toast.error('Network error');
+      toast.error(tc('networkError'));
       return null;
     }
-  }, []);
+  }, [tu, tc]);
 
   // Client-side filtering (for work mode, employment type)
   const filteredApplications = applications.filter(app => {

@@ -12,6 +12,7 @@ import {
 } from '@/components/ui/tooltip';
 import { CoverLetterTemplateEngine } from './template-engine';
 import { useBreakpoints } from '@/hooks/use-breakpoints';
+import { useTranslations } from '@/i18n/provider';
 import type { CoverLetterTemplateId, CoverLetterData, CoverLetterCustomization } from '@/types/cover-letter';
 
 interface PreviewPanelProps {
@@ -26,6 +27,8 @@ const A4_HEIGHT = 1122;
 
 export function PreviewPanel({ data, customization, templateId, previewRef }: PreviewPanelProps) {
   const { isMobile } = useBreakpoints();
+  const t = useTranslations('app.coverLetterEditor');
+  const tc = useTranslations('app.common');
   const previewAreaRef = useRef<HTMLDivElement>(null);
   const [previewZoom, setPreviewZoom] = useState(100);
   const [isFullscreen, setIsFullscreen] = useState(false);
@@ -100,7 +103,7 @@ export function PreviewPanel({ data, customization, templateId, previewRef }: Pr
       {/* Preview Controls */}
       <div className="flex items-center justify-between px-4 py-2 border-b border-border/30 bg-background/50">
         <div className="flex items-center gap-2">
-          <span className="text-xs text-muted-foreground font-medium">Preview</span>
+          <span className="text-xs text-muted-foreground font-medium">{tc('preview')}</span>
         </div>
         <TooltipProvider delayDuration={200}>
           <div className="flex items-center gap-0.5">
@@ -118,7 +121,7 @@ export function PreviewPanel({ data, customization, templateId, previewRef }: Pr
                   <ZoomOut className="w-3.5 h-3.5" />
                 </Button>
               </TooltipTrigger>
-              <TooltipContent><span className="text-[10px]">Zoom out</span></TooltipContent>
+              <TooltipContent><span className="text-[10px]">{t('zoomOut')}</span></TooltipContent>
             </Tooltip>
 
             <span className="text-[11px] text-muted-foreground w-10 text-center select-none font-mono">
@@ -139,7 +142,7 @@ export function PreviewPanel({ data, customization, templateId, previewRef }: Pr
                   <ZoomIn className="w-3.5 h-3.5" />
                 </Button>
               </TooltipTrigger>
-              <TooltipContent><span className="text-[10px]">Zoom in</span></TooltipContent>
+              <TooltipContent><span className="text-[10px]">{t('zoomIn')}</span></TooltipContent>
             </Tooltip>
 
             <Tooltip>
@@ -153,7 +156,7 @@ export function PreviewPanel({ data, customization, templateId, previewRef }: Pr
                   <Maximize2 className="w-3.5 h-3.5" />
                 </Button>
               </TooltipTrigger>
-              <TooltipContent><span className="text-[10px]">Fit width</span></TooltipContent>
+              <TooltipContent><span className="text-[10px]">{t('fitWidth')}</span></TooltipContent>
             </Tooltip>
 
             <Tooltip>
@@ -167,7 +170,7 @@ export function PreviewPanel({ data, customization, templateId, previewRef }: Pr
                   <Expand className="w-3.5 h-3.5" />
                 </Button>
               </TooltipTrigger>
-              <TooltipContent><span className="text-[10px]">Fullscreen</span></TooltipContent>
+              <TooltipContent><span className="text-[10px]">{t('fullscreen')}</span></TooltipContent>
             </Tooltip>
           </div>
         </TooltipProvider>

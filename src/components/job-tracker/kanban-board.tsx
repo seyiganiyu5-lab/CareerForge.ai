@@ -3,6 +3,8 @@
 import { useState, useCallback, useRef } from 'react';
 import { AnimatePresence } from 'framer-motion';
 import { STATUSES } from './status-config';
+import { useJobLabels } from './use-job-labels';
+import { useTranslations } from '@/i18n/provider';
 import { JobCard } from './job-card';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import type { JobApplication } from '@/hooks/use-job-tracker';
@@ -28,6 +30,8 @@ export function KanbanBoard({
 }: KanbanBoardProps) {
   const [dragOverColumn, setDragOverColumn] = useState<string | null>(null);
   const dragItemId = useRef<string | null>(null);
+  const t = useTranslations('dashboard.jobTracker');
+  const labels = useJobLabels();
 
   const handleDragStart = useCallback((e: React.DragEvent, id: string) => {
     dragItemId.current = id;
@@ -85,7 +89,7 @@ export function KanbanBoard({
                 <div className={`w-2 h-2 rounded-full ${status.color}`} />
                 <Icon className="w-3.5 h-3.5 text-muted-foreground" />
                 <span className="text-xs font-medium font-heading text-foreground truncate">
-                  {status.label}
+                  {labels.status(status.key, status.label)}
                 </span>
                 <span className={
                   'ml-auto text-[10px] font-bold rounded-full w-5 h-5 flex items-center justify-center ' +
@@ -120,7 +124,7 @@ export function KanbanBoard({
                         : 'border-transparent')
                     }>
                       <p className="text-[11px] text-muted-foreground font-body">
-                        {isOver ? 'Drop here' : 'No applications'}
+                        {isOver ? t('dropHere') : t('noApplicationsInColumn')}
                       </p>
                     </div>
                   )}

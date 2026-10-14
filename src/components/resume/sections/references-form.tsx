@@ -7,6 +7,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { useTranslations } from '@/i18n/provider';
 
 interface ReferencesFormProps {
   resumeData: ResumeData;
@@ -15,6 +16,7 @@ interface ReferencesFormProps {
 
 export function ReferencesForm({ resumeData, setResumeData }: ReferencesFormProps) {
   const items = resumeData.references;
+  const t = useTranslations('app.resumeForms');
 
   const addItem = () => {
     setResumeData((prev) => ({
@@ -42,17 +44,17 @@ export function ReferencesForm({ resumeData, setResumeData }: ReferencesFormProp
   return (
     <div className="space-y-1">
       <h3 className="font-heading text-lg font-semibold text-foreground">
-        References
+        {t('referencesTitle')}
       </h3>
       <p className="font-body text-sm text-muted-foreground">
-        Add professional references who can vouch for your qualifications.
+        {t('referencesDescription')}
       </p>
 
       <div className="mt-4 space-y-4">
         {items.length === 0 && (
           <div className="rounded-lg border border-dashed p-8 text-center">
             <p className="font-body text-sm text-muted-foreground">
-              No entries yet. Click the button below to add one.
+              {t('noEntries')}
             </p>
           </div>
         )}
@@ -66,7 +68,7 @@ export function ReferencesForm({ resumeData, setResumeData }: ReferencesFormProp
                   size="icon"
                   className="size-8 text-muted-foreground hover:text-destructive"
                   onClick={() => removeItem(item.id)}
-                  aria-label="Delete reference entry"
+                  aria-label={t('deleteReference')}
                 >
                   <Trash2 className="size-4" />
                 </Button>
@@ -74,7 +76,7 @@ export function ReferencesForm({ resumeData, setResumeData }: ReferencesFormProp
 
               <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
                 <div>
-                  <Label className="font-body">Name</Label>
+                  <Label className="font-body">{t('name')}</Label>
                   <Input
                     value={item.name}
                     onChange={(e) => updateItem(item.id, 'name', e.target.value)}
@@ -83,20 +85,20 @@ export function ReferencesForm({ resumeData, setResumeData }: ReferencesFormProp
                   />
                 </div>
                 <div>
-                  <Label className="font-body">Position</Label>
+                  <Label className="font-body">{t('position')}</Label>
                   <Input
                     value={item.position}
                     onChange={(e) => updateItem(item.id, 'position', e.target.value)}
-                    placeholder="Engineering Manager"
+                    placeholder={t('referencePositionPlaceholder')}
                     className="mt-1.5 font-body"
                   />
                 </div>
                 <div>
-                  <Label className="font-body">Company</Label>
+                  <Label className="font-body">{t('company')}</Label>
                   <Input
                     value={item.company}
                     onChange={(e) => updateItem(item.id, 'company', e.target.value)}
-                    placeholder="Google"
+                    placeholder={t('companyPlaceholder')}
                     className="mt-1.5 font-body"
                   />
                 </div>
@@ -104,7 +106,7 @@ export function ReferencesForm({ resumeData, setResumeData }: ReferencesFormProp
 
               <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                 <div>
-                  <Label className="font-body">Email</Label>
+                  <Label className="font-body">{t('email')}</Label>
                   <Input
                     type="email"
                     value={item.email}
@@ -114,7 +116,7 @@ export function ReferencesForm({ resumeData, setResumeData }: ReferencesFormProp
                   />
                 </div>
                 <div>
-                  <Label className="font-body">Phone</Label>
+                  <Label className="font-body">{t('phone')}</Label>
                   <Input
                     type="tel"
                     value={item.phone}
@@ -134,7 +136,7 @@ export function ReferencesForm({ resumeData, setResumeData }: ReferencesFormProp
           className="w-full font-body"
         >
           <Plus className="size-4" aria-hidden="true" />
-          Add Reference
+          {t('addReference')}
         </Button>
       </div>
     </div>

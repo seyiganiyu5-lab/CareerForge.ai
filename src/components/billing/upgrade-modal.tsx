@@ -12,6 +12,7 @@ import {
   DialogFooter,
 } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
+import { useTranslations } from '@/i18n/provider';
 
 interface UpgradeModalProps {
   open: boolean;
@@ -47,6 +48,7 @@ const iconContainerVariants: Variants = {
 
 export function UpgradeModal({ open, onOpenChange, featureName, onClose }: UpgradeModalProps) {
   const router = useRouter();
+  const t = useTranslations('app.billingUi');
 
   const handleUpgrade = () => {
     onOpenChange(false);
@@ -85,11 +87,11 @@ export function UpgradeModal({ open, onOpenChange, featureName, onClose }: Upgra
             </motion.div>
 
             <DialogTitle className="text-2xl font-heading font-semibold tracking-tight">
-              Upgrade to Pro
+              {t('upgradeToPro')}
             </DialogTitle>
 
             <DialogDescription className="text-sm font-body">
-              Premium Feature
+              {t('premiumFeature')}
             </DialogDescription>
           </DialogHeader>
 
@@ -97,21 +99,21 @@ export function UpgradeModal({ open, onOpenChange, featureName, onClose }: Upgra
             <p className="font-body text-sm leading-relaxed text-muted-foreground">
               {featureName ? (
                 <>
-                  Unlock{' '}
+                  {t('unlockFeaturePrefix')}{' '}
                   <span className="font-semibold text-foreground">{featureName}</span>{' '}
-                  and all other Pro features.
+                  {t('unlockFeatureSuffix')}
                 </>
               ) : (
-                'This feature is available on the Pro plan. Unlock AI-powered resume tools, ATS optimization, unlimited documents, and more.'
+                t('unlockGeneric')
               )}
             </p>
 
             {/* Feature highlights */}
-            <div className="mt-5 grid grid-cols-1 gap-2.5 sm:grid-cols-3" role="list" aria-label="Pro plan features">
+            <div className="mt-5 grid grid-cols-1 gap-2.5 sm:grid-cols-3" role="list" aria-label={t('proFeaturesAria')}>
               {[
-                { label: 'AI Resume Tools', icon: '🤖' },
-                { label: 'ATS Optimization', icon: '✅' },
-                { label: 'Unlimited Docs', icon: '📄' },
+                { label: t('highlightAiTools'), icon: '🤖' },
+                { label: t('highlightAts'), icon: '✅' },
+                { label: t('highlightUnlimited'), icon: '📄' },
               ].map((feature) => (
                 <div
                   key={feature.label}
@@ -132,19 +134,19 @@ export function UpgradeModal({ open, onOpenChange, featureName, onClose }: Upgra
               onClick={handleUpgrade}
               className="w-full bg-brand text-white hover:bg-brand/90 focus-visible:ring-brand/50 sm:text-sm"
               size="lg"
-              aria-label="Upgrade to Pro plan now"
+              aria-label={t('upgradeNowAria')}
             >
               <Sparkles className="size-4" aria-hidden="true" />
-              Upgrade Now
+              {t('upgradeNow')}
             </Button>
             <Button
               variant="outline"
               onClick={handleMaybeLater}
               className="w-full font-body"
               size="lg"
-              aria-label="Close upgrade dialog and continue with free plan"
+              aria-label={t('maybeLaterAria')}
             >
-              Maybe Later
+              {t('maybeLater')}
             </Button>
           </DialogFooter>
         </motion.div>

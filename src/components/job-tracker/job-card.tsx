@@ -17,7 +17,9 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { MoreHorizontal } from 'lucide-react';
-import { getStatusConfig, getBorderColor, daysAgo } from './status-config';
+import { getStatusConfig, getBorderColor } from './status-config';
+import { useJobLabels } from './use-job-labels';
+import { useTranslations } from '@/i18n/provider';
 import type { JobApplication } from '@/hooks/use-job-tracker';
 
 interface JobCardProps {
@@ -43,7 +45,18 @@ function JobCardInner({
 }: JobCardProps) {
   const statusConfig = getStatusConfig(application.status);
   const borderColor = getBorderColor(application.status);
-  const ago = daysAgo(application.applied_at || application.created_at);
+  const t = useTranslations('dashboard.jobTracker');
+  const tu = useTranslations('app.jobTrackerUi');
+  const tc = useTranslations('app.common');
+  const labels = useJobLabels();
+  const ago = (() => {
+    const dateStr = application.applied_at || application.created_at;
+    if (!dateStr) return '';
+    const diffDays = Math.floor((Date.now() - new Date(dateStr).getTime()) / (1000 * 60 * 60 * 24));
+    if (diffDays <= 0) return t('today');
+    if (diffDays === 1) return t('oneDayAgo');
+    return t('daysAgo', { count: diffDays });
+  })();
 
   return (
     <motion.div
@@ -83,24 +96,24 @@ function JobCardInner({
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end" className="w-48">
               <DropdownMenuItem onClick={() => onEdit(application)}>
-                <Edit className="w-4 h-4 mr-2" /> Edit
+                <Edit className="w-4 h-4 mr-2" /> {tc('edit')}
               </DropdownMenuItem>
               <DropdownMenuItem onClick={() => onDuplicate(application.id)}>
-                <Copy className="w-4 h-4 mr-2" /> Duplicate
+                <Copy className="w-4 h-4 mr-2" /> {tc('duplicate')}
               </DropdownMenuItem>
               <DropdownMenuItem onClick={() => onArchive(application.id)}>
-                <Archive className="w-4 h-4 mr-2" /> {application.is_archived ? 'Unarchive' : 'Archive'}
+                <Archive className="w-4 h-4 mr-2" /> {application.is_archived ? t('unarchive') : t('archive')}
               </DropdownMenuItem>
               <DropdownMenuSeparator />
               <DropdownMenuItem onClick={() => onAiSuggest(application.id)}>
-                <Sparkles className="w-4 h-4 mr-2" /> AI Suggestions
+                <Sparkles className="w-4 h-4 mr-2" /> {t('aiSuggestions')}
               </DropdownMenuItem>
               <DropdownMenuSeparator />
               <DropdownMenuItem
                 onClick={() => onDelete(application.id)}
                 className="text-red-600 focus:text-red-600"
               >
-                <Trash2 className="w-4 h-4 mr-2" /> Delete
+                <Trash2 className="w-4 h-4 mr-2" /> {tc('delete')}
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
@@ -126,12 +139,12 @@ function JobCardInner({
         <div className="flex items-center gap-1.5 mt-2.5 flex-wrap">
           {application.work_mode && (
             <Badge variant="outline" className="text-[10px] px-1.5 py-0 h-5 font-body">
-              {application.work_mode}
+              {labels.workMode(application.work_mode)}
             </Badge>
           )}
           {application.employment_type && (
             <Badge variant="outline" className="text-[10px] px-1.5 py-0 h-5 font-body">
-              {application.employment_type}
+              {labels.employmentType(application.employment_type)}
             </Badge>
           )}
           {application.job_url && (
@@ -143,7 +156,7 @@ function JobCardInner({
               onClick={(e) => e.stopPropagation()}
             >
               <Badge variant="outline" className="text-[10px] px-1.5 py-0 h-5 font-body gap-0.5">
-                <ExternalLink className="w-2.5 h-2.5" /> Link
+                <ExternalLink className="w-2.5 h-2.5" /> {tu('link')}
               </Badge>
             </a>
           )}

@@ -11,6 +11,7 @@ import {
 } from '@/components/ui/tooltip';
 import type { TemplateCustomization } from '@/types/template';
 import { PAGE_DIMENSIONS } from '@/types/template';
+import { useTranslations } from '@/i18n/provider';
 
 interface PreviewContainerProps {
   children: ReactNode;
@@ -20,6 +21,7 @@ interface PreviewContainerProps {
 const ZOOM_LEVELS = [0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0];
 
 export function PreviewContainer({ children, customization }: PreviewContainerProps) {
+  const t = useTranslations('app.resumeEditor');
   const containerRef = useRef<HTMLDivElement>(null);
   const [zoom, setZoom] = useState(0.5);
   const [isFullscreen, setIsFullscreen] = useState(false);
@@ -96,12 +98,12 @@ export function PreviewContainer({ children, customization }: PreviewContainerPr
                   className="size-7"
                   onClick={zoomOut}
                   disabled={zoom <= ZOOM_LEVELS[0]}
-                  aria-label="Zoom out"
+                  aria-label={t('zoomOut')}
                 >
                   <ZoomOut className="size-3.5" />
                 </Button>
               </TooltipTrigger>
-              <TooltipContent side="bottom" className="text-xs">Zoom out</TooltipContent>
+              <TooltipContent side="bottom" className="text-xs">{t('zoomOut')}</TooltipContent>
             </Tooltip>
 
             <span className="text-[11px] font-mono text-muted-foreground tabular-nums w-10 text-center">
@@ -116,12 +118,12 @@ export function PreviewContainer({ children, customization }: PreviewContainerPr
                   className="size-7"
                   onClick={zoomIn}
                   disabled={zoom >= ZOOM_LEVELS[ZOOM_LEVELS.length - 1]}
-                  aria-label="Zoom in"
+                  aria-label={t('zoomIn')}
                 >
                   <ZoomIn className="size-3.5" />
                 </Button>
               </TooltipTrigger>
-              <TooltipContent side="bottom" className="text-xs">Zoom in</TooltipContent>
+              <TooltipContent side="bottom" className="text-xs">{t('zoomIn')}</TooltipContent>
             </Tooltip>
 
             <Tooltip>
@@ -131,12 +133,12 @@ export function PreviewContainer({ children, customization }: PreviewContainerPr
                   size="icon"
                   className="size-7"
                   onClick={() => fitWidth(true)}
-                  aria-label="Fit width"
+                  aria-label={t('fitWidth')}
                 >
                   <Scan className="size-3.5" />
                 </Button>
               </TooltipTrigger>
-              <TooltipContent side="bottom" className="text-xs">Fit width</TooltipContent>
+              <TooltipContent side="bottom" className="text-xs">{t('fitWidth')}</TooltipContent>
             </Tooltip>
           </div>
 
@@ -147,13 +149,13 @@ export function PreviewContainer({ children, customization }: PreviewContainerPr
                 size="icon"
                 className="size-7"
                 onClick={toggleFullscreen}
-                aria-label={isFullscreen ? 'Exit fullscreen' : 'Fullscreen'}
+                aria-label={isFullscreen ? t('exitFullscreen') : t('fullscreen')}
               >
                 {isFullscreen ? <Minimize2 className="size-3.5" /> : <Maximize2 className="size-3.5" />}
               </Button>
             </TooltipTrigger>
             <TooltipContent side="bottom" className="text-xs">
-              {isFullscreen ? 'Exit fullscreen' : 'Fullscreen'}
+              {isFullscreen ? t('exitFullscreen') : t('fullscreen')}
             </TooltipContent>
           </Tooltip>
         </div>

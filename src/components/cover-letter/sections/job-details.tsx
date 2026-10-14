@@ -14,6 +14,8 @@ import {
 } from '@/components/ui/select';
 import { TONE_OPTIONS, LANGUAGE_OPTIONS } from '@/types/cover-letter';
 import type { CoverLetterData, ToneType } from '@/types/cover-letter';
+import { useTranslations } from '@/i18n/provider';
+import { useCoverLetterOptionLabels } from '../ai-generate-dialog';
 
 interface JobDetailsSectionProps {
   data: CoverLetterData;
@@ -21,57 +23,59 @@ interface JobDetailsSectionProps {
 }
 
 export function JobDetailsSection({ data, onChange }: JobDetailsSectionProps) {
+  const t = useTranslations('app.coverLetterEditor');
+  const labels = useCoverLetterOptionLabels();
   return (
     <SectionCard
       icon={<Briefcase className="w-4 h-4" />}
-      title="Job Details"
-      description="Information about the position you're applying for"
+      title={t('jobDetailsTitle')}
+      description={t('jobDetailsDescription')}
       defaultOpen={true}
     >
       <div className="space-y-4">
         <div className="space-y-1.5">
-          <Label className="text-xs font-medium">Job Title</Label>
+          <Label className="text-xs font-medium">{t('jobTitle')}</Label>
           <Input
             value={data.jobTitle}
             onChange={(e) => onChange({ jobTitle: e.target.value })}
-            placeholder="e.g. Senior Software Engineer"
+            placeholder={t('jobTitlePlaceholder')}
             className="h-9 text-sm bg-muted/30 border-border/50 focus:border-brand/50 transition-colors"
           />
         </div>
 
         <div className="space-y-1.5">
-          <Label className="text-xs font-medium">Job Description</Label>
+          <Label className="text-xs font-medium">{t('jobDescription')}</Label>
           <Textarea
             value={data.jobDescription}
             onChange={(e) => onChange({ jobDescription: e.target.value })}
-            placeholder="Paste the full job description here..."
+            placeholder={t('jobDescriptionPlaceholder')}
             className="min-h-[100px] text-sm bg-muted/30 border-border/50 focus:border-brand/50 transition-colors resize-y"
           />
         </div>
 
         <div className="grid grid-cols-2 gap-3">
           <div className="space-y-1.5">
-            <Label className="text-xs font-medium">Language</Label>
+            <Label className="text-xs font-medium">{t('language')}</Label>
             <Select value={data.language} onValueChange={(v) => onChange({ language: v as 'en' | 'fr' })}>
               <SelectTrigger className="h-9 text-sm bg-muted/30 border-border/50">
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
                 {LANGUAGE_OPTIONS.map((l) => (
-                  <SelectItem key={l.value} value={l.value}>{l.label}</SelectItem>
+                  <SelectItem key={l.value} value={l.value}>{labels.language(l.value, l.label)}</SelectItem>
                 ))}
               </SelectContent>
             </Select>
           </div>
           <div className="space-y-1.5">
-            <Label className="text-xs font-medium">Writing Tone</Label>
+            <Label className="text-xs font-medium">{t('writingTone')}</Label>
             <Select value={data.tone} onValueChange={(v) => onChange({ tone: v as ToneType })}>
               <SelectTrigger className="h-9 text-sm bg-muted/30 border-border/50">
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
-                {TONE_OPTIONS.map((t) => (
-                  <SelectItem key={t.value} value={t.value}>{t.label}</SelectItem>
+                {TONE_OPTIONS.map((o) => (
+                  <SelectItem key={o.value} value={o.value}>{labels.tone(o.value, o.label)}</SelectItem>
                 ))}
               </SelectContent>
             </Select>
@@ -79,7 +83,7 @@ export function JobDetailsSection({ data, onChange }: JobDetailsSectionProps) {
         </div>
 
         <div className="space-y-1.5">
-          <Label className="text-xs font-medium">Date</Label>
+          <Label className="text-xs font-medium">{t('date')}</Label>
           <Input
             type="date"
             value={data.date}

@@ -13,6 +13,7 @@ import {
   Lightbulb, FileText, BookOpen, Clock, TrendingUp, Loader2, RefreshCw,
 } from 'lucide-react';
 import type { AiSuggestion } from '@/hooks/use-job-tracker';
+import { useTranslations, useLocale } from '@/i18n/provider';
 
 interface AiSuggestionsPanelProps {
   open: boolean;
@@ -24,12 +25,12 @@ interface AiSuggestionsPanelProps {
   generateSuggestions: (id: string, types?: string[]) => Promise<AiSuggestion[] | null>;
 }
 
-const SUGGESTION_CONFIG: Record<string, { label: string; icon: typeof Lightbulb; color: string }> = {
-  interview_tips: { label: 'Interview Tips', icon: Lightbulb, color: 'text-amber-600' },
-  resume_improvements: { label: 'Resume Improvements', icon: FileText, color: 'text-blue-600' },
-  cover_letter_tips: { label: 'Cover Letter Tips', icon: BookOpen, color: 'text-violet-600' },
-  follow_up_advice: { label: 'Follow-up Advice', icon: Clock, color: 'text-emerald-600' },
-  negotiation_tips: { label: 'Negotiation Tips', icon: TrendingUp, color: 'text-orange-600' },
+const SUGGESTION_CONFIG: Record<string, { labelKey: string; icon: typeof Lightbulb; color: string }> = {
+  interview_tips: { labelKey: 'tipInterview', icon: Lightbulb, color: 'text-amber-600' },
+  resume_improvements: { labelKey: 'tipResume', icon: FileText, color: 'text-blue-600' },
+  cover_letter_tips: { labelKey: 'tipCoverLetter', icon: BookOpen, color: 'text-violet-600' },
+  follow_up_advice: { labelKey: 'tipFollowUp', icon: Clock, color: 'text-emerald-600' },
+  negotiation_tips: { labelKey: 'tipNegotiation', icon: TrendingUp, color: 'text-orange-600' },
 };
 
 export function AiSuggestionsPanel({
@@ -38,6 +39,8 @@ export function AiSuggestionsPanel({
 }: AiSuggestionsPanelProps) {
   const [suggestions, setSuggestions] = useState<AiSuggestion[]>(existingSuggestions);
   const [loading, setLoading] = useState(false);
+  const t = useTranslations('dashboard.jobTracker');
+  const { locale } = useLocale();
 
   const handleGenerate = useCallback(async (types?: string[]) => {
     if (!applicationId) return;
@@ -66,7 +69,7 @@ export function AiSuggestionsPanel({
         <SheetHeader>
           <SheetTitle className="font-heading text-base flex items-center gap-2">
             <Lightbulb className="w-4 h-4 text-brand" />
-            AI Suggestions
+            {t('aiSuggestions')}
           </SheetTitle>
           <p className="text-xs text-muted-foreground font-body">
             {companyName} — {applicationTitle}
@@ -88,7 +91,7 @@ export function AiSuggestionsPanel({
                   disabled={loading}
                 >
                   <Icon className={`w-3.5 h-3.5 ${config.color}`} />
-                  {config.label}
+                  {t(config.labelKey)}
                 </Button>
               );
             })}
@@ -102,7 +105,7 @@ export function AiSuggestionsPanel({
             disabled={loading}
           >
             {loading ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <RefreshCw className="w-3.5 h-3.5" />}
-            Generate All
+            {t('generateAll')}
           </Button>
 
           {/* Suggestions List */}
@@ -133,9 +136,9 @@ export function AiSuggestionsPanel({
               {suggestions.length === 0 && !loading && (
                 <div className="text-center py-12">
                   <Lightbulb className="w-8 h-8 text-muted-foreground mx-auto mb-2" />
-                  <p className="text-sm text-muted-foreground font-body">No suggestions yet</p>
+                  <p className="text-sm text-muted-foreground font-body">{t('noSuggestions')}</p>
                   <p className="text-xs text-muted-foreground font-body mt-1">
-                    Click a category above to generate AI-powered advice
+                    {t('noSuggestionsHint')}
                   </p>
                 </div>
               )}
@@ -154,10 +157,10 @@ export function AiSuggestionsPanel({
                         <div className="flex items-center gap-1.5 mb-1.5">
                           {config && <Icon className={`w-3.5 h-3.5 ${config.color}`} />}
                           <span className="text-xs font-medium font-heading">
-                            {config?.label || suggestion.type}
+                            {config ? t(config.labelKey) : suggestion.type}
                           </span>
                           <span className="text-[10px] text-muted-foreground ml-auto font-body">
-                            {new Date(suggestion.createdAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
+                            {new Date(suggestion.createdAt).toLocaleDateString(locale === 'fr' ? 'fr-FR' : 'en-US', { month: 'short', day: 'numeric' })}
                           </span>
                         </div>
                         <p className="text-xs text-foreground/80 font-body whitespace-pre-wrap leading-relaxed">

@@ -8,6 +8,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
+import { useTranslations } from '@/i18n/provider';
 
 interface ProjectsFormProps {
   resumeData: ResumeData;
@@ -17,6 +18,7 @@ interface ProjectsFormProps {
 
 export function ProjectsForm({ resumeData, setResumeData, onAiAssist }: ProjectsFormProps) {
   const items = resumeData.projects;
+  const t = useTranslations('app.resumeForms');
 
   const addItem = () => {
     setResumeData((prev) => ({
@@ -44,17 +46,17 @@ export function ProjectsForm({ resumeData, setResumeData, onAiAssist }: Projects
   return (
     <div className="space-y-1">
       <h3 className="font-heading text-lg font-semibold text-foreground">
-        Projects
+        {t('projectsTitle')}
       </h3>
       <p className="font-body text-sm text-muted-foreground">
-        Showcase relevant projects that demonstrate your skills and experience.
+        {t('projectsDescription')}
       </p>
 
       <div className="mt-4 space-y-4">
         {items.length === 0 && (
           <div className="rounded-lg border border-dashed p-8 text-center">
             <p className="font-body text-sm text-muted-foreground">
-              No entries yet. Click the button below to add one.
+              {t('noEntries')}
             </p>
           </div>
         )}
@@ -68,7 +70,7 @@ export function ProjectsForm({ resumeData, setResumeData, onAiAssist }: Projects
                   size="icon"
                   className="size-8 text-muted-foreground hover:text-destructive"
                   onClick={() => removeItem(item.id)}
-                  aria-label="Delete project entry"
+                  aria-label={t('deleteProject')}
                 >
                   <Trash2 className="size-4" />
                 </Button>
@@ -76,16 +78,16 @@ export function ProjectsForm({ resumeData, setResumeData, onAiAssist }: Projects
 
               <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                 <div>
-                  <Label className="font-body">Project Name</Label>
+                  <Label className="font-body">{t('projectName')}</Label>
                   <Input
                     value={item.name}
                     onChange={(e) => updateItem(item.id, 'name', e.target.value)}
-                    placeholder="My Awesome Project"
+                    placeholder={t('projectNamePlaceholder')}
                     className="mt-1.5 font-body"
                   />
                 </div>
                 <div>
-                  <Label className="font-body">Technologies</Label>
+                  <Label className="font-body">{t('technologies')}</Label>
                   <Input
                     value={item.technologies}
                     onChange={(e) => updateItem(item.id, 'technologies', e.target.value)}
@@ -97,7 +99,7 @@ export function ProjectsForm({ resumeData, setResumeData, onAiAssist }: Projects
 
               <div>
               <div className="flex items-center justify-between">
-                <Label className="font-body">Description</Label>
+                <Label className="font-body">{t('description')}</Label>
                 <Button
                   type="button"
                   variant="ghost"
@@ -109,7 +111,7 @@ export function ProjectsForm({ resumeData, setResumeData, onAiAssist }: Projects
                     itemId: item.id,
                     field: 'description',
                   })}
-                  aria-label="AI Assist"
+                  aria-label={t('aiAssist')}
                 >
                   <Sparkles className="size-4" />
                 </Button>
@@ -117,14 +119,14 @@ export function ProjectsForm({ resumeData, setResumeData, onAiAssist }: Projects
                 <Textarea
                   value={item.description}
                   onChange={(e) => updateItem(item.id, 'description', e.target.value)}
-                  placeholder="Describe the project, your role, and key achievements..."
+                  placeholder={t('projectDescriptionPlaceholder')}
                   className="mt-1.5 min-h-[80px] resize-y font-body"
                 />
               </div>
 
               <div>
               <div className="flex items-center justify-between">
-                <Label className="font-body">Business Impact & Results</Label>
+                <Label className="font-body">{t('businessImpact')}</Label>
                 <Button
                   type="button"
                   variant="ghost"
@@ -136,7 +138,7 @@ export function ProjectsForm({ resumeData, setResumeData, onAiAssist }: Projects
                     itemId: item.id,
                     field: 'results',
                   })}
-                  aria-label="AI Assist for results"
+                  aria-label={t('aiAssistResults')}
                 >
                   <Sparkles className="size-4" />
                 </Button>
@@ -144,14 +146,14 @@ export function ProjectsForm({ resumeData, setResumeData, onAiAssist }: Projects
                 <Textarea
                   value={item.results}
                   onChange={(e) => updateItem(item.id, 'results', e.target.value)}
-                  placeholder="Describe the business impact, measurable results, or outcomes achieved..."
+                  placeholder={t('businessImpactPlaceholder')}
                   className="mt-1.5 min-h-[80px] resize-y font-body"
                 />
               </div>
 
               <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                 <div>
-                  <Label className="font-body">GitHub URL</Label>
+                  <Label className="font-body">{t('githubUrl')}</Label>
                   <Input
                     type="url"
                     value={item.githubUrl}
@@ -161,7 +163,7 @@ export function ProjectsForm({ resumeData, setResumeData, onAiAssist }: Projects
                   />
                 </div>
                 <div>
-                  <Label className="font-body">Live URL</Label>
+                  <Label className="font-body">{t('liveUrl')}</Label>
                   <Input
                     type="url"
                     value={item.liveUrl}
@@ -181,7 +183,7 @@ export function ProjectsForm({ resumeData, setResumeData, onAiAssist }: Projects
           className="w-full font-body"
         >
           <Plus className="size-4" aria-hidden="true" />
-          Add Project
+          {t('addProject')}
         </Button>
       </div>
     </div>

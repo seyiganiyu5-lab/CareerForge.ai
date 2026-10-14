@@ -35,6 +35,7 @@ const COUNTRY_KEYS = ['ci', 'sn', 'ml', 'bf', 'cm', 'ne', 'tg', 'bj', 'gn', 'td'
 export default function PersonalInfoStep({ onNext, onBack, initialData }: PersonalInfoStepProps) {
   const t = useTranslations('auth.onboarding.personalInfo');
   const tCommon = useTranslations('auth.common');
+  const tm = useTranslations('app.misc');
 
   const personalInfoSchema = z.object({
     firstName: z.string().min(1, t('errors.firstNameRequired')),
@@ -173,7 +174,7 @@ export default function PersonalInfoStep({ onNext, onBack, initialData }: Person
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel className="font-body text-sm font-medium">
-                      {t('jobTitlePlaceholder').startsWith('e.g.') ? t('jobTitlePlaceholder').replace(/^e\.g\.\s*,?\s*/i, '') : t('jobTitlePlaceholder')}
+                      {tm('jobTitleLabel')}
                     </FormLabel>
                     <FormControl>
                       <Input
