@@ -15,6 +15,8 @@ import {
 } from '@/components/ui/select';
 import { COVER_LETTER_TEMPLATES, ACCENT_PRESETS, FONT_OPTIONS } from '@/lib/cover-letter/template-registry';
 import type { CoverLetterCustomization, CoverLetterTemplateId } from '@/types/cover-letter';
+import { useTranslations } from '@/i18n/provider';
+import { useCoverLetterOptionLabels } from '../ai-generate-dialog';
 
 interface CustomizationSectionProps {
   customization: CoverLetterCustomization;
@@ -29,35 +31,38 @@ export function CustomizationSection({
   onChange,
   onTemplateChange,
 }: CustomizationSectionProps) {
+  const t = useTranslations('app.coverLetterEditor');
+  const tc = useTranslations('app.common');
+  const labels = useCoverLetterOptionLabels();
   return (
     <SectionCard
       icon={<Palette className="w-4 h-4" />}
-      title="Design & Customization"
-      description="Choose template, colors, fonts, and spacing"
+      title={t('customizationTitle')}
+      description={t('customizationDescription')}
       defaultOpen={false}
     >
       <div className="space-y-5">
         {/* Template Selector */}
         <div className="space-y-2">
-          <Label className="text-xs font-medium">Template</Label>
+          <Label className="text-xs font-medium">{t('template')}</Label>
           <div className="grid grid-cols-2 gap-2">
-            {COVER_LETTER_TEMPLATES.map((t) => (
+            {COVER_LETTER_TEMPLATES.map((tpl) => (
               <button
-                key={t.id}
-                onClick={() => onTemplateChange(t.id as CoverLetterTemplateId)}
+                key={tpl.id}
+                onClick={() => onTemplateChange(tpl.id as CoverLetterTemplateId)}
                 className={`relative flex items-center gap-2 p-2.5 rounded-lg border text-left transition-all duration-200 ${
-                  templateId === t.id
+                  templateId === tpl.id
                     ? 'border-brand bg-brand/5 ring-1 ring-brand/30 shadow-sm'
                     : 'border-border/40 bg-muted/20 hover:border-border hover:bg-muted/40'
                 }`}
               >
                 <div className="flex-1 min-w-0">
-                  <div className="text-xs font-medium truncate">{t.name}</div>
-                  <div className="text-[10px] text-muted-foreground mt-0.5">{t.tags[0]}</div>
+                  <div className="text-xs font-medium truncate">{labels.template(tpl.name)}</div>
+                  <div className="text-[10px] text-muted-foreground mt-0.5">{labels.tag(tpl.tags[0])}</div>
                 </div>
-                {t.tier === 'pro' && (
+                {tpl.tier === 'pro' && (
                   <Badge className="text-[8px] px-1 py-0 h-3.5 bg-violet-100 text-violet-700 shrink-0">
-                    Pro
+                    {tc('pro')}
                   </Badge>
                 )}
               </button>
@@ -69,7 +74,7 @@ export function CustomizationSection({
 
         {/* Accent Color */}
         <div className="space-y-2">
-          <Label className="text-xs font-medium">Accent Color</Label>
+          <Label className="text-xs font-medium">{t('accentColor')}</Label>
           <div className="flex flex-wrap gap-2">
             {ACCENT_PRESETS.map((c) => (
               <button
@@ -81,7 +86,7 @@ export function CustomizationSection({
                     : 'border-transparent'
                 }`}
                 style={{ backgroundColor: c.value }}
-                title={c.label}
+                title={labels.color(c.label)}
               />
             ))}
           </div>
@@ -89,7 +94,7 @@ export function CustomizationSection({
 
         {/* Font */}
         <div className="space-y-1.5">
-          <Label className="text-xs font-medium">Font Family</Label>
+          <Label className="text-xs font-medium">{t('fontFamily')}</Label>
           <Select value={customization.primaryFont} onValueChange={(v) => onChange({ primaryFont: v })}>
             <SelectTrigger className="h-9 text-sm bg-muted/30 border-border/50">
               <SelectValue />
@@ -107,7 +112,7 @@ export function CustomizationSection({
         {/* Font Size */}
         <div className="space-y-2">
           <div className="flex items-center justify-between">
-            <Label className="text-xs font-medium">Font Size</Label>
+            <Label className="text-xs font-medium">{t('fontSize')}</Label>
             <span className="text-[11px] text-muted-foreground font-mono">
               {Math.round(customization.fontSize * 100)}%
             </span>
@@ -125,7 +130,7 @@ export function CustomizationSection({
         {/* Line Spacing */}
         <div className="space-y-2">
           <div className="flex items-center justify-between">
-            <Label className="text-xs font-medium">Line Spacing</Label>
+            <Label className="text-xs font-medium">{t('lineSpacing')}</Label>
             <span className="text-[11px] text-muted-foreground font-mono">
               {customization.lineSpacing.toFixed(1)}
             </span>
@@ -143,7 +148,7 @@ export function CustomizationSection({
         {/* Margins */}
         <div className="space-y-2">
           <div className="flex items-center justify-between">
-            <Label className="text-xs font-medium">Page Margins</Label>
+            <Label className="text-xs font-medium">{t('pageMargins')}</Label>
             <span className="text-[11px] text-muted-foreground font-mono">
               {customization.pageMargins}px
             </span>
@@ -160,7 +165,7 @@ export function CustomizationSection({
 
         {/* Date Format */}
         <div className="space-y-1.5">
-          <Label className="text-xs font-medium">Date Format</Label>
+          <Label className="text-xs font-medium">{t('dateFormat')}</Label>
           <Select
             value={customization.dateFormat}
             onValueChange={(v) => onChange({ dateFormat: v as CoverLetterCustomization['dateFormat'] })}
@@ -169,9 +174,9 @@ export function CustomizationSection({
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="full">Full (January 15, 2025)</SelectItem>
-              <SelectItem value="short">Short (Jan 15, 2025)</SelectItem>
-              <SelectItem value="iso">ISO (2025-01-15)</SelectItem>
+              <SelectItem value="full">{t('dateFormatFull')}</SelectItem>
+              <SelectItem value="short">{t('dateFormatShort')}</SelectItem>
+              <SelectItem value="iso">{t('dateFormatIso')}</SelectItem>
             </SelectContent>
           </Select>
         </div>

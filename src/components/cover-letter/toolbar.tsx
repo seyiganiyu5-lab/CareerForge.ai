@@ -49,6 +49,8 @@ import {
 import { COVER_LETTER_TEMPLATES } from '@/lib/cover-letter/template-registry';
 import { TONE_OPTIONS, LANGUAGE_OPTIONS } from '@/types/cover-letter';
 import type { CoverLetterTemplateId, ToneType, AutosaveStatus } from '@/types/cover-letter';
+import { useTranslations } from '@/i18n/provider';
+import { useCoverLetterOptionLabels } from './ai-generate-dialog';
 
 interface ToolbarProps {
   title: string;
@@ -91,6 +93,9 @@ export function Toolbar({
   onDuplicate,
   onGenerateAI,
 }: ToolbarProps) {
+  const t = useTranslations('app.coverLetterEditor');
+  const tc = useTranslations('app.common');
+  const labels = useCoverLetterOptionLabels();
   const [editingTitle, setEditingTitle] = useState(false);
   const [titleInput, setTitleInput] = useState('');
 
@@ -105,6 +110,8 @@ export function Toolbar({
     }
     setEditingTitle(false);
   };
+
+  const currentTemplateName = COVER_LETTER_TEMPLATES.find(tpl => tpl.id === templateId)?.name;
 
   return (
     <TooltipProvider delayDuration={300}>
@@ -136,7 +143,7 @@ export function Toolbar({
                 onClick={handleStartRename}
                 className="text-sm font-heading font-semibold truncate max-w-[120px] sm:max-w-[160px] hover:text-brand transition-colors text-left"
               >
-                {title || 'Untitled Cover Letter'}
+                {title || tc('untitledCoverLetter')}
               </button>
             )}
           </div>
@@ -149,12 +156,12 @@ export function Toolbar({
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
-                {COVER_LETTER_TEMPLATES.map((t) => (
-                  <SelectItem key={t.id} value={t.id} className="text-xs">
+                {COVER_LETTER_TEMPLATES.map((tpl) => (
+                  <SelectItem key={tpl.id} value={tpl.id} className="text-xs">
                     <div className="flex items-center gap-2">
-                      <span>{t.name}</span>
-                      {t.tier === 'pro' && (
-                        <Badge className="text-[8px] px-1 py-0 h-3 bg-violet-100 text-violet-700">Pro</Badge>
+                      <span>{labels.template(tpl.name)}</span>
+                      {tpl.tier === 'pro' && (
+                        <Badge className="text-[8px] px-1 py-0 h-3 bg-violet-100 text-violet-700">{tc('pro')}</Badge>
                       )}
                     </div>
                   </SelectItem>
@@ -174,7 +181,7 @@ export function Toolbar({
               </SelectTrigger>
               <SelectContent>
                 {LANGUAGE_OPTIONS.map((l) => (
-                  <SelectItem key={l.value} value={l.value} className="text-xs">{l.label}</SelectItem>
+                  <SelectItem key={l.value} value={l.value} className="text-xs">{labels.language(l.value, l.label)}</SelectItem>
                 ))}
               </SelectContent>
             </Select>
@@ -185,8 +192,8 @@ export function Toolbar({
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
-                {TONE_OPTIONS.map((t) => (
-                  <SelectItem key={t.value} value={t.value} className="text-xs">{t.label}</SelectItem>
+                {TONE_OPTIONS.map((o) => (
+                  <SelectItem key={o.value} value={o.value} className="text-xs">{labels.tone(o.value, o.label)}</SelectItem>
                 ))}
               </SelectContent>
             </Select>
@@ -209,7 +216,7 @@ export function Toolbar({
                   <Wand2 className="w-4 h-4" />
                 </Button>
               </TooltipTrigger>
-              <TooltipContent side="bottom"><span className="text-xs">Generate with AI</span></TooltipContent>
+              <TooltipContent side="bottom"><span className="text-xs">{t('generateWithAI')}</span></TooltipContent>
             </Tooltip>
 
             <Separator orientation="vertical" className="h-6 mx-0.5 shrink-0" />
@@ -220,19 +227,19 @@ export function Toolbar({
                 {autosaveStatus === 'saving' && (
                   <motion.div key="saving" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="flex items-center gap-1">
                     <Loader2 className="w-3 h-3 animate-spin text-brand shrink-0" />
-                    <span className="text-[10px] sm:text-[11px] text-muted-foreground whitespace-nowrap">Saving</span>
+                    <span className="text-[10px] sm:text-[11px] text-muted-foreground whitespace-nowrap">{t('autosaveSaving')}</span>
                   </motion.div>
                 )}
                 {autosaveStatus === 'saved' && (
                   <motion.div key="saved" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="flex items-center gap-1">
                     <CheckCircle2 className="w-3 h-3 text-emerald-500 shrink-0" />
-                    <span className="text-[10px] sm:text-[11px] text-muted-foreground whitespace-nowrap">Saved</span>
+                    <span className="text-[10px] sm:text-[11px] text-muted-foreground whitespace-nowrap">{tc('saved')}</span>
                   </motion.div>
                 )}
                 {autosaveStatus === 'error' && (
                   <motion.div key="error" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="flex items-center gap-1">
                     <AlertCircle className="w-3 h-3 text-destructive shrink-0" />
-                    <span className="text-[10px] sm:text-[11px] text-destructive whitespace-nowrap">Error</span>
+                    <span className="text-[10px] sm:text-[11px] text-destructive whitespace-nowrap">{t('autosaveError')}</span>
                   </motion.div>
                 )}
               </AnimatePresence>
@@ -245,7 +252,7 @@ export function Toolbar({
                   <Download className="w-4 h-4" />
                 </Button>
               </TooltipTrigger>
-              <TooltipContent side="bottom"><span className="text-xs">Export PDF</span></TooltipContent>
+              <TooltipContent side="bottom"><span className="text-xs">{t('exportPdf')}</span></TooltipContent>
             </Tooltip>
 
             {/* Export DOCX — visible lg+ (≥1024px) */}
@@ -255,7 +262,7 @@ export function Toolbar({
                   <FileDown className="w-4 h-4" />
                 </Button>
               </TooltipTrigger>
-              <TooltipContent side="bottom"><span className="text-xs">Export DOCX</span></TooltipContent>
+              <TooltipContent side="bottom"><span className="text-xs">{t('exportDocx')}</span></TooltipContent>
             </Tooltip>
 
             {/* Print — visible lg+ (≥1024px) */}
@@ -265,7 +272,7 @@ export function Toolbar({
                   <Printer className="w-4 h-4" />
                 </Button>
               </TooltipTrigger>
-              <TooltipContent side="bottom"><span className="text-xs">Print</span></TooltipContent>
+              <TooltipContent side="bottom"><span className="text-xs">{t('print')}</span></TooltipContent>
             </Tooltip>
 
             {/* Fullscreen — visible xl+ (≥1280px) */}
@@ -275,7 +282,7 @@ export function Toolbar({
                   <Maximize2 className="w-4 h-4" />
                 </Button>
               </TooltipTrigger>
-              <TooltipContent side="bottom"><span className="text-xs">Fullscreen Preview</span></TooltipContent>
+              <TooltipContent side="bottom"><span className="text-xs">{t('fullscreenPreview')}</span></TooltipContent>
             </Tooltip>
 
             <Separator orientation="vertical" className="h-6 mx-0.5 shrink-0" />
@@ -291,40 +298,40 @@ export function Toolbar({
                 {/* Template — show in dropdown on tablet (below lg) */}
                 <DropdownMenuItem className="text-xs gap-2 lg:hidden" onClick={() => {}}>
                   <LayoutTemplate className="w-3.5 h-3.5" />
-                  <span>Template: {COVER_LETTER_TEMPLATES.find(t => t.id === templateId)?.name || 'Default'}</span>
+                  <span>{t('templateCurrent', { name: currentTemplateName ? labels.template(currentTemplateName) : t('templateDefault') })}</span>
                 </DropdownMenuItem>
                 <DropdownMenuSeparator className="lg:hidden" />
 
                 {/* Export PDF — show in dropdown on mobile (below sm) */}
                 <DropdownMenuItem className="text-xs gap-2 sm:hidden" onClick={onExportPDF}>
-                  <Download className="w-3.5 h-3.5" /> Export PDF
+                  <Download className="w-3.5 h-3.5" /> {t('exportPdf')}
                 </DropdownMenuItem>
                 {/* Export DOCX — show in dropdown below lg */}
                 <DropdownMenuItem className="text-xs gap-2 lg:hidden" onClick={onExportDOCX}>
-                  <FileDown className="w-3.5 h-3.5" /> Export DOCX
+                  <FileDown className="w-3.5 h-3.5" /> {t('exportDocx')}
                 </DropdownMenuItem>
                 {/* Print — show in dropdown below lg */}
                 <DropdownMenuItem className="text-xs gap-2 lg:hidden" onClick={onPrint}>
-                  <Printer className="w-3.5 h-3.5" /> Print
+                  <Printer className="w-3.5 h-3.5" /> {t('print')}
                 </DropdownMenuItem>
                 {/* Fullscreen — show in dropdown below xl */}
                 <DropdownMenuItem className="text-xs gap-2 xl:hidden" onClick={onFullscreen}>
-                  <Maximize2 className="w-3.5 h-3.5" /> Fullscreen
+                  <Maximize2 className="w-3.5 h-3.5" /> {t('fullscreen')}
                 </DropdownMenuItem>
                 <DropdownMenuSeparator className="sm:hidden" />
 
                 <DropdownMenuItem className="text-xs gap-2" onClick={onCopyAll}>
-                  <Copy className="w-3.5 h-3.5" /> Copy All Text
+                  <Copy className="w-3.5 h-3.5" /> {t('copyAllText')}
                 </DropdownMenuItem>
                 {letterId && (
                   <DropdownMenuItem className="text-xs gap-2" onClick={onDuplicate}>
-                    <FileText className="w-3.5 h-3.5" /> Duplicate
+                    <FileText className="w-3.5 h-3.5" /> {tc('duplicate')}
                   </DropdownMenuItem>
                 )}
                 <DropdownMenuSeparator />
                 {letterId && (
                   <DropdownMenuItem className="text-xs gap-2 text-destructive focus:text-destructive" onClick={onDelete}>
-                    <Trash2 className="w-3.5 h-3.5" /> Delete
+                    <Trash2 className="w-3.5 h-3.5" /> {tc('delete')}
                   </DropdownMenuItem>
                 )}
               </DropdownMenuContent>

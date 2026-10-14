@@ -35,6 +35,7 @@ import {
 } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import type { AIEditAction, ToneType } from '@/types/cover-letter';
+import { useTranslations } from '@/i18n/provider';
 
 // ─── Animation Variants ──────────────────────────────────────
 
@@ -53,6 +54,8 @@ const slideIn: Variants = {
 
 export default function CoverLetterWorkspace() {
   const { user } = useAuth();
+  const t = useTranslations('app.coverLetterEditor');
+  const tc = useTranslations('app.common');
   const { isMobile, isTablet, isDesktop } = useBreakpoints();
   // Compact = mobile or tablet portrait — use tab-switching layout
   const isCompact = isMobile || isTablet;
@@ -108,17 +111,17 @@ export default function CoverLetterWorkspace() {
     setLoadingSection(null);
 
     if (result.success) {
-      toast.success('Section updated successfully');
+      toast.success(t('sectionUpdated'));
     } else {
       if (result.error === 'limit_reached') setShowUpgrade(true);
-      else toast.error(result.error || 'AI edit failed');
+      else toast.error(result.error || t('aiEditFailed'));
     }
   };
 
   const handleGenerate = async (params: Parameters<typeof generateWithAI>[0]) => {
     let id = letterId;
     if (!id) {
-      id = await createLetter({ title: `${params.jobTitle} at ${params.companyName}` });
+      id = await createLetter({ title: t('defaultLetterTitle', { jobTitle: params.jobTitle, companyName: params.companyName }) });
       if (!id) {
         if (error === 'limit_reached') { setShowUpgrade(true); return; }
         return;
@@ -127,12 +130,12 @@ export default function CoverLetterWorkspace() {
 
     const result = await generateWithAI(params);
     if (result.success) {
-      toast.success('Cover letter generated!');
+      toast.success(t('letterGenerated'));
       setShowGeneratorDialog(false);
       setActiveStep(4); // Move to Letter Content
     } else {
       if (result.error === 'limit_reached') setShowUpgrade(true);
-      else toast.error(result.error || 'Generation failed');
+      else toast.error(result.error || t('generationFailed'));
     }
   };
 
@@ -143,11 +146,11 @@ export default function CoverLetterWorkspace() {
         element: previewRef.current,
         filename: `cover-letter-${(data.companyName || 'draft').toLowerCase().replace(/\s+/g, '-')}.pdf`,
       });
-      toast.success('PDF exported successfully');
+      toast.success(t('pdfExported'));
     } catch {
-      toast.error('Failed to export PDF');
+      toast.error(t('pdfExportFailed'));
     }
-  }, [letterId, data.companyName]);
+  }, [letterId, data.companyName, t]);
 
   const handleExportDOCX = useCallback(async () => {
     if (!letterId) return;
@@ -159,7 +162,7 @@ export default function CoverLetterWorkspace() {
       if (!res.ok) {
         const json = await res.json();
         if (json.error === 'limit_reached') { setShowUpgrade(true); return; }
-        toast.error('Export failed');
+        toast.error(t('exportFailed'));
         return;
       }
       const blob = await res.blob();
@@ -171,11 +174,11 @@ export default function CoverLetterWorkspace() {
       a.click();
       document.body.removeChild(a);
       URL.revokeObjectURL(url);
-      toast.success('DOCX exported successfully');
+      toast.success(t('docxExported'));
     } catch {
-      toast.error('Failed to export DOCX');
+      toast.error(t('docxExportFailed'));
     }
-  }, [letterId, data.companyName]);
+  }, [letterId, data.companyName, t]);
 
   const handlePrint = useCallback(() => {
     if (!previewRef.current) return;
@@ -184,28 +187,28 @@ export default function CoverLetterWorkspace() {
     const printWindow = window.open('', '_blank');
     if (!printWindow) return;
     printWindow.document.write(`
-      <html><head><title>Cover Letter</title>
+      <html><head><title>${t('printWindowTitle')}</title>
       <style>body{margin:0;display:flex;justify-content:center;}</style>
       </head><body></body></html>
     `);
     printWindow.document.body.appendChild(clone);
     printWindow.document.close();
     printWindow.print();
-  }, []);
+  }, [t]);
 
   const handleCopyAll = useCallback(() => {
     const { salutation, opening, body, closing, signOff, fullName } = data;
     const text = [salutation, '', opening, '', body, '', closing, '', signOff, '', fullName].filter(Boolean).join('\n');
     navigator.clipboard.writeText(text)
-      .then(() => toast.success('Copied to clipboard!'))
-      .catch(() => toast.error('Copy failed'));
-  }, [data]);
+      .then(() => toast.success(t('copiedToClipboard')))
+      .catch(() => toast.error(t('copyFailed')));
+  }, [data, t]);
 
   const handleDelete = async () => {
     if (!letterId) return;
     await deleteLetter(letterId);
     setDeleteDialogOpen(false);
-    toast.success('Cover letter deleted');
+    toast.success(t('letterDeleted'));
   };
 
   const handleFullscreen = useCallback(() => {
@@ -324,7 +327,7 @@ export default function CoverLetterWorkspace() {
               mobileView === 'editor' ? 'text-brand border-b-2 border-brand' : 'text-muted-foreground'
             }`}
           >
-            Editor
+            {t('editorTab')}
           </button>
           <button
             onClick={() => setMobileView('preview')}
@@ -332,7 +335,7 @@ export default function CoverLetterWorkspace() {
               mobileView === 'preview' ? 'text-brand border-b-2 border-brand' : 'text-muted-foreground'
             }`}
           >
-            Preview
+            {tc('preview')}
           </button>
         </div>
 
@@ -382,12 +385,12 @@ export default function CoverLetterWorkspace() {
         <Dialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
           <DialogContent>
             <DialogHeader>
-              <DialogTitle>Delete Cover Letter</DialogTitle>
-              <DialogDescription>Are you sure? This action cannot be undone.</DialogDescription>
+              <DialogTitle>{t('deleteDialogTitle')}</DialogTitle>
+              <DialogDescription>{t('deleteDialogDescriptionShort')}</DialogDescription>
             </DialogHeader>
             <DialogFooter>
-              <Button variant="outline" onClick={() => setDeleteDialogOpen(false)}>Cancel</Button>
-              <Button variant="destructive" onClick={handleDelete}>Delete</Button>
+              <Button variant="outline" onClick={() => setDeleteDialogOpen(false)}>{tc('cancel')}</Button>
+              <Button variant="destructive" onClick={handleDelete}>{tc('delete')}</Button>
             </DialogFooter>
           </DialogContent>
         </Dialog>
@@ -465,12 +468,12 @@ export default function CoverLetterWorkspace() {
       <Dialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Delete Cover Letter</DialogTitle>
-            <DialogDescription>Are you sure you want to delete this cover letter? This action cannot be undone.</DialogDescription>
+            <DialogTitle>{t('deleteDialogTitle')}</DialogTitle>
+            <DialogDescription>{t('deleteDialogDescription')}</DialogDescription>
           </DialogHeader>
           <DialogFooter>
-            <Button variant="outline" onClick={() => setDeleteDialogOpen(false)}>Cancel</Button>
-            <Button variant="destructive" onClick={handleDelete}>Delete</Button>
+            <Button variant="outline" onClick={() => setDeleteDialogOpen(false)}>{tc('cancel')}</Button>
+            <Button variant="destructive" onClick={handleDelete}>{tc('delete')}</Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
@@ -490,6 +493,7 @@ export default function CoverLetterWorkspace() {
 // ─── AI Generate Placeholder (Step 3) ─────────────────────
 
 function AIPlaceholder({ onStartGenerate }: { onStartGenerate: () => void }) {
+  const t = useTranslations('app.coverLetterEditor');
   return (
     <motion.div
       initial={{ opacity: 0, scale: 0.95 }}
@@ -501,11 +505,10 @@ function AIPlaceholder({ onStartGenerate }: { onStartGenerate: () => void }) {
         <PenLine className="w-6 h-6 sm:w-7 sm:h-7 text-white" />
       </div>
       <h3 className="text-base sm:text-lg font-heading font-semibold text-foreground mb-2 text-center">
-        Generate Your Cover Letter
+        {t('placeholderTitle')}
       </h3>
       <p className="text-xs sm:text-sm text-muted-foreground text-center max-w-xs sm:max-w-sm mb-5 sm:mb-6 leading-relaxed">
-        Let AI craft a professional cover letter tailored to the job you&apos;re applying for.
-        Fill in the details and watch it come to life.
+        {t('placeholderDescription')}
       </p>
       {/* CTA Button — always visible above the fold */}
       <button
@@ -513,14 +516,14 @@ function AIPlaceholder({ onStartGenerate }: { onStartGenerate: () => void }) {
         className="flex items-center gap-2 px-6 py-3 rounded-xl bg-brand text-white font-medium text-sm shadow-lg shadow-brand/25 hover:shadow-xl hover:shadow-brand/30 hover:bg-brand/90 transition-all duration-200 hover:scale-[1.02] active:scale-[0.98]"
       >
         <PenLine className="w-4 h-4" />
-        Start Generating
+        {t('startGenerating')}
       </button>
       {/* Feature highlights — only on large screens, below the button */}
       <div className="hidden lg:grid grid-cols-3 gap-4 mt-8 w-full max-w-sm">
         {[
-          { label: 'ATS Optimized', desc: 'Passes applicant tracking systems' },
-          { label: 'Professional', desc: 'Industry-standard formatting' },
-          { label: 'Customizable', desc: 'Edit and refine every section' },
+          { label: t('featureAtsLabel'), desc: t('featureAtsDesc') },
+          { label: t('featureProfessionalLabel'), desc: t('featureProfessionalDesc') },
+          { label: t('featureCustomizableLabel'), desc: t('featureCustomizableDesc') },
         ].map((item) => (
           <div key={item.label} className="text-center">
             <div className="text-xs font-medium text-foreground">{item.label}</div>
