@@ -13,6 +13,16 @@ import {
 import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
 import { Skeleton } from '@/components/ui/skeleton';
+import { Label } from '@/components/ui/label';
+import PasswordInput from '@/components/auth/password-input';
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog';
 import {
   Select,
   SelectContent,
@@ -126,6 +136,12 @@ export default function SettingsPage() {
   const [loading, setLoading] = useState(true);
   const [themeUpdating, setThemeUpdating] = useState(false);
   const [langUpdating, setLangUpdating] = useState(false);
+  const [passwordDialogOpen, setPasswordDialogOpen] = useState(false);
+  const [currentPassword, setCurrentPassword] = useState('');
+  const [newPassword, setNewPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
+  const [passwordSaving, setPasswordSaving] = useState(false);
+  const [deleting, setDeleting] = useState(false);
 
   const fetchSettings = useCallback(async () => {
     try {
@@ -196,12 +212,60 @@ export default function SettingsPage() {
     }
   };
 
-  const handleChangePassword = () => {
-    toast.info('Password change feature coming soon');
+  const resetPasswordForm = () => {
+    setCurrentPassword('');
+    setNewPassword('');
+    setConfirmPassword('');
   };
 
-  const handleDeleteAccount = () => {
-    toast.info('Account deletion is disabled in demo mode');
+  const handleChangePassword = async () => {
+    if (newPassword !== confirmPassword) {
+      toast.error('The new passwords do not match.');
+      return;
+    }
+    setPasswordSaving(true);
+    try {
+      const res = await fetch('/api/auth/change-password', {
+        method: 'POST',
+        credentials: 'include',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ currentPassword, newPassword }),
+      });
+      const data = await res.json();
+      if (data.success) {
+        toast.success('Your password has been changed.');
+        setPasswordDialogOpen(false);
+        resetPasswordForm();
+      } else {
+        toast.error(data.error || 'Failed to change password');
+      }
+    } catch {
+      toast.error('Failed to change password');
+    } finally {
+      setPasswordSaving(false);
+    }
+  };
+
+  const handleDeleteAccount = async () => {
+    setDeleting(true);
+    try {
+      const res = await fetch('/api/user/account', {
+        method: 'DELETE',
+        credentials: 'include',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ confirm: true }),
+      });
+      const data = await res.json();
+      if (data.success) {
+        toast.success('Your account has been deleted.');
+        window.location.href = '/';
+        return;
+      }
+      toast.error(data.error || 'Failed to delete account');
+    } catch {
+      toast.error('Failed to delete account');
+    }
+    setDeleting(false);
   };
 
   // ── Render ────────────────────────────────────────────────────────────────
@@ -356,11 +420,68 @@ export default function SettingsPage() {
               </div>
               <Button
                 variant="outline"
-                onClick={handleChangePassword}
+                onClick={() => setPasswordDialogOpen(true)}
                 className="shrink-0 font-body w-full sm:w-auto"
               >
                 Change Password
               </Button>
+              <Dialog
+                open={passwordDialogOpen}
+                onOpenChange={(open) => {
+                  setPasswordDialogOpen(open);
+                  if (!open) resetPasswordForm();
+                }}
+              >
+                <DialogContent>
+                  <DialogHeader>
+                    <DialogTitle className="font-heading">Change Password</DialogTitle>
+                    <DialogDescription className="font-body">
+                      Enter your current password, then choose a new one.
+                    </DialogDescription>
+                  </DialogHeader>
+                  <form
+                    className="space-y-4"
+                    onSubmit={(e) => {
+                      e.preventDefault();
+                      handleChangePassword();
+                    }}
+                  >
+                    <div className="space-y-2">
+                      <Label htmlFor="current-password" className="font-body">Current password</Label>
+                      <PasswordInput id="current-password" value={currentPassword} onChange={(e) => setCurrentPassword(e.target.value)} />
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="new-password" className="font-body">New password</Label>
+                      <PasswordInput id="new-password" value={newPassword} onChange={(e) => setNewPassword(e.target.value)} />
+                      <p className="text-xs text-muted-foreground font-body">
+                        At least 8 characters, with a mix of upper and lower case letters, numbers or symbols.
+                      </p>
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="confirm-password" className="font-body">Confirm new password</Label>
+                      <PasswordInput id="confirm-password" value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} />
+                    </div>
+                    <DialogFooter>
+                      <Button
+                        type="button"
+                        variant="outline"
+                        className="font-body"
+                        onClick={() => setPasswordDialogOpen(false)}
+                      >
+                        Cancel
+                      </Button>
+                      <Button
+                        type="submit"
+                        className="font-body"
+                        disabled={passwordSaving || !currentPassword || !newPassword || !confirmPassword}
+                      >
+                        {passwordSaving && <Loader2 className="size-4 mr-2 animate-spin" />}
+                        Save new password
+                      </Button>
+                    </DialogFooter>
+                  </form>
+                </DialogContent>
+              </Dialog>
             </div>
 
             <Separator />
@@ -393,7 +514,9 @@ export default function SettingsPage() {
                     </AlertDialogTitle>
                     <AlertDialogDescription className="font-body">
                       This action cannot be undone. This will permanently delete
-                      your account and remove all your data from our servers.
+                      your account and all your resumes, cover letters, job
+                      applications and payment history. Any paid plan ends
+                      immediately and is not refunded.
                     </AlertDialogDescription>
                   </AlertDialogHeader>
                   <AlertDialogFooter>
@@ -401,9 +524,14 @@ export default function SettingsPage() {
                       Cancel
                     </AlertDialogCancel>
                     <AlertDialogAction
-                      onClick={handleDeleteAccount}
-                      className="font-body"
+                      onClick={(e) => {
+                        e.preventDefault();
+                        handleDeleteAccount();
+                      }}
+                      disabled={deleting}
+                      className="font-body bg-destructive text-white hover:bg-destructive/90"
                     >
+                      {deleting && <Loader2 className="size-4 mr-2 animate-spin" />}
                       Yes, delete my account
                     </AlertDialogAction>
                   </AlertDialogFooter>

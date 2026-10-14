@@ -31,9 +31,6 @@
       "optimized": "Optimized"
     }
   },
-  "trust": {
-    "heading": "Trusted by job seekers preparing ATS-standard applications for leading companies worldwide."
-  },
   "features": {
     "badge": "Powerful Features",
     "title": "Everything You Need for a Successful Job Search",
@@ -53,7 +50,7 @@
       },
       "resumeTemplates": {
         "title": "ATS-Tested Resume Templates",
-        "description": "Choose from 50+ professionally designed templates. Each template is crafted by career experts and tested against real ATS systems for guaranteed compatibility."
+        "description": "Choose from 10 professionally designed templates with clean, simple layouts that applicant tracking systems (ATS) can read."
       },
       "aiResumeReview": {
         "title": "AI Resume & Cover Letter Review",
@@ -99,7 +96,7 @@
   "templates": {
     "badge": "Resume Templates",
     "title": "Professional Templates That Get Noticed",
-    "description": "Choose from our curated collection of ATS-standard resume templates, designed and tested by career experts.",
+    "description": "Choose from our collection of clean, ATS-friendly resume templates.",
     "items": {
       "modern": "Modern",
       "professional": "Professional",
@@ -152,7 +149,7 @@
   "statistics": {
     "items": {
       "templates": {
-        "value": "50+",
+        "value": "10",
         "label": "Resume Templates"
       },
       "suggestions": {
@@ -166,31 +163,6 @@
       "access": {
         "value": "24/7",
         "label": "Cloud Access"
-      }
-    }
-  },
-  "testimonials": {
-    "badge": "Testimonials",
-    "title": "Loved by Job Seekers Worldwide",
-    "description": "See what our users have to say about their experience with CareerForge AI.",
-    "items": {
-      "sarah": {
-        "name": "Sarah Johnson",
-        "title": "Software Engineer at Google",
-        "review": "CareerForge AI completely transformed my job search. The ATS optimization feature helped my resume pass through every filter. I landed 5 interviews in the first week!",
-        "rating": 5
-      },
-      "michael": {
-        "name": "Michael Chen",
-        "title": "Product Manager at Microsoft",
-        "review": "The AI resume and cover letter builder is incredible. It understood my experience and created application materials that perfectly highlighted my achievements. Highly recommended!",
-        "rating": 5
-      },
-      "emily": {
-        "name": "Emily Rodriguez",
-        "title": "Marketing Director at Deloitte",
-        "review": "I was skeptical about AI career tools, but CareerForge AI exceeded all my expectations. The cover letter generator and ATS checker alone saved me hours of work.",
-        "rating": 5
       }
     }
   },
@@ -703,11 +675,14 @@
       "viewAll": "View All Activity"
     },
     "aiInsights": {
-      "title": "AI Insights",
-      "improveNow": "Improve Now",
-      "insight1": "Your resume could be improved by adding measurable achievements to your experience section.",
-      "insight2": "Your ATS score increased by 12% after the last update. Keep optimizing!",
-      "insight3": "Consider adding more keywords from job descriptions to improve your match rate."
+      "title": "Tips for you",
+      "improveNow": "Go",
+      "tipFirstResume": "You haven't created a resume yet. Start with the Resume Builder — it only takes a few minutes.",
+      "tipFirstCoverLetter": "Pair your resume with a cover letter tailored to the job you want.",
+      "tipFirstAtsCheck": "Run the ATS Checker on your resume to see how applicant tracking systems will read it.",
+      "tipAchievements": "Add measurable results to your experience, like \"cut costs by 15%\" or \"managed a team of 6\".",
+      "tipKeywords": "Copy key skills and phrases from the job description into your resume to improve your match.",
+      "tipTailor": "Tailor your resume and cover letter for each application — small changes make a big difference."
     },
     "jobTracker": {
       "title": "Job Tracker",

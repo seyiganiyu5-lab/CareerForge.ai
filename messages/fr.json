@@ -31,9 +31,6 @@
       "optimized": "Optimisé"
     }
   },
-  "trust": {
-    "heading": "Adopté par les chercheurs d'emploi préparant des candidatures aux normes ATS pour les entreprises leaders du monde entier."
-  },
   "features": {
     "badge": "Fonctionnalités Puissantes",
     "title": "Tout ce Dont Vous Avez Besoin pour une Recherche d'Emploi Réussie",
@@ -53,7 +50,7 @@
       },
       "resumeTemplates": {
         "title": "Modèles de CV Testés ATS",
-        "description": "Choisissez parmi plus de 50 modèles professionnels. Chaque modèle est conçu par des experts en carrière et testé contre de vrais systèmes ATS pour une compatibilité garantie."
+        "description": "Choisissez parmi 10 modèles professionnels aux mises en page claires et simples, lisibles par les logiciels de recrutement (ATS)."
       },
       "aiResumeReview": {
         "title": "Revue IA de CV et Lettres de Motivation",
@@ -99,7 +96,7 @@
   "templates": {
     "badge": "Modèles de CV",
     "title": "Des Modèles Professionnels qui Attirent l'Attention",
-    "description": "Choisissez parmi notre collection de modèles de CV aux normes ATS, conçus et testés par des experts en carrière.",
+    "description": "Choisissez parmi notre collection de modèles de CV clairs et compatibles ATS.",
     "items": {
       "modern": "Moderne",
       "professional": "Professionnel",
@@ -152,7 +149,7 @@
   "statistics": {
     "items": {
       "templates": {
-        "value": "50+",
+        "value": "10",
         "label": "Modèles de CV"
       },
       "suggestions": {
@@ -166,31 +163,6 @@
       "access": {
         "value": "24/7",
         "label": "Accès Cloud"
-      }
-    }
-  },
-  "testimonials": {
-    "badge": "Témoignages",
-    "title": "Adopté par les Chercheurs d'Emploi du Monde Entier",
-    "description": "Découvrez ce que nos utilisateurs disent de leur expérience avec CareerForge AI.",
-    "items": {
-      "sarah": {
-        "name": "Sarah Johnson",
-        "title": "Ingénieure Logicielle chez Google",
-        "review": "CareerForge AI a complètement transformé ma recherche d'emploi. La fonctionnalité d'optimisation ATS a permis à mon CV de passer tous les filtres. J'ai décroché 5 entretiens la première semaine !",
-        "rating": 5
-      },
-      "michael": {
-        "name": "Michael Chen",
-        "title": "Chef de Produit chez Microsoft",
-        "review": "Le constructeur de CV et de lettres de motivation IA est incroyable. Il a compris mon expérience et a créé des documents de candidature qui ont parfaitement mis en valeur mes accomplissements. Fortement recommandé !",
-        "rating": 5
-      },
-      "emily": {
-        "name": "Emily Rodriguez",
-        "title": "Directrice Marketing chez Deloitte",
-        "review": "J'étais sceptique quant aux outils de carrière IA, mais CareerForge AI a dépassé toutes mes attentes. Le générateur de lettres de motivation et le vérificateur ATS m'ont fait gagner des heures de travail.",
-        "rating": 5
       }
     }
   },
@@ -703,11 +675,14 @@
       "viewAll": "Voir Toute l'Activité"
     },
     "aiInsights": {
-      "title": "Insights IA",
-      "improveNow": "Améliorer",
-      "insight1": "Votre CV pourrait être amélioré en ajoutant des réalisations mesurables à votre section expérience.",
-      "insight2": "Votre score ATS a augmenté de 12% après la dernière mise à jour. Continuez à optimiser !",
-      "insight3": "Envisagez d'ajouter plus de mots-clés des descriptions d'emploi pour améliorer votre taux de correspondance."
+      "title": "Conseils pour vous",
+      "improveNow": "Y aller",
+      "tipFirstResume": "Vous n'avez pas encore créé de CV. Commencez avec le Créateur de CV — cela ne prend que quelques minutes.",
+      "tipFirstCoverLetter": "Associez votre CV à une lettre de motivation adaptée au poste visé.",
+      "tipFirstAtsCheck": "Passez votre CV au Vérificateur ATS pour voir comment les logiciels de recrutement le lisent.",
+      "tipAchievements": "Ajoutez des résultats chiffrés à votre expérience, par exemple « réduit les coûts de 15 % » ou « encadré une équipe de 6 personnes ».",
+      "tipKeywords": "Reprenez les compétences et expressions clés de l'offre d'emploi dans votre CV pour améliorer votre correspondance.",
+      "tipTailor": "Adaptez votre CV et votre lettre à chaque candidature — de petits changements font une grande différence."
     },
     "jobTracker": {
       "title": "Suivi des Candidatures",

@@ -40,7 +40,7 @@ export default function Statistics() {
   const ref = useRef<HTMLElement>(null);
   const inView = useInView(ref, { once: true, margin: '-100px' });
 
-  const templates = useAnimatedCount(50, '+', inView, 1500);
+  const templates = useAnimatedCount(10, '', inView, 1500);
   const suggestions = useAnimatedCount(100, '+', inView, 1800);
   const optimization = useAnimatedCount(95, '%', inView, 1600);
 

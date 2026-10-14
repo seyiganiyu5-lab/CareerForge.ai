@@ -2,7 +2,6 @@
 
 import Navbar from '@/components/landing/navbar';
 import Hero from '@/components/landing/hero';
-import Trust from '@/components/landing/trust';
 import HowItWorks from '@/components/landing/how-it-works';
 import Features from '@/components/landing/features';
 import Templates from '@/components/landing/templates';
@@ -21,7 +20,6 @@ export default function LandingPage() {
       <Navbar />
       <main className="flex-1">
         <Hero />
-        <Trust />
         <HowItWorks />
         <Features />
         <Templates />
