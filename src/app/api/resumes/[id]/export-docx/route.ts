@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/lib/db';
 import { getAuthUser } from '@/lib/subscription/auth-helpers';
+import { docWhere } from '@/lib/subscription/documents';
 import { checkAndIncrementUsage } from '@/lib/subscription/service';
 import { FEATURE_KEYS } from '@/lib/subscription/features';
 import { generateDocxBlob } from '@/lib/export/docx';
@@ -22,7 +23,7 @@ export async function POST(
 
     // Verify resume ownership
     const resume = await db.resume.findFirst({
-      where: { id, user_id: user.userId },
+      where: { id, ...(await docWhere(user.userId)) },
     });
 
     if (!resume) {
@@ -35,7 +36,7 @@ export async function POST(
     if (!access.allowed) {
       if (access.reason === 'upgrade_required' || access.reason === 'limit_reached') {
         return NextResponse.json(
-          { error: 'limit_reached', limit: access.limit, used: access.used },
+          { error: access.reason === 'limit_reached' ? 'limit_reached' : 'upgrade_required', limit: access.limit, used: access.used },
           { status: 403 }
         );
       }

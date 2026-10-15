@@ -13,15 +13,20 @@ import { Separator } from '@/components/ui/separator';
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from '@/components/ui/sheet';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { cn } from '@/lib/utils';
+import { ProBadge, useFeatureLocked } from '@/components/billing/pro-badge';
+
+function DrawerProBadge({ featureKey }: { featureKey: string }) {
+  return useFeatureLocked(featureKey) ? <ProBadge className="ml-auto" /> : null;
+}
 
 const DRAWER_ITEMS = [
   { key: 'dashboard', icon: LayoutDashboard, href: '/home' },
   { key: 'resumeBuilder', icon: FileText, href: '/resume-builder' },
   { key: 'myResumes', icon: FolderOpen, href: '/my-resumes' },
   { key: 'coverLetters', icon: Mail, href: '/cover-letters' },
-  { key: 'resumeReview', icon: Sparkles, href: '/resume-review' },
+  { key: 'resumeReview', icon: Sparkles, href: '/resume-review', proFeature: 'AI_RESUME_REVIEW' },
   { key: 'atsChecker', icon: ShieldCheck, href: '/ats-checker' },
-  { key: 'jobTracker', icon: Briefcase, href: '/job-tracker' },
+  { key: 'jobTracker', icon: Briefcase, href: '/job-tracker', proFeature: 'JOB_TRACKER' },
   { key: 'templates', icon: LayoutTemplate, href: '/templates' },
   { key: 'profile', icon: User, href: '/profile' },
   { key: 'billing', icon: CreditCard, href: '/billing' },
@@ -76,6 +81,7 @@ export default function MobileDrawer({ open, onClose, pathname }: MobileDrawerPr
                 >
                   <Icon className={cn('w-5 h-5 shrink-0', isActive && 'text-brand')} />
                   <span className="font-body">{t(item.key)}</span>
+                  {'proFeature' in item && item.proFeature && <DrawerProBadge featureKey={item.proFeature} />}
                 </Link>
               );
             })}

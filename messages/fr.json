@@ -615,7 +615,15 @@
       "expand": "Développer"
     },
     "topNav": {
-      "searchPlaceholder": "Rechercher des CV, lettres de motivation, modèles..."
+      "searchPlaceholder": "Rechercher pages, CV, lettres, candidatures...",
+      "openSearch": "Rechercher",
+      "group_pages": "Pages",
+      "group_resumes": "CV",
+      "group_coverLetters": "Lettres de motivation",
+      "group_jobs": "Candidatures",
+      "searching": "Recherche…",
+      "noResults": "Aucun résultat pour « {query} »",
+      "untitled": "Sans titre"
     },
     "notifications": {
       "title": "Notifications",
@@ -1817,7 +1825,10 @@
       "upgradeAria": "Mettre à niveau votre abonnement",
       "manageAria": "Gérer les paramètres de votre abonnement",
       "manageSubscription": "Gérer l'abonnement",
-      "loadingSubscription": "Chargement des informations d'abonnement"
+      "loadingSubscription": "Chargement des informations d'abonnement",
+      "hiddenResumes": "{count, plural, one {# CV créé avec Pro est masqué} other {# CV créés avec Pro sont masqués}} avec l'offre Gratuite. Ils sont conservés et réapparaîtront si vous repassez à Pro.",
+      "hiddenCoverLetters": "{count, plural, one {# lettre de motivation créée avec Pro est masquée} other {# lettres de motivation créées avec Pro sont masquées}} avec l'offre Gratuite. Elles sont conservées et réapparaîtront si vous repassez à Pro.",
+      "hiddenDocsUpgrade": "Passer à Pro"
     },
     "misc": {
       "mainNavigation": "Navigation principale",

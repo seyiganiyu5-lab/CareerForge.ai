@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getAuthUser } from '@/lib/subscription/auth-helpers';
+import { docWhere } from '@/lib/subscription/documents';
 import { db } from '@/lib/db';
 
 type Params = { params: Promise<{ id: string }> };
@@ -17,7 +18,7 @@ export async function GET(_request: NextRequest, { params }: Params) {
     const { id } = await params;
 
     const letter = await db.coverLetter.findFirst({
-      where: { id, user_id: auth.userId },
+      where: { id, ...(await docWhere(auth.userId)) },
     });
 
     if (!letter) {

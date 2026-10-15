@@ -51,6 +51,7 @@ import { TONE_OPTIONS, LANGUAGE_OPTIONS } from '@/types/cover-letter';
 import type { CoverLetterTemplateId, ToneType, AutosaveStatus } from '@/types/cover-letter';
 import { useTranslations } from '@/i18n/provider';
 import { useCoverLetterOptionLabels } from './ai-generate-dialog';
+import { ProBadge } from '@/components/billing/pro-badge';
 
 interface ToolbarProps {
   title: string;
@@ -71,6 +72,9 @@ interface ToolbarProps {
   onDelete: () => void;
   onDuplicate: () => void;
   onGenerateAI: () => void;
+  /** Pro-only actions on the current plan: shown with a Pro badge */
+  aiLocked?: boolean;
+  docxLocked?: boolean;
 }
 
 export function Toolbar({
@@ -92,6 +96,8 @@ export function Toolbar({
   onDelete,
   onDuplicate,
   onGenerateAI,
+  aiLocked,
+  docxLocked,
 }: ToolbarProps) {
   const t = useTranslations('app.coverLetterEditor');
   const tc = useTranslations('app.common');
@@ -210,13 +216,14 @@ export function Toolbar({
                 <Button
                   variant="ghost"
                   size="icon"
-                  className="h-8 w-8 text-brand hover:text-brand hover:bg-brand/10"
+                  className="relative h-8 w-8 text-brand hover:text-brand hover:bg-brand/10"
                   onClick={onGenerateAI}
                 >
                   <Wand2 className="w-4 h-4" />
+                  {aiLocked && <ProBadge className="absolute -top-1 -right-1 px-1 text-[8px]" />}
                 </Button>
               </TooltipTrigger>
-              <TooltipContent side="bottom"><span className="text-xs">{t('generateWithAI')}</span></TooltipContent>
+              <TooltipContent side="bottom"><span className="text-xs">{t('generateWithAI')}{aiLocked && ' · Pro'}</span></TooltipContent>
             </Tooltip>
 
             <Separator orientation="vertical" className="h-6 mx-0.5 shrink-0" />
@@ -258,11 +265,12 @@ export function Toolbar({
             {/* Export DOCX — visible lg+ (≥1024px) */}
             <Tooltip>
               <TooltipTrigger asChild>
-                <Button variant="ghost" size="icon" className="h-8 w-8 hidden lg:inline-flex" onClick={onExportDOCX}>
+                <Button variant="ghost" size="icon" className="relative h-8 w-8 hidden lg:inline-flex" onClick={onExportDOCX}>
                   <FileDown className="w-4 h-4" />
+                  {docxLocked && <ProBadge className="absolute -top-1 -right-1 px-1 text-[8px]" />}
                 </Button>
               </TooltipTrigger>
-              <TooltipContent side="bottom"><span className="text-xs">{t('exportDocx')}</span></TooltipContent>
+              <TooltipContent side="bottom"><span className="text-xs">{t('exportDocx')}{docxLocked && ' · Pro'}</span></TooltipContent>
             </Tooltip>
 
             {/* Print — visible lg+ (≥1024px) */}
@@ -309,6 +317,7 @@ export function Toolbar({
                 {/* Export DOCX — show in dropdown below lg */}
                 <DropdownMenuItem className="text-xs gap-2 lg:hidden" onClick={onExportDOCX}>
                   <FileDown className="w-3.5 h-3.5" /> {t('exportDocx')}
+                  {docxLocked && <ProBadge className="ml-auto" />}
                 </DropdownMenuItem>
                 {/* Print — show in dropdown below lg */}
                 <DropdownMenuItem className="text-xs gap-2 lg:hidden" onClick={onPrint}>

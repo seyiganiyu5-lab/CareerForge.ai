@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getAuthUser } from '@/lib/subscription/auth-helpers';
+import { docAccess, hiddenDocsWhere, newDocTier } from '@/lib/subscription/documents';
 import { checkAndIncrementUsage } from '@/lib/subscription/service';
 import { FEATURE_KEYS } from '@/lib/subscription/features';
 import { db } from '@/lib/db';
@@ -14,8 +15,11 @@ export async function GET() {
       return NextResponse.json({ success: false, error: 'Unauthorized' }, { status: 401 });
     }
 
+    const { planName, where } = await docAccess(auth.userId);
+    const hiddenWhere = hiddenDocsWhere(auth.userId, planName);
+    const hiddenCount = hiddenWhere ? await db.coverLetter.count({ where: hiddenWhere }) : 0;
     const letters = await db.coverLetter.findMany({
-      where: { user_id: auth.userId },
+      where,
       orderBy: { updated_at: 'desc' },
       select: {
         id: true,
@@ -28,7 +32,7 @@ export async function GET() {
       },
     });
 
-    return NextResponse.json({ success: true, coverLetters: letters });
+    return NextResponse.json({ success: true, coverLetters: letters, hiddenCount });
   } catch (error) {
     console.error('Cover letters fetch error:', error);
     return NextResponse.json({ success: false, error: 'Failed to fetch cover letters' }, { status: 500 });
@@ -54,7 +58,7 @@ export async function POST(request: NextRequest) {
         );
       }
       return NextResponse.json(
-        { success: false, error: 'This feature is not available on your plan' },
+        { success: false, error: 'upgrade_required' },
         { status: 403 },
       );
     }
@@ -97,6 +101,7 @@ export async function POST(request: NextRequest) {
     const coverLetter = await db.coverLetter.create({
       data: {
         user_id: auth.userId,
+        plan_tier: await newDocTier(auth.userId),
         title: body.title || 'Untitled Cover Letter',
         data_json: body.data_json || JSON.stringify(defaultData),
         template: body.template || 'professional',

@@ -1,5 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getAuthUser } from '@/lib/subscription/auth-helpers';
+import { requireFeature } from '@/lib/subscription/gate';
+import { FEATURE_KEYS } from '@/lib/subscription/features';
 import { db } from '@/lib/db';
 import { z } from 'zod';
 
@@ -41,6 +43,8 @@ export async function GET(_request: NextRequest, { params }: Params) {
     if (!auth) {
       return NextResponse.json({ success: false, error: 'Unauthorized' }, { status: 401 });
     }
+    const locked = await requireFeature(auth.userId, FEATURE_KEYS.JOB_TRACKER);
+    if (locked) return locked;
 
     const { id } = await params;
 
@@ -75,6 +79,8 @@ export async function POST(request: NextRequest, { params }: Params) {
     if (!auth) {
       return NextResponse.json({ success: false, error: 'Unauthorized' }, { status: 401 });
     }
+    const locked = await requireFeature(auth.userId, FEATURE_KEYS.JOB_TRACKER);
+    if (locked) return locked;
 
     const { id } = await params;
 
@@ -133,6 +139,8 @@ export async function PUT(request: NextRequest, { params }: Params) {
     if (!auth) {
       return NextResponse.json({ success: false, error: 'Unauthorized' }, { status: 401 });
     }
+    const locked = await requireFeature(auth.userId, FEATURE_KEYS.JOB_TRACKER);
+    if (locked) return locked;
 
     const { id } = await params;
 
@@ -189,6 +197,8 @@ export async function DELETE(request: NextRequest, { params }: Params) {
     if (!auth) {
       return NextResponse.json({ success: false, error: 'Unauthorized' }, { status: 401 });
     }
+    const locked = await requireFeature(auth.userId, FEATURE_KEYS.JOB_TRACKER);
+    if (locked) return locked;
 
     const { id } = await params;
 

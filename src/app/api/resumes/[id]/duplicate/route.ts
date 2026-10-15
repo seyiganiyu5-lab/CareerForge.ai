@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/lib/db';
 import { getAuthUser } from '@/lib/subscription/auth-helpers';
+import { docWhere, newDocTier } from '@/lib/subscription/documents';
 import { canAccess } from '@/lib/subscription/service';
 import { FEATURE_KEYS } from '@/lib/subscription/features';
 import { checkAndIncrementUsage } from '@/lib/subscription/service';
@@ -24,7 +25,7 @@ export async function POST(
     const { id } = await params;
 
     const original = await db.resume.findFirst({
-      where: { id, user_id: auth.userId },
+      where: { id, ...(await docWhere(auth.userId)) },
     });
 
     if (!original) {
@@ -36,6 +37,7 @@ export async function POST(
     const duplicated = await db.resume.create({
       data: {
         user_id: auth.userId,
+        plan_tier: await newDocTier(auth.userId),
         title: `${original.title} (Copy)`,
         data_json: original.data_json,
         template: original.template,

@@ -39,6 +39,7 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { UpgradeModal } from '@/components/billing/upgrade-modal';
+import { HiddenDocsNotice } from '@/components/billing/hidden-docs-notice';
 import { useLocale, useTranslations } from '@/i18n/provider';
 
 interface CoverLetterItem {
@@ -59,6 +60,7 @@ export default function CoverLettersPage() {
   const { locale } = useLocale();
   const router = useRouter();
   const [letters, setLetters] = useState<CoverLetterItem[]>([]);
+  const [hiddenCount, setHiddenCount] = useState(0);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState('');
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
@@ -74,7 +76,10 @@ export default function CoverLettersPage() {
     try {
       const res = await fetch('/api/cover-letters', { credentials: 'include' });
       const data = await res.json();
-      if (data.success) setLetters(data.coverLetters);
+      if (data.success) {
+        setLetters(data.coverLetters);
+        setHiddenCount(data.hiddenCount ?? 0);
+      }
     } catch {
       // silent
     } finally {
@@ -173,6 +178,8 @@ export default function CoverLettersPage() {
           <span className="hidden sm:inline">{t('newLetter')}</span>
         </Button>
       </FadeInUp>
+
+      <HiddenDocsNotice count={hiddenCount} kind="coverLetters" />
 
       {/* Search */}
       {letters.length > 0 && (

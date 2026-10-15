@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getAuthUser } from '@/lib/subscription/auth-helpers';
+import { docWhere, newDocTier } from '@/lib/subscription/documents';
 import { checkAndIncrementUsage } from '@/lib/subscription/service';
 import { FEATURE_KEYS } from '@/lib/subscription/features';
 import { db } from '@/lib/db';
@@ -25,7 +26,7 @@ export async function POST(_request: NextRequest, { params }: Params) {
         );
       }
       return NextResponse.json(
-        { success: false, error: 'This feature is not available on your plan' },
+        { success: false, error: 'upgrade_required' },
         { status: 403 },
       );
     }
@@ -33,7 +34,7 @@ export async function POST(_request: NextRequest, { params }: Params) {
     const { id } = await params;
 
     const original = await db.coverLetter.findFirst({
-      where: { id, user_id: auth.userId },
+      where: { id, ...(await docWhere(auth.userId)) },
     });
     if (!original) {
       return NextResponse.json({ success: false, error: 'Cover letter not found' }, { status: 404 });
@@ -42,6 +43,7 @@ export async function POST(_request: NextRequest, { params }: Params) {
     const duplicated = await db.coverLetter.create({
       data: {
         user_id: auth.userId,
+        plan_tier: await newDocTier(auth.userId),
         title: `${original.title} (Copy)`,
         data_json: original.data_json,
         template: original.template,

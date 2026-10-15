@@ -1,6 +1,7 @@
 import { db } from '@/lib/db';
 import { notifyUsage } from '@/lib/notifications';
 import { FEATURE_USAGE_MAP, type FeatureKey } from './features';
+import { canSeeDoc } from './doc-visibility';
 
 // Plans and their feature limits rarely change, so keep them in memory
 // briefly instead of reading them on every request.
@@ -35,10 +36,12 @@ async function findPlan(planId: string) {
  * expired paid plans back to Free.
  */
 export async function loadAccount(userId: string) {
-  let [subscriptionRow, usage, plans] = await Promise.all([
+  let [subscriptionRow, usage, plans, resumeTiers, letterTiers] = await Promise.all([
     db.subscription.findUnique({ where: { user_id: userId } }),
     db.userUsage.findUnique({ where: { user_id: userId } }),
     getPlansCached(),
+    db.resume.groupBy({ by: ['plan_tier'], where: { user_id: userId }, _count: { _all: true } }),
+    db.coverLetter.groupBy({ by: ['plan_tier'], where: { user_id: userId }, _count: { _all: true } }),
   ]);
 
   if (!subscriptionRow) {
@@ -72,6 +75,12 @@ export async function loadAccount(userId: string) {
   if (!usage) {
     usage = await db.userUsage.create({ data: { user_id: userId } });
   }
+
+  // Resume / cover letter limits count the documents the user can see on
+  // this plan (on Free, the ones created on Pro are hidden and don't count)
+  const visible = (rows: { plan_tier: string; _count: { _all: number } }[]) =>
+    rows.filter(r => canSeeDoc(plan.name, r.plan_tier)).reduce((n, r) => n + r._count._all, 0);
+  usage = { ...usage, resume_count: visible(resumeTiers), cover_letter_count: visible(letterTiers) };
 
   const subscription = { ...subscriptionRow, plan };
   return { subscription, features: plan.plan_features, usage };
@@ -154,7 +163,11 @@ export async function checkAndIncrementUsage(
         where: { user_id: userId },
         data: { [usageField]: { increment: 1 } },
       });
-      await warnIfNearLimit(userId, usageField, row, access.limit);
+      // Document counts are live counts, not the stored counter
+      const counted = usageField === 'resume_count' || usageField === 'cover_letter_count'
+        ? { [usageField]: access.used + 1 }
+        : row;
+      await warnIfNearLimit(userId, usageField, counted, access.limit);
     }
   }
 

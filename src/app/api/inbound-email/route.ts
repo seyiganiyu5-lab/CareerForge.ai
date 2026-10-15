@@ -4,6 +4,8 @@ import PostalMime from 'postal-mime';
 import { db } from '@/lib/db';
 import { isAIConfigured } from '@/lib/ai/client';
 import { processJobEmail } from '@/lib/job-tracker/process-email';
+import { canAccess } from '@/lib/subscription/service';
+import { FEATURE_KEYS } from '@/lib/subscription/features';
 import { gmailForwardingConfirmation, htmlToText, tokenFromAddress } from '@/lib/job-tracker/inbound';
 import { createNotification } from '@/lib/notifications';
 
@@ -97,6 +99,12 @@ export async function POST(request: NextRequest) {
         link: confirm.link,
       });
       return NextResponse.json({ success: true, handled: 'gmail_confirmation' });
+    }
+
+    // The job tracker is a Pro feature: ignore job emails on the Free plan
+    const access = await canAccess(user.id, FEATURE_KEYS.JOB_TRACKER);
+    if (!access.allowed && access.reason !== 'limit_reached') {
+      return NextResponse.json({ success: true, skipped: 'upgrade_required' });
     }
 
     if (!isAIConfigured()) return NextResponse.json({ success: true, skipped: 'ai_not_configured' });

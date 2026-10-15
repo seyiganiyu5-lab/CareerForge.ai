@@ -38,7 +38,7 @@ export async function POST(request: NextRequest, { params }: Params) {
         );
       }
       return NextResponse.json(
-        { success: false, error: 'This feature is not available on your plan' },
+        { success: false, error: 'upgrade_required' },
         { status: 403 },
       );
     }

@@ -3,12 +3,17 @@
 import { useTranslations } from '@/i18n/provider';
 import { FilePlus, MailPlus, Sparkles, PlusCircle, ArrowRight } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { ProBadge, useFeatureLocked } from '@/components/billing/pro-badge';
+
+function ActionProBadge({ featureKey }: { featureKey: string }) {
+  return useFeatureLocked(featureKey) ? <ProBadge /> : null;
+}
 
 const ACTIONS = [
   { key: 'createResume', icon: FilePlus, color: 'bg-teal-500/10 text-teal-600 dark:text-teal-400', href: '/resume-builder' },
   { key: 'createCoverLetter', icon: MailPlus, color: 'bg-violet/10 text-violet', href: '/cover-letters' },
-  { key: 'reviewResume', icon: Sparkles, color: 'bg-amber-500/10 text-amber-600 dark:text-amber-400', href: '/resume-review' },
-  { key: 'trackApplication', icon: PlusCircle, color: 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400', href: '/job-tracker' },
+  { key: 'reviewResume', icon: Sparkles, color: 'bg-amber-500/10 text-amber-600 dark:text-amber-400', href: '/resume-review', proFeature: 'AI_RESUME_REVIEW' },
+  { key: 'trackApplication', icon: PlusCircle, color: 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400', href: '/job-tracker', proFeature: 'JOB_TRACKER' },
 ] as const;
 
 export default function QuickActions() {
@@ -33,8 +38,9 @@ export default function QuickActions() {
                 <Icon className="w-5 h-5" />
               </div>
               <div className="flex-1 min-w-0">
-                <h3 className="text-sm font-semibold font-heading text-foreground group-hover:text-brand transition-colors">
+                <h3 className="text-sm font-semibold font-heading text-foreground group-hover:text-brand transition-colors flex items-center gap-2">
                   {t(`${action.key}.title`)}
+                  {'proFeature' in action && <ActionProBadge featureKey={action.proFeature} />}
                 </h3>
                 <p className="text-xs text-muted-foreground mt-1 font-body leading-relaxed">
                   {t(`${action.key}.description`)}

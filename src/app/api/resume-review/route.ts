@@ -3,6 +3,7 @@ import { generateText, parseJsonReply, isAIConfigured, AIError, AI_NOT_CONFIGURE
 import { getRequestLocale, replyLanguageInstruction } from '@/lib/ai/locale';
 import { db } from '@/lib/db';
 import { getAuthUser } from '@/lib/subscription/auth-helpers';
+import { docWhere } from '@/lib/subscription/documents';
 import { checkAndIncrementUsage, recordUsage } from '@/lib/subscription/service';
 import { FEATURE_KEYS } from '@/lib/subscription/features';
 import type { ResumeData } from '@/types/resume';
@@ -36,7 +37,7 @@ export async function POST(request: NextRequest) {
 
     if (!textToAnalyze && resumeId) {
       const resume = await db.resume.findFirst({
-        where: { id: resumeId, user_id: auth.userId },
+        where: { id: resumeId, ...(await docWhere(auth.userId)) },
       });
       if (!resume) {
         return NextResponse.json({ success: false, error: 'Resume not found' }, { status: 404 });

@@ -1,14 +1,12 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/lib/db';
 import { getAuthUser } from '@/lib/subscription/auth-helpers';
+import { docWhere } from '@/lib/subscription/documents';
 
 async function verifyOwnership(id: string, userId: string) {
-  const resume = await db.resume.findUnique({ where: { id } });
+  const resume = await db.resume.findFirst({ where: { id, ...(await docWhere(userId)) } });
   if (!resume) {
     return { ok: false, response: NextResponse.json({ success: false, error: 'Resume not found' }, { status: 404 }) };
-  }
-  if (resume.user_id !== userId) {
-    return { ok: false, response: NextResponse.json({ success: false, error: 'Forbidden' }, { status: 403 }) };
   }
   return { ok: true, resume };
 }

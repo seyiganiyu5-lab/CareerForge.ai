@@ -48,6 +48,7 @@ import { ResumeEmptyState } from './resume-empty-state';
 import { AiAssistPanel } from '@/components/ai/ai-assist-panel';
 import { AiHistoryPanel } from '@/components/ai/ai-history-panel';
 import { UpgradeModal } from '@/components/billing/upgrade-modal';
+import { ProBadge } from '@/components/billing/pro-badge';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -261,8 +262,8 @@ function ResumeHeader({
         </Button>
       )}
 
-      {/* Download DOCX button (Pro only) */}
-      {onDownloadDocx && isProUser && (
+      {/* Download DOCX button (Pro only; shown with a Pro badge on Free) */}
+      {onDownloadDocx && (
         <Button
           variant="ghost"
           size="sm"
@@ -276,6 +277,7 @@ function ResumeHeader({
             <FileDown className="size-3.5" />
           )}
           {downloadingDocx ? t('exporting') : 'DOCX'}
+          {!isProUser && <ProBadge />}
         </Button>
       )}
       {/* Download PDF button */}
@@ -328,11 +330,11 @@ function ResumeHeader({
               </DropdownMenuItem>
             </>
           )}
-          {onDownloadDocx && isProUser && (
+          {onDownloadDocx && (
             <DropdownMenuItem onClick={onDownloadDocx} disabled={downloadingDocx}>
               {downloadingDocx ? <Loader2 className="size-4 animate-spin" /> : <FileDown className="size-4" />}
               {downloadingDocx ? t('exporting') : t('downloadDocx')}
-              <span className="ml-auto text-[10px] bg-blue-100 dark:bg-blue-900/40 text-blue-700 dark:text-blue-300 px-1.5 py-0.5 rounded font-medium">PRO</span>
+              {!isProUser && <ProBadge className="ml-auto" />}
             </DropdownMenuItem>
           )}
           <DropdownMenuSeparator />
@@ -461,6 +463,7 @@ export default function ResumeWorkspace() {
   const [galleryOpen, setGalleryOpen] = useState(false);
   const [customizationOpen, setCustomizationOpen] = useState(false);
   const [upgradeOpen, setUpgradeOpen] = useState(false);
+  const [upgradeFeature, setUpgradeFeature] = useState<string | null>(null);
   const [isProUser, setIsProUser] = useState(false);
   const [downloading, setDownloading] = useState(false);
   const [downloadingDocx, setDownloadingDocx] = useState(false);
@@ -472,6 +475,7 @@ export default function ResumeWorkspace() {
   const [aiPanelParams, setAiPanelParams] = useState<{ section: string; content: string; itemId?: string; field?: string } | null>(null);
   const t = useTranslations('app.resumeEditor');
   const tc = useTranslations('app.common');
+  const tf = useTranslations('app.features');
 
   // Listen for AI limit-reached events
   useEffect(() => {
@@ -693,6 +697,11 @@ export default function ResumeWorkspace() {
 
   const handleDownloadDocx = async () => {
     if (!resumeId) return;
+    if (!isProUser) {
+      setUpgradeFeature(tf('DOCX_EXPORT'));
+      setUpgradeOpen(true);
+      return;
+    }
 
     setDownloadingDocx(true);
     try {
@@ -705,7 +714,8 @@ export default function ResumeWorkspace() {
 
       if (!res.ok) {
         const data = await res.json().catch(() => ({}));
-        if (data.error === 'limit_reached') {
+        if (data.error === 'limit_reached' || data.error === 'upgrade_required') {
+          setUpgradeFeature(tf('DOCX_EXPORT'));
           setUpgradeOpen(true);
         }
         return;
@@ -798,7 +808,7 @@ export default function ResumeWorkspace() {
           open={galleryOpen} onOpenChange={setGalleryOpen}
         />
         <DeleteDialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen} onConfirm={handleDelete} />
-        <UpgradeModal open={upgradeOpen} onOpenChange={setUpgradeOpen} onClose={() => setUpgradeOpen(false)} featureName={t('aiResumeAssistant')} />
+        <UpgradeModal open={upgradeOpen} onOpenChange={(o) => { setUpgradeOpen(o); if (!o) setUpgradeFeature(null); }} onClose={() => { setUpgradeOpen(false); setUpgradeFeature(null); }} featureName={upgradeFeature ?? t('aiResumeAssistant')} />
 
         {/* AI Assist Panel (mobile) */}
         {aiPanelParams && resumeId && (
@@ -928,7 +938,7 @@ export default function ResumeWorkspace() {
       />
 
       <DeleteDialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen} onConfirm={handleDelete} />
-      <UpgradeModal open={upgradeOpen} onOpenChange={setUpgradeOpen} onClose={() => setUpgradeOpen(false)} featureName={t('aiResumeAssistant')} />
+      <UpgradeModal open={upgradeOpen} onOpenChange={(o) => { setUpgradeOpen(o); if (!o) setUpgradeFeature(null); }} onClose={() => { setUpgradeOpen(false); setUpgradeFeature(null); }} featureName={upgradeFeature ?? t('aiResumeAssistant')} />
 
       {/* AI Assist Panel */}
       {aiPanelParams && resumeId && (

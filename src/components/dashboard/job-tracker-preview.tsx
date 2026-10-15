@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { useTranslations } from '@/i18n/provider';
 import { Send, UserCheck, Trophy, XCircle, ArrowRight, Briefcase } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { ProBadge, useFeatureLocked } from '@/components/billing/pro-badge';
 
 interface JobStats {
   total: number;
@@ -14,6 +15,8 @@ interface JobStats {
   rejected: number;
   byStatus?: Record<string, number>;
 }
+
+const EMPTY_STATS: JobStats = { total: 0, applied: 0, offersReceived: 0, accepted: 0, rejected: 0 };
 
 const STAT_STYLES = [
   { key: 'applied', icon: Send, color: 'text-sky-600 dark:text-sky-400', bg: 'bg-sky-500/10' },
@@ -35,15 +38,19 @@ export default function JobTrackerPreview() {
   const t = useTranslations('dashboard.jobTracker');
   const tu = useTranslations('app.jobTrackerUi');
   const [stats, setStats] = useState<JobStats | null>(null);
+  const locked = useFeatureLocked('JOB_TRACKER');
 
   useEffect(() => {
+    if (locked) return;
     fetch('/api/job-tracker/stats', { credentials: 'include' })
       .then(r => r.json())
       .then(data => {
         if (data.success) setStats(data.stats);
       })
       .catch(() => {});
-  }, []);
+  }, [locked]);
+  // The tracker is Pro-only: on Free show empty numbers instead of loading forever
+  const shown = locked ? EMPTY_STATS : stats;
 
   return (
     <section aria-label={t('title')}>
@@ -55,6 +62,7 @@ export default function JobTrackerPreview() {
           <h2 className="text-lg font-semibold font-heading text-foreground">
             {t('title')}
           </h2>
+          {locked && <ProBadge />}
         </div>
         <Link
           href="/job-tracker"
@@ -80,7 +88,7 @@ export default function JobTrackerPreview() {
                   <Icon className={cn('w-4 h-4', stat.color)} />
                 </div>
                 <p className="text-2xl font-bold font-heading text-foreground">
-                  {stats ? statValue(stat.key, stats) : <span className="inline-block w-6 h-6 rounded bg-muted animate-pulse align-middle" />}
+                  {shown ? statValue(stat.key, shown) : <span className="inline-block w-6 h-6 rounded bg-muted animate-pulse align-middle" />}
                 </p>
                 <p className="text-xs text-muted-foreground mt-0.5 font-body">{t(stat.key)}</p>
               </div>
@@ -89,7 +97,7 @@ export default function JobTrackerPreview() {
         </div>
         <div className="px-4 py-3 border-t border-border/50 flex items-center justify-between">
           <p className="text-xs text-muted-foreground font-body">
-            {t('totalApplications')}: <span className="font-medium text-foreground">{stats ? stats.total : '–'}</span>
+            {t('totalApplications')}: <span className="font-medium text-foreground">{shown ? shown.total : '–'}</span>
           </p>
           <Link
             href="/job-tracker"
