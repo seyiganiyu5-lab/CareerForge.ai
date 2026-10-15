@@ -16,6 +16,7 @@ import { Badge } from '@/components/ui/badge';
 import { useTranslations } from '@/i18n/provider';
 import { useJobLabels } from '@/components/job-tracker/use-job-labels';
 import type { JobApplication } from '@/hooks/use-job-tracker';
+import { NOTIFICATIONS_CHANGED } from '@/components/dashboard/notification-dropdown';
 
 type EmailKind = 'application_received' | 'assessment' | 'interview' | 'offer' | 'rejection' | 'other';
 
@@ -27,6 +28,7 @@ interface ImportResult {
   application?: JobApplication;
   previous?: Record<string, unknown>;
   previousStatus?: string;
+  notificationId?: string | null;
 }
 
 const KIND_KEYS: Record<EmailKind, string> = {
@@ -98,6 +100,7 @@ export function EmailImportDialog({ open, onOpenChange, applications, onChanged,
         : applications.find((a) => a.id === target)?.status;
       setResult({ ...data, previousStatus: data.previous?.status ?? before });
       if (data.action !== 'none') onChanged();
+      if (data.notificationId) window.dispatchEvent(new Event(NOTIFICATIONS_CHANGED));
     } catch {
       toast.error(tc('networkError'));
     } finally {
@@ -119,6 +122,11 @@ export function EmailImportDialog({ open, onOpenChange, applications, onChanged,
           body: JSON.stringify(result.previous),
         });
       if (!res.ok) throw new Error();
+      // The change is gone, so is its notification
+      if (result.notificationId) {
+        await fetch(`/api/notifications/${result.notificationId}`, { method: 'DELETE', credentials: 'include' }).catch(() => {});
+        window.dispatchEvent(new Event(NOTIFICATIONS_CHANGED));
+      }
       toast.success(t('emailUndone'));
       onChanged();
       reset();

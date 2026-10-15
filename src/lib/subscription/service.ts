@@ -1,4 +1,5 @@
 import { db } from '@/lib/db';
+import { notifyUsage } from '@/lib/notifications';
 import { FEATURE_USAGE_MAP, type FeatureKey } from './features';
 
 // Plans and their feature limits rarely change, so keep them in memory
@@ -149,10 +150,11 @@ export async function checkAndIncrementUsage(
   if (increment) {
     const usageField = FEATURE_USAGE_MAP[featureKey];
     if (usageField) {
-      await db.userUsage.update({
+      const row = await db.userUsage.update({
         where: { user_id: userId },
         data: { [usageField]: { increment: 1 } },
       });
+      await warnIfNearLimit(userId, usageField, row, access.limit);
     }
   }
 
@@ -165,10 +167,24 @@ export async function checkAndIncrementUsage(
 export async function recordUsage(userId: string, featureKey: FeatureKey) {
   const usageField = FEATURE_USAGE_MAP[featureKey];
   if (!usageField) return;
-  await db.userUsage.update({
+  const row = await db.userUsage.update({
     where: { user_id: userId },
     data: { [usageField]: { increment: 1 } },
   });
+  const { features } = await loadAccount(userId);
+  const limit = features.find(f => f.feature_key === featureKey)?.limit_value ?? -1;
+  await warnIfNearLimit(userId, usageField, row, limit);
+}
+
+/** Notification at 80% / 100% of a plan limit; never blocks the action itself. */
+async function warnIfNearLimit(userId: string, usageField: string, row: object, limit: number) {
+  const used = (row as Record<string, unknown>)[usageField];
+  if (typeof used !== 'number') return;
+  try {
+    await notifyUsage(userId, usageField, used, limit);
+  } catch (err) {
+    console.error('Usage notification failed:', err);
+  }
 }
 
 /**
