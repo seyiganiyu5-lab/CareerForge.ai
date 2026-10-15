@@ -17,6 +17,7 @@ interface TopNavProps {
 
 export default function TopNav({ isMobile, onMenuClick }: TopNavProps) {
   const tSearch = useTranslations('dashboard.topNav');
+  const tA = useTranslations('a11y');
   const { locale, setLocale } = useLocale();
   const { theme, setTheme } = useTheme();
   const [searchFocused, setSearchFocused] = useState(false);
@@ -45,7 +46,7 @@ export default function TopNav({ isMobile, onMenuClick }: TopNavProps) {
           size="icon"
           onClick={onMenuClick}
           className="shrink-0"
-          aria-label="Open navigation menu"
+          aria-label={tA('openMenu')}
         >
           <Menu className="w-5 h-5" />
         </Button>
@@ -83,7 +84,7 @@ export default function TopNav({ isMobile, onMenuClick }: TopNavProps) {
           size="icon"
           onClick={() => setLocale(locale === 'en' ? 'fr' : 'en')}
           className="h-9 w-auto px-2 gap-1"
-          aria-label={`Switch to ${locale === 'en' ? 'French' : 'English'}`}
+          aria-label={tA('switchLanguage')}
         >
           <Globe className="w-4 h-4" />
           <span className="text-[11px] font-semibold uppercase">{locale}</span>
@@ -96,7 +97,7 @@ export default function TopNav({ isMobile, onMenuClick }: TopNavProps) {
             size="icon"
             onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
             className="h-9 w-9"
-            aria-label="Toggle theme"
+            aria-label={tA('toggleTheme')}
           >
             {theme === 'dark' ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
           </Button>

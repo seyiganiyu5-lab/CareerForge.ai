@@ -1,6 +1,7 @@
 'use client';
 
 import { createElement, lazy, Suspense } from 'react';
+import { useTranslations } from '@/i18n/provider';
 import type { ResumeData } from '@/types/resume';
 import type { TemplateId, TemplateCustomization } from '@/types/template';
 import { isValidTemplateId } from '@/lib/templates/registry';
@@ -13,11 +14,12 @@ interface TemplateEngineProps {
 }
 
 function TemplateFallback() {
+  const t = useTranslations('a11y');
   return (
     <div className="flex items-center justify-center h-32 bg-white">
       <div className="flex items-center gap-2 text-gray-400">
         <div className="size-4 border-2 border-gray-300 border-t-gray-600 rounded-full animate-spin" />
-        <span className="text-sm">Loading template…</span>
+        <span className="text-sm">{t('loadingTemplate')}</span>
       </div>
     </div>
   );

@@ -149,7 +149,7 @@ function VerifyEmailContent() {
           {/* Error Message */}
           <motion.div variants={staggerItem} className="space-y-2">
             <h3 className="text-lg font-semibold font-heading text-foreground">
-              Verification Failed
+              {t('failedTitle')}
             </h3>
             <p className="text-sm text-muted-foreground font-body max-w-xs mx-auto">
               {verificationError}
@@ -178,7 +178,7 @@ function VerifyEmailContent() {
                 variant="ghost"
                 className="w-full h-11 text-brand hover:text-brand/80 font-body text-sm font-medium"
               >
-                Back to Sign In
+                {t('backToLogin')}
               </Button>
             </Link>
           </motion.div>
@@ -279,7 +279,7 @@ function VerifyEmailContent() {
               className="w-full h-11 text-muted-foreground hover:text-foreground font-body text-sm font-medium"
             >
               <ArrowLeft className="w-4 h-4" />
-              Back to Sign In
+              {t('backToLogin')}
             </Button>
           </Link>
         </motion.div>

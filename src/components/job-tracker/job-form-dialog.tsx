@@ -16,6 +16,7 @@ import {
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { STATUSES, EMPLOYMENT_TYPES, WORK_MODES } from './status-config';
 import { useJobLabels } from './use-job-labels';
+import { toast } from 'sonner';
 import { useTranslations } from '@/i18n/provider';
 import type { JobApplication, Reminder } from '@/hooks/use-job-tracker';
 
@@ -96,7 +97,8 @@ export function JobFormDialog({ open, onOpenChange, editingApplication, onSave, 
 
   const handleSave = useCallback(async () => {
     if (!form.company_name.trim() || !form.job_title.trim()) {
-      return 'Company and position are required';
+      toast.error(tu('companyPositionRequired'));
+      return 'required';
     }
     setSaving(true);
     try {
@@ -124,12 +126,12 @@ export function JobFormDialog({ open, onOpenChange, editingApplication, onSave, 
 
       const result = await onSave(data);
       setSaving(false);
-      return result ? null : 'Save failed';
+      return result ? null : 'failed'; // the hook already showed the error
     } catch {
       setSaving(false);
-      return 'Network error';
+      return 'failed';
     }
-  }, [form, onSave]);
+  }, [form, onSave, tu]);
 
   const handleAddReminder = useCallback(async () => {
     if (!editingApplication || !reminderForm.title.trim() || !reminderForm.date) return;

@@ -125,7 +125,7 @@ function ResetPasswordContent() {
                 variant="outline"
                 className="w-full h-11 font-body text-sm font-medium"
               >
-                Request New Link
+                {t('requestNewLink')}
               </Button>
             </Link>
           </motion.div>

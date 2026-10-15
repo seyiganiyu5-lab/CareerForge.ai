@@ -25,6 +25,7 @@ function Logo() {
 
 export default function LegalNavbar() {
   const t = useTranslations('legal.navbar');
+  const tA = useTranslations('a11y');
   const { locale, setLocale } = useLocale();
   const { theme, setTheme } = useTheme();
   const mounted = useSyncExternalStore(
@@ -55,7 +56,7 @@ export default function LegalNavbar() {
             whileHover={{ scale: 1.02 }}
             whileTap={{ scale: 0.98 }}
           >
-            <Link href="/" aria-label="Go to homepage">
+            <Link href="/" aria-label={tA('backToHome')}>
               <Logo />
             </Link>
           </motion.div>
@@ -68,7 +69,7 @@ export default function LegalNavbar() {
               size="icon"
               onClick={toggleLocale}
               className="text-muted-foreground hover:text-foreground"
-              aria-label="Switch language"
+              aria-label={tA('switchLanguage')}
             >
               <Globe className="w-4 h-4" />
             </Button>
@@ -79,7 +80,7 @@ export default function LegalNavbar() {
               size="icon"
               onClick={toggleTheme}
               className="text-muted-foreground hover:text-foreground"
-              aria-label="Toggle theme"
+              aria-label={tA('toggleTheme')}
             >
               {mounted && theme === 'dark' ? (
                 <Sun className="w-4 h-4" />

@@ -10,6 +10,8 @@ import { Button } from '@/components/ui/button';
 
 export default function AuthLayout({ children }: { children: React.ReactNode }) {
   const tAuth = useTranslations('auth.common');
+  const tLegal = useTranslations('legal.footer');
+  const tA = useTranslations('a11y');
   const { locale, setLocale } = useLocale();
   const { theme, setTheme } = useTheme();
   const mounted = useSyncExternalStore(
@@ -30,7 +32,7 @@ export default function AuthLayout({ children }: { children: React.ReactNode }) 
               size="icon"
               onClick={() => router.push('/')}
               className="text-muted-foreground hover:text-foreground"
-              aria-label="Back to home"
+              aria-label={tA('backToHome')}
               title={tAuth('back')}
             >
               <ArrowLeft className="w-4 h-4" />
@@ -58,7 +60,7 @@ export default function AuthLayout({ children }: { children: React.ReactNode }) 
               size="icon"
               onClick={() => setLocale(locale === 'en' ? 'fr' : 'en')}
               className="text-muted-foreground hover:text-foreground"
-              aria-label="Switch language"
+              aria-label={tA('switchLanguage')}
             >
               <Globe className="w-4 h-4" />
             </Button>
@@ -67,7 +69,7 @@ export default function AuthLayout({ children }: { children: React.ReactNode }) 
               size="icon"
               onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
               className="text-muted-foreground hover:text-foreground"
-              aria-label="Toggle theme"
+              aria-label={tA('toggleTheme')}
             >
               {mounted && theme === 'dark' ? (
                 <Sun className="w-4 h-4" />
@@ -94,7 +96,7 @@ export default function AuthLayout({ children }: { children: React.ReactNode }) 
       {/* Footer */}
       <footer className="py-6 text-center">
         <p className="text-sm text-muted-foreground font-body">
-          © 2025 CareerForge AI. All rights reserved.
+          {tLegal('copyright')}
         </p>
       </footer>
     </div>

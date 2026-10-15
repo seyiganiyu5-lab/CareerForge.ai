@@ -37,6 +37,7 @@ function Logo() {
 
 export default function Navbar() {
   const t = useTranslations('nav');
+  const tA = useTranslations('a11y');
   const { locale, setLocale } = useLocale();
   const { theme, setTheme } = useTheme();
   const { activeSection, scrollToSection } = useHashNavigation();
@@ -129,7 +130,7 @@ export default function Navbar() {
               size="icon"
               onClick={toggleLocale}
               className="text-muted-foreground hover:text-foreground"
-              aria-label="Switch language"
+              aria-label={tA('switchLanguage')}
             >
               <Globe className="w-4 h-4" />
             </Button>
@@ -140,7 +141,7 @@ export default function Navbar() {
               size="icon"
               onClick={toggleTheme}
               className="text-muted-foreground hover:text-foreground"
-              aria-label="Toggle theme"
+              aria-label={tA('toggleTheme')}
             >
               {mounted && theme === 'dark' ? (
                 <Sun className="w-4 h-4" />
@@ -182,7 +183,7 @@ export default function Navbar() {
               size="icon"
               onClick={toggleLocale}
               className="text-muted-foreground"
-              aria-label="Switch language"
+              aria-label={tA('switchLanguage')}
             >
               <Globe className="w-4 h-4" />
             </Button>
@@ -192,7 +193,7 @@ export default function Navbar() {
               size="icon"
               onClick={toggleTheme}
               className="text-muted-foreground"
-              aria-label="Toggle theme"
+              aria-label={tA('toggleTheme')}
             >
               {mounted && theme === 'dark' ? (
                 <Sun className="w-4 h-4" />
@@ -203,12 +204,12 @@ export default function Navbar() {
 
             <Sheet open={mobileOpen} onOpenChange={setMobileOpen}>
               <SheetTrigger asChild>
-                <Button variant="ghost" size="icon" className="text-muted-foreground" aria-label="Open menu">
+                <Button variant="ghost" size="icon" className="text-muted-foreground" aria-label={tA('openMenu')}>
                   <Menu className="w-5 h-5" />
                 </Button>
               </SheetTrigger>
               <SheetContent side="right" className="w-80 pt-12 px-6">
-                <SheetTitle className="sr-only">Navigation Menu</SheetTitle>
+                <SheetTitle className="sr-only">{tA('navigationMenu')}</SheetTitle>
 
                 {/* Mobile Logo */}
                 <div className="mb-8">
