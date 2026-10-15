@@ -30,7 +30,7 @@ import {
 } from '@/components/ui/select';
 import { TONE_OPTIONS, LANGUAGE_OPTIONS } from '@/types/cover-letter';
 import type { ToneType } from '@/types/cover-letter';
-import { useTranslations } from '@/i18n/provider';
+import { useLocale, useTranslations } from '@/i18n/provider';
 
 const toPascal = (value: string) =>
   value.split(/[^A-Za-z0-9]+/).filter(Boolean).map((w) => w.charAt(0).toUpperCase() + w.slice(1)).join('');
@@ -72,7 +72,9 @@ export function AIGenerateDialog({ open, onOpenChange, onGenerate, isGenerating 
   const [hiringManager, setHiringManager] = useState('');
   const [jobDescription, setJobDescription] = useState('');
   const [tone, setTone] = useState<ToneType>('professional');
-  const [language, setLanguage] = useState<'en' | 'fr'>('en');
+  const { locale } = useLocale();
+  // Default the letter language to the site language; the user can still change it
+  const [language, setLanguage] = useState<'en' | 'fr'>(locale);
   const [resumeId, setResumeId] = useState('');
   const [resumes, setResumes] = useState<{ id: string; title: string }[]>([]);
   const [resumesLoading, setResumesLoading] = useState(false);

@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { getAuthUser } from '@/lib/subscription/auth-helpers';
 import { checkAndIncrementUsage, recordUsage } from '@/lib/subscription/service';
 import { generateText, isAIConfigured, AIError, AI_NOT_CONFIGURED_MESSAGE } from '@/lib/ai/client';
+import { getRequestLocale, replyLanguageInstruction } from '@/lib/ai/locale';
 import { FEATURE_KEYS } from '@/lib/subscription/features';
 import { db } from '@/lib/db';
 
@@ -72,10 +73,12 @@ Company: ${application.company_name}${application.job_description ? `\nJob Descr
 
     const extraContext = body.context ? `\nAdditional Context: ${body.context}` : '';
 
+    const locale = getRequestLocale(request);
+
     // Generate suggestions for all requested types at the same time
     const suggestions: AiSuggestion[] = await Promise.all(requestedTypes.map(async (type) => {
       let prompt = '';
-      let systemPrompt = 'You are a career coach and job search expert. Provide actionable, specific, and concise advice. Respond in a clear, structured format with bullet points or numbered lists. Keep each suggestion to 2-4 sentences maximum.';
+      let systemPrompt = 'You are a career coach and job search expert. Provide actionable, specific, and concise advice. Respond in a clear, structured format with bullet points or numbered lists. Keep each suggestion to 2-4 sentences maximum.' + replyLanguageInstruction(locale);
 
       switch (type) {
         case 'interview_tips':
