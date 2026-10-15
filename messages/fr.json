@@ -609,7 +609,16 @@
       "coverLetterGenerated": "Votre lettre de motivation a été générée.",
       "jobMoved": "Passée de {from} à {to}",
       "jobAdded": "Ajoutée à votre suivi : {to}",
-      "fromEmail": "Depuis un e-mail"
+      "fromEmail": "Depuis un e-mail",
+      "interviewSoon": "Entretien {when}",
+      "followUpDue": "Date de relance atteinte : bon moment pour reprendre contact avec le recruteur",
+      "deadlineSoon": "Date limite {when}",
+      "offerExpires": "L'offre expire {when}",
+      "reminderDue": "Rappel : {title} ({when})",
+      "usageWarningTitle": "Bientôt à votre limite",
+      "usageWarning": "{feature} : {used} sur {limit} utilisés",
+      "usageLimitTitle": "Limite atteinte",
+      "usageLimit": "{feature} : vous avez utilisé les {limit}. Passez à une offre supérieure pour continuer."
     },
     "userMenu": {
       "profile": "Mon Profil",

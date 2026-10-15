@@ -609,7 +609,16 @@
       "coverLetterGenerated": "Your cover letter has been generated.",
       "jobMoved": "Moved from {from} to {to}",
       "jobAdded": "Added to your tracker as {to}",
-      "fromEmail": "From an email"
+      "fromEmail": "From an email",
+      "interviewSoon": "Interview {when}",
+      "followUpDue": "Follow-up date reached: a good moment to check in with the recruiter",
+      "deadlineSoon": "Deadline {when}",
+      "offerExpires": "Offer expires {when}",
+      "reminderDue": "Reminder: {title} ({when})",
+      "usageWarningTitle": "Almost at your limit",
+      "usageWarning": "{feature}: {used} of {limit} used",
+      "usageLimitTitle": "Limit reached",
+      "usageLimit": "{feature}: you have used all {limit}. Upgrade to keep going."
     },
     "userMenu": {
       "profile": "My Profile",

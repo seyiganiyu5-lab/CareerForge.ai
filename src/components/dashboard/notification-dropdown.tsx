@@ -2,8 +2,8 @@
 
 import React, { useCallback, useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { Bell, Briefcase, Mail } from 'lucide-react';
-import { useTranslations } from '@/i18n/provider';
+import { Bell, Briefcase, Mail, CalendarClock, MessageSquareReply, Hourglass, Gift, AlarmClock, Gauge, type LucideIcon } from 'lucide-react';
+import { useLocale, useTranslations } from '@/i18n/provider';
 import { useRelativeTime } from '@/i18n/use-relative-time';
 import { Button } from '@/components/ui/button';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
@@ -24,8 +24,32 @@ export const NOTIFICATIONS_CHANGED = 'cf:notifications-changed';
 
 const POLL_MS = 60_000;
 
+const ICONS: Record<string, LucideIcon> = {
+  job_status: Briefcase,
+  job_interview_soon: CalendarClock,
+  job_follow_up: MessageSquareReply,
+  job_deadline: Hourglass,
+  job_offer_expiry: Gift,
+  job_reminder: AlarmClock,
+  usage_warning: Gauge,
+  usage_limit: Gauge,
+};
+
+// Usage counter → feature name (app.features.*)
+const USAGE_FEATURE: Record<string, string> = {
+  ai_requests: 'AI_REQUESTS',
+  resume_reviews: 'AI_RESUME_REVIEW',
+  resume_count: 'CREATE_RESUME',
+  cover_letter_count: 'CREATE_COVER_LETTER',
+  exports_count: 'PDF_EXPORT',
+  ats_checks: 'ATS_CHECKER',
+  job_applications_count: 'JOB_TRACKER',
+};
+
 export default function NotificationDropdown() {
   const t = useTranslations('dashboard.notifications');
+  const tf = useTranslations('app.features');
+  const { locale } = useLocale();
   const router = useRouter();
   const relative = useRelativeTime();
   const labels = useJobLabels();
@@ -85,10 +109,35 @@ export default function NotificationDropdown() {
     if (n.link) router.push(n.link);
   };
 
+  const when = (iso: unknown) => {
+    const d = new Date(String(iso));
+    if (isNaN(d.getTime())) return '';
+    const hasTime = d.getUTCHours() !== 0 || d.getUTCMinutes() !== 0;
+    return d.toLocaleString(locale === 'fr' ? 'fr-FR' : 'en-US', {
+      weekday: 'short', day: 'numeric', month: 'short',
+      ...(hasTime ? { hour: '2-digit', minute: '2-digit' } : {}),
+    });
+  };
+
   const describe = (n: AppNotification) => {
+    const d = n.data as Record<string, string>;
+    const where = [d.company, d.jobTitle && d.jobTitle !== '—' ? d.jobTitle : ''].filter(Boolean).join(' — ');
+    switch (n.type) {
+      case 'job_interview_soon': return { title: where, body: t('interviewSoon', { when: when(d.date) }) };
+      case 'job_follow_up': return { title: where, body: t('followUpDue') };
+      case 'job_deadline': return { title: where, body: t('deadlineSoon', { when: when(d.date) }) };
+      case 'job_offer_expiry': return { title: where, body: t('offerExpires', { when: when(d.date) }) };
+      case 'job_reminder': return { title: where, body: t('reminderDue', { title: d.title || '', when: when(d.date) }) };
+      case 'usage_warning':
+      case 'usage_limit': {
+        const u = n.data as { field?: string; used?: number; limit?: number };
+        const feature = USAGE_FEATURE[u.field ?? ''] ? tf(USAGE_FEATURE[u.field ?? '']) : '';
+        return n.type === 'usage_limit'
+          ? { title: t('usageLimitTitle'), body: t('usageLimit', { feature, limit: u.limit ?? 0 }) }
+          : { title: t('usageWarningTitle'), body: t('usageWarning', { feature, used: u.used ?? 0, limit: u.limit ?? 0 }) };
+      }
+    }
     if (n.type === 'job_status') {
-      const d = n.data as { company?: string; jobTitle?: string; from?: string | null; to?: string };
-      const where = [d.company, d.jobTitle && d.jobTitle !== '—' ? d.jobTitle : ''].filter(Boolean).join(' — ');
       const to = labels.status(d.to ?? '');
       return {
         title: where,
@@ -135,8 +184,11 @@ export default function NotificationDropdown() {
                     onClick={() => openItem(n)}
                     className={cn('w-full flex gap-3 px-4 py-3 text-left hover:bg-accent transition-colors', !n.read && 'bg-brand/5')}
                   >
-                    <div className="w-8 h-8 rounded-lg bg-brand/10 text-brand flex items-center justify-center shrink-0">
-                      <Briefcase className="w-4 h-4" />
+                    <div className={cn(
+                      'w-8 h-8 rounded-lg flex items-center justify-center shrink-0',
+                      n.type === 'usage_limit' ? 'bg-red-500/10 text-red-600' : n.type === 'usage_warning' ? 'bg-amber-500/10 text-amber-600' : 'bg-brand/10 text-brand'
+                    )}>
+                      {(() => { const Icon = ICONS[n.type] ?? Bell; return <Icon className="w-4 h-4" />; })()}
                     </div>
                     <div className="min-w-0 flex-1">
                       {title && <p className="text-sm font-semibold font-body truncate">{title}</p>}
