@@ -83,7 +83,7 @@ function StatsCards({ stats, collapsed, onToggle }: {
           >
             <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3">
               {cards.map(card => (
-                <Card key={card.label}>
+                <Card key={card.label} className="last:col-span-2 sm:last:col-span-1">
                   <CardContent className="p-3 sm:p-4">
                     <div className="flex items-center gap-2.5">
                       <div className={`w-9 h-9 rounded-lg ${card.bgColor} flex items-center justify-center shrink-0`}>
@@ -321,7 +321,7 @@ function JobTrackerContent() {
             <div className="flex items-center gap-2 shrink-0 flex-wrap">
               {/* Status Filter */}
               <Select value={filters.status} onValueChange={v => updateFilters({ status: v })}>
-                <SelectTrigger className="w-[130px] font-body text-xs h-9">
+                <SelectTrigger className="w-auto min-w-[130px] font-body text-xs h-9">
                   <SelectValue placeholder={t('allStatus')} />
                 </SelectTrigger>
                 <SelectContent>

@@ -296,7 +296,7 @@ export default function CoverLetterWorkspace() {
 
   if (isCompact) {
     return (
-      <div className="h-[calc(100vh-96px)] md:h-[calc(100vh-112px)] flex flex-col overflow-x-hidden">
+      <div className="h-[calc(100dvh-96px)] md:h-[calc(100dvh-112px)] flex flex-col overflow-x-hidden">
         {/* Toolbar (compact) */}
         <Toolbar
           title={title}

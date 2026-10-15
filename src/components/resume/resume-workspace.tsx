@@ -602,7 +602,7 @@ export default function ResumeWorkspace() {
   // Loading
   if (loading) {
     return (
-      <div className="h-[calc(100vh-64px)] flex items-center justify-center">
+      <div className="h-[calc(100dvh-96px)] md:h-[calc(100dvh-112px)] lg:h-[calc(100dvh-128px)] flex items-center justify-center">
         <div className="flex flex-col items-center gap-4">
           <Skeleton className="size-10 rounded-full" />
           <Skeleton className="h-5 w-40" />
@@ -620,7 +620,7 @@ export default function ResumeWorkspace() {
   // Non-limit error
   if (error && error !== 'limit_reached') {
     return (
-      <div className="h-[calc(100vh-64px)] flex items-center justify-center">
+      <div className="h-[calc(100dvh-96px)] md:h-[calc(100dvh-112px)] lg:h-[calc(100dvh-128px)] flex items-center justify-center">
         <div className="flex flex-col items-center gap-4 text-center">
           <AlertCircle className="size-10 text-destructive" />
           <p className="font-body text-sm text-muted-foreground">{ERROR_KEYS[error] ? t(ERROR_KEYS[error]) : error}</p>
@@ -734,7 +734,7 @@ export default function ResumeWorkspace() {
   // ─── Mobile Layout ─────────────────────────────────────────
   if (isMobile) {
     return (
-      <div className="h-[calc(100vh-64px)] flex flex-col">
+      <div className="h-[calc(100dvh-96px)] md:h-[calc(100dvh-112px)] lg:h-[calc(100dvh-128px)] flex flex-col">
         <ResumeHeader
           title={resumeTitle} templateName={templateName}
           onRename={(t) => setResumeTitle(t)}
@@ -830,7 +830,7 @@ export default function ResumeWorkspace() {
 
   // ─── Desktop / Tablet Layout ───────────────────────────────
   return (
-    <div className="h-[calc(100vh-64px)] flex">
+    <div className="h-[calc(100dvh-96px)] md:h-[calc(100dvh-112px)] lg:h-[calc(100dvh-128px)] flex">
       {/* Left sidebar */}
       <ResumeSidebar
         activeSection={activeSection}

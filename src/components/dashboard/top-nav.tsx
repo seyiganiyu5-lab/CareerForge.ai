@@ -51,8 +51,8 @@ export default function TopNav({ isMobile, onMenuClick }: TopNavProps) {
         </Button>
       )}
 
-      {/* Search */}
-      <div className="relative flex-1 max-w-md">
+      {/* Search (hidden on phones, where there isn't room for it) */}
+      <div className="hidden sm:block relative flex-1 max-w-md">
         <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground pointer-events-none" />
         <Input
           id="dashboard-search"
@@ -73,6 +73,8 @@ export default function TopNav({ isMobile, onMenuClick }: TopNavProps) {
         </kbd>
       </div>
 
+      <div className="flex-1 sm:hidden" />
+
       {/* Right Actions */}
       <div className="flex items-center gap-1">
         {/* Language Switcher */}
@@ -80,10 +82,11 @@ export default function TopNav({ isMobile, onMenuClick }: TopNavProps) {
           variant="ghost"
           size="icon"
           onClick={() => setLocale(locale === 'en' ? 'fr' : 'en')}
-          className="h-9 w-9"
+          className="h-9 w-auto px-2 gap-1"
           aria-label={`Switch to ${locale === 'en' ? 'French' : 'English'}`}
         >
           <Globe className="w-4 h-4" />
+          <span className="text-[11px] font-semibold uppercase">{locale}</span>
         </Button>
 
         {/* Theme Toggle */}
