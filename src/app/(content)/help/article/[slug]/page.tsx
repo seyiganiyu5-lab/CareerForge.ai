@@ -15,7 +15,7 @@ import {
   ArrowLeft,
   ArrowRight,
 } from 'lucide-react';
-import { useLocale } from '@/i18n/provider';
+import { useLocale, useTranslations } from '@/i18n/provider';
 import { getLocalized } from '@/types/content';
 import { helpArticles, helpCategories } from '@/data/help-articles';
 import ArticleCard from '@/components/help/article-card';
@@ -60,6 +60,7 @@ export default function ArticlePage() {
   const params = useParams();
   const slug = params.slug as string;
   const t = uiText[locale];
+  const tA = useTranslations('a11y');
 
   const [copied, setCopied] = useState(false);
   const [feedback, setFeedback] = useState<'up' | 'down' | null>(null);
@@ -287,14 +288,14 @@ export default function ArticlePage() {
                     <button
                       onClick={() => setFeedback('up')}
                       className="p-2.5 rounded-full border border-border hover:border-brand hover:text-brand hover:bg-brand/5 transition-colors text-muted-foreground"
-                      aria-label="Helpful"
+                      aria-label={tA('helpful')}
                     >
                       <ThumbsUp className="h-5 w-5" />
                     </button>
                     <button
                       onClick={() => setFeedback('down')}
                       className="p-2.5 rounded-full border border-border hover:border-brand hover:text-brand hover:bg-brand/5 transition-colors text-muted-foreground"
-                      aria-label="Not helpful"
+                      aria-label={tA('notHelpful')}
                     >
                       <ThumbsDown className="h-5 w-5" />
                     </button>

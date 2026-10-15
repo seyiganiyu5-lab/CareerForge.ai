@@ -37,7 +37,7 @@ export default function Footer() {
           <div className="col-span-2">
             <Logo />
             <p className="text-muted-foreground text-sm mt-4 max-w-xs font-body">
-              AI-powered career tools for modern job seekers.
+              {t('tagline')}
             </p>
             <div className="flex items-center gap-2 mt-6">
               <button

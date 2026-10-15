@@ -120,7 +120,21 @@
       "grammarImprovements": "Grammar Improvements",
       "resumeScoring": "Resume Scoring"
     },
-    "cta": "Try AI Features Free"
+    "cta": "Try AI Features Free",
+    "visual": {
+      "engine": "AI Engine",
+      "active": "Active",
+      "analysis": "Resume Analysis",
+      "keywords": "Keyword Match",
+      "ats": "ATS Compatibility",
+      "processing": "Processing...",
+      "nlp": "NLP",
+      "languageModel": "Language Model",
+      "deepLearning": "Deep Learning",
+      "neuralNetwork": "Neural Network",
+      "fast": "Fast",
+      "response": "< 2s response"
+    }
   },
   "atsChecker": {
     "badge": "ATS Checker",
@@ -225,7 +239,8 @@
         ],
         "cta": "Contact Sales"
       }
-    }
+    },
+    "customPricing": "Custom pricing based on your needs"
   },
   "faq": {
     "badge": "FAQ",
@@ -295,7 +310,8 @@
       "button": "Subscribe",
       "success": "Thanks for subscribing!"
     },
-    "copyright": "© 2025 CareerForge AI. All rights reserved."
+    "copyright": "© 2025 CareerForge AI. All rights reserved.",
+    "tagline": "AI-powered career tools for modern job seekers."
   },
   "language": {
     "en": "EN",
@@ -408,7 +424,8 @@
         "emailRequired": "Email is required",
         "emailInvalid": "Please enter a valid email address",
         "userNotFound": "No account found with this email address"
-      }
+      },
+      "emailSent": "Email sent successfully!"
     },
     "resetPassword": {
       "title": "Set New Password",
@@ -428,7 +445,8 @@
         "confirmPasswordRequired": "Please confirm your password",
         "passwordsDoNotMatch": "Passwords do not match",
         "invalidOrExpiredToken": "This reset link is invalid or has expired. Please request a new one."
-      }
+      },
+      "requestNewLink": "Request New Link"
     },
     "verifyEmail": {
       "title": "Verify Your Email",
@@ -446,7 +464,9 @@
         "resendFailed": "Failed to resend verification email. Please try again.",
         "resendSuccess": "Verification email sent successfully!",
         "alreadyVerified": "Your email is already verified."
-      }
+      },
+      "backToLogin": "Back to Sign In",
+      "failedTitle": "Verification Failed"
     },
     "onboarding": {
       "stepIndicator": {
@@ -1206,7 +1226,8 @@
       "export": "Export",
       "preview": "Preview",
       "add": "Add",
-      "remove": "Remove"
+      "remove": "Remove",
+      "updating": "Updating…"
     },
     "resumeBuilder": {
       "title": "Resume Builder",
@@ -1717,7 +1738,8 @@
       "fwdResetDone": "New address created",
       "fwdResetFailed": "Couldn't create a new address",
       "fwdCopyFailed": "Couldn't copy. Select the address and copy it by hand.",
-      "fwdNotAvailable": "Automatic forwarding isn't switched on for this site yet. Meanwhile, use “Paste an email”."
+      "fwdNotAvailable": "Automatic forwarding isn't switched on for this site yet. Meanwhile, use “Paste an email”.",
+      "companyPositionRequired": "Company and position are required."
     },
     "aiPanel": {
       "actionGenerate": "Generate",
@@ -2097,5 +2119,16 @@
       "addressPlaceholder": "New York, NY",
       "linkedIn": "LinkedIn"
     }
+  },
+  "a11y": {
+    "backToHome": "Back to home",
+    "switchLanguage": "Switch language",
+    "toggleTheme": "Toggle theme",
+    "openMenu": "Open menu",
+    "navigationMenu": "Navigation menu",
+    "toggleBilling": "Toggle billing period",
+    "helpful": "Helpful",
+    "notHelpful": "Not helpful",
+    "loadingTemplate": "Loading template…"
   }
 }

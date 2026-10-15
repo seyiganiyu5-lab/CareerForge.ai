@@ -256,7 +256,7 @@ export default function ForgotPasswordPage() {
                 animate={{ opacity: 1, y: 0 }}
                 className="text-xs text-emerald font-medium font-body"
               >
-                Email sent successfully!
+                {t('emailSent')}
               </motion.p>
             )}
 

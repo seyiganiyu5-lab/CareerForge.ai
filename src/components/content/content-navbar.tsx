@@ -29,6 +29,7 @@ interface ContentNavbarProps {
 
 export default function ContentNavbar({ activeSection }: ContentNavbarProps) {
   const t = useTranslations('content.navbar');
+  const tA = useTranslations('a11y');
   const { locale, setLocale } = useLocale();
   const { theme, setTheme } = useTheme();
   const mounted = useSyncExternalStore(
@@ -51,7 +52,7 @@ export default function ContentNavbar({ activeSection }: ContentNavbarProps) {
         <div className="flex items-center justify-between h-16">
           <div className="flex items-center gap-6">
             <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
-              <Link href="/" aria-label="Go to homepage">
+              <Link href="/" aria-label={tA('backToHome')}>
                 <Logo />
               </Link>
             </motion.div>
@@ -86,7 +87,7 @@ export default function ContentNavbar({ activeSection }: ContentNavbarProps) {
               size="icon"
               onClick={toggleLocale}
               className="text-muted-foreground hover:text-foreground"
-              aria-label="Switch language"
+              aria-label={tA('switchLanguage')}
             >
               <Globe className="w-4 h-4" />
             </Button>
@@ -95,7 +96,7 @@ export default function ContentNavbar({ activeSection }: ContentNavbarProps) {
               size="icon"
               onClick={toggleTheme}
               className="text-muted-foreground hover:text-foreground"
-              aria-label="Toggle theme"
+              aria-label={tA('toggleTheme')}
             >
               {mounted && theme === 'dark' ? (
                 <Sun className="w-4 h-4" />

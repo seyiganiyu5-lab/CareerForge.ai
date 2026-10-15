@@ -374,7 +374,7 @@ export default function SettingsPage() {
                   {langUpdating ? (
                     <span className="flex items-center gap-2">
                       <Loader2 className="size-4 animate-spin" />
-                      Updating…
+                      {tc('updating')}
                     </span>
                   ) : (
                     <SelectValue placeholder={t('selectLanguage')} />

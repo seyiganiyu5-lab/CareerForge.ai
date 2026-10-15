@@ -1,7 +1,9 @@
 import type { Metadata } from "next";
+import { cookies } from "next/headers";
 import { Poppins, Inter } from "next/font/google";
 import { ThemeProvider } from "next-themes";
 import { LocaleProvider } from "@/i18n/provider";
+import { locales, defaultLocale, type Locale } from "@/i18n/config";
 import { AuthProvider } from "@/lib/auth/context";
 import { UsageProvider } from "@/lib/usage/context";
 import "./globals.css";
@@ -30,13 +32,18 @@ export const metadata: Metadata = {
   },
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  // Render the page in the visitor's saved language so the server HTML
+  // matches what the browser shows (no English flash, no hydration errors)
+  const saved = (await cookies()).get("cf-locale")?.value;
+  const locale: Locale = locales.includes(saved as Locale) ? (saved as Locale) : defaultLocale;
+
   return (
-    <html lang="en" suppressHydrationWarning>
+    <html lang={locale} suppressHydrationWarning>
       <body
         className={`${poppins.variable} ${inter.variable} antialiased bg-background text-foreground`}
       >
@@ -46,7 +53,7 @@ export default function RootLayout({
           enableSystem
           disableTransitionOnChange={true}
         >
-          <LocaleProvider>
+          <LocaleProvider initialLocale={locale}>
             <AuthProvider>
               <UsageProvider>
                 {children}

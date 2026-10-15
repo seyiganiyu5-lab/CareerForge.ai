@@ -35,6 +35,7 @@ const cardVariants: Variants = {
 
 export default function Pricing() {
   const t = useTranslations('pricing');
+  const tA = useTranslations('a11y');
   const [isYearly, setIsYearly] = useState(false);
 
   return (
@@ -66,7 +67,7 @@ export default function Pricing() {
               type="button"
               onClick={() => setIsYearly(!isYearly)}
               className="relative inline-flex h-7 w-12 items-center rounded-full border border-border bg-muted p-0.5 transition-colors"
-              aria-label="Toggle billing period"
+              aria-label={tA('toggleBilling')}
             >
               <motion.span
                 layoutId="pricing-toggle-indicator"
@@ -152,7 +153,7 @@ export default function Pricing() {
                 </div>
                 ) : (
                 <p className="mt-4 text-muted-foreground text-sm font-body">
-                  Custom pricing based on your needs
+                  {t('customPricing')}
                 </p>
                 )}
 

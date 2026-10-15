@@ -1,6 +1,6 @@
 'use client';
 
-import React, { createContext, useContext, useCallback, useEffect, useSyncExternalStore } from 'react';
+import React, { createContext, useContext, useCallback, useEffect, useState, startTransition } from 'react';
 import { NextIntlClientProvider, useTranslations as useNextIntlTranslations } from 'next-intl';
 import type { MessageKeys, Messages } from 'next-intl';
 import { Locale, defaultLocale, locales } from '@/i18n/config';
@@ -38,29 +38,14 @@ export function useTranslations(namespace?: string) {
   return useNextIntlTranslations(namespace);
 }
 
-let cachedLocale: Locale | null = null;
-const listeners = new Set<() => void>();
-
-function getSnapshot(): Locale {
-  if (cachedLocale) return cachedLocale;
-  if (typeof window !== 'undefined') {
+function readSavedLocale(fallback: Locale): Locale {
+  try {
     const saved = localStorage.getItem('cf-locale');
-    if (saved && locales.includes(saved as Locale)) {
-      cachedLocale = saved as Locale;
-      return cachedLocale;
-    }
+    if (saved && locales.includes(saved as Locale)) return saved as Locale;
+  } catch {
+    // Storage blocked (private mode etc.)
   }
-  cachedLocale = defaultLocale;
-  return defaultLocale;
-}
-
-function getServerSnapshot(): Locale {
-  return defaultLocale;
-}
-
-function subscribe(callback: () => void): () => void {
-  listeners.add(callback);
-  return () => listeners.delete(callback);
+  return fallback;
 }
 
 function writeLocaleCookie(locale: Locale) {
@@ -69,26 +54,33 @@ function writeLocaleCookie(locale: Locale) {
   }
 }
 
-function emitChange() {
-  listeners.forEach(l => l());
-}
+export function LocaleProvider({ children, initialLocale = defaultLocale }: { children: React.ReactNode; initialLocale?: Locale }) {
+  // The server renders in the language saved in the cf-locale cookie. Start
+  // with it so the first render matches the server HTML. If the browser has a
+  // different saved language (e.g. the cookie was cleared), switch as a
+  // low-priority update once the page has loaded.
+  const [locale, setLocaleState] = useState<Locale>(initialLocale);
 
-export function LocaleProvider({ children }: { children: React.ReactNode }) {
-  const locale = useSyncExternalStore(subscribe, getSnapshot, getServerSnapshot);
+  useEffect(() => {
+    const saved = readSavedLocale(initialLocale);
+    if (saved !== initialLocale) startTransition(() => setLocaleState(saved));
+  }, [initialLocale]);
 
   // Let the server know the language too (used to make the AI reply in it)
   useEffect(() => {
     writeLocaleCookie(locale);
+    document.documentElement.lang = locale;
   }, [locale]);
   const messages = getMessages(locale);
 
   const setLocale = useCallback((newLocale: Locale) => {
-    if (typeof window !== 'undefined') {
+    try {
       localStorage.setItem('cf-locale', newLocale);
+    } catch {
+      // Storage blocked; the cookie still remembers it
     }
     writeLocaleCookie(newLocale);
-    cachedLocale = newLocale;
-    emitChange();
+    setLocaleState(newLocale);
   }, []);
 
   return (

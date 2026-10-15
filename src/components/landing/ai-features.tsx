@@ -40,7 +40,7 @@ export default function AiFeatures() {
             transition={{ duration: 0.6, ease: 'easeOut' }}
             className="w-full lg:w-1/2 relative"
           >
-            <div className="relative w-full max-w-lg mx-auto aspect-square">
+            <div className="relative w-full max-w-lg mx-auto aspect-[4/5] sm:aspect-square">
               {/* Main Glass Card */}
               <motion.div
                 className="absolute inset-8 rounded-2xl p-6 glass border border-border shadow-xl z-10"
@@ -54,11 +54,11 @@ export default function AiFeatures() {
                     <Sparkles className="w-4 h-4 text-white" />
                   </div>
                   <span className="font-heading font-semibold text-foreground">
-                    AI Engine
+                    {t('visual.engine')}
                   </span>
                   <span className="ml-auto inline-flex items-center gap-1 text-xs text-emerald font-medium">
                     <span className="w-1.5 h-1.5 rounded-full bg-emerald animate-pulse" />
-                    Active
+                    {t('visual.active')}
                   </span>
                 </div>
 
@@ -68,7 +68,7 @@ export default function AiFeatures() {
                     <div className="flex items-center justify-between mb-1.5">
                       <div className="flex items-center gap-2 text-sm text-muted-foreground font-body">
                         <Activity className="w-3.5 h-3.5" />
-                        Resume Analysis
+                        {t('visual.analysis')}
                       </div>
                       <span className="text-xs text-brand font-medium font-body">87%</span>
                     </div>
@@ -78,7 +78,7 @@ export default function AiFeatures() {
                     <div className="flex items-center justify-between mb-1.5">
                       <div className="flex items-center gap-2 text-sm text-muted-foreground font-body">
                         <BarChart3 className="w-3.5 h-3.5" />
-                        Keyword Match
+                        {t('visual.keywords')}
                       </div>
                       <span className="text-xs text-violet font-medium font-body">92%</span>
                     </div>
@@ -88,7 +88,7 @@ export default function AiFeatures() {
                     <div className="flex items-center justify-between mb-1.5">
                       <div className="flex items-center gap-2 text-sm text-muted-foreground font-body">
                         <Cpu className="w-3.5 h-3.5" />
-                        ATS Compatibility
+                        {t('visual.ats')}
                       </div>
                       <span className="text-xs text-emerald font-medium font-body">95%</span>
                     </div>
@@ -100,7 +100,7 @@ export default function AiFeatures() {
                 <div className="mt-6 flex items-center gap-2 px-3 py-2 rounded-xl bg-brand/5 border border-brand/10">
                   <span className="w-2 h-2 rounded-full bg-brand animate-pulse" />
                   <span className="text-sm text-brand font-medium font-body animate-pulse">
-                    Processing...
+                    {t('visual.processing')}
                   </span>
                 </div>
               </motion.div>
@@ -119,10 +119,10 @@ export default function AiFeatures() {
                   </div>
                   <div>
                     <p className="text-xs font-semibold text-foreground font-heading">
-                      NLP
+                      {t('visual.nlp')}
                     </p>
                     <p className="text-[10px] text-muted-foreground font-body">
-                      Language Model
+                      {t('visual.languageModel')}
                     </p>
                   </div>
                 </div>
@@ -142,10 +142,10 @@ export default function AiFeatures() {
                   </div>
                   <div>
                     <p className="text-xs font-semibold text-foreground font-heading">
-                      Deep Learn
+                      {t('visual.deepLearning')}
                     </p>
                     <p className="text-[10px] text-muted-foreground font-body">
-                      Neural Network
+                      {t('visual.neuralNetwork')}
                     </p>
                   </div>
                 </div>
@@ -165,10 +165,10 @@ export default function AiFeatures() {
                   </div>
                   <div>
                     <p className="text-xs font-semibold text-foreground font-heading">
-                      Fast
+                      {t('visual.fast')}
                     </p>
                     <p className="text-[10px] text-muted-foreground font-body">
-                      &lt; 2s response
+                      {t('visual.response')}
                     </p>
                   </div>
                 </div>

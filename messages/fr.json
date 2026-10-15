@@ -120,7 +120,21 @@
       "grammarImprovements": "Améliorations Grammaticales",
       "resumeScoring": "Scoring de CV"
     },
-    "cta": "Essayer les Fonctionnalités IA Gratuitement"
+    "cta": "Essayer les Fonctionnalités IA Gratuitement",
+    "visual": {
+      "engine": "Moteur IA",
+      "active": "Actif",
+      "analysis": "Analyse du CV",
+      "keywords": "Mots-clés",
+      "ats": "Compatibilité ATS",
+      "processing": "Analyse...",
+      "nlp": "TALN",
+      "languageModel": "Modèle de langage",
+      "deepLearning": "Deep Learning",
+      "neuralNetwork": "Réseau de neurones",
+      "fast": "Rapide",
+      "response": "Réponse en < 2 s"
+    }
   },
   "atsChecker": {
     "badge": "Vérificateur ATS",
@@ -225,7 +239,8 @@
         ],
         "cta": "Contacter les Ventes"
       }
-    }
+    },
+    "customPricing": "Tarif personnalisé selon vos besoins"
   },
   "faq": {
     "badge": "FAQ",
@@ -295,7 +310,8 @@
       "button": "S'abonner",
       "success": "Merci pour votre abonnement !"
     },
-    "copyright": "© 2025 CareerForge AI. Tous droits réservés."
+    "copyright": "© 2025 CareerForge AI. Tous droits réservés.",
+    "tagline": "Des outils de carrière propulsés par l'IA pour les chercheurs d'emploi d'aujourd'hui."
   },
   "language": {
     "en": "EN",
@@ -408,7 +424,8 @@
         "emailRequired": "L'email est requis",
         "emailInvalid": "Veuillez entrer une adresse email valide",
         "userNotFound": "Aucun compte trouvé avec cette adresse email"
-      }
+      },
+      "emailSent": "E-mail envoyé avec succès !"
     },
     "resetPassword": {
       "title": "Définir un Nouveau Mot de Passe",
@@ -428,7 +445,8 @@
         "confirmPasswordRequired": "Veuillez confirmer votre mot de passe",
         "passwordsDoNotMatch": "Les mots de passe ne correspondent pas",
         "invalidOrExpiredToken": "Ce lien de réinitialisation est invalide ou a expiré. Veuillez en demander un nouveau."
-      }
+      },
+      "requestNewLink": "Demander un nouveau lien"
     },
     "verifyEmail": {
       "title": "Vérifiez Votre Email",
@@ -446,7 +464,9 @@
         "resendFailed": "Impossible de renvoyer l'email de vérification. Veuillez réessayer.",
         "resendSuccess": "Email de vérification envoyé avec succès !",
         "alreadyVerified": "Votre email est déjà vérifié."
-      }
+      },
+      "backToLogin": "Retour à la connexion",
+      "failedTitle": "Échec de la vérification"
     },
     "onboarding": {
       "stepIndicator": {
@@ -1206,7 +1226,8 @@
       "export": "Exporter",
       "preview": "Aperçu",
       "add": "Ajouter",
-      "remove": "Retirer"
+      "remove": "Retirer",
+      "updating": "Mise à jour…"
     },
     "resumeBuilder": {
       "title": "Créateur de CV",
@@ -1717,7 +1738,8 @@
       "fwdResetDone": "Nouvelle adresse créée",
       "fwdResetFailed": "Impossible de créer une nouvelle adresse",
       "fwdCopyFailed": "Copie impossible. Sélectionnez l'adresse et copiez-la à la main.",
-      "fwdNotAvailable": "Le transfert automatique n'est pas encore activé sur ce site. En attendant, utilisez « Coller un e-mail »."
+      "fwdNotAvailable": "Le transfert automatique n'est pas encore activé sur ce site. En attendant, utilisez « Coller un e-mail ».",
+      "companyPositionRequired": "L'entreprise et le poste sont obligatoires."
     },
     "aiPanel": {
       "actionGenerate": "Générer",
@@ -2097,5 +2119,16 @@
       "addressPlaceholder": "Paris, France",
       "linkedIn": "LinkedIn"
     }
+  },
+  "a11y": {
+    "backToHome": "Retour à l'accueil",
+    "switchLanguage": "Changer de langue",
+    "toggleTheme": "Changer de thème",
+    "openMenu": "Ouvrir le menu",
+    "navigationMenu": "Menu de navigation",
+    "toggleBilling": "Changer la période de facturation",
+    "helpful": "Utile",
+    "notHelpful": "Pas utile",
+    "loadingTemplate": "Chargement du modèle…"
   }
 }
