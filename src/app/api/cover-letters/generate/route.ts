@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getAuthUser } from '@/lib/subscription/auth-helpers';
+import { docWhere } from '@/lib/subscription/documents';
 import { checkAndIncrementUsage, recordUsage } from '@/lib/subscription/service';
 import { generateText, parseJsonReply, isAIConfigured, AIError, AI_NOT_CONFIGURED_MESSAGE } from '@/lib/ai/client';
 import { FEATURE_KEYS } from '@/lib/subscription/features';
@@ -28,7 +29,7 @@ export async function POST(request: NextRequest) {
         );
       }
       return NextResponse.json(
-        { success: false, error: 'This feature is not available on your plan' },
+        { success: false, error: 'upgrade_required' },
         { status: 403 },
       );
     }
@@ -56,7 +57,7 @@ export async function POST(request: NextRequest) {
     let resumeContent = '';
     if (resumeId) {
       const resume = await db.resume.findFirst({
-        where: { id: resumeId, user_id: auth.userId },
+        where: { id: resumeId, ...(await docWhere(auth.userId)) },
         select: { data_json: true },
       });
       if (resume) {

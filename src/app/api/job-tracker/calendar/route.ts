@@ -1,5 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getAuthUser } from '@/lib/subscription/auth-helpers';
+import { requireFeature } from '@/lib/subscription/gate';
+import { FEATURE_KEYS } from '@/lib/subscription/features';
 import { db } from '@/lib/db';
 
 interface CalendarEvent {
@@ -22,6 +24,8 @@ export async function GET(request: NextRequest) {
     if (!auth) {
       return NextResponse.json({ success: false, error: 'Unauthorized' }, { status: 401 });
     }
+    const locked = await requireFeature(auth.userId, FEATURE_KEYS.JOB_TRACKER);
+    if (locked) return locked;
 
     const { searchParams } = new URL(request.url);
     const from = searchParams.get('from');

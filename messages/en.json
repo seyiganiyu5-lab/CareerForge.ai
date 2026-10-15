@@ -615,7 +615,15 @@
       "expand": "Expand"
     },
     "topNav": {
-      "searchPlaceholder": "Search resumes, cover letters, templates..."
+      "searchPlaceholder": "Search pages, resumes, cover letters, jobs...",
+      "openSearch": "Search",
+      "group_pages": "Pages",
+      "group_resumes": "Resumes",
+      "group_coverLetters": "Cover letters",
+      "group_jobs": "Job applications",
+      "searching": "Searching…",
+      "noResults": "No results for “{query}”",
+      "untitled": "Untitled"
     },
     "notifications": {
       "title": "Notifications",
@@ -1817,7 +1825,10 @@
       "upgradeAria": "Upgrade your subscription plan",
       "manageAria": "Manage your subscription settings",
       "manageSubscription": "Manage Subscription",
-      "loadingSubscription": "Loading subscription information"
+      "loadingSubscription": "Loading subscription information",
+      "hiddenResumes": "{count, plural, one {# resume you created on Pro is} other {# resumes you created on Pro are}} hidden on the Free plan. They are safe and will come back when you upgrade.",
+      "hiddenCoverLetters": "{count, plural, one {# cover letter you created on Pro is} other {# cover letters you created on Pro are}} hidden on the Free plan. They are safe and will come back when you upgrade.",
+      "hiddenDocsUpgrade": "Upgrade to Pro"
     },
     "misc": {
       "mainNavigation": "Main navigation",

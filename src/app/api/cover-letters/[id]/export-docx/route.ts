@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getAuthUser } from '@/lib/subscription/auth-helpers';
+import { docWhere } from '@/lib/subscription/documents';
 import { checkAndIncrementUsage } from '@/lib/subscription/service';
 import { FEATURE_KEYS } from '@/lib/subscription/features';
 import { db } from '@/lib/db';
@@ -35,18 +36,16 @@ export async function POST(_request: NextRequest, { params }: Params) {
     // Check DOCX export limit
     const access = await checkAndIncrementUsage(auth.userId, FEATURE_KEYS.DOCX_EXPORT);
     if (!access.allowed) {
-      if (access.reason === 'limit_reached') {
-        return NextResponse.json(
-          { success: false, error: 'limit_reached' },
-          { status: 403 },
-        );
-      }
+      return NextResponse.json(
+        { success: false, error: access.reason === 'limit_reached' ? 'limit_reached' : 'upgrade_required' },
+        { status: 403 },
+      );
     }
 
     const { id } = await params;
 
     const letter = await db.coverLetter.findFirst({
-      where: { id, user_id: auth.userId },
+      where: { id, ...(await docWhere(auth.userId)) },
     });
 
     if (!letter) {

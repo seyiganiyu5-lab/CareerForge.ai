@@ -37,6 +37,7 @@ import {
 } from '@/components/ui/dialog';
 import { Skeleton } from '@/components/ui/skeleton';
 import { UpgradeModal } from '@/components/billing/upgrade-modal';
+import { HiddenDocsNotice } from '@/components/billing/hidden-docs-notice';
 
 interface ResumeListItem {
   id: string;
@@ -153,6 +154,7 @@ export default function ResumeBuilderPage() {
   const [duplicating, setDuplicating] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [upgradeOpen, setUpgradeOpen] = useState(false);
+  const [hiddenCount, setHiddenCount] = useState(0);
 
   const fetchResumes = useCallback(async () => {
     try {
@@ -162,6 +164,7 @@ export default function ResumeBuilderPage() {
         const data = await res.json();
         if (data.success) {
           setResumes(data.resumes);
+          setHiddenCount(data.hiddenCount ?? 0);
           return;
         }
       }
@@ -268,6 +271,7 @@ export default function ResumeBuilderPage() {
 
       {/* Content */}
       <div className="flex-1 p-6">
+        {hiddenCount > 0 && <div className="mb-4"><HiddenDocsNotice count={hiddenCount} kind="resumes" /></div>}
         {error ? (
           <div className="flex items-center justify-center h-64">
             <div className="text-center">

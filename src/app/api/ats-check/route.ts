@@ -4,6 +4,7 @@ import { getRequestLocale, replyLanguageInstruction, type AiLocale } from '@/lib
 import { localizeAtsMessage } from '@/lib/ats/localize';
 import { db } from '@/lib/db';
 import { getAuthUser } from '@/lib/subscription/auth-helpers';
+import { docWhere } from '@/lib/subscription/documents';
 import { checkAndIncrementUsage } from '@/lib/subscription/service';
 import { FEATURE_KEYS } from '@/lib/subscription/features';
 import type { ResumeData } from '@/types/resume';
@@ -133,10 +134,7 @@ export async function POST(request: NextRequest) {
 
     if (resumeId) {
       const resume = await db.resume.findFirst({
-        where: {
-          id: resumeId,
-          user_id: authUser.userId,
-        },
+        where: { id: resumeId, ...(await docWhere(authUser.userId)) },
       });
 
       if (!resume) {

@@ -132,6 +132,7 @@ model Resume {
   template            String   @default("ats-classic")  // Template ID
   customization_json  String   @default("{}")           // Template customization as JSON
   status              String   @default("draft")        // draft, completed
+  plan_tier           String   @default("free")         // plan it was created on: free, pro (hidden on Free when pro)
   created_at          DateTime @default(now())
   updated_at          DateTime @updatedAt
 
@@ -139,6 +140,7 @@ model Resume {
   aiHistory AiHistory[]
 
   @@index([user_id])
+  @@index([user_id, plan_tier])
 }
 
 model AiHistory {
@@ -190,6 +192,7 @@ model CoverLetter {
   customization_json    String   @default("{}")
   status                String   @default("draft")
   language              String   @default("en")
+  plan_tier             String   @default("free")  // plan it was created on: free, pro (hidden on Free when pro)
   created_at            DateTime @default(now())
   updated_at            DateTime @updatedAt
 
@@ -197,6 +200,7 @@ model CoverLetter {
   versions CoverLetterVersion[]
 
   @@index([user_id])
+  @@index([user_id, plan_tier])
 }
 
 model JobApplication {

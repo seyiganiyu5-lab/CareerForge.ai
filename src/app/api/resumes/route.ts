@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/lib/db';
 import { getAuthUser } from '@/lib/subscription/auth-helpers';
+import { docAccess, hiddenDocsWhere, newDocTier } from '@/lib/subscription/documents';
 import { canAccess } from '@/lib/subscription/service';
 import { FEATURE_KEYS } from '@/lib/subscription/features';
 import { checkAndIncrementUsage } from '@/lib/subscription/service';
@@ -12,10 +13,12 @@ export async function GET() {
       return NextResponse.json({ success: false, error: 'Unauthorized' }, { status: 401 });
     }
 
-    const resumes = await db.resume.findMany({
-      where: { user_id: auth.userId },
-      orderBy: { updated_at: 'desc' },
-    });
+    const { planName, where } = await docAccess(auth.userId);
+    const hiddenWhere = hiddenDocsWhere(auth.userId, planName);
+    const [resumes, hiddenCount] = await Promise.all([
+      db.resume.findMany({ where, orderBy: { updated_at: 'desc' } }),
+      hiddenWhere ? db.resume.count({ where: hiddenWhere }) : 0,
+    ]);
 
     const formatted = resumes.map(r => ({
       id: r.id,
@@ -26,7 +29,7 @@ export async function GET() {
       updated_at: r.updated_at,
     }));
 
-    return NextResponse.json({ success: true, resumes: formatted });
+    return NextResponse.json({ success: true, resumes: formatted, hiddenCount });
   } catch (error) {
     console.error('Resumes list error:', error);
     return NextResponse.json({ success: false, error: 'Failed to fetch resumes' }, { status: 500 });
@@ -53,6 +56,7 @@ export async function POST(request: Request) {
     const resume = await db.resume.create({
       data: {
         user_id: auth.userId,
+        plan_tier: await newDocTier(auth.userId),
         title: title || 'Untitled Resume',
         template: template || 'ats-classic',
         data_json: JSON.stringify({}),

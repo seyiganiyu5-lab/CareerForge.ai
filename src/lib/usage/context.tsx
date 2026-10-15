@@ -1,6 +1,8 @@
 'use client';
 
 import React, { createContext, useContext, useState, useCallback, useEffect, useRef } from 'react';
+import { usePathname } from 'next/navigation';
+import { useAuth } from '@/lib/auth/context';
 import type { FeatureKey } from '@/lib/subscription/features';
 
 interface UsageData {
@@ -39,8 +41,9 @@ export function useUsage() {
   return useContext(UsageContext);
 }
 
-// Cache TTL: 5 minutes
-const CACHE_TTL = 5 * 60 * 1000;
+// Cache TTL: refreshed at most this often when moving between pages or
+// coming back to the tab, so a plan change shows up quickly everywhere
+const CACHE_TTL = 30 * 1000;
 
 export function UsageProvider({ children }: { children: React.ReactNode }) {
   const [data, setData] = useState<UsageData | null>(null);
@@ -60,7 +63,8 @@ export function UsageProvider({ children }: { children: React.ReactNode }) {
     }
 
     try {
-      setIsLoading(true);
+      // Only show loading the first time; later refreshes happen quietly
+      if (!dataRef.current) setIsLoading(true);
       lastFetchRef.current = now;
       const res = await fetch('/api/usage/me', { credentials: 'include' });
       if (!res.ok) return;
@@ -90,9 +94,28 @@ export function UsageProvider({ children }: { children: React.ReactNode }) {
     }
   }, []);
 
+  const pathname = usePathname();
+  const { isAuthenticated, isLoading: authLoading } = useAuth();
   useEffect(() => {
+    if (authLoading) return;
+    if (!isAuthenticated) {
+      // Signed out (or a different account next time): forget the old plan
+      setData(null);
+      dataRef.current = null;
+      setIsLoading(false);
+      return;
+    }
     fetchUsage();
-  }, []);
+  }, [fetchUsage, pathname, isAuthenticated, authLoading]);
+
+  useEffect(() => {
+    if (!isAuthenticated) return;
+    const onVisible = () => { if (document.visibilityState === 'visible') fetchUsage(); };
+    document.addEventListener('visibilitychange', onVisible);
+    return () => document.removeEventListener('visibilitychange', onVisible);
+  }, [fetchUsage, isAuthenticated]);
+
+  const refetch = useCallback(() => fetchUsage(true), [fetchUsage]);
 
   const canAccess = useCallback((featureKey: FeatureKey): boolean => {
     const d = dataRef.current;
@@ -104,7 +127,7 @@ export function UsageProvider({ children }: { children: React.ReactNode }) {
   }, []);
 
   return (
-    <UsageContext.Provider value={{ data, isLoading, canAccess, refetch: () => fetchUsage(true) }}>
+    <UsageContext.Provider value={{ data, isLoading, canAccess, refetch }}>
       {children}
     </UsageContext.Provider>
   );

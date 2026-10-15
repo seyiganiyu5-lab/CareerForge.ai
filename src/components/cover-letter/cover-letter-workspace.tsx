@@ -13,6 +13,8 @@ import { useCoverLetter } from '@/hooks/use-cover-letter';
 import { useBreakpoints } from '@/hooks/use-breakpoints';
 import { exportToPDF } from '@/lib/export/pdf';
 import { UpgradeModal } from '@/components/billing/upgrade-modal';
+import { ProBadge } from '@/components/billing/pro-badge';
+import { useUsage } from '@/lib/usage/context';
 import { Toolbar } from './toolbar';
 import { PreviewPanel } from './preview-panel';
 import { StatusBar } from './status-bar';
@@ -56,6 +58,12 @@ export default function CoverLetterWorkspace() {
   const { user } = useAuth();
   const t = useTranslations('app.coverLetterEditor');
   const tc = useTranslations('app.common');
+  // Pro-only parts of the editor (shown with a Pro badge on Free)
+  const { data: plan } = useUsage();
+  const isLocked = (key: string) => plan?.usage[key]?.enabled === false;
+  const aiLocked = isLocked('AI_COVER_LETTER');
+  const docxLocked = isLocked('DOCX_EXPORT');
+  const openGenerator = () => (aiLocked ? setShowUpgrade(true) : setShowGeneratorDialog(true));
   const { isMobile, isTablet, isDesktop } = useBreakpoints();
   // Compact = mobile or tablet portrait — use tab-switching layout
   const isCompact = isMobile || isTablet;
@@ -97,6 +105,7 @@ export default function CoverLetterWorkspace() {
   const handleAIEdit = async (section: string, action: AIEditAction) => {
     const text = data[section as keyof typeof data] as string;
     if (!text || !letterId) return;
+    if (aiLocked) { setShowUpgrade(true); return; }
 
     setAiActionLoading(true);
     setLoadingSection(section);
@@ -113,7 +122,7 @@ export default function CoverLetterWorkspace() {
     if (result.success) {
       toast.success(t('sectionUpdated'));
     } else {
-      if (result.error === 'limit_reached') setShowUpgrade(true);
+      if (result.error === 'limit_reached' || result.error === 'upgrade_required') setShowUpgrade(true);
       else toast.error(result.error || t('aiEditFailed'));
     }
   };
@@ -134,7 +143,7 @@ export default function CoverLetterWorkspace() {
       setShowGeneratorDialog(false);
       setActiveStep(4); // Move to Letter Content
     } else {
-      if (result.error === 'limit_reached') setShowUpgrade(true);
+      if (result.error === 'limit_reached' || result.error === 'upgrade_required') setShowUpgrade(true);
       else toast.error(result.error || t('generationFailed'));
     }
   };
@@ -154,6 +163,7 @@ export default function CoverLetterWorkspace() {
 
   const handleExportDOCX = useCallback(async () => {
     if (!letterId) return;
+    if (docxLocked) { setShowUpgrade(true); return; }
     try {
       const res = await fetch(`/api/cover-letters/${letterId}/export-docx`, {
         method: 'POST',
@@ -161,7 +171,7 @@ export default function CoverLetterWorkspace() {
       });
       if (!res.ok) {
         const json = await res.json();
-        if (json.error === 'limit_reached') { setShowUpgrade(true); return; }
+        if (json.error === 'limit_reached' || json.error === 'upgrade_required') { setShowUpgrade(true); return; }
         toast.error(t('exportFailed'));
         return;
       }
@@ -178,7 +188,7 @@ export default function CoverLetterWorkspace() {
     } catch {
       toast.error(t('docxExportFailed'));
     }
-  }, [letterId, data.companyName, t]);
+  }, [letterId, data.companyName, t, docxLocked, setShowUpgrade]);
 
   const handlePrint = useCallback(() => {
     if (!previewRef.current) return;
@@ -244,7 +254,7 @@ export default function CoverLetterWorkspace() {
       case 'ai-generate':
         return (
           <motion.div key="ai" variants={fadeIn} initial="hidden" animate="visible">
-            <AIPlaceholder onStartGenerate={() => setShowGeneratorDialog(true)} />
+            <AIPlaceholder onStartGenerate={openGenerator} locked={aiLocked} />
           </motion.div>
         );
       case 'content':
@@ -316,7 +326,9 @@ export default function CoverLetterWorkspace() {
           onCopyAll={handleCopyAll}
           onDelete={() => setDeleteDialogOpen(true)}
           onDuplicate={letterId ? () => duplicateLetter(letterId) : () => {}}
-          onGenerateAI={() => setShowGeneratorDialog(true)}
+          onGenerateAI={openGenerator}
+          aiLocked={aiLocked}
+          docxLocked={docxLocked}
         />
 
         {/* Mobile Tab Switcher */}
@@ -431,7 +443,9 @@ export default function CoverLetterWorkspace() {
         onCopyAll={handleCopyAll}
         onDelete={() => setDeleteDialogOpen(true)}
         onDuplicate={letterId ? () => duplicateLetter(letterId) : () => {}}
-        onGenerateAI={() => setShowGeneratorDialog(true)}
+        onGenerateAI={openGenerator}
+        aiLocked={aiLocked}
+        docxLocked={docxLocked}
       />
 
       {/* Step Navigation */}
@@ -492,7 +506,7 @@ export default function CoverLetterWorkspace() {
 
 // ─── AI Generate Placeholder (Step 3) ─────────────────────
 
-function AIPlaceholder({ onStartGenerate }: { onStartGenerate: () => void }) {
+function AIPlaceholder({ onStartGenerate, locked }: { onStartGenerate: () => void; locked?: boolean }) {
   const t = useTranslations('app.coverLetterEditor');
   return (
     <motion.div
@@ -517,6 +531,7 @@ function AIPlaceholder({ onStartGenerate }: { onStartGenerate: () => void }) {
       >
         <PenLine className="w-4 h-4" />
         {t('startGenerating')}
+        {locked && <ProBadge className="bg-white/20 text-white" />}
       </button>
       {/* Feature highlights — only on large screens, below the button */}
       <div className="hidden lg:grid grid-cols-3 gap-4 mt-8 w-full max-w-sm">

@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/lib/db';
 import { getAuthUser } from '@/lib/subscription/auth-helpers';
+import { docWhere } from '@/lib/subscription/documents';
 
 export async function GET(
   request: NextRequest,
@@ -15,7 +16,7 @@ export async function GET(
     const { id } = await params;
 
     const resume = await db.resume.findFirst({
-      where: { id, user_id: auth.userId },
+      where: { id, ...(await docWhere(auth.userId)) },
     });
 
     if (!resume) {
@@ -62,7 +63,7 @@ export async function PUT(
     };
 
     const existing = await db.resume.findFirst({
-      where: { id, user_id: auth.userId },
+      where: { id, ...(await docWhere(auth.userId)) },
     });
 
     if (!existing) {
@@ -111,7 +112,7 @@ export async function DELETE(
     const { id } = await params;
 
     const existing = await db.resume.findFirst({
-      where: { id, user_id: auth.userId },
+      where: { id, ...(await docWhere(auth.userId)) },
     });
 
     if (!existing) {

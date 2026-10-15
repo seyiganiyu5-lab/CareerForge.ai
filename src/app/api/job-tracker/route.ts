@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getAuthUser } from '@/lib/subscription/auth-helpers';
+import { requireFeature } from '@/lib/subscription/gate';
 import { checkAndIncrementUsage } from '@/lib/subscription/service';
 import { FEATURE_KEYS } from '@/lib/subscription/features';
 import { db } from '@/lib/db';
@@ -41,6 +42,8 @@ export async function GET(request: NextRequest) {
     if (!auth) {
       return NextResponse.json({ success: false, error: 'Unauthorized' }, { status: 401 });
     }
+    const locked = await requireFeature(auth.userId, FEATURE_KEYS.JOB_TRACKER);
+    if (locked) return locked;
 
     const { searchParams } = new URL(request.url);
     const status = searchParams.get('status');
@@ -87,6 +90,8 @@ export async function POST(request: NextRequest) {
     if (!auth) {
       return NextResponse.json({ success: false, error: 'Unauthorized' }, { status: 401 });
     }
+    const locked = await requireFeature(auth.userId, FEATURE_KEYS.JOB_TRACKER);
+    if (locked) return locked;
 
     const access = await checkAndIncrementUsage(auth.userId, FEATURE_KEYS.JOB_TRACKER);
     if (!access.allowed) {
@@ -97,7 +102,7 @@ export async function POST(request: NextRequest) {
         );
       }
       return NextResponse.json(
-        { success: false, error: 'This feature is not available on your plan' },
+        { success: false, error: 'upgrade_required' },
         { status: 403 },
       );
     }

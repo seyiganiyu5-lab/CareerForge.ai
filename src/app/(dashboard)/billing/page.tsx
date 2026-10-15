@@ -4,6 +4,7 @@ import { useState, useEffect, useCallback } from 'react';
 import { toast } from 'sonner';
 import { FadeInUp, ScaleIn, FadeIn, StaggerItem } from '@/lib/motion';
 import { useAuth } from '@/lib/auth/context';
+import { useUsage } from '@/lib/usage/context';
 import { useLocale, useTranslations } from '@/i18n/provider';
 import { FEATURE_DISPLAY_INFO, FEATURE_KEYS } from '@/lib/subscription/features';
 import {
@@ -237,6 +238,8 @@ export default function BillingPage() {
   const isCancelled = subscription?.status === 'cancelled';
   const isFree = currentPlanName === 'free';
 
+  const { refetch: refetchPlan } = useUsage();
+
   // Fetch all data
   const fetchAllData = useCallback(async () => {
     setLoading(true);
@@ -255,12 +258,15 @@ export default function BillingPage() {
         setRawUsage(usageRes.raw || {});
       }
       if (paymentsRes.success) setPayments(paymentsRes.payments || []);
+      // Plan may have just changed: refresh it for the rest of the app
+      // (sidebar Pro badges, locked features)
+      refetchPlan();
     } catch {
       toast.error(t('loadFailed'));
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [refetchPlan]);
 
   useEffect(() => {
     fetchAllData();

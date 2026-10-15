@@ -1,5 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getAuthUser } from '@/lib/subscription/auth-helpers';
+import { requireFeature } from '@/lib/subscription/gate';
+import { FEATURE_KEYS } from '@/lib/subscription/features';
 import { db } from '@/lib/db';
 import { inboundAddress, inboundDomain, newInboundToken } from '@/lib/job-tracker/inbound';
 
@@ -25,6 +27,8 @@ export async function GET(request: NextRequest) {
   try {
     const auth = await getAuthUser(request);
     if (!auth) return NextResponse.json({ success: false, error: 'Unauthorized' }, { status: 401 });
+    const locked = await requireFeature(auth.userId, FEATURE_KEYS.JOB_TRACKER);
+    if (locked) return locked;
 
     const domain = inboundDomain();
     if (!domain) return NextResponse.json({ success: true, enabled: false });
@@ -45,6 +49,8 @@ export async function POST(request: NextRequest) {
   try {
     const auth = await getAuthUser(request);
     if (!auth) return NextResponse.json({ success: false, error: 'Unauthorized' }, { status: 401 });
+    const locked = await requireFeature(auth.userId, FEATURE_KEYS.JOB_TRACKER);
+    if (locked) return locked;
 
     const domain = inboundDomain();
     if (!domain) return NextResponse.json({ success: true, enabled: false });

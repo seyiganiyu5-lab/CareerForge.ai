@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getAuthUser } from '@/lib/subscription/auth-helpers';
+import { requireFeature } from '@/lib/subscription/gate';
 import { checkAndIncrementUsage, recordUsage } from '@/lib/subscription/service';
 import { generateText, isAIConfigured, AIError, AI_NOT_CONFIGURED_MESSAGE } from '@/lib/ai/client';
 import { getRequestLocale, replyLanguageInstruction } from '@/lib/ai/locale';
@@ -26,6 +27,8 @@ export async function POST(request: NextRequest, { params }: Params) {
     if (!auth) {
       return NextResponse.json({ success: false, error: 'Unauthorized' }, { status: 401 });
     }
+    const locked = await requireFeature(auth.userId, FEATURE_KEYS.JOB_TRACKER);
+    if (locked) return locked;
 
     if (!isAIConfigured()) {
       return NextResponse.json({ success: false, error: AI_NOT_CONFIGURED_MESSAGE }, { status: 503 });
@@ -41,7 +44,7 @@ export async function POST(request: NextRequest, { params }: Params) {
         );
       }
       return NextResponse.json(
-        { success: false, error: 'This feature is not available on your plan' },
+        { success: false, error: 'upgrade_required' },
         { status: 403 },
       );
     }

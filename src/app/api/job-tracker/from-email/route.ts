@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
 import { getAuthUser } from '@/lib/subscription/auth-helpers';
+import { requireFeature } from '@/lib/subscription/gate';
+import { FEATURE_KEYS } from '@/lib/subscription/features';
 import { isAIConfigured, AIError, AI_NOT_CONFIGURED_MESSAGE } from '@/lib/ai/client';
 import { getRequestLocale } from '@/lib/ai/locale';
 import { processJobEmail } from '@/lib/job-tracker/process-email';
@@ -22,6 +24,8 @@ export async function POST(request: NextRequest) {
     if (!auth) {
       return NextResponse.json({ success: false, error: 'Unauthorized' }, { status: 401 });
     }
+    const locked = await requireFeature(auth.userId, FEATURE_KEYS.JOB_TRACKER);
+    if (locked) return locked;
     if (!isAIConfigured()) {
       return NextResponse.json({ success: false, error: AI_NOT_CONFIGURED_MESSAGE }, { status: 503 });
     }

@@ -1,6 +1,7 @@
 'use client';
 
-import { useState, useCallback, useMemo } from 'react';
+import { useState, useCallback, useMemo, useEffect } from 'react';
+import { useSearchParams } from 'next/navigation';
 import { AnimatePresence, motion } from 'framer-motion';
 import { toast } from 'sonner';
 import { FadeInUp, FadeIn } from '@/lib/motion';
@@ -233,6 +234,13 @@ function JobTrackerContent() {
   const updateFilters = useCallback((updates: Partial<typeof filters>) => {
     setFilters(prev => ({ ...prev, ...updates }));
   }, [setFilters]);
+
+  // Opened from the dashboard search: filter to that application
+  const searchParams = useSearchParams();
+  const linkedQuery = searchParams.get('q');
+  useEffect(() => {
+    if (linkedQuery) setFilters(prev => ({ ...prev, search: linkedQuery }));
+  }, [linkedQuery, setFilters]);
 
   const totalCount = filteredApplications.length;
 

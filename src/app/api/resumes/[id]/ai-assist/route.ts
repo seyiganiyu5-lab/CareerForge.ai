@@ -3,6 +3,7 @@ import { generateText, isAIConfigured, AIError, AI_NOT_CONFIGURED_MESSAGE } from
 import { getRequestLocale, contentLanguageInstruction } from '@/lib/ai/locale';
 import { db } from '@/lib/db';
 import { getAuthUser } from '@/lib/subscription/auth-helpers';
+import { docWhere } from '@/lib/subscription/documents';
 import { checkAndIncrementUsage, recordUsage } from '@/lib/subscription/service';
 import { FEATURE_KEYS } from '@/lib/subscription/features';
 
@@ -579,11 +580,11 @@ export async function POST(
     const { id } = await params;
 
     // 4. Ownership check
-    const resume = await db.resume.findUnique({
-      where: { id },
+    const resume = await db.resume.findFirst({
+      where: { id, ...(await docWhere(auth.userId)) },
     });
 
-    if (!resume || resume.user_id !== auth.userId) {
+    if (!resume) {
       return NextResponse.json(
         { success: false, error: 'Resume not found' },
         { status: 404 }
