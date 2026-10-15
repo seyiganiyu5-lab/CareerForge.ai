@@ -6,6 +6,8 @@ import { getAuthUser } from '@/lib/subscription/auth-helpers';
 import { checkAndIncrementUsage, recordUsage } from '@/lib/subscription/service';
 import { FEATURE_KEYS } from '@/lib/subscription/features';
 import type { ResumeData } from '@/types/resume';
+import { resumeDataToText } from '@/lib/resume/to-text';
+import { REVIEW_SYSTEM_PROMPT, normalizeReview } from '@/lib/resume/review';
 
 export async function POST(request: NextRequest) {
   try {
@@ -22,7 +24,7 @@ export async function POST(request: NextRequest) {
     const access = await checkAndIncrementUsage(auth.userId, FEATURE_KEYS.AI_RESUME_REVIEW, false);
     if (!access.allowed) {
       return NextResponse.json(
-        { success: false, error: access.reason === 'limit_reached' ? 'Usage limit reached' : 'Upgrade required', planName: access.planName },
+        { success: false, error: access.reason === 'limit_reached' ? 'limit_reached' : 'upgrade_required', planName: access.planName },
         { status: 403 },
       );
     }
@@ -47,74 +49,16 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ success: false, error: 'No resume content provided' }, { status: 400 });
     }
 
-    const prompt = `You are an expert resume reviewer and career coach. Analyze the following resume text and provide a comprehensive review.
-
-Evaluate it across these 4 sections:
-1. Summary / Professional Summary
-2. Experience / Work History
-3. Education
-4. Skills
-
-For EACH section, provide:
-- name: The section name
-- score: A score from 0 to 100
-- feedback: 2-3 sentences of detailed feedback on what's good and what needs improvement
-- suggestions: An array of 2-4 specific, actionable improvement suggestions
-
-Also provide an overall score from 0-100 that considers:
-- Content quality (clarity, relevance, impact)
-- Formatting and structure
-- Impact and quantification of achievements
-- Keyword optimization for ATS
-- Overall professionalism
-
-IMPORTANT: Respond ONLY with valid JSON in this exact format, no markdown or extra text:
-{
-  "score": 75,
-  "sections": [
-    {
-      "name": "Summary",
-      "score": 80,
-      "feedback": "...",
-      "suggestions": ["...", "..."]
-    },
-    {
-      "name": "Experience",
-      "score": 70,
-      "feedback": "...",
-      "suggestions": ["...", "..."]
-    },
-    {
-      "name": "Education",
-      "score": 85,
-      "feedback": "...",
-      "suggestions": ["..."]
-    },
-    {
-      "name": "Skills",
-      "score": 65,
-      "feedback": "...",
-      "suggestions": ["...", "..."]
-    }
-  ]
-}
-
-Resume text:
----
-${textToAnalyze.substring(0, 8000)}`;
-
     const raw = await generateText(
       [
-        { role: 'system', content: 'You are an expert resume reviewer. Always respond with valid JSON only, no markdown fences.' + replyLanguageInstruction(getRequestLocale(request)) },
-        { role: 'user', content: prompt },
+        { role: 'system', content: REVIEW_SYSTEM_PROMPT + replyLanguageInstruction(getRequestLocale(request)) },
+        { role: 'user', content: `Resume:\n"""\n${textToAnalyze.substring(0, 12000)}\n"""` },
       ],
-      { temperature: 0.4, json: true }
+      // Low temperature: the same resume should get (nearly) the same review
+      { temperature: 0.2, json: true },
     );
 
-    const review = parseJsonReply<{
-      score: number;
-      sections: { name: string; score: number; feedback: string; suggestions: string[] }[];
-    }>(raw);
+    const review = normalizeReview(parseJsonReply<unknown>(raw));
     await recordUsage(auth.userId, FEATURE_KEYS.AI_RESUME_REVIEW);
 
     return NextResponse.json({ success: true, review });
@@ -125,46 +69,4 @@ ${textToAnalyze.substring(0, 8000)}`;
     }
     return NextResponse.json({ success: false, error: 'Failed to analyze resume' }, { status: 500 });
   }
-}
-
-function resumeDataToText(data: ResumeData): string {
-  const parts: string[] = [];
-
-  const pi = data.personalInfo;
-  if (pi) {
-    if (pi.fullName) parts.push(pi.fullName);
-    if (pi.professionalTitle) parts.push(pi.professionalTitle);
-    if (pi.email) parts.push(pi.email);
-    if (pi.phone) parts.push(pi.phone);
-    if (pi.location) parts.push(pi.location);
-  }
-
-  if (data.professionalSummary) {
-    parts.push('Professional Summary', data.professionalSummary);
-  }
-
-  if (data.workExperience?.length) {
-    parts.push('Work Experience');
-    for (const exp of data.workExperience) {
-      if (exp.position) parts.push(`- ${exp.position} at ${exp.company || 'Unknown'}`);
-      if (exp.startDate) parts.push(`  ${exp.startDate} - ${exp.endDate || 'Present'}`);
-      if (exp.description) parts.push(`  ${exp.description}`);
-    }
-  }
-
-  if (data.education?.length) {
-    parts.push('Education');
-    for (const edu of data.education) {
-      const degree = [edu.degree, edu.fieldOfStudy].filter(Boolean).join(' in ');
-      if (degree || edu.school) parts.push(`- ${degree || 'Studies'} at ${edu.school || 'Unknown'}`);
-      if (edu.startDate) parts.push(`  ${edu.startDate} - ${edu.endDate || 'Present'}`);
-      if (edu.grade) parts.push(`  Grade: ${edu.grade}`);
-    }
-  }
-
-  if (data.skills?.length) {
-    parts.push('Skills', data.skills.map(s => typeof s === 'string' ? s : s.name || '').filter(Boolean).join(', '));
-  }
-
-  return parts.join('\n');
 }

@@ -32,6 +32,11 @@ const FR: Record<string, string> = {
   'Use action verbs (e.g., "led", "developed", "achieved") in your work descriptions.':
     'Utilisez des verbes d\'action (ex. « dirigé », « développé », « réalisé ») dans vos descriptions de poste.',
 
+  'Add dates to each role (e.g. "Jan 2021 – Mar 2023").':
+    'Ajoutez des dates à chaque poste (ex. « janv. 2021 – mars 2023 »).',
+  'Add measurable results (numbers, percentages, amounts) to show your impact.':
+    'Ajoutez des résultats mesurables (chiffres, pourcentages, montants) pour montrer votre impact.',
+
   // Education
   'Education section is missing. Most ATS systems expect this section.':
     'La section Formation est manquante. La plupart des ATS attendent cette section.',

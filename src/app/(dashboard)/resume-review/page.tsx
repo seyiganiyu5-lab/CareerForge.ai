@@ -35,7 +35,9 @@ interface ResumeOption {
 }
 
 interface SectionReview {
+  key?: string;
   name: string;
+  present?: boolean;
   score: number;
   feedback: string;
   suggestions: string[];
@@ -137,7 +139,7 @@ function SectionCard({ section, index }: { section: SectionReview; index: number
                   variant="outline"
                   className={`text-[10px] ${section.score >= 80 ? 'border-emerald-500/30 text-emerald-600' : section.score >= 60 ? 'border-amber-500/30 text-amber-600' : 'border-red-500/30 text-red-600'}`}
                 >
-                  {section.score >= 80 ? t('good') : section.score >= 60 ? t('fair') : t('needsWork')}
+                  {section.present === false ? t('missing') : section.score >= 80 ? t('good') : section.score >= 60 ? t('fair') : t('needsWork')}
                 </Badge>
               </div>
               <Progress value={section.score} className="mt-2 h-1.5" />
@@ -248,7 +250,11 @@ function ResumeReviewContent() {
       const data = await res.json();
 
       if (!data.success) {
-        toast.error(data.error || t('analysisFailed'));
+        toast.error(
+          data.error === 'limit_reached' ? t('limitReached')
+            : data.error === 'upgrade_required' ? t('upgradeRequired')
+              : data.error || t('analysisFailed'),
+        );
         return;
       }
 

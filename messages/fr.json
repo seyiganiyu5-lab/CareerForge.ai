@@ -1505,7 +1505,10 @@
       "score60": "De bonnes bases ! Avec quelques améliorations ciblées, votre CV peut se démarquer.",
       "score0": "Votre CV nécessite des améliorations importantes. Suivez les suggestions ci-dessous pour le renforcer.",
       "regenerate": "Régénérer",
-      "sectionBreakdown": "Détail par section"
+      "sectionBreakdown": "Détail par section",
+      "missing": "Manquant",
+      "limitReached": "Vous avez utilisé toutes vos analyses de CV pour cette offre. Passez à une offre supérieure pour continuer.",
+      "upgradeRequired": "L'analyse de CV est incluse dans l'offre Pro."
     },
     "resumeForms": {
       "noEntries": "Aucune entrée pour le moment. Cliquez sur le bouton ci-dessous pour en ajouter une.",

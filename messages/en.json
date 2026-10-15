@@ -1505,7 +1505,10 @@
       "score60": "Good foundation! With a few targeted improvements, your resume can stand out.",
       "score0": "Your resume needs significant improvements. Follow the suggestions below to strengthen it.",
       "regenerate": "Regenerate",
-      "sectionBreakdown": "Section Breakdown"
+      "sectionBreakdown": "Section Breakdown",
+      "missing": "Missing",
+      "limitReached": "You've used all your resume reviews on this plan. Upgrade to keep going.",
+      "upgradeRequired": "Resume review is part of the Pro plan."
     },
     "resumeForms": {
       "noEntries": "No entries yet. Click the button below to add one.",
