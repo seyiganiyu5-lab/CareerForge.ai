@@ -1843,7 +1843,9 @@
       "tpl_chronological_desc": "Mise en page traditionnelle appréciée des recruteurs, avec le parcours professionnel en premier.",
       "tpl_functional_desc": "Mise en page axée sur les compétences, idéale pour les reconversions et les parcours variés.",
       "tpl_combination_desc": "Équilibre entre compétences et expérience pour les profils polyvalents.",
-      "tpl_tech-professional_desc": "Conçu pour les ingénieurs logiciels, développeurs et professionnels de l'informatique."
+      "tpl_tech-professional_desc": "Conçu pour les ingénieurs logiciels, développeurs et professionnels de l'informatique.",
+      "cvLanguage": "Langue du CV",
+      "cvLanguageHint": "Titres des sections, dates et libellés de votre CV (PDF et Word)."
     },
     "templatesPage": {
       "title": "Galerie de modèles",

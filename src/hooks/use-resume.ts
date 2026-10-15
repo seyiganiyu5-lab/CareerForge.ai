@@ -288,8 +288,8 @@ export function useResume(): UseResumeReturn {
 
   const setTemplateId = useCallback((id: TemplateId) => {
     setTemplateIdState(id);
-    const newCustomization = createDefaultCustomization(id);
-    setCustomizationState(newCustomization);
+    // A new template resets the design settings, but the CV keeps its language
+    setCustomizationState((prev) => ({ ...createDefaultCustomization(id), language: prev.language }));
   }, []);
 
   const setCustomization = useCallback((c: TemplateCustomization) => {

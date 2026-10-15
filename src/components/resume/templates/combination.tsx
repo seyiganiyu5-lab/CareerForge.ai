@@ -8,11 +8,16 @@ import {
   getSectionLabel,
   getTemplateStyles,
   hexToRgba,
+  docLanguage,
+  docText,
+  levelLabel,
 } from '@/lib/templates/utils';
 import type { SectionKey } from '@/types/resume';
 
 export default function Combination({ data, customization }: TemplateComponentProps) {
   const s = getTemplateStyles(customization);
+  const lang = docLanguage(customization);
+  const T = docText(lang);
   const { personalInfo } = data;
   const contactItems = getContactItems(personalInfo);
   const visible = getVisibleSections(
@@ -135,7 +140,7 @@ export default function Combination({ data, customization }: TemplateComponentPr
 
       {/* ── Priority Sections (Summary, Skills, Work, Ed) ── */}
       {topSections.map(key => {
-        const label = getSectionLabel(key);
+        const label = getSectionLabel(key, lang);
         if (!label) return null;
         return (
           <div key={key} style={{ marginTop: `${sectionGap}px` }}>
@@ -147,7 +152,7 @@ export default function Combination({ data, customization }: TemplateComponentPr
 
       {/* ── Other Sections ────────────────────────────────── */}
       {bottomSections.map(key => {
-        const label = getSectionLabel(key);
+        const label = getSectionLabel(key, lang);
         if (!label) return null;
         return (
           <div key={key} style={{ marginTop: `${sectionGap}px` }}>
@@ -204,7 +209,7 @@ export default function Combination({ data, customization }: TemplateComponentPr
               <span style={{ fontSize: baseFontSize, color: '#374151' }}>
                 {skill.name}
                 {skill.proficiency && (
-                  <span style={{ color: '#6b7280', fontSize: '0.85em', marginLeft: 4 }}>({skill.proficiency})</span>
+                  <span style={{ color: '#6b7280', fontSize: '0.85em', marginLeft: 4 }}>({levelLabel(skill.proficiency, lang)})</span>
                 )}
               </span>
             </div>
@@ -243,8 +248,8 @@ export default function Combination({ data, customization }: TemplateComponentPr
           if (hasBoth) {
             return (
               <div>
-                {renderSkillGroup('Technical Skills', technicalSkills)}
-                {renderSkillGroup('Soft Skills', softSkills)}
+                {renderSkillGroup(T.technicalSkills, technicalSkills)}
+                {renderSkillGroup(T.softSkills, softSkills)}
               </div>
             );
           }
@@ -267,6 +272,7 @@ export default function Combination({ data, customization }: TemplateComponentPr
                   exp.startDate,
                   exp.endDate,
                   exp.currentJob,
+                  lang,
                 );
                 const descLines = exp.description
                   ? exp.description.split('\n').map(l => l.replace(/^[-•*]\s*/, '').trim()).filter(Boolean)
@@ -354,6 +360,7 @@ export default function Combination({ data, customization }: TemplateComponentPr
                 const dateRange = formatDateRangeRaw(
                   edu.startDate,
                   edu.endDate,
+                  lang,
                 );
                 return (
                   <div key={edu.id}>
@@ -370,7 +377,7 @@ export default function Combination({ data, customization }: TemplateComponentPr
                         }}
                       >
                         {edu.degree}
-                        {edu.fieldOfStudy ? ` in ${edu.fieldOfStudy}` : ''}
+                        {edu.fieldOfStudy ? ` ${T.in} ${edu.fieldOfStudy}` : ''}
                       </span>
                       {dateRange && (
                         <span
@@ -393,7 +400,7 @@ export default function Combination({ data, customization }: TemplateComponentPr
                       }}
                     >
                       {[edu.school, edu.location].filter(Boolean).join(', ')}
-                      {edu.grade ? ` — GPA: ${edu.grade}` : ''}
+                      {edu.grade ? ` — ${T.gpa}: ${edu.grade}` : ''}
                     </div>
                   </div>
                 );
@@ -548,7 +555,7 @@ export default function Combination({ data, customization }: TemplateComponentPr
                         whiteSpace: 'nowrap',
                       }}
                     >
-                      {formatDate(cert.issueDate)}
+                      {formatDate(cert.issueDate, lang)}
                     </span>
                   )}
                 </div>
@@ -559,15 +566,15 @@ export default function Combination({ data, customization }: TemplateComponentPr
       case 'languages':
         return (
           <div className="flex flex-wrap" style={{ gap: '4px 20px' }}>
-            {data.languages.map(lang => (
-              <span key={lang.id} style={{ fontSize: baseFontSize }}>
+            {data.languages.map(langItem => (
+              <span key={langItem.id} style={{ fontSize: baseFontSize }}>
                 <span style={{ fontWeight: 600, color: '#111827' }}>
-                  {lang.language}
+                  {langItem.language}
                 </span>
-                {lang.proficiency && (
+                {langItem.proficiency && (
                   <span style={{ color: '#6b7280' }}>
                     {' '}
-                    ({lang.proficiency})
+                    ({levelLabel(langItem.proficiency, lang)})
                   </span>
                 )}
               </span>
@@ -715,7 +722,7 @@ export default function Combination({ data, customization }: TemplateComponentPr
                       margin: '1px 0 0',
                     }}
                   >
-                    {[ref.position, ref.company].filter(Boolean).join(' at ')}
+                    {[ref.position, ref.company].filter(Boolean).join(` ${T.at} `)}
                   </div>
                   {(ref.email || ref.phone) && (
                     <div

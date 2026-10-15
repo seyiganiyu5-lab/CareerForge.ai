@@ -8,7 +8,7 @@ import {
   convertInchesToTwip,
 } from 'docx';
 import type { ResumeData } from '@/types/resume';
-import { formatDate, formatDateRange } from '@/lib/templates/utils';
+import { formatDate, formatDateRange, docText, levelLabel, getSectionLabel, type DocLanguage } from '@/lib/templates/utils';
 
 // ─── Helpers ──────────────────────────────────────────────────────
 
@@ -64,7 +64,8 @@ const dateRange = formatDateRange;
 
 // ─── Section Builders ─────────────────────────────────────────────
 
-function buildPersonalInfo(data: ResumeData): Paragraph[] {
+function buildPersonalInfo(data: ResumeData, lang: DocLanguage): Paragraph[] {
+  const T = docText(lang);
   const { personalInfo: p } = data;
   const paras: Paragraph[] = [];
 
@@ -75,7 +76,7 @@ function buildPersonalInfo(data: ResumeData): Paragraph[] {
       spacing: { after: 40 },
       children: [
         new TextRun({
-          text: p.fullName || 'Your Name',
+          text: p.fullName || T.yourName,
           bold: true,
           size: 32,
           font: 'Calibri',
@@ -149,16 +150,16 @@ function buildPersonalInfo(data: ResumeData): Paragraph[] {
   return paras;
 }
 
-function buildSummary(data: ResumeData): Paragraph[] {
+function buildSummary(data: ResumeData, lang: DocLanguage): Paragraph[] {
   if (!data.professionalSummary?.trim()) return [];
-  return [heading('Professional Summary'), textPara(data.professionalSummary.trim())];
+  return [heading(getSectionLabel('professionalSummary', lang)), textPara(data.professionalSummary.trim())];
 }
 
-function buildWorkExperience(data: ResumeData): Paragraph[] {
+function buildWorkExperience(data: ResumeData, lang: DocLanguage): Paragraph[] {
   const items = data.workExperience?.filter((e) => e.company || e.position);
   if (!items?.length) return [];
 
-  const paras: Paragraph[] = [heading('Work Experience')];
+  const paras: Paragraph[] = [heading(getSectionLabel('workExperience', lang))];
 
   for (const exp of items) {
     // Company + location line
@@ -171,7 +172,7 @@ function buildWorkExperience(data: ResumeData): Paragraph[] {
     paras.push(new Paragraph({ spacing: { before: 160, after: 0 }, children: companyChildren }));
 
     // Position + date range line
-    const dateStr = dateRange(exp.startDate, exp.endDate, exp.currentJob);
+    const dateStr = dateRange(exp.startDate, exp.endDate, exp.currentJob, lang);
     const posChildren: TextRun[] = [
       new TextRun({ text: exp.position || '', italics: true, size: 21, font: 'Calibri' }),
     ];
@@ -196,11 +197,12 @@ function buildWorkExperience(data: ResumeData): Paragraph[] {
   return paras;
 }
 
-function buildEducation(data: ResumeData): Paragraph[] {
+function buildEducation(data: ResumeData, lang: DocLanguage): Paragraph[] {
+  const T = docText(lang);
   const items = data.education?.filter((e) => e.school || e.degree);
   if (!items?.length) return [];
 
-  const paras: Paragraph[] = [heading('Education')];
+  const paras: Paragraph[] = [heading(getSectionLabel('education', lang))];
 
   for (const edu of items) {
     const schoolChildren: TextRun[] = [
@@ -214,10 +216,10 @@ function buildEducation(data: ResumeData): Paragraph[] {
     const degreeParts: string[] = [];
     if (edu.degree) degreeParts.push(edu.degree);
     if (edu.fieldOfStudy) degreeParts.push(edu.fieldOfStudy);
-    if (edu.grade) degreeParts.push(`GPA: ${edu.grade}`);
+    if (edu.grade) degreeParts.push(`${T.gpa}: ${edu.grade}`);
 
     const degreeStr = degreeParts.join(', ');
-    const dateStr = dateRange(edu.startDate, edu.endDate, false);
+    const dateStr = dateRange(edu.startDate, edu.endDate, false, lang);
 
     const degreeChildren: TextRun[] = [
       new TextRun({ text: degreeStr, italics: true, size: 21, font: 'Calibri' }),
@@ -247,7 +249,8 @@ function subheading(text: string): Paragraph {
   });
 }
 
-function buildSkills(data: ResumeData): Paragraph[] {
+function buildSkills(data: ResumeData, lang: DocLanguage): Paragraph[] {
+  const T = docText(lang);
   const items = data.skills?.filter((s) => s.name?.trim());
   if (!items?.length) return [];
 
@@ -255,7 +258,7 @@ function buildSkills(data: ResumeData): Paragraph[] {
   const softSkills = items.filter((s) => s.type === 'soft');
   const hasBothGroups = technicalSkills.length > 0 && softSkills.length > 0;
 
-  const paras: Paragraph[] = [heading('Skills')];
+  const paras: Paragraph[] = [heading(getSectionLabel('skills', lang))];
 
   const skillRuns = (skills: typeof items): TextRun[] => {
     const runs: TextRun[] = [];
@@ -263,7 +266,7 @@ function buildSkills(data: ResumeData): Paragraph[] {
       if (i > 0) runs.push(new TextRun({ text: '  •  ', size: 21, font: 'Calibri' }));
       runs.push(new TextRun({ text: s.name.trim(), size: 21, font: 'Calibri' }));
       if (s.proficiency) {
-        runs.push(new TextRun({ text: ` (${s.proficiency})`, size: 18, font: 'Calibri', color: '777777', italics: true }));
+        runs.push(new TextRun({ text: ` (${levelLabel(s.proficiency, lang)})`, size: 18, font: 'Calibri', color: '777777', italics: true }));
       }
     });
     return runs;
@@ -271,11 +274,11 @@ function buildSkills(data: ResumeData): Paragraph[] {
 
   if (hasBothGroups) {
     // Technical Skills subheading
-    paras.push(subheading('Technical Skills'));
+    paras.push(subheading(T.technicalSkills));
     paras.push(new Paragraph({ spacing: { before: 40, after: 60, line: 276 }, children: skillRuns(technicalSkills) }));
 
     // Soft Skills subheading
-    paras.push(subheading('Soft Skills'));
+    paras.push(subheading(T.softSkills));
     paras.push(new Paragraph({ spacing: { before: 40, after: 40, line: 276 }, children: skillRuns(softSkills) }));
   } else {
     paras.push(new Paragraph({ spacing: { before: 40, after: 40, line: 276 }, children: skillRuns(items) }));
@@ -284,11 +287,12 @@ function buildSkills(data: ResumeData): Paragraph[] {
   return paras;
 }
 
-function buildProjects(data: ResumeData): Paragraph[] {
+function buildProjects(data: ResumeData, lang: DocLanguage): Paragraph[] {
+  const T = docText(lang);
   const items = data.projects?.filter((p) => p.name?.trim());
   if (!items?.length) return [];
 
-  const paras: Paragraph[] = [heading('Projects')];
+  const paras: Paragraph[] = [heading(getSectionLabel('projects', lang))];
 
   for (const proj of items) {
     // Project name + URLs
@@ -322,7 +326,7 @@ function buildProjects(data: ResumeData): Paragraph[] {
         new Paragraph({
           spacing: { before: 20, after: 0, line: 276 },
           children: [
-            new TextRun({ text: 'Technologies: ', bold: true, size: 20, font: 'Calibri', color: '555555' }),
+            new TextRun({ text: `${T.technologies}: `, bold: true, size: 20, font: 'Calibri', color: '555555' }),
             new TextRun({ text: proj.technologies, size: 20, font: 'Calibri', color: '555555', italics: true }),
           ],
         })
@@ -335,7 +339,7 @@ function buildProjects(data: ResumeData): Paragraph[] {
         new Paragraph({
           spacing: { before: 40, after: 40, line: 276 },
           children: [
-            new TextRun({ text: 'Results: ', bold: true, size: 20, font: 'Calibri', color: '555555' }),
+            new TextRun({ text: `${T.results}: `, bold: true, size: 20, font: 'Calibri', color: '555555' }),
             new TextRun({ text: proj.results.trim(), size: 20, font: 'Calibri', color: '555555', italics: true }),
           ],
         })
@@ -346,11 +350,11 @@ function buildProjects(data: ResumeData): Paragraph[] {
   return paras;
 }
 
-function buildCertifications(data: ResumeData): Paragraph[] {
+function buildCertifications(data: ResumeData, lang: DocLanguage): Paragraph[] {
   const items = data.certifications?.filter((c) => c.name?.trim());
   if (!items?.length) return [];
 
-  const paras: Paragraph[] = [heading('Certifications')];
+  const paras: Paragraph[] = [heading(getSectionLabel('certifications', lang))];
 
   for (const cert of items) {
     const children: TextRun[] = [
@@ -360,7 +364,7 @@ function buildCertifications(data: ResumeData): Paragraph[] {
       children.push(new TextRun({ text: ` — ${cert.issuer}`, size: 21, font: 'Calibri' }));
     }
     if (cert.issueDate) {
-      children.push(new TextRun({ text: ` (${formatDate(cert.issueDate)})`, size: 20, font: 'Calibri', color: '666666' }));
+      children.push(new TextRun({ text: ` (${formatDate(cert.issueDate, lang)})`, size: 20, font: 'Calibri', color: '666666' }));
     }
     paras.push(new Paragraph({ spacing: { before: 60, after: 40, line: 276 }, children }));
   }
@@ -368,16 +372,16 @@ function buildCertifications(data: ResumeData): Paragraph[] {
   return paras;
 }
 
-function buildLanguages(data: ResumeData): Paragraph[] {
+function buildLanguages(data: ResumeData, lang: DocLanguage): Paragraph[] {
   const items = data.languages?.filter((l) => l.language?.trim());
   if (!items?.length) return [];
 
-  const paras: Paragraph[] = [heading('Languages')];
+  const paras: Paragraph[] = [heading(getSectionLabel('languages', lang))];
 
   const text = items
     .map((l) => {
       const parts = [l.language.trim()];
-      if (l.proficiency) parts.push(`(${l.proficiency})`);
+      if (l.proficiency) parts.push(`(${levelLabel(l.proficiency, lang)})`);
       return parts.join(' ');
     })
     .join('  •  ');
@@ -392,11 +396,11 @@ function buildLanguages(data: ResumeData): Paragraph[] {
   return paras;
 }
 
-function buildAwards(data: ResumeData): Paragraph[] {
+function buildAwards(data: ResumeData, lang: DocLanguage): Paragraph[] {
   const items = data.awards?.filter((a) => a.name?.trim());
   if (!items?.length) return [];
 
-  const paras: Paragraph[] = [heading('Awards')];
+  const paras: Paragraph[] = [heading(getSectionLabel('awards', lang))];
 
   for (const award of items) {
     const children: TextRun[] = [
@@ -414,11 +418,11 @@ function buildAwards(data: ResumeData): Paragraph[] {
   return paras;
 }
 
-function buildVolunteer(data: ResumeData): Paragraph[] {
+function buildVolunteer(data: ResumeData, lang: DocLanguage): Paragraph[] {
   const items = data.volunteerExperience?.filter((v) => v.organization?.trim());
   if (!items?.length) return [];
 
-  const paras: Paragraph[] = [heading('Volunteer Experience')];
+  const paras: Paragraph[] = [heading(getSectionLabel('volunteerExperience', lang))];
 
   for (const vol of items) {
     paras.push(
@@ -447,11 +451,12 @@ function buildVolunteer(data: ResumeData): Paragraph[] {
   return paras;
 }
 
-function buildReferences(data: ResumeData): Paragraph[] {
+function buildReferences(data: ResumeData, lang: DocLanguage): Paragraph[] {
+  const T = docText(lang);
   const items = data.references?.filter((r) => r.name?.trim());
   if (!items?.length) return [];
 
-  const paras: Paragraph[] = [heading('References')];
+  const paras: Paragraph[] = [heading(getSectionLabel('references', lang))];
 
   for (const ref of items) {
     const children: TextRun[] = [
@@ -461,7 +466,7 @@ function buildReferences(data: ResumeData): Paragraph[] {
     if (ref.position) details.push(ref.position);
     if (ref.company) details.push(ref.company);
     if (details.length > 0) {
-      children.push(new TextRun({ text: `, ${details.join(' at ')}`, size: 21, font: 'Calibri' }));
+      children.push(new TextRun({ text: `, ${details.join(` ${T.at} `)}`, size: 21, font: 'Calibri' }));
     }
     paras.push(new Paragraph({ spacing: { before: 120, after: 0 }, children }));
 
@@ -483,10 +488,10 @@ function buildReferences(data: ResumeData): Paragraph[] {
   return paras;
 }
 
-function buildAdditionalInfo(data: ResumeData): Paragraph[] {
+function buildAdditionalInfo(data: ResumeData, lang: DocLanguage): Paragraph[] {
   if (!data.additionalInfo?.text?.trim()) return [];
   return [
-    heading('Additional Information'),
+    heading(getSectionLabel('additionalInfo', lang)),
     ...data.additionalInfo.text
       .split(/\n/)
       .filter((l) => l.trim())
@@ -496,20 +501,20 @@ function buildAdditionalInfo(data: ResumeData): Paragraph[] {
 
 // ─── Main Export Function ─────────────────────────────────────────
 
-export async function generateDocxBlob(data: ResumeData): Promise<Buffer> {
+export async function generateDocxBlob(data: ResumeData, lang: DocLanguage = 'en'): Promise<Buffer> {
   const sections: Paragraph[] = [
-    ...buildPersonalInfo(data),
-    ...buildSummary(data),
-    ...buildWorkExperience(data),
-    ...buildEducation(data),
-    ...buildSkills(data),
-    ...buildProjects(data),
-    ...buildCertifications(data),
-    ...buildLanguages(data),
-    ...buildAwards(data),
-    ...buildVolunteer(data),
-    ...buildReferences(data),
-    ...buildAdditionalInfo(data),
+    ...buildPersonalInfo(data, lang),
+    ...buildSummary(data, lang),
+    ...buildWorkExperience(data, lang),
+    ...buildEducation(data, lang),
+    ...buildSkills(data, lang),
+    ...buildProjects(data, lang),
+    ...buildCertifications(data, lang),
+    ...buildLanguages(data, lang),
+    ...buildAwards(data, lang),
+    ...buildVolunteer(data, lang),
+    ...buildReferences(data, lang),
+    ...buildAdditionalInfo(data, lang),
   ];
 
   // No post-filter needed — section builders only add non-empty content

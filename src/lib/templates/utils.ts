@@ -1,22 +1,23 @@
 import type { PersonalInfo, SectionKey, ResumeData } from '@/types/resume';
+import { docText, monthName, sectionLabel, type DocLanguage } from './labels';
+
+export { docLanguage, docText, levelLabel, type DocLanguage } from './labels';
 
 // ─── Date Formatting ──────────────────────────────────────────
 
-const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'] as const;
-
-export function formatDate(dateStr: string): string {
+export function formatDate(dateStr: string, lang: DocLanguage = 'en'): string {
   if (!dateStr) return '';
   const parts = dateStr.split('-');
   if (parts.length < 2) return dateStr; // not a standard YYYY-MM format, return as-is
   const year = parts[0];
   const monthIndex = parseInt(parts[1], 10) - 1;
   if (monthIndex < 0 || monthIndex > 11 || isNaN(monthIndex)) return dateStr;
-  return `${MONTHS[monthIndex]} ${year}`;
+  return `${monthName(monthIndex, lang)} ${year}`;
 }
 
-export function formatDateRange(start: string, end: string, current: boolean): string {
-  const s = formatDate(start);
-  const e = current ? 'Present' : formatDate(end);
+export function formatDateRange(start: string, end: string, current: boolean, lang: DocLanguage = 'en'): string {
+  const s = formatDate(start, lang);
+  const e = current ? docText(lang).present : formatDate(end, lang);
   if (!s && !e) return '';
   if (!s) return e;
   if (!e) return s;
@@ -24,9 +25,9 @@ export function formatDateRange(start: string, end: string, current: boolean): s
 }
 
 /** Format a date range as "Jan 2024 – Mar 2026". Used for education. */
-export function formatDateRangeRaw(start: string, end: string): string {
-  const s = formatDate(start);
-  const e = formatDate(end);
+export function formatDateRangeRaw(start: string, end: string, lang: DocLanguage = 'en'): string {
+  const s = formatDate(start, lang);
+  const e = formatDate(end, lang);
   if (!s && !e) return '';
   if (!s) return e;
   if (!e) return s;
@@ -92,23 +93,8 @@ export function sectionHasContent(data: ResumeData, key: SectionKey): boolean {
 
 // ─── Section Labels ───────────────────────────────────────────
 
-const SECTION_LABELS: Record<SectionKey, string> = {
-  personalInfo: '',
-  professionalSummary: 'Professional Summary',
-  workExperience: 'Work Experience',
-  education: 'Education',
-  skills: 'Skills',
-  projects: 'Projects',
-  certifications: 'Certifications',
-  languages: 'Languages',
-  awards: 'Awards',
-  volunteerExperience: 'Volunteer Experience',
-  references: 'References',
-  additionalInfo: 'Additional Information',
-};
-
-export function getSectionLabel(key: SectionKey): string {
-  return SECTION_LABELS[key];
+export function getSectionLabel(key: SectionKey, lang: DocLanguage = 'en'): string {
+  return sectionLabel(key, lang);
 }
 
 // ─── Hex to RGBA helper ───────────────────────────────────────

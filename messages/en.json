@@ -1843,7 +1843,9 @@
       "tpl_chronological_desc": "Traditional recruiter-friendly layout with employment history first.",
       "tpl_functional_desc": "Skills-first layout ideal for career changers and diverse backgrounds.",
       "tpl_combination_desc": "Balanced mix of skills and experience sections for versatile professionals.",
-      "tpl_tech-professional_desc": "Designed for software engineers, developers, and IT professionals."
+      "tpl_tech-professional_desc": "Designed for software engineers, developers, and IT professionals.",
+      "cvLanguage": "CV language",
+      "cvLanguageHint": "Section headings, dates and labels on your CV (PDF and Word)."
     },
     "templatesPage": {
       "title": "Templates Gallery",

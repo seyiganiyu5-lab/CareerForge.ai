@@ -9,10 +9,15 @@ import {
   getSectionLabel,
   getTemplateStyles,
   hexToRgba,
+  docLanguage,
+  docText,
+  levelLabel,
 } from '@/lib/templates/utils';
 
 export default function TechProfessional({ data, customization }: TemplateComponentProps) {
   const s = getTemplateStyles(customization);
+  const lang = docLanguage(customization);
+  const T = docText(lang);
   const fs = 11 * customization.fontSize;
   const sectionGap = 16 * customization.sectionSpacing;
 
@@ -27,13 +32,13 @@ export default function TechProfessional({ data, customization }: TemplateCompon
   // Build labeled contact entries for the grid
   const contactEntries: { label: string; value: string; isLink?: boolean; href?: string }[] = [];
   const info = data.personalInfo;
-  if (info.email) contactEntries.push({ label: 'EMAIL', value: info.email, href: `mailto:${info.email}` });
-  if (info.phone) contactEntries.push({ label: 'PHONE', value: info.phone, href: `tel:${info.phone}` });
-  if (info.location) contactEntries.push({ label: 'LOCATION', value: info.location });
-  if (info.website && info.website !== 'https://') contactEntries.push({ label: 'WEB', value: info.website, isLink: true });
-  if (info.linkedin) contactEntries.push({ label: 'LINKEDIN', value: info.linkedin, isLink: true });
-  if (info.github) contactEntries.push({ label: 'GITHUB', value: info.github, isLink: true });
-  if (info.portfolio) contactEntries.push({ label: 'PORTFOLIO', value: info.portfolio, isLink: true });
+  if (info.email) contactEntries.push({ label: T.email.toUpperCase(), value: info.email, href: `mailto:${info.email}` });
+  if (info.phone) contactEntries.push({ label: T.phone.toUpperCase(), value: info.phone, href: `tel:${info.phone}` });
+  if (info.location) contactEntries.push({ label: T.location.toUpperCase(), value: info.location });
+  if (info.website && info.website !== 'https://') contactEntries.push({ label: T.web.toUpperCase(), value: info.website, isLink: true });
+  if (info.linkedin) contactEntries.push({ label: T.linkedin.toUpperCase(), value: info.linkedin, isLink: true });
+  if (info.github) contactEntries.push({ label: T.github.toUpperCase(), value: info.github, isLink: true });
+  if (info.portfolio) contactEntries.push({ label: T.portfolio.toUpperCase(), value: info.portfolio, isLink: true });
 
   // Accent color with 10% opacity for tag backgrounds
   const accentBg10 = hexToRgba(customization.accentColor, 0.1);
@@ -101,7 +106,7 @@ export default function TechProfessional({ data, customization }: TemplateCompon
                     href={entry.href || (entry.value.startsWith('http') ? entry.value : `https://${entry.value}`)}
                     style={{
                       fontSize: `${fs * 0.88}px`,
-                      color: (entry.label === 'GITHUB' || entry.label === 'PORTFOLIO' || entry.label === 'WEB' || entry.label === 'LINKEDIN') ? customization.accentColor : '#374151',
+                      color: entry.isLink ? customization.accentColor : '#374151',
                       textDecoration: 'none',
                       fontWeight: 400,
                       wordBreak: 'break-all',
@@ -156,7 +161,8 @@ function SectionRenderer({
   sectionGap: number;
   accentBg10: string;
 }) {
-  const label = getSectionLabel(sectionKey);
+  const lang = docLanguage(customization);
+  const label = getSectionLabel(sectionKey, lang);
   if (!label) return null;
 
   return (
@@ -241,6 +247,7 @@ function renderSummary(data: TemplateComponentProps['data'], customization: Temp
 // ─── Work Experience ───────────────────────────────────────────
 
 function renderWorkExperience(data: TemplateComponentProps['data'], customization: TemplateComponentProps['customization'], fs: number) {
+  const lang = docLanguage(customization);
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: `${12 * customization.sectionSpacing}px`, marginTop: `${6 * customization.sectionSpacing}px` }}>
       {data.workExperience.filter(e => e.company || e.position).map((exp) => {
@@ -252,7 +259,7 @@ function renderWorkExperience(data: TemplateComponentProps['data'], customizatio
                 {exp.position}
               </span>
               <span style={{ fontSize: `${fs * 0.85}px`, color: '#6b7280', whiteSpace: 'nowrap' }}>
-                {formatDateRange(exp.startDate, exp.endDate, exp.currentJob)}
+                {formatDateRange(exp.startDate, exp.endDate, exp.currentJob, lang)}
               </span>
             </div>
             <div style={{ fontSize: `${fs * 0.9}px`, color: '#4b5563', marginTop: 1 }}>
@@ -284,20 +291,22 @@ function renderWorkExperience(data: TemplateComponentProps['data'], customizatio
 // ─── Education ─────────────────────────────────────────────────
 
 function renderEducation(data: TemplateComponentProps['data'], customization: TemplateComponentProps['customization'], fs: number) {
+  const lang = docLanguage(customization);
+  const T = docText(lang);
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: `${10 * customization.sectionSpacing}px`, marginTop: `${6 * customization.sectionSpacing}px` }}>
       {data.education.filter(e => e.school || e.degree).map((edu) => (
         <div key={edu.id}>
           <div className="flex items-baseline justify-between gap-2">
             <span style={{ fontWeight: 700, fontSize: `${fs}px`, color: '#111827' }}>
-              {edu.degree}{edu.fieldOfStudy ? ` in ${edu.fieldOfStudy}` : ''}
+              {edu.degree}{edu.fieldOfStudy ? ` ${T.in} ${edu.fieldOfStudy}` : ''}
             </span>
             <span style={{ fontSize: `${fs * 0.85}px`, color: '#6b7280', whiteSpace: 'nowrap' }}>
-              {formatDateRangeRaw(edu.startDate, edu.endDate)}
+              {formatDateRangeRaw(edu.startDate, edu.endDate, lang)}
             </span>
           </div>
           <div style={{ fontSize: `${fs * 0.9}px`, color: '#4b5563', marginTop: 1 }}>
-            {edu.school}{edu.location ? ` · ${edu.location}` : ''}{edu.grade ? ` — GPA: ${edu.grade}` : ''}
+            {edu.school}{edu.location ? ` · ${edu.location}` : ''}{edu.grade ? ` — ${T.gpa}: ${edu.grade}` : ''}
           </div>
         </div>
       ))}
@@ -308,6 +317,8 @@ function renderEducation(data: TemplateComponentProps['data'], customization: Te
 // ─── Skills (Tech Tags) ────────────────────────────────────────
 
 function renderSkills(data: TemplateComponentProps['data'], customization: TemplateComponentProps['customization'], fs: number, accentBg10: string) {
+  const lang = docLanguage(customization);
+  const T = docText(lang);
   if (data.skills.length === 0) return null;
   const technicalSkills = data.skills.filter(sk => sk.type !== 'soft');
   const softSkills = data.skills.filter(sk => sk.type === 'soft');
@@ -328,7 +339,7 @@ function renderSkills(data: TemplateComponentProps['data'], customization: Templ
         lineHeight: 1.4,
       }}
     >
-      {skill.name}{skill.proficiency && <span style={{ fontSize: '0.85em', opacity: 0.7 }}> — {skill.proficiency}</span>}
+      {skill.name}{skill.proficiency && <span style={{ fontSize: '0.85em', opacity: 0.7 }}> — {levelLabel(skill.proficiency, lang)}</span>}
     </span>
   );
 
@@ -355,8 +366,8 @@ function renderSkills(data: TemplateComponentProps['data'], customization: Templ
   if (hasBoth) {
     return (
       <div style={{ marginTop: `${6 * customization.sectionSpacing}px` }}>
-        {renderSkillGroup('Technical Skills', technicalSkills)}
-        {renderSkillGroup('Soft Skills', softSkills)}
+        {renderSkillGroup(T.technicalSkills, technicalSkills)}
+        {renderSkillGroup(T.softSkills, softSkills)}
       </div>
     );
   }
@@ -373,6 +384,8 @@ function renderSkills(data: TemplateComponentProps['data'], customization: Templ
 // ─── Projects (Prominent) ─────────────────────────────────────
 
 function renderProjects(data: TemplateComponentProps['data'], customization: TemplateComponentProps['customization'], fs: number, s: ReturnType<typeof getTemplateStyles>) {
+  const lang = docLanguage(customization);
+  const T = docText(lang);
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: `${12 * customization.sectionSpacing}px`, marginTop: `${6 * customization.sectionSpacing}px` }}>
       {data.projects.filter(p => p.name).map((proj) => {
@@ -426,7 +439,7 @@ function renderProjects(data: TemplateComponentProps['data'], customization: Tem
                     href={proj.githubUrl.startsWith('http') ? proj.githubUrl : `https://${proj.githubUrl}`}
                     style={{ fontSize: `${fs * 0.85}px`, color: customization.accentColor, textDecoration: 'none', fontWeight: 500 }}
                   >
-                    &#x2192; GitHub
+                    &#x2192; {T.github}
                   </a>
                 )}
                 {proj.liveUrl && (
@@ -434,7 +447,7 @@ function renderProjects(data: TemplateComponentProps['data'], customization: Tem
                     href={proj.liveUrl.startsWith('http') ? proj.liveUrl : `https://${proj.liveUrl}`}
                     style={{ fontSize: `${fs * 0.85}px`, color: customization.accentColor, textDecoration: 'none', fontWeight: 500 }}
                   >
-                    &#x2192; Live Demo
+                    &#x2192; {T.liveDemo}
                   </a>
                 )}
               </div>
@@ -449,6 +462,7 @@ function renderProjects(data: TemplateComponentProps['data'], customization: Tem
 // ─── Certifications ────────────────────────────────────────────
 
 function renderCertifications(data: TemplateComponentProps['data'], customization: TemplateComponentProps['customization'], fs: number) {
+  const lang = docLanguage(customization);
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: `${6 * customization.sectionSpacing}px`, marginTop: `${6 * customization.sectionSpacing}px` }}>
       {data.certifications.filter(c => c.name).map((cert) => (
@@ -457,7 +471,7 @@ function renderCertifications(data: TemplateComponentProps['data'], customizatio
             {cert.name}
           </span>
           <span style={{ fontSize: `${fs * 0.85}px`, color: '#6b7280', whiteSpace: 'nowrap' }}>
-            {cert.issuer}{cert.issueDate ? ` · ${formatDate(cert.issueDate)}` : ''}
+            {cert.issuer}{cert.issueDate ? ` · ${formatDate(cert.issueDate, lang)}` : ''}
           </span>
         </div>
       ))}
@@ -468,12 +482,13 @@ function renderCertifications(data: TemplateComponentProps['data'], customizatio
 // ─── Languages ─────────────────────────────────────────────────
 
 function renderLanguages(data: TemplateComponentProps['data'], customization: TemplateComponentProps['customization'], fs: number) {
+  const lang = docLanguage(customization);
   return (
     <div className="flex flex-wrap" style={{ gap: '4px 16px', marginTop: `${6 * customization.sectionSpacing}px` }}>
-      {data.languages.map((lang) => (
-        <span key={lang.id} style={{ fontSize: `${fs}px`, color: '#374151' }}>
-          <span style={{ fontWeight: 600, color: '#111827' }}>{lang.language}</span>
-          <span style={{ color: '#6b7280' }}> — {lang.proficiency}</span>
+      {data.languages.map((langItem) => (
+        <span key={langItem.id} style={{ fontSize: `${fs}px`, color: '#374151' }}>
+          <span style={{ fontWeight: 600, color: '#111827' }}>{langItem.language}</span>
+          <span style={{ color: '#6b7280' }}> — {levelLabel(langItem.proficiency, lang)}</span>
         </span>
       ))}
     </div>
@@ -542,13 +557,15 @@ function renderVolunteer(data: TemplateComponentProps['data'], customization: Te
 // ─── References ────────────────────────────────────────────────
 
 function renderReferences(data: TemplateComponentProps['data'], customization: TemplateComponentProps['customization'], fs: number) {
+  const lang = docLanguage(customization);
+  const T = docText(lang);
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: `${10 * customization.sectionSpacing}px`, marginTop: `${6 * customization.sectionSpacing}px` }}>
       {data.references.filter(r => r.name).map((ref) => (
         <div key={ref.id}>
           <span style={{ fontWeight: 700, fontSize: `${fs}px`, color: '#111827' }}>{ref.name}</span>
           <span style={{ fontSize: `${fs * 0.9}px`, color: '#4b5563', marginLeft: 8 }}>
-            {ref.position}{ref.company ? ` at ${ref.company}` : ''}
+            {ref.position}{ref.company ? ` ${T.at} ${ref.company}` : ''}
           </span>
           <div style={{ fontSize: `${fs * 0.85}px`, color: '#6b7280', marginTop: 1 }}>
             {[ref.email, ref.phone].filter(Boolean).join(' · ')}

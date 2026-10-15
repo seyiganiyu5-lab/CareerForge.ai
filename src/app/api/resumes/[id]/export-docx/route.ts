@@ -5,6 +5,8 @@ import { checkAndIncrementUsage } from '@/lib/subscription/service';
 import { FEATURE_KEYS } from '@/lib/subscription/features';
 import { generateDocxBlob } from '@/lib/export/docx';
 import type { ResumeData } from '@/types/resume';
+import { getRequestLocale } from '@/lib/ai/locale';
+import type { DocLanguage } from '@/lib/templates/utils';
 
 export async function POST(
   request: NextRequest,
@@ -48,18 +50,30 @@ export async function POST(
       return NextResponse.json({ error: 'Invalid resume data' }, { status: 400 });
     }
 
-    // Generate DOCX
-    const buffer = await generateDocxBlob(resumeData);
+    // CV language: from the editor, else the saved design settings, else the site language
+    const body = (await request.json().catch(() => ({}))) as { language?: string };
+    let saved: string | undefined;
+    try {
+      saved = (JSON.parse(resume.customization_json || '{}') as { language?: string }).language;
+    } catch {
+      saved = undefined;
+    }
+    const pick = body.language ?? saved ?? getRequestLocale(request);
+    const lang: DocLanguage = pick === 'fr' ? 'fr' : 'en';
 
-    // Build safe filename
-    const safeTitle = (resume.title || 'resume').replace(/[^a-zA-Z0-9\s-_]/g, '').replace(/\s+/g, '_');
-    const filename = `${safeTitle}.docx`;
+    // Generate DOCX
+    const buffer = await generateDocxBlob(resumeData, lang);
+
+    // Build filename (accents kept via filename*, plain-ASCII fallback for old clients)
+    const title = (resume.title || 'resume').trim().replace(/[\\/:*?"<>|]+/g, '').replace(/\s+/g, '_') || 'resume';
+    const asciiTitle = title.normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/[^a-zA-Z0-9_-]/g, '') || 'resume';
+    const filename = `${title}.docx`;
 
     return new NextResponse(new Uint8Array(buffer), {
       status: 200,
       headers: {
         'Content-Type': 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
-        'Content-Disposition': `attachment; filename="${filename}"`,
+        'Content-Disposition': `attachment; filename="${asciiTitle}.docx"; filename*=UTF-8''${encodeURIComponent(filename)}`,
       },
     });
   } catch (error) {

@@ -9,6 +9,9 @@ import {
   getSectionLabel,
   getTemplateStyles,
   hexToRgba,
+  docLanguage,
+  docText,
+  levelLabel,
 } from '@/lib/templates/utils';
 
 export default function Graduate({ data, customization }: TemplateComponentProps) {
@@ -146,7 +149,8 @@ function SectionRenderer({
   fs: number;
   sectionGap: number;
 }) {
-  const label = getSectionLabel(sectionKey);
+  const lang = docLanguage(customization);
+  const label = getSectionLabel(sectionKey, lang);
   if (!label) return null;
 
   return (
@@ -228,6 +232,8 @@ function renderSummary(data: TemplateComponentProps['data'], customization: Temp
 // ─── Education (Detailed, Graduate-focused) ────────────────────
 
 function renderEducation(data: TemplateComponentProps['data'], customization: TemplateComponentProps['customization'], fs: number, s: ReturnType<typeof getTemplateStyles>) {
+  const lang = docLanguage(customization);
+  const T = docText(lang);
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: `${14 * customization.sectionSpacing}px`, marginTop: `${6 * customization.sectionSpacing}px` }}>
       {data.education.filter(e => e.school || e.degree).map((edu) => (
@@ -243,10 +249,10 @@ function renderEducation(data: TemplateComponentProps['data'], customization: Te
                 fontFamily: s.heading.fontFamily,
               }}
             >
-              {edu.degree}{edu.fieldOfStudy ? ` in ${edu.fieldOfStudy}` : ''}
+              {edu.degree}{edu.fieldOfStudy ? ` ${T.in} ${edu.fieldOfStudy}` : ''}
             </h3>
             <span style={{ fontSize: `${fs * 0.85}px`, color: '#6b7280', whiteSpace: 'nowrap', flexShrink: 0 }}>
-              {formatDateRangeRaw(edu.startDate, edu.endDate)}
+              {formatDateRangeRaw(edu.startDate, edu.endDate, lang)}
             </span>
           </div>
 
@@ -258,7 +264,7 @@ function renderEducation(data: TemplateComponentProps['data'], customization: Te
           {/* Location + GPA */}
           <p style={{ fontSize: `${fs * 0.88}px`, color: '#6b7280', margin: '2px 0 0' }}>
             {edu.location}{edu.location && edu.grade ? '  ·  ' : ''}
-            {edu.grade && <span style={{ fontWeight: 600, color: '#374151' }}>GPA: {edu.grade}</span>}
+            {edu.grade && <span style={{ fontWeight: 600, color: '#374151' }}>{T.gpa}: {edu.grade}</span>}
           </p>
 
         </div>
@@ -270,6 +276,7 @@ function renderEducation(data: TemplateComponentProps['data'], customization: Te
 // ─── Work Experience ───────────────────────────────────────────
 
 function renderWorkExperience(data: TemplateComponentProps['data'], customization: TemplateComponentProps['customization'], fs: number) {
+  const lang = docLanguage(customization);
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: `${12 * customization.sectionSpacing}px`, marginTop: `${6 * customization.sectionSpacing}px` }}>
       {data.workExperience.filter(e => e.company || e.position).map((exp) => {
@@ -281,7 +288,7 @@ function renderWorkExperience(data: TemplateComponentProps['data'], customizatio
                 {exp.position}
               </span>
               <span style={{ fontSize: `${fs * 0.85}px`, color: '#6b7280', whiteSpace: 'nowrap' }}>
-                {formatDateRange(exp.startDate, exp.endDate, exp.currentJob)}
+                {formatDateRange(exp.startDate, exp.endDate, exp.currentJob, lang)}
               </span>
             </div>
             <div style={{ fontSize: `${fs * 0.9}px`, color: '#4b5563', marginTop: 1 }}>
@@ -313,6 +320,8 @@ function renderWorkExperience(data: TemplateComponentProps['data'], customizatio
 // ─── Skills (2-column grid with accent circle bullets) ─────────
 
 function renderSkills(data: TemplateComponentProps['data'], customization: TemplateComponentProps['customization'], fs: number) {
+  const lang = docLanguage(customization);
+  const T = docText(lang);
   if (data.skills.length === 0) return null;
 
   const technicalSkills = data.skills.filter(sk => sk.type !== 'soft');
@@ -334,7 +343,7 @@ function renderSkills(data: TemplateComponentProps['data'], customization: Templ
       <span style={{ fontSize: `${fs}px`, color: '#374151' }}>
         {skill.name}
         {skill.proficiency && (
-          <span style={{ color: '#6b7280', fontSize: '0.85em', marginLeft: 4 }}>({skill.proficiency})</span>
+          <span style={{ color: '#6b7280', fontSize: '0.85em', marginLeft: 4 }}>({levelLabel(skill.proficiency, lang)})</span>
         )}
       </span>
     </div>
@@ -382,8 +391,8 @@ function renderSkills(data: TemplateComponentProps['data'], customization: Templ
   if (hasBoth) {
     return (
       <div style={{ marginTop: `${6 * customization.sectionSpacing}px` }}>
-        {renderSkillGroup('Technical Skills', technicalSkills)}
-        {renderSkillGroup('Soft Skills', softSkills)}
+        {renderSkillGroup(T.technicalSkills, technicalSkills)}
+        {renderSkillGroup(T.softSkills, softSkills)}
       </div>
     );
   }
@@ -413,6 +422,8 @@ function renderSkills(data: TemplateComponentProps['data'], customization: Templ
 // ─── Projects ──────────────────────────────────────────────────
 
 function renderProjects(data: TemplateComponentProps['data'], customization: TemplateComponentProps['customization'], fs: number, s: ReturnType<typeof getTemplateStyles>) {
+  const lang = docLanguage(customization);
+  const T = docText(lang);
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: `${12 * customization.sectionSpacing}px`, marginTop: `${6 * customization.sectionSpacing}px` }}>
       {data.projects.filter(p => p.name).map((proj) => (
@@ -466,7 +477,7 @@ function renderProjects(data: TemplateComponentProps['data'], customization: Tem
                   href={proj.githubUrl.startsWith('http') ? proj.githubUrl : `https://${proj.githubUrl}`}
                   style={{ fontSize: `${fs * 0.85}px`, color: customization.accentColor, textDecoration: 'none', fontWeight: 500 }}
                 >
-                  GitHub
+                  {T.github}
                 </a>
               )}
               {proj.liveUrl && (
@@ -474,7 +485,7 @@ function renderProjects(data: TemplateComponentProps['data'], customization: Tem
                   href={proj.liveUrl.startsWith('http') ? proj.liveUrl : `https://${proj.liveUrl}`}
                   style={{ fontSize: `${fs * 0.85}px`, color: customization.accentColor, textDecoration: 'none', fontWeight: 500 }}
                 >
-                  Live Demo
+                  {T.liveDemo}
                 </a>
               )}
             </div>
@@ -488,6 +499,7 @@ function renderProjects(data: TemplateComponentProps['data'], customization: Tem
 // ─── Certifications ────────────────────────────────────────────
 
 function renderCertifications(data: TemplateComponentProps['data'], customization: TemplateComponentProps['customization'], fs: number) {
+  const lang = docLanguage(customization);
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: `${6 * customization.sectionSpacing}px`, marginTop: `${6 * customization.sectionSpacing}px` }}>
       {data.certifications.filter(c => c.name).map((cert) => (
@@ -496,7 +508,7 @@ function renderCertifications(data: TemplateComponentProps['data'], customizatio
             {cert.name}
           </span>
           <span style={{ fontSize: `${fs * 0.85}px`, color: '#6b7280', whiteSpace: 'nowrap' }}>
-            {cert.issuer}{cert.issueDate ? ` · ${formatDate(cert.issueDate)}` : ''}
+            {cert.issuer}{cert.issueDate ? ` · ${formatDate(cert.issueDate, lang)}` : ''}
           </span>
         </div>
       ))}
@@ -507,12 +519,13 @@ function renderCertifications(data: TemplateComponentProps['data'], customizatio
 // ─── Languages ─────────────────────────────────────────────────
 
 function renderLanguages(data: TemplateComponentProps['data'], customization: TemplateComponentProps['customization'], fs: number) {
+  const lang = docLanguage(customization);
   return (
     <div className="flex flex-wrap" style={{ gap: '4px 16px', marginTop: `${6 * customization.sectionSpacing}px` }}>
-      {data.languages.map((lang) => (
-        <span key={lang.id} style={{ fontSize: `${fs}px`, color: '#374151' }}>
-          <span style={{ fontWeight: 600, color: '#111827' }}>{lang.language}</span>
-          <span style={{ color: '#6b7280' }}> — {lang.proficiency}</span>
+      {data.languages.map((langItem) => (
+        <span key={langItem.id} style={{ fontSize: `${fs}px`, color: '#374151' }}>
+          <span style={{ fontWeight: 600, color: '#111827' }}>{langItem.language}</span>
+          <span style={{ color: '#6b7280' }}> — {levelLabel(langItem.proficiency, lang)}</span>
         </span>
       ))}
     </div>
@@ -580,13 +593,15 @@ function renderVolunteer(data: TemplateComponentProps['data'], customization: Te
 // ─── References ────────────────────────────────────────────────
 
 function renderReferences(data: TemplateComponentProps['data'], customization: TemplateComponentProps['customization'], fs: number) {
+  const lang = docLanguage(customization);
+  const T = docText(lang);
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: `${10 * customization.sectionSpacing}px`, marginTop: `${6 * customization.sectionSpacing}px` }}>
       {data.references.filter(r => r.name).map((ref) => (
         <div key={ref.id}>
           <span style={{ fontWeight: 700, fontSize: `${fs}px`, color: '#111827' }}>{ref.name}</span>
           <span style={{ fontSize: `${fs * 0.9}px`, color: '#4b5563', marginLeft: 8 }}>
-            {ref.position}{ref.company ? ` at ${ref.company}` : ''}
+            {ref.position}{ref.company ? ` ${T.at} ${ref.company}` : ''}
           </span>
           <div style={{ fontSize: `${fs * 0.85}px`, color: '#6b7280', marginTop: 1 }}>
             {[ref.email, ref.phone].filter(Boolean).join(' · ')}
