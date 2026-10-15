@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { generateText, parseJsonReply, isAIConfigured, AIError } from '@/lib/ai/client';
 import { getRequestLocale, replyLanguageInstruction, type AiLocale } from '@/lib/ai/locale';
+import { localizeAtsMessage } from '@/lib/ats/localize';
 import { db } from '@/lib/db';
 import { getAuthUser } from '@/lib/subscription/auth-helpers';
 import { checkAndIncrementUsage } from '@/lib/subscription/service';
@@ -675,12 +676,14 @@ Guidelines:
 // ---------------------------------------------------------------------------
 
 export async function POST(request: NextRequest) {
+  const locale = getRequestLocale(request);
+  const msg = (text: string) => localizeAtsMessage(text, locale);
   try {
     // 1. Authenticate
     const authUser = await getAuthUser(request);
     if (!authUser) {
       return NextResponse.json(
-        { success: false, error: 'Authentication required. Please log in.' },
+        { success: false, error: msg('Authentication required. Please log in.') },
         { status: 401 },
       );
     }
@@ -695,7 +698,7 @@ export async function POST(request: NextRequest) {
 
     if (!resumeId && !resumeText) {
       return NextResponse.json(
-        { success: false, error: 'Provide either resumeId or resumeText.' },
+        { success: false, error: msg('Provide either resumeId or resumeText.') },
         { status: 400 },
       );
     }
@@ -704,7 +707,7 @@ export async function POST(request: NextRequest) {
     const basicAccess = await checkAndIncrementUsage(authUser.userId, FEATURE_KEYS.BASIC_ATS_SCORE, false);
     if (!basicAccess.allowed) {
       return NextResponse.json(
-        { success: false, error: 'ATS scoring is not available on your current plan.' },
+        { success: false, error: msg('ATS scoring is not available on your current plan.') },
         { status: 403 },
       );
     }
@@ -731,7 +734,7 @@ export async function POST(request: NextRequest) {
 
       if (!resume) {
         return NextResponse.json(
-          { success: false, error: 'Resume not found.' },
+          { success: false, error: msg('Resume not found.') },
           { status: 404 },
         );
       }
@@ -774,7 +777,7 @@ export async function POST(request: NextRequest) {
       length.score +
       keywordCategory.score;
 
-    const categories = {
+    const categoryResults = {
       contactInfo,
       summary,
       workExperience: workExp,
@@ -784,6 +787,10 @@ export async function POST(request: NextRequest) {
       length,
       keywords: keywordCategory,
     };
+    // Rule messages are written in English; translate them for the user's language
+    const categories = Object.fromEntries(
+      Object.entries(categoryResults).map(([key, c]) => [key, { ...c, issues: c.issues.map(msg) }]),
+    );
 
     // 7. AI Analysis for Pro users
     let aiAnalysis: AiAnalysis | undefined;
@@ -791,15 +798,15 @@ export async function POST(request: NextRequest) {
     // Skipped when AI isn't set up; the scoring above still works
     if (isPremium && text.length > 0 && isAIConfigured()) {
       try {
-        aiAnalysis = await runAiAnalysis(text, getRequestLocale(request));
+        aiAnalysis = await runAiAnalysis(text, locale);
       } catch (error) {
         console.error('ATS AI analysis error:', error);
         // AI analysis failed — still return scoring
         aiAnalysis = {
           grammarIssues: [],
           suggestions: [],
-          strengths: ['Resume scoring completed successfully.'],
-          weaknesses: [error instanceof AIError ? error.userMessage : 'AI analysis encountered an issue.'],
+          strengths: [msg('Resume scoring completed successfully.')],
+          weaknesses: [error instanceof AIError ? error.userMessage : msg('AI analysis encountered an issue.')],
         };
       }
     }
@@ -822,7 +829,7 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json(response);
   } catch (error) {
-    const message = error instanceof Error ? error.message : 'An unexpected error occurred.';
+    const message = error instanceof Error ? error.message : msg('An unexpected error occurred.');
     return NextResponse.json(
       { success: false, error: message },
       { status: 500 },
