@@ -59,14 +59,14 @@ export default function TopNav({ isMobile, onMenuClick }: TopNavProps) {
           type="search"
           placeholder={tSearch('searchPlaceholder')}
           className={cn(
-            'pl-9 h-9 bg-muted/50 border-transparent font-body text-sm',
+            'pl-9 lg:pr-12 h-9 bg-muted/50 border-transparent font-body text-sm',
             'focus:bg-background focus:border-border transition-all',
             searchFocused && 'ring-2 ring-ring ring-offset-2 ring-offset-background'
           )}
           onFocus={() => setSearchFocused(true)}
           onBlur={() => setSearchFocused(false)}
         />
-        <kbd className="hidden md:flex absolute right-3 top-1/2 -translate-y-1/2 items-center gap-1 pointer-events-none">
+        <kbd className="hidden lg:flex absolute right-3 top-1/2 -translate-y-1/2 items-center gap-1 pointer-events-none">
           <span className="inline-flex items-center rounded border border-border/60 bg-muted/50 px-1.5 py-0.5 text-[10px] font-medium text-muted-foreground font-mono">
             ⌘K
           </span>
