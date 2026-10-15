@@ -33,6 +33,8 @@ const ICONS: Record<string, LucideIcon> = {
   job_reminder: AlarmClock,
   usage_warning: Gauge,
   usage_limit: Gauge,
+  forwarding_confirm: Mail,
+  forward_skipped_limit: Gauge,
 };
 
 // Usage counter → feature name (app.features.*)
@@ -106,7 +108,10 @@ export default function NotificationDropdown() {
   const openItem = (n: AppNotification) => {
     if (!n.read) markRead([n.id]);
     setOpen(false);
-    if (n.link) router.push(n.link);
+    if (!n.link) return;
+    // Outside links (e.g. Gmail's confirmation page) open in a new tab
+    if (/^https?:\/\//.test(n.link)) window.open(n.link, '_blank', 'noopener,noreferrer');
+    else router.push(n.link);
   };
 
   const when = (iso: unknown) => {
@@ -128,6 +133,10 @@ export default function NotificationDropdown() {
       case 'job_deadline': return { title: where, body: t('deadlineSoon', { when: when(d.date) }) };
       case 'job_offer_expiry': return { title: where, body: t('offerExpires', { when: when(d.date) }) };
       case 'job_reminder': return { title: where, body: t('reminderDue', { title: d.title || '', when: when(d.date) }) };
+      case 'forwarding_confirm':
+        return { title: t('fwdConfirmTitle'), body: t('fwdConfirmBody', { code: d.code || '—' }) };
+      case 'forward_skipped_limit':
+        return { title: t('fwdSkippedTitle'), body: t('fwdSkippedBody', { subject: d.subject || '—' }) };
       case 'usage_warning':
       case 'usage_limit': {
         const u = n.data as { field?: string; used?: number; limit?: number };
@@ -186,7 +195,7 @@ export default function NotificationDropdown() {
                   >
                     <div className={cn(
                       'w-8 h-8 rounded-lg flex items-center justify-center shrink-0',
-                      n.type === 'usage_limit' ? 'bg-red-500/10 text-red-600' : n.type === 'usage_warning' ? 'bg-amber-500/10 text-amber-600' : 'bg-brand/10 text-brand'
+                      n.type === 'usage_limit' || n.type === 'forward_skipped_limit' ? 'bg-red-500/10 text-red-600' : n.type === 'usage_warning' ? 'bg-amber-500/10 text-amber-600' : 'bg-brand/10 text-brand'
                     )}>
                       {(() => { const Icon = ICONS[n.type] ?? Bell; return <Icon className="w-4 h-4" />; })()}
                     </div>

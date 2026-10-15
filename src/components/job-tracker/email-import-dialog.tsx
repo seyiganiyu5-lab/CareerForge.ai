@@ -16,6 +16,8 @@ import { Badge } from '@/components/ui/badge';
 import { useTranslations } from '@/i18n/provider';
 import { useJobLabels } from '@/components/job-tracker/use-job-labels';
 import type { JobApplication } from '@/hooks/use-job-tracker';
+import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { ForwardingPanel } from '@/components/job-tracker/forwarding-panel';
 import { NOTIFICATIONS_CHANGED } from '@/components/dashboard/notification-dropdown';
 
 type EmailKind = 'application_received' | 'assessment' | 'interview' | 'offer' | 'rejection' | 'other';
@@ -60,6 +62,7 @@ export function EmailImportDialog({ open, onOpenChange, applications, onChanged,
   const [loading, setLoading] = useState(false);
   const [undoing, setUndoing] = useState(false);
   const [result, setResult] = useState<ImportResult | null>(null);
+  const [tab, setTab] = useState<'paste' | 'forward'>('paste');
 
   const reset = () => {
     setEmail('');
@@ -150,6 +153,15 @@ export function EmailImportDialog({ open, onOpenChange, applications, onChanged,
           </DialogTitle>
           <DialogDescription>{t('emailImportDesc')}</DialogDescription>
         </DialogHeader>
+
+        <Tabs value={tab} onValueChange={(v) => setTab(v as 'paste' | 'forward')}>
+          <TabsList className="w-full grid grid-cols-2">
+            <TabsTrigger value="paste">{t('tabPaste')}</TabsTrigger>
+            <TabsTrigger value="forward">{t('tabForward')}</TabsTrigger>
+          </TabsList>
+        </Tabs>
+
+        {tab === 'forward' ? <ForwardingPanel /> : (<>
 
         {!result ? (
           <div className="space-y-4">
@@ -255,6 +267,7 @@ export function EmailImportDialog({ open, onOpenChange, applications, onChanged,
             </>
           )}
         </DialogFooter>
+        </>)}
       </DialogContent>
     </Dialog>
   );
