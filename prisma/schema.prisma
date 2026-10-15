@@ -34,6 +34,7 @@ model User {
   coverLetters   CoverLetter[]
   aiHistory      AiHistory[]
   jobApplications JobApplication[]
+  notifications  Notification[]
 }
 
 model Plan {
@@ -242,4 +243,18 @@ model CoverLetterVersion {
 
   @@unique([cover_letter_id, version_number])
   @@index([cover_letter_id])
+}
+
+model Notification {
+  id         String    @id @default(cuid())
+  user_id    String
+  type       String // e.g. "job_status"
+  data       String    @default("{}") // JSON: what happened; the text is translated in the app
+  link       String?
+  read_at    DateTime?
+  created_at DateTime  @default(now())
+
+  user User @relation(fields: [user_id], references: [id], onDelete: Cascade)
+
+  @@index([user_id, created_at])
 }

@@ -13,6 +13,7 @@ import {
   normalizeAnalysis,
 } from '@/lib/job-tracker/email-update';
 import { db } from '@/lib/db';
+import { notifyJobStatus } from '@/lib/notifications';
 import type { JobApplication } from '@prisma/client';
 
 const bodySchema = z.object({
@@ -114,7 +115,16 @@ export async function POST(request: NextRequest) {
           deadline_date: analysis.kind === 'assessment' ? date : null,
         },
       });
-      return NextResponse.json({ success: true, analysis, action: 'created', application });
+      const notificationId = await notifyJobStatus(auth.userId, {
+        applicationId: application.id,
+        company: application.company_name,
+        jobTitle: application.job_title,
+        from: null,
+        to: application.status,
+        source: 'email',
+        date: analysis.date,
+      });
+      return NextResponse.json({ success: true, analysis, action: 'created', application, notificationId });
     }
 
     // 3b. Update the existing application
@@ -141,6 +151,18 @@ export async function POST(request: NextRequest) {
       },
     });
 
+    const notificationId = status
+      ? await notifyJobStatus(auth.userId, {
+        applicationId: application.id,
+        company: application.company_name,
+        jobTitle: application.job_title,
+        from: previous.status,
+        to: status,
+        source: 'email',
+        date: analysis.date,
+      })
+      : null;
+
     return NextResponse.json({
       success: true,
       analysis,
@@ -148,6 +170,7 @@ export async function POST(request: NextRequest) {
       statusChanged: !!status,
       application,
       previous,
+      notificationId,
     });
   } catch (error) {
     console.error('Job tracker email import error:', error);

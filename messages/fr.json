@@ -606,7 +606,10 @@
       "atsImproved": "Votre score ATS s'est amélioré de 12% !",
       "welcome": "Bienvenue sur CareerForge AI ! Commencez par créer votre premier CV.",
       "profileComplete": "Complétez votre profil pour de meilleures suggestions IA.",
-      "coverLetterGenerated": "Votre lettre de motivation a été générée."
+      "coverLetterGenerated": "Votre lettre de motivation a été générée.",
+      "jobMoved": "Passée de {from} à {to}",
+      "jobAdded": "Ajoutée à votre suivi : {to}",
+      "fromEmail": "Depuis un e-mail"
     },
     "userMenu": {
       "profile": "Mon Profil",

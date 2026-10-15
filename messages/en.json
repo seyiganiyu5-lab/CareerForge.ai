@@ -606,7 +606,10 @@
       "atsImproved": "Your ATS score improved by 12%!",
       "welcome": "Welcome to CareerForge AI! Start by creating your first resume.",
       "profileComplete": "Complete your profile for better AI suggestions.",
-      "coverLetterGenerated": "Your cover letter has been generated."
+      "coverLetterGenerated": "Your cover letter has been generated.",
+      "jobMoved": "Moved from {from} to {to}",
+      "jobAdded": "Added to your tracker as {to}",
+      "fromEmail": "From an email"
     },
     "userMenu": {
       "profile": "My Profile",
