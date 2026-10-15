@@ -618,7 +618,11 @@
       "usageWarningTitle": "Bientôt à votre limite",
       "usageWarning": "{feature} : {used} sur {limit} utilisés",
       "usageLimitTitle": "Limite atteinte",
-      "usageLimit": "{feature} : vous avez utilisé les {limit}. Passez à une offre supérieure pour continuer."
+      "usageLimit": "{feature} : vous avez utilisé les {limit}. Passez à une offre supérieure pour continuer.",
+      "fwdConfirmTitle": "Confirmez le transfert Gmail",
+      "fwdConfirmBody": "Gmail vous demande de confirmer le transfert vers CareerForge. Code : {code}. Cliquez pour ouvrir le lien de confirmation.",
+      "fwdSkippedTitle": "E-mail transféré non traité",
+      "fwdSkippedBody": "« {subject} » est arrivé, mais votre limite IA est atteinte. Collez-le plus tard dans le suivi, ou passez à une offre supérieure."
     },
     "userMenu": {
       "profile": "Mon Profil",
@@ -1692,7 +1696,25 @@
       "kindInterview": "Invitation à un entretien",
       "kindOffer": "Offre d'emploi",
       "kindRejection": "Refus",
-      "kindOther": "Sans rapport avec une candidature"
+      "kindOther": "Sans rapport avec une candidature",
+      "tabPaste": "Coller un e-mail",
+      "tabForward": "Transfert automatique",
+      "fwdIntro": "Transférez vos e-mails de candidature à votre adresse personnelle et votre suivi se met à jour tout seul : nouvelles candidatures, entretiens, tests, offres et refus.",
+      "fwdYourAddress": "Votre adresse personnelle",
+      "fwdKeepPrivate": "Gardez-la privée : toute personne qui la connaît peut ajouter des e-mails à votre suivi.",
+      "fwdGmail1": "Dans Gmail, ouvrez Paramètres (⚙) → Voir tous les paramètres → Transfert et POP/IMAP → Ajouter une adresse de transfert, et collez votre adresse.",
+      "fwdGmail2": "Gmail envoie une confirmation : elle apparaît dans vos notifications CareerForge (🔔) avec le lien et le code. Ouvrez-la pour confirmer.",
+      "fwdGmail3": "Créez un filtre (barre de recherche → options), par exemple : Objet contient application OR interview OR candidature OR entretien.",
+      "fwdGmail4": "Choisissez « Transférer à » votre adresse CareerForge, puis Créer le filtre.",
+      "fwdOutlook1": "Dans Outlook, ouvrez Paramètres → Courrier → Règles → Ajouter une règle.",
+      "fwdOutlook2": "Condition : l'objet contient « application », « interview », « candidature »… Action : Transférer à votre adresse CareerForge. Enregistrez.",
+      "fwdManual": "Vous pouvez aussi transférer n'importe quel e-mail à la main. Les e-mails sans rapport avec une candidature sont ignorés.",
+      "fwdReset": "Créer une nouvelle adresse (l'ancienne ne fonctionnera plus)",
+      "fwdResetConfirm": "Créer une nouvelle adresse ? Les e-mails envoyés à l'ancienne n'arriveront plus dans votre suivi : pensez à mettre à jour vos règles de transfert.",
+      "fwdResetDone": "Nouvelle adresse créée",
+      "fwdResetFailed": "Impossible de créer une nouvelle adresse",
+      "fwdCopyFailed": "Copie impossible. Sélectionnez l'adresse et copiez-la à la main.",
+      "fwdNotAvailable": "Le transfert automatique n'est pas encore activé sur ce site. En attendant, utilisez « Coller un e-mail »."
     },
     "aiPanel": {
       "actionGenerate": "Générer",

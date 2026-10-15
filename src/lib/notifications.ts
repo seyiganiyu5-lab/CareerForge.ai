@@ -32,7 +32,7 @@ interface AutoNotification {
   type: string;
   key: string; // unique per user: the same event is never reported twice
   data: Record<string, unknown>;
-  link: string;
+  link: string | null;
 }
 
 async function createOnce(userId: string, items: AutoNotification[]) {
@@ -47,6 +47,11 @@ async function createOnce(userId: string, items: AutoNotification[]) {
     })),
     skipDuplicates: true,
   });
+}
+
+/** A one-off notification, created only once per key. */
+export async function createNotification(userId: string, n: AutoNotification) {
+  await createOnce(userId, [n]);
 }
 
 const HOUR = 3_600_000;

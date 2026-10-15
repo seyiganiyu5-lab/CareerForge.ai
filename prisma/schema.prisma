@@ -11,6 +11,7 @@ datasource db {
 model User {
   id                    String    @id @default(cuid())  // Same id as the Supabase Auth user
   email                 String    @unique
+  inbound_email_token   String?   @unique // personal address for forwarding job emails
   first_name            String?
   last_name             String?
   auth_provider         String    @default("email")

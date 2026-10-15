@@ -618,7 +618,11 @@
       "usageWarningTitle": "Almost at your limit",
       "usageWarning": "{feature}: {used} of {limit} used",
       "usageLimitTitle": "Limit reached",
-      "usageLimit": "{feature}: you have used all {limit}. Upgrade to keep going."
+      "usageLimit": "{feature}: you have used all {limit}. Upgrade to keep going.",
+      "fwdConfirmTitle": "Confirm Gmail forwarding",
+      "fwdConfirmBody": "Gmail needs you to confirm forwarding to CareerForge. Code: {code}. Click to open the confirmation link.",
+      "fwdSkippedTitle": "Forwarded email not processed",
+      "fwdSkippedBody": "\"{subject}\" arrived, but your AI limit is reached. Paste it in the job tracker later, or upgrade."
     },
     "userMenu": {
       "profile": "My Profile",
@@ -1692,7 +1696,25 @@
       "kindInterview": "Interview invite",
       "kindOffer": "Job offer",
       "kindRejection": "Rejection",
-      "kindOther": "Not about an application"
+      "kindOther": "Not about an application",
+      "tabPaste": "Paste an email",
+      "tabForward": "Automatic forwarding",
+      "fwdIntro": "Forward job emails to your personal address and your tracker updates by itself: new applications, interviews, tests, offers and rejections.",
+      "fwdYourAddress": "Your personal address",
+      "fwdKeepPrivate": "Keep it private: anyone who knows it can add emails to your tracker.",
+      "fwdGmail1": "In Gmail, open Settings (⚙) → See all settings → Forwarding and POP/IMAP → Add a forwarding address, and paste your address.",
+      "fwdGmail2": "Gmail sends a confirmation: it appears in your CareerForge notifications (🔔) with the link and code. Open it to confirm.",
+      "fwdGmail3": "Create a filter (search bar → ⚙ options), for example: Subject contains application OR interview OR candidature OR entretien.",
+      "fwdGmail4": "Choose “Forward it to” your CareerForge address, then Create filter.",
+      "fwdOutlook1": "In Outlook, open Settings → Mail → Rules → Add new rule.",
+      "fwdOutlook2": "Condition: Subject includes “application”, “interview”, “candidature”… Action: Forward to your CareerForge address. Save.",
+      "fwdManual": "You can also forward any single email by hand. Emails that aren't about an application are ignored.",
+      "fwdReset": "Create a new address (the old one stops working)",
+      "fwdResetConfirm": "Create a new address? Emails sent to the old one will no longer reach your tracker, so update your forwarding settings afterwards.",
+      "fwdResetDone": "New address created",
+      "fwdResetFailed": "Couldn't create a new address",
+      "fwdCopyFailed": "Couldn't copy. Select the address and copy it by hand.",
+      "fwdNotAvailable": "Automatic forwarding isn't switched on for this site yet. Meanwhile, use “Paste an email”."
     },
     "aiPanel": {
       "actionGenerate": "Generate",
