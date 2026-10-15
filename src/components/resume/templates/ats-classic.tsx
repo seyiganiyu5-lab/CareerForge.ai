@@ -8,6 +8,9 @@ import {
   getVisibleSections,
   getSectionLabel,
   getTemplateStyles,
+  docLanguage,
+  docText,
+  levelLabel,
 } from '@/lib/templates/utils';
 
 // ─── Color Palette ─────────────────────────────────────────────────────
@@ -20,6 +23,8 @@ const COLORS = {
 
 export default function AtsClassic({ data, customization }: TemplateComponentProps) {
   const s = getTemplateStyles(customization);
+  const lang = docLanguage(customization);
+  const T = docText(lang);
   const contactItems = getContactItems(data.personalInfo);
   const visibleSections = getVisibleSections(
     data,
@@ -53,7 +58,7 @@ export default function AtsClassic({ data, customization }: TemplateComponentPro
 
   // ─── Section Heading ────────────────────────────────────────────────
   const renderSectionHeading = (key: SectionKey) => {
-    const label = getSectionLabel(key);
+    const label = getSectionLabel(key, lang);
     if (!label) return null;
     return (
       <h2
@@ -232,7 +237,7 @@ export default function AtsClassic({ data, customization }: TemplateComponentPro
     return (
       <div style={{ display: 'flex', flexDirection: 'column', gap: entryGap }}>
         {entries.map((exp) => {
-          const dateRange = formatDateRange(exp.startDate, exp.endDate, exp.currentJob);
+          const dateRange = formatDateRange(exp.startDate, exp.endDate, exp.currentJob, lang);
           const descLines = exp.description
             ? exp.description.split('\n').map(l => l.replace(/^[-•*]\s*/, '').trim()).filter(Boolean)
             : [];
@@ -283,12 +288,12 @@ export default function AtsClassic({ data, customization }: TemplateComponentPro
     return (
       <div style={{ display: 'flex', flexDirection: 'column', gap: entryGap }}>
         {entries.map((edu) => {
-          const dateRange = formatDateRangeRaw(edu.startDate, edu.endDate);
+          const dateRange = formatDateRangeRaw(edu.startDate, edu.endDate, lang);
           return (
             <div key={edu.id}>
               <div style={rowLayout}>
                 <h3 style={entryTitleStyle}>
-                  {edu.degree}{edu.fieldOfStudy ? ` in ${edu.fieldOfStudy}` : ''}
+                  {edu.degree}{edu.fieldOfStudy ? ` ${T.in} ${edu.fieldOfStudy}` : ''}
                 </h3>
                 {dateRange && (
                   <span style={dateStyle}>
@@ -297,7 +302,7 @@ export default function AtsClassic({ data, customization }: TemplateComponentPro
                 )}
               </div>
               <p style={entrySubtitleStyle}>
-                {edu.school}{edu.location ? `, ${edu.location}` : ''}{edu.grade ? ` — GPA: ${edu.grade}` : ''}
+                {edu.school}{edu.location ? `, ${edu.location}` : ''}{edu.grade ? ` — ${T.gpa}: ${edu.grade}` : ''}
               </p>
             </div>
           );
@@ -328,7 +333,7 @@ export default function AtsClassic({ data, customization }: TemplateComponentPro
           <span key={sk.id}>
             {sk.name}
             {sk.proficiency && (
-              <span style={{ color: '#6b7280', fontSize: '0.85em' }}> ({sk.proficiency})</span>
+              <span style={{ color: '#6b7280', fontSize: '0.85em' }}> ({levelLabel(sk.proficiency, lang)})</span>
             )}
             {i < skills.length - 1 ? ', ' : ''}
           </span>
@@ -358,8 +363,8 @@ export default function AtsClassic({ data, customization }: TemplateComponentPro
     if (hasBoth) {
       return (
         <div>
-          {renderSkillGroup('Technical Skills', technicalSkills)}
-          {renderSkillGroup('Soft Skills', softSkills)}
+          {renderSkillGroup(T.technicalSkills, technicalSkills)}
+          {renderSkillGroup(T.softSkills, softSkills)}
         </div>
       );
     }
@@ -454,7 +459,7 @@ export default function AtsClassic({ data, customization }: TemplateComponentPro
     return (
       <div style={{ display: 'flex', flexDirection: 'column', gap: smallEntryGap }}>
         {entries.map((cert) => {
-          const dateStr = formatDate(cert.issueDate);
+          const dateStr = formatDate(cert.issueDate, lang);
           return (
             <div key={cert.id}>
               <div style={rowLayout}>
@@ -493,7 +498,7 @@ export default function AtsClassic({ data, customization }: TemplateComponentPro
           margin: 0,
         }}
       >
-        {data.languages.map(l => `${l.language} (${l.proficiency})`).join(', ')}
+        {data.languages.map(l => `${l.language} (${levelLabel(l.proficiency, lang)})`).join(', ')}
       </p>
     );
   }
@@ -589,7 +594,7 @@ export default function AtsClassic({ data, customization }: TemplateComponentPro
                 lineHeight: 1.3,
               }}
             >
-              {[ref.position, ref.company].filter(Boolean).join(' at ')}
+              {[ref.position, ref.company].filter(Boolean).join(` ${T.at} `)}
             </p>
             {(ref.email || ref.phone) && (
               <p

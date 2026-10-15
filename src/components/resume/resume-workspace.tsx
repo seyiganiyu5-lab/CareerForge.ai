@@ -67,7 +67,7 @@ import {
   DialogDescription,
   DialogFooter,
 } from '@/components/ui/dialog';
-import { useTranslations } from '@/i18n/provider';
+import { useLocale, useTranslations } from '@/i18n/provider';
 import {
   Sheet,
   SheetContent,
@@ -444,6 +444,14 @@ export default function ResumeWorkspace() {
     setResumeData, setResumeTitle, setTemplateId, setCustomization,
     loading, error, autosaveStatus, createResume, duplicateResume, deleteResume,
   } = useResume();
+  const { locale } = useLocale();
+
+  // CVs created before the "CV language" setting existed: start them in the site language
+  useEffect(() => {
+    if (!loading && resumeId && !customization.language) {
+      setCustomization({ ...customization, language: locale });
+    }
+  }, [loading, resumeId, customization, locale, setCustomization]);
 
   const [activeSection, setActiveSection] = useState<SectionKey>('personalInfo');
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
@@ -691,6 +699,8 @@ export default function ResumeWorkspace() {
       const res = await fetch(`/api/resumes/${resumeId}/export-docx`, {
         method: 'POST',
         credentials: 'include',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ language: customization.language }),
       });
 
       if (!res.ok) {

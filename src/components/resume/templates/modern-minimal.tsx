@@ -9,11 +9,16 @@ import {
   getSectionLabel,
   getTemplateStyles,
   hexToRgba,
+  docLanguage,
+  docText,
+  levelLabel,
 } from '@/lib/templates/utils';
 
 export default function ModernMinimal({ data, customization }: TemplateComponentProps) {
   const s = getTemplateStyles(customization);
   const { accentColor, fontSize, sectionSpacing, headerAlignment, lineHeight } = customization;
+  const lang = docLanguage(customization);
+  const T = docText(lang);
 
   const nameSize = `${24 * fontSize}px`;
   const titleSize = `${12.5 * fontSize}px`;
@@ -97,7 +102,7 @@ export default function ModernMinimal({ data, customization }: TemplateComponent
               letterSpacing: '-0.3px',
             }}
           >
-            {getSectionLabel(sectionKey)}
+            {getSectionLabel(sectionKey, lang)}
           </h2>
           <div style={{ color: s.body.color }}>
             {renderSection(sectionKey)}
@@ -161,7 +166,7 @@ export default function ModernMinimal({ data, customization }: TemplateComponent
     return (
       <div style={{ display: 'flex', flexDirection: 'column' as const, gap: itemGap }}>
         {entries.map((job) => {
-          const dateRange = formatDateRange(job.startDate, job.endDate, job.currentJob);
+          const dateRange = formatDateRange(job.startDate, job.endDate, job.currentJob, lang);
           return (
             <div key={job.id}>
               <div
@@ -245,8 +250,8 @@ export default function ModernMinimal({ data, customization }: TemplateComponent
     return (
       <div style={{ display: 'flex', flexDirection: 'column' as const, gap: itemGap }}>
         {entries.map((edu) => {
-          const dateRange = formatDateRangeRaw(edu.startDate, edu.endDate);
-          const degreeLine = [edu.degree, edu.fieldOfStudy].filter(Boolean).join(' in ');
+          const dateRange = formatDateRangeRaw(edu.startDate, edu.endDate, lang);
+          const degreeLine = [edu.degree, edu.fieldOfStudy].filter(Boolean).join(` ${T.in} `);
           return (
             <div key={edu.id}>
               <div
@@ -292,7 +297,7 @@ export default function ModernMinimal({ data, customization }: TemplateComponent
                   lineHeight: 1.3,
                 }}
               >
-                {degreeLine}{edu.grade ? ` — GPA: ${edu.grade}` : ''}
+                {degreeLine}{edu.grade ? ` — ${T.gpa}: ${edu.grade}` : ''}
               </p>
             </div>
           );
@@ -321,7 +326,7 @@ export default function ModernMinimal({ data, customization }: TemplateComponent
           <span key={sk.id}>
             {sk.name}
             {sk.proficiency && (
-              <span style={{ color: '#6b7280', fontSize: '0.85em' }}> ({sk.proficiency})</span>
+              <span style={{ color: '#6b7280', fontSize: '0.85em' }}> ({levelLabel(sk.proficiency, lang)})</span>
             )}
             {i < skills.length - 1 ? ' \u00B7 ' : ''}
           </span>
@@ -351,8 +356,8 @@ export default function ModernMinimal({ data, customization }: TemplateComponent
     if (hasBoth) {
       return (
         <div>
-          {renderSkillGroup('Technical Skills', technicalSkills)}
-          {renderSkillGroup('Soft Skills', softSkills)}
+          {renderSkillGroup(T.technicalSkills, technicalSkills)}
+          {renderSkillGroup(T.softSkills, softSkills)}
         </div>
       );
     }
@@ -505,7 +510,7 @@ export default function ModernMinimal({ data, customization }: TemplateComponent
                     flexShrink: 0,
                   }}
                 >
-                  {formatDate(cert.issueDate)}
+                  {formatDate(cert.issueDate, lang)}
                 </span>
               )}
             </div>
@@ -532,9 +537,9 @@ export default function ModernMinimal({ data, customization }: TemplateComponent
     if (data.languages.length === 0) return null;
     return (
       <div style={{ display: 'flex', flexWrap: 'wrap' as const, gap: '4px 20px' }}>
-        {data.languages.filter(l => l.language).map(lang => (
+        {data.languages.filter(l => l.language).map(langItem => (
           <p
-            key={lang.id}
+            key={langItem.id}
             style={{
               fontFamily: s.body.fontFamily,
               fontSize: baseSize,
@@ -543,8 +548,8 @@ export default function ModernMinimal({ data, customization }: TemplateComponent
               lineHeight: 1.6,
             }}
           >
-            {lang.language}
-            <span style={{ color: '#9ca3af' }}> — {lang.proficiency}</span>
+            {langItem.language}
+            <span style={{ color: '#9ca3af' }}> — {levelLabel(langItem.proficiency, lang)}</span>
           </p>
         ))}
       </div>

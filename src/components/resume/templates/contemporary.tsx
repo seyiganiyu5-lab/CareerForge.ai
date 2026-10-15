@@ -9,10 +9,15 @@ import {
   getSectionLabel,
   getTemplateStyles,
   hexToRgba,
+  docLanguage,
+  docText,
+  levelLabel,
 } from '@/lib/templates/utils';
 
 export default function Contemporary({ data, customization }: TemplateComponentProps) {
   const s = getTemplateStyles(customization);
+  const lang = docLanguage(customization);
+  const T = docText(lang);
   const { accentColor, fontSize, sectionSpacing, lineHeight } = customization;
 
   const base = 10.5 * fontSize;
@@ -131,7 +136,7 @@ export default function Contemporary({ data, customization }: TemplateComponentP
                   letterSpacing: '-0.01em',
                 }}
               >
-                {getSectionLabel(sectionKey)}
+                {getSectionLabel(sectionKey, lang)}
               </h2>
             </div>
             <div
@@ -171,7 +176,7 @@ export default function Contemporary({ data, customization }: TemplateComponentP
         return (
           <div style={{ display: 'flex', flexDirection: 'column', gap: itemGap }}>
             {data.workExperience.filter(e => e.company || e.position).map(job => {
-              const dateRange = formatDateRange(job.startDate, job.endDate, job.currentJob);
+              const dateRange = formatDateRange(job.startDate, job.endDate, job.currentJob, lang);
               return (
                 <div key={job.id}>
                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', gap: '12px' }}>
@@ -240,8 +245,8 @@ export default function Contemporary({ data, customization }: TemplateComponentP
         return (
           <div style={{ display: 'flex', flexDirection: 'column', gap: itemGap }}>
             {data.education.filter(e => e.school || e.degree).map(edu => {
-              const dateRange = formatDateRangeRaw(edu.startDate, edu.endDate);
-              const degreeLine = [edu.degree, edu.fieldOfStudy].filter(Boolean).join(' in ');
+              const dateRange = formatDateRangeRaw(edu.startDate, edu.endDate, lang);
+              const degreeLine = [edu.degree, edu.fieldOfStudy].filter(Boolean).join(` ${T.in} `);
               return (
                 <div key={edu.id}>
                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', gap: '12px' }}>
@@ -279,7 +284,7 @@ export default function Contemporary({ data, customization }: TemplateComponentP
                         margin: '1px 0 0 0',
                       }}
                     >
-                      GPA: {edu.grade}
+                      {T.gpa}: {edu.grade}
                     </p>
                   )}
                 </div>
@@ -313,7 +318,7 @@ export default function Contemporary({ data, customization }: TemplateComponentP
             >
               {skill.name}
               {skill.proficiency && (
-                <span style={{ fontSize: '0.85em', opacity: 0.7 }}> — {skill.proficiency}</span>
+                <span style={{ fontSize: '0.85em', opacity: 0.7 }}> — {levelLabel(skill.proficiency, lang)}</span>
               )}
             </span>
           );
@@ -342,8 +347,8 @@ export default function Contemporary({ data, customization }: TemplateComponentP
           if (hasBoth) {
             return (
               <div>
-                {renderSkillGroup('Technical Skills', technicalSkills)}
-                {renderSkillGroup('Soft Skills', softSkills)}
+                {renderSkillGroup(T.technicalSkills, technicalSkills)}
+                {renderSkillGroup(T.softSkills, softSkills)}
               </div>
             );
           }
@@ -450,7 +455,7 @@ export default function Contemporary({ data, customization }: TemplateComponentP
                       flexShrink: 0,
                     }}
                   >
-                    {formatDate(cert.issueDate)}
+                    {formatDate(cert.issueDate, lang)}
                   </span>
                 )}
               </div>
@@ -461,11 +466,11 @@ export default function Contemporary({ data, customization }: TemplateComponentP
       case 'languages':
         return (
           <div style={{ display: 'flex', flexWrap: 'wrap', gap: '4px 16px' }}>
-            {data.languages.filter(l => l.language).map(lang => (
-              <span key={lang.id} style={{ color: '#334155' }}>
-                <span style={{ fontWeight: 500, color: '#1e293b' }}>{lang.language}</span>
-                {lang.proficiency && (
-                  <span style={{ color: '#94a3b8' }}> — {lang.proficiency}</span>
+            {data.languages.filter(l => l.language).map(langItem => (
+              <span key={langItem.id} style={{ color: '#334155' }}>
+                <span style={{ fontWeight: 500, color: '#1e293b' }}>{langItem.language}</span>
+                {langItem.proficiency && (
+                  <span style={{ color: '#94a3b8' }}> — {levelLabel(langItem.proficiency, lang)}</span>
                 )}
               </span>
             ))}
@@ -547,7 +552,7 @@ export default function Contemporary({ data, customization }: TemplateComponentP
               <div key={ref.id}>
                 <div style={{ fontWeight: 600, color: '#1e293b' }}>{ref.name}</div>
                 <div style={{ fontFamily: s.body.fontFamily, fontSize: smallSize, color: '#94a3b8' }}>
-                  {[ref.position, ref.company].filter(Boolean).join(' at ')}
+                  {[ref.position, ref.company].filter(Boolean).join(` ${T.at} `)}
                 </div>
                 <div style={{ fontFamily: s.body.fontFamily, fontSize: smallSize, color: '#94a3b8' }}>
                   {[ref.email, ref.phone].filter(Boolean).join(' \u00B7 ')}

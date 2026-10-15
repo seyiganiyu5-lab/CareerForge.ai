@@ -9,10 +9,15 @@ import {
   getSectionLabel,
   getTemplateStyles,
   hexToRgba,
+  docLanguage,
+  docText,
+  levelLabel,
 } from '@/lib/templates/utils';
 
 export default function ProfessionalBlue({ data, customization }: TemplateComponentProps) {
   const s = getTemplateStyles(customization);
+  const lang = docLanguage(customization);
+  const T = docText(lang);
   const contactItems = getContactItems(data.personalInfo);
   const visibleSections = getVisibleSections(
     data,
@@ -37,7 +42,7 @@ export default function ProfessionalBlue({ data, customization }: TemplateCompon
     : 'flex-start' as const;
 
   const renderSectionHeading = (key: SectionKey) => {
-    const label = getSectionLabel(key);
+    const label = getSectionLabel(key, lang);
     if (!label) return null;
     return (
       <div
@@ -244,7 +249,7 @@ export default function ProfessionalBlue({ data, customization }: TemplateCompon
     return (
       <div style={{ display: 'flex', flexDirection: 'column', gap: entryGap }}>
         {entries.map((exp) => {
-          const dateRange = formatDateRange(exp.startDate, exp.endDate, exp.currentJob);
+          const dateRange = formatDateRange(exp.startDate, exp.endDate, exp.currentJob, lang);
           return (
             <div key={exp.id}>
               <h3
@@ -328,7 +333,7 @@ export default function ProfessionalBlue({ data, customization }: TemplateCompon
     return (
       <div style={{ display: 'flex', flexDirection: 'column', gap: entryGap }}>
         {entries.map((edu) => {
-          const dateRange = formatDateRangeRaw(edu.startDate, edu.endDate);
+          const dateRange = formatDateRangeRaw(edu.startDate, edu.endDate, lang);
           return (
             <div key={edu.id}>
               <div
@@ -374,7 +379,7 @@ export default function ProfessionalBlue({ data, customization }: TemplateCompon
                   lineHeight: 1.3,
                 }}
               >
-                {edu.degree}{edu.fieldOfStudy ? ` in ${edu.fieldOfStudy}` : ''}{edu.grade ? `  ·  GPA: ${edu.grade}` : ''}
+                {edu.degree}{edu.fieldOfStudy ? ` ${T.in} ${edu.fieldOfStudy}` : ''}{edu.grade ? `  ·  ${T.gpa}: ${edu.grade}` : ''}
               </p>
             </div>
           );
@@ -405,7 +410,7 @@ export default function ProfessionalBlue({ data, customization }: TemplateCompon
       >
         {skill.name}
         {skill.proficiency && (
-          <span style={{ fontSize: '0.85em', opacity: 0.7 }}> — {skill.proficiency}</span>
+          <span style={{ fontSize: '0.85em', opacity: 0.7 }}> — {levelLabel(skill.proficiency, lang)}</span>
         )}
       </span>
     );
@@ -444,8 +449,8 @@ export default function ProfessionalBlue({ data, customization }: TemplateCompon
     if (hasBoth) {
       return (
         <div>
-          {renderSkillGroup('Technical Skills', technicalSkills)}
-          {renderSkillGroup('Soft Skills', softSkills)}
+          {renderSkillGroup(T.technicalSkills, technicalSkills)}
+          {renderSkillGroup(T.softSkills, softSkills)}
         </div>
       );
     }
@@ -543,7 +548,7 @@ export default function ProfessionalBlue({ data, customization }: TemplateCompon
     return (
       <div style={{ display: 'flex', flexDirection: 'column', gap: smallEntryGap }}>
         {entries.map((cert) => {
-          const dateStr = formatDate(cert.issueDate);
+          const dateStr = formatDate(cert.issueDate, lang);
           return (
             <div key={cert.id}>
               <div
@@ -610,9 +615,9 @@ export default function ProfessionalBlue({ data, customization }: TemplateCompon
           gap: '4px 20px',
         }}
       >
-        {data.languages.map(lang => (
+        {data.languages.map(langItem => (
           <span
-            key={lang.id}
+            key={langItem.id}
             style={{
               fontFamily: s.body.fontFamily,
               fontSize: baseSize,
@@ -620,9 +625,9 @@ export default function ProfessionalBlue({ data, customization }: TemplateCompon
               lineHeight: 1.5,
             }}
           >
-            <span style={{ fontWeight: 600, color: '#111827' }}>{lang.language}</span>
+            <span style={{ fontWeight: 600, color: '#111827' }}>{langItem.language}</span>
             {' — '}
-            <span style={{ color: '#6b7280' }}>{lang.proficiency}</span>
+            <span style={{ color: '#6b7280' }}>{levelLabel(langItem.proficiency, lang)}</span>
           </span>
         ))}
       </div>
@@ -772,7 +777,7 @@ export default function ProfessionalBlue({ data, customization }: TemplateCompon
                 lineHeight: 1.3,
               }}
             >
-              {[ref.position, ref.company].filter(Boolean).join(' at ')}
+              {[ref.position, ref.company].filter(Boolean).join(` ${T.at} `)}
             </p>
             {(ref.email || ref.phone) && (
               <p

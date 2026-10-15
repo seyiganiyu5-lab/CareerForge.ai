@@ -51,6 +51,8 @@ export interface TemplateCustomization {
   sectionOrder: SectionKey[];
   hiddenSections: SectionKey[];
   pageSize: 'a4' | 'letter';
+  /** Language of the CV's headings, dates and labels (defaults to English) */
+  language?: 'en' | 'fr';
 }
 
 // ─── Template Component Props ─────────────────────────────────

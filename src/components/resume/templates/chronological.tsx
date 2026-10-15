@@ -9,10 +9,15 @@ import {
   getSectionLabel,
   getTemplateStyles,
   hexToRgba,
+  docLanguage,
+  docText,
+  levelLabel,
 } from '@/lib/templates/utils';
 
 export default function Chronological({ data, customization }: TemplateComponentProps) {
   const s = getTemplateStyles(customization);
+  const lang = docLanguage(customization);
+  const T = docText(lang);
   const { accentColor, fontSize, sectionSpacing, lineHeight } = customization;
 
   const base = 10.5 * fontSize;
@@ -85,7 +90,7 @@ export default function Chronological({ data, customization }: TemplateComponent
   /* ── Section Wrapper ───────────────────────────────────── */
 
   function renderSection(key: SectionKey) {
-    const label = getSectionLabel(key);
+    const label = getSectionLabel(key, lang);
     const isTimeline = key === 'workExperience';
     const isLightTimeline = key === 'education';
 
@@ -185,7 +190,7 @@ export default function Chronological({ data, customization }: TemplateComponent
     return (
       <div style={{ display: 'flex', flexDirection: 'column', gap: itemGap }}>
         {filtered.map((job, idx) => {
-          const dateRange = formatDateRange(job.startDate, job.endDate, job.currentJob);
+          const dateRange = formatDateRange(job.startDate, job.endDate, job.currentJob, lang);
           const descLines = job.description ? job.description.split('\n').filter(Boolean) : [];
           return (
             <div
@@ -274,8 +279,8 @@ export default function Chronological({ data, customization }: TemplateComponent
     return (
       <div style={{ display: 'flex', flexDirection: 'column', gap: itemGap }}>
         {filtered.map((edu, idx) => {
-          const dateRange = formatDateRangeRaw(edu.startDate, edu.endDate);
-          const degreeLine = [edu.degree, edu.fieldOfStudy].filter(Boolean).join(' in ');
+          const dateRange = formatDateRangeRaw(edu.startDate, edu.endDate, lang);
+          const degreeLine = [edu.degree, edu.fieldOfStudy].filter(Boolean).join(` ${T.in} `);
           return (
             <div
               key={edu.id}
@@ -321,7 +326,7 @@ export default function Chronological({ data, customization }: TemplateComponent
               </p>
               {edu.grade && (
                 <p style={{ fontFamily: s.body.fontFamily, fontSize: smallSize, color: '#94a3b8', margin: '1px 0 0 0' }}>
-                  GPA: {edu.grade}
+                  {T.gpa}: {edu.grade}
                 </p>
               )}
             </div>
@@ -353,7 +358,7 @@ export default function Chronological({ data, customization }: TemplateComponent
           <span key={sk.id}>
             {sk.name}
             {sk.proficiency && (
-              <span style={{ color: '#6b7280', fontSize: '0.85em' }}> ({sk.proficiency})</span>
+              <span style={{ color: '#6b7280', fontSize: '0.85em' }}> ({levelLabel(sk.proficiency, lang)})</span>
             )}
             {i < skills.length - 1 ? ' \u00B7 ' : ''}
           </span>
@@ -383,8 +388,8 @@ export default function Chronological({ data, customization }: TemplateComponent
     if (hasBoth) {
       return (
         <div>
-          {renderSkillGroup('Technical Skills', technicalSkills)}
-          {renderSkillGroup('Soft Skills', softSkills)}
+          {renderSkillGroup(T.technicalSkills, technicalSkills)}
+          {renderSkillGroup(T.softSkills, softSkills)}
         </div>
       );
     }
@@ -488,7 +493,7 @@ export default function Chronological({ data, customization }: TemplateComponent
                   flexShrink: 0,
                 }}
               >
-                {formatDate(cert.issueDate)}
+                {formatDate(cert.issueDate, lang)}
               </span>
             )}
           </div>
@@ -504,11 +509,11 @@ export default function Chronological({ data, customization }: TemplateComponent
     if (filtered.length === 0) return null;
     return (
       <div style={{ display: 'flex', flexWrap: 'wrap', gap: '4px 16px' }}>
-        {filtered.map(lang => (
-          <span key={lang.id} style={{ color: '#334155' }}>
-            <span style={{ fontWeight: 500, color: '#1e293b' }}>{lang.language}</span>
-            {lang.proficiency && (
-              <span style={{ color: '#94a3b8' }}> — {lang.proficiency}</span>
+        {filtered.map(langItem => (
+          <span key={langItem.id} style={{ color: '#334155' }}>
+            <span style={{ fontWeight: 500, color: '#1e293b' }}>{langItem.language}</span>
+            {langItem.proficiency && (
+              <span style={{ color: '#94a3b8' }}> — {levelLabel(langItem.proficiency, lang)}</span>
             )}
           </span>
         ))}
@@ -598,7 +603,7 @@ export default function Chronological({ data, customization }: TemplateComponent
           <div key={ref.id}>
             <div style={{ fontWeight: 600, color: '#1e293b' }}>{ref.name}</div>
             <div style={{ fontFamily: s.body.fontFamily, fontSize: smallSize, color: '#94a3b8' }}>
-              {[ref.position, ref.company].filter(Boolean).join(' at ')}
+              {[ref.position, ref.company].filter(Boolean).join(` ${T.at} `)}
             </div>
             <div style={{ fontFamily: s.body.fontFamily, fontSize: smallSize, color: '#94a3b8' }}>
               {[ref.email, ref.phone].filter(Boolean).join(' \u00B7 ')}

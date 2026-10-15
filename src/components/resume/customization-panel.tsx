@@ -108,7 +108,7 @@ export function CustomizationPanel({
   };
 
   const reset = () => {
-    onChange(createDefaultCustomization(templateId));
+    onChange({ ...createDefaultCustomization(templateId), language: customization.language });
   };
 
   return (
@@ -325,6 +325,28 @@ export function CustomizationPanel({
                     </button>
                   ))}
                 </div>
+              </div>
+              <div className="space-y-1.5">
+                <Label className="text-xs font-body text-muted-foreground">
+                  {t('cvLanguage')}
+                </Label>
+                <div className="flex gap-1">
+                  {(['en', 'fr'] as const).map(lng => (
+                    <button
+                      key={lng}
+                      onClick={() => update('language', lng)}
+                      className={cn(
+                        'flex-1 h-8 rounded-md border text-xs font-body transition-all',
+                        (customization.language ?? 'en') === lng
+                          ? 'bg-primary text-primary-foreground border-primary'
+                          : 'border-border hover:bg-accent text-muted-foreground'
+                      )}
+                    >
+                      {lng === 'en' ? 'English' : 'Français'}
+                    </button>
+                  ))}
+                </div>
+                <p className="text-[11px] text-muted-foreground font-body">{t('cvLanguageHint')}</p>
               </div>
             </div>
           </Section>

@@ -9,10 +9,15 @@ import {
   getSectionLabel,
   getTemplateStyles,
   hexToRgba,
+  docLanguage,
+  docText,
+  levelLabel,
 } from '@/lib/templates/utils';
 
 export default function Executive({ data, customization }: TemplateComponentProps) {
   const s = getTemplateStyles(customization);
+  const lang = docLanguage(customization);
+  const T = docText(lang);
   const { accentColor, fontSize, sectionSpacing, lineHeight } = customization;
 
   const nameSize = `${26 * fontSize}px`;
@@ -31,7 +36,7 @@ export default function Executive({ data, customization }: TemplateComponentProp
 
   // ── Decorative section heading with flanking lines ────────
   const renderSectionHeading = (key: SectionKey) => {
-    const label = getSectionLabel(key);
+    const label = getSectionLabel(key, lang);
     if (!label) return null;
     return (
       <div
@@ -221,7 +226,7 @@ export default function Executive({ data, customization }: TemplateComponentProp
     return (
       <div style={{ display: 'flex', flexDirection: 'column' as const, gap: entryGap }}>
         {entries.map((job) => {
-          const dateRange = formatDateRange(job.startDate, job.endDate, job.currentJob);
+          const dateRange = formatDateRange(job.startDate, job.endDate, job.currentJob, lang);
           return (
             <div key={job.id}>
               <div
@@ -312,7 +317,7 @@ export default function Executive({ data, customization }: TemplateComponentProp
     return (
       <div style={{ display: 'flex', flexDirection: 'column' as const, gap: entryGap }}>
         {entries.map((edu) => {
-          const dateRange = formatDateRangeRaw(edu.startDate, edu.endDate);
+          const dateRange = formatDateRangeRaw(edu.startDate, edu.endDate, lang);
           return (
             <div key={edu.id}>
               <div
@@ -333,7 +338,7 @@ export default function Executive({ data, customization }: TemplateComponentProp
                     lineHeight: 1.3,
                   }}
                 >
-                  {edu.degree}{edu.fieldOfStudy ? ` in ${edu.fieldOfStudy}` : ''}
+                  {edu.degree}{edu.fieldOfStudy ? ` ${T.in} ${edu.fieldOfStudy}` : ''}
                 </h3>
                 {dateRange && (
                   <span
@@ -370,7 +375,7 @@ export default function Executive({ data, customization }: TemplateComponentProp
                     lineHeight: 1.3,
                   }}
                 >
-                  GPA: {edu.grade}
+                  {T.gpa}: {edu.grade}
                 </p>
               )}
             </div>
@@ -408,7 +413,7 @@ export default function Executive({ data, customization }: TemplateComponentProp
         >
           {sk.name}
           {sk.proficiency && (
-            <span style={{ color: '#6b7280', fontSize: '0.85em', marginLeft: 4 }}>({sk.proficiency})</span>
+            <span style={{ color: '#6b7280', fontSize: '0.85em', marginLeft: 4 }}>({levelLabel(sk.proficiency, lang)})</span>
           )}
         </span>
       </div>
@@ -452,8 +457,8 @@ export default function Executive({ data, customization }: TemplateComponentProp
     if (hasBoth) {
       return (
         <div>
-          {renderSkillGroup('Technical Skills', technicalSkills)}
-          {renderSkillGroup('Soft Skills', softSkills)}
+          {renderSkillGroup(T.technicalSkills, technicalSkills)}
+          {renderSkillGroup(T.softSkills, softSkills)}
         </div>
       );
     }
@@ -561,7 +566,7 @@ export default function Executive({ data, customization }: TemplateComponentProp
     return (
       <div style={{ display: 'flex', flexDirection: 'column' as const, gap: smallEntryGap }}>
         {entries.map((cert) => {
-          const dateStr = formatDate(cert.issueDate);
+          const dateStr = formatDate(cert.issueDate, lang);
           return (
             <div key={cert.id}>
               <div
@@ -628,9 +633,9 @@ export default function Executive({ data, customization }: TemplateComponentProp
           gap: '4px 24px',
         }}
       >
-        {data.languages.map(lang => (
+        {data.languages.map(langItem => (
           <span
-            key={lang.id}
+            key={langItem.id}
             style={{
               fontFamily: s.body.fontFamily,
               fontSize: baseSize,
@@ -638,8 +643,8 @@ export default function Executive({ data, customization }: TemplateComponentProp
               lineHeight: 1.6,
             }}
           >
-            {lang.language}
-            <span style={{ color: '#6b7280' }}> — {lang.proficiency}</span>
+            {langItem.language}
+            <span style={{ color: '#6b7280' }}> — {levelLabel(langItem.proficiency, lang)}</span>
           </span>
         ))}
       </div>
