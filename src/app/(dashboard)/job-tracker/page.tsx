@@ -7,6 +7,7 @@ import { FadeInUp, FadeIn } from '@/lib/motion';
 import {
   Briefcase, Plus, Search, X, LayoutGrid, List, Calendar,
   Filter, ChevronDown, ChevronUp, FileText, TrendingUp, Award, Percent,
+  Mail,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
@@ -29,6 +30,7 @@ import { ListView } from '@/components/job-tracker/list-view';
 import { CalendarView } from '@/components/job-tracker/calendar-view';
 import { JobFormDialog } from '@/components/job-tracker/job-form-dialog';
 import { AiSuggestionsPanel } from '@/components/job-tracker/ai-suggestions-panel';
+import { EmailImportDialog } from '@/components/job-tracker/email-import-dialog';
 
 // ---------------------------------------------------------------------------
 // Types
@@ -152,10 +154,11 @@ function NoResults() {
 
 function JobTrackerContent() {
   const t = useTranslations('dashboard.jobTracker');
+  const tu = useTranslations('app.jobTrackerUi');
   const labels = useJobLabels();
   const {
-    filteredApplications, loading, stats, calendarEvents,
-    filters, setFilters, fetchCalendar,
+    applications, filteredApplications, loading, stats, calendarEvents,
+    filters, setFilters, fetchApplications, fetchStats, fetchCalendar,
     createApplication, updateApplication, deleteApplication,
     archiveApplication, duplicateApplication, changeStatus,
     addReminder, generateAiSuggestions,
@@ -170,6 +173,13 @@ function JobTrackerContent() {
   const [aiAppTitle, setAiAppTitle] = useState('');
   const [aiCompanyName, setAiCompanyName] = useState('');
   const [aiSuggestions, setAiSuggestions] = useState<AiSuggestion[]>([]);
+  const [emailOpen, setEmailOpen] = useState(false);
+
+  const refreshAll = useCallback(() => {
+    fetchApplications();
+    fetchStats();
+    fetchCalendar();
+  }, [fetchApplications, fetchStats, fetchCalendar]);
 
   const handleAdd = useCallback(() => {
     setEditingApp(null);
@@ -249,14 +259,27 @@ function JobTrackerContent() {
           </div>
         </div>
 
-        <Button
-          onClick={handleAdd}
-          className="bg-brand hover:bg-brand/90 text-white font-body gap-2 shrink-0"
-        >
-          <Plus className="w-4 h-4" />
-          {t('addJob')}
-        </Button>
+        <div className="flex gap-2 shrink-0">
+          <Button variant="outline" onClick={() => setEmailOpen(true)} className="font-body gap-2 flex-1 sm:flex-none">
+            <Mail className="w-4 h-4" />
+            {tu('emailImportButton')}
+          </Button>
+          <Button
+            onClick={handleAdd}
+            className="bg-brand hover:bg-brand/90 text-white font-body gap-2 flex-1 sm:flex-none"
+          >
+            <Plus className="w-4 h-4" />
+            {t('addJob')}
+          </Button>
+        </div>
       </FadeInUp>
+
+      <EmailImportDialog
+        open={emailOpen}
+        onOpenChange={setEmailOpen}
+        applications={applications.filter(a => !a.is_archived)}
+        onChanged={refreshAll}
+      />
 
       {/* Stats */}
       <FadeInUp delay={0.1} duration={0.35}>
