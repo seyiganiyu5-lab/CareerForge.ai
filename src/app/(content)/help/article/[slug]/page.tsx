@@ -202,7 +202,13 @@ export default function ArticlePage() {
                 </span>
                 <span className="inline-flex items-center gap-1.5">
                   <Calendar className="h-4 w-4" />
-                  {t.lastUpdated} {local.lastUpdated}
+                  {t.lastUpdated}{' '}
+                  {new Date(local.lastUpdated).toLocaleDateString(locale === 'fr' ? 'fr-FR' : 'en-US', {
+                    year: 'numeric',
+                    month: 'long',
+                    day: 'numeric',
+                    timeZone: 'UTC',
+                  })}
                 </span>
               </div>
             </motion.div>
