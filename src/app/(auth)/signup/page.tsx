@@ -149,7 +149,7 @@ export default function SignupPage() {
             )}
 
             {/* Name Row */}
-            <motion.div variants={staggerItem} className="grid grid-cols-2 gap-3">
+            <motion.div variants={staggerItem} className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               <FormField
                 control={form.control}
                 name="firstName"

@@ -131,9 +131,8 @@ function SettingsSkeleton() {
 export default function SettingsPage() {
   const t = useTranslations('app.settings');
   const tc = useTranslations('app.common');
-  const { setLocale } = useLocale();
+  const { locale, setLocale } = useLocale();
   const [theme, setTheme] = useState<ThemeValue>('system');
-  const [language, setLanguage] = useState('en');
   const [loading, setLoading] = useState(true);
   const [themeUpdating, setThemeUpdating] = useState(false);
   const [langUpdating, setLangUpdating] = useState(false);
@@ -150,7 +149,6 @@ export default function SettingsPage() {
       const data = await res.json();
       if (data.success && data.settings) {
         setTheme((data.settings.theme as ThemeValue) || 'system');
-        setLanguage(data.settings.language || 'en');
       } else {
         toast.error(data.error || t('loadFailed'));
       }
@@ -192,7 +190,6 @@ export default function SettingsPage() {
 
   const handleLanguageChange = async (newLang: string) => {
     setLangUpdating(true);
-    setLanguage(newLang);
     if (newLang === 'en' || newLang === 'fr') setLocale(newLang as Locale);
     try {
       const res = await fetch('/api/user/settings', {
@@ -369,7 +366,7 @@ export default function SettingsPage() {
           <CardContent>
             <div className="max-w-xs">
               <Select
-                value={language}
+                value={locale}
                 onValueChange={handleLanguageChange}
                 disabled={langUpdating}
               >
