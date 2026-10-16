@@ -1,8 +1,8 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { motion, AnimatePresence, type Variants } from 'framer-motion';
-import { useTranslations } from '@/i18n/provider';
+import { useLocale, useTranslations } from '@/i18n/provider';
 import { CheckCircle2, ArrowRight } from 'lucide-react';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
@@ -37,6 +37,29 @@ export default function Pricing() {
   const t = useTranslations('pricing');
   const tA = useTranslations('a11y');
   const [isYearly, setIsYearly] = useState(false);
+  const { locale } = useLocale();
+  // Real Pro price in the visitor's currency (falls back to the text prices)
+  const [livePro, setLivePro] = useState<{ monthly: number; yearly: number; currency: string } | null>(null);
+  useEffect(() => {
+    fetch('/api/billing/plans')
+      .then(r => r.json())
+      .then(data => {
+        const pro = data?.plans?.find((p: { name: string }) => p.name === 'pro');
+        if (pro?.price_monthly > 0) setLivePro({ monthly: pro.price_monthly, yearly: pro.price_yearly, currency: pro.currency });
+      })
+      .catch(() => {});
+  }, []);
+  const money = (subunits: number, currency: string) => {
+    const amount = subunits / 100;
+    const digits = Number.isInteger(amount) ? 0 : 2;
+    return new Intl.NumberFormat(locale === 'fr' ? 'fr-FR' : 'en-US', {
+      style: 'currency', currency, minimumFractionDigits: digits, maximumFractionDigits: digits,
+    }).format(amount);
+  };
+  const priceText = (planKey: string, yearly: boolean) => {
+    if (planKey === 'pro' && livePro) return money(yearly ? livePro.yearly : livePro.monthly, livePro.currency);
+    return yearly ? t(`plans.${planKey}.priceYearly`) : t(`plans.${planKey}.price`);
+  };
 
   return (
     <section id="pricing" className="py-20 md:py-28">
@@ -129,10 +152,7 @@ export default function Pricing() {
                       transition={{ duration: 0.2 }}
                       className="text-4xl md:text-5xl font-bold font-heading text-foreground"
                     >
-                      {planKey !== 'free' && isYearly
-                        ? t(`plans.${planKey}.priceYearly`)
-                        : t(`plans.${planKey}.price`)
-                      }
+                      {priceText(planKey, planKey !== 'free' && isYearly)}
                     </motion.span>
                   </AnimatePresence>
                   <AnimatePresence mode="wait">

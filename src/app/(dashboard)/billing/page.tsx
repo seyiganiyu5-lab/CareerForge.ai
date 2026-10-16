@@ -110,11 +110,13 @@ function getPlanTier(planName: string): number {
 
 function formatPrice(cents: number, currency: string = 'USD', locale = 'en-US'): string {
   const amount = cents / 100;
+  // Whole amounts without decimals (₦7,900, 4 900 F CFA), others with two ($7.99)
+  const digits = Number.isInteger(amount) ? 0 : 2;
   return new Intl.NumberFormat(locale, {
     style: 'currency',
     currency,
-    minimumFractionDigits: 2,
-    maximumFractionDigits: 2,
+    minimumFractionDigits: digits,
+    maximumFractionDigits: digits,
   }).format(amount);
 }
 
@@ -232,11 +234,18 @@ export default function BillingPage() {
   const [upgrading, setUpgrading] = useState<string | null>(null);
   const [cancelDialogOpen, setCancelDialogOpen] = useState(false);
   const [cancelling, setCancelling] = useState(false);
+  // Currency: what the customer picked (null = let the server use their country's)
+  const [chosenCurrency, setChosenCurrency] = useState<string | null>(null);
+  const [currency, setCurrency] = useState('USD');
+  const [currencies, setCurrencies] = useState<string[]>([]);
 
   const currentPlanName = subscription?.plan.name.toLowerCase() as PlanName || 'free';
   const currentTier = getPlanTier(currentPlanName);
   const isCancelled = subscription?.status === 'cancelled';
   const isFree = currentPlanName === 'free';
+  const periodEnd = subscription?.current_period_end ? new Date(subscription.current_period_end).getTime() : null;
+  const daysLeft = periodEnd ? Math.max(0, Math.ceil((periodEnd - Date.now()) / 86_400_000)) : null;
+  const currentPlanPrices = plans.find(p => p.id === subscription?.plan.id);
 
   const { refetch: refetchPlan } = useUsage();
 
@@ -246,13 +255,17 @@ export default function BillingPage() {
     try {
       const [subRes, plansRes, usageRes, paymentsRes] = await Promise.all([
         fetch('/api/subscriptions/me', { credentials: 'include' }).then(r => r.json()),
-        fetch('/api/billing/plans', { credentials: 'include' }).then(r => r.json()),
+        fetch(`/api/billing/plans${chosenCurrency ? `?currency=${chosenCurrency}` : ''}`, { credentials: 'include' }).then(r => r.json()),
         fetch('/api/usage/me', { credentials: 'include' }).then(r => r.json()),
         fetch('/api/payments/history', { credentials: 'include' }).then(r => r.json()),
       ]);
 
       if (subRes.success) setSubscription(subRes.subscription);
-      if (plansRes.success) setPlans(plansRes.plans);
+      if (plansRes.success) {
+        setPlans(plansRes.plans);
+        setCurrency(plansRes.currency || 'USD');
+        setCurrencies(plansRes.currencies || []);
+      }
       if (usageRes.success) {
         setUsage(usageRes.usage || {});
         setRawUsage(usageRes.raw || {});
@@ -266,23 +279,18 @@ export default function BillingPage() {
     } finally {
       setLoading(false);
     }
-  }, [refetchPlan]);
+  }, [refetchPlan, chosenCurrency]);
 
   useEffect(() => {
     fetchAllData();
   }, [fetchAllData]);
 
-  // Flutterwave sends the user back here with ?status=...&tx_ref=...&transaction_id=...
+  // Paystack sends the user back here with ?trxref=...&reference=...
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
-    const txRef = params.get('tx_ref');
-    if (!txRef) return;
+    const reference = params.get('reference') || params.get('trxref');
+    if (!reference) return;
     window.history.replaceState(null, '', window.location.pathname);
-
-    if (params.get('status') === 'cancelled') {
-      toast.info(t('paymentCancelled'));
-      return;
-    }
 
     (async () => {
       try {
@@ -290,12 +298,14 @@ export default function BillingPage() {
           method: 'POST',
           credentials: 'include',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ tx_ref: txRef, transaction_id: params.get('transaction_id') }),
+          body: JSON.stringify({ reference }),
         });
         const data = await res.json();
         if (data.success) {
           toast.success(t('paymentReceived'));
           await fetchAllData();
+        } else if (data.error === 'payment_not_completed') {
+          toast.info(t('paymentCancelled'));
         } else {
           toast.error(data.error || t('paymentNotConfirmed'));
         }
@@ -303,7 +313,8 @@ export default function BillingPage() {
         toast.error(t('paymentCheckFailed'));
       }
     })();
-  }, [fetchAllData]);
+    // Runs once, when the page opens after checkout
+  }, []);
 
   // Handlers
   const handleUpgrade = async (planId: string, planDisplayName: string) => {
@@ -313,7 +324,7 @@ export default function BillingPage() {
         method: 'POST',
         credentials: 'include',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ planId, billingCycle: isYearly ? 'yearly' : 'monthly' }),
+        body: JSON.stringify({ planId, billingCycle: isYearly ? 'yearly' : 'monthly', currency }),
       });
       const data = await res.json();
 
@@ -430,7 +441,7 @@ export default function BillingPage() {
                       ? t('freeNote')
                       : isCancelled && subscription?.current_period_end
                         ? t('expiresOn', { date: fmtDate(subscription.current_period_end) })
-                        : t('nextBilling', { date: fmtDate(subscription?.current_period_end || null) })
+                        : t('activeUntil', { date: fmtDate(subscription?.current_period_end || null) })
                     }
                   </p>
                 </div>
@@ -455,16 +466,42 @@ export default function BillingPage() {
                     )}
                   </Button>
                 ) : (
-                  <Button
-                    variant="outline"
-                    className="font-body rounded-lg"
-                    onClick={() => setCancelDialogOpen(true)}
-                  >
-                    {t('changePlan')}
-                  </Button>
+                  <>
+                    {subscription && currentPlanName !== 'enterprise' && (
+                      <Button
+                        className="bg-brand text-white hover:bg-brand/90 font-body rounded-lg"
+                        onClick={() => handleUpgrade(subscription.plan.id, subscription.plan.display_name)}
+                        disabled={upgrading !== null}
+                      >
+                        {upgrading === subscription.plan.id ? <Loader2 className="w-4 h-4 animate-spin" /> : t('renew')}
+                      </Button>
+                    )}
+                    <Button
+                      variant="outline"
+                      className="font-body rounded-lg"
+                      onClick={() => setCancelDialogOpen(true)}
+                    >
+                      {t('changePlan')}
+                    </Button>
+                  </>
                 )}
               </div>
             </div>
+
+            {/* Ending soon: there is no automatic charge, so remind to renew */}
+            {!isFree && !isCancelled && daysLeft !== null && daysLeft <= 7 && (
+              <FadeIn className="mt-4 flex items-start gap-3 rounded-lg border border-amber-500/30 bg-amber-500/5 p-4">
+                <AlertTriangle className="w-5 h-5 text-amber-600 dark:text-amber-400 shrink-0 mt-0.5" />
+                <div>
+                  <p className="text-sm font-medium font-body text-amber-700 dark:text-amber-300">
+                    {t('endsSoon', { days: daysLeft })}
+                  </p>
+                  <p className="text-xs text-amber-600/70 dark:text-amber-400/70 mt-0.5 font-body">
+                    {t('renewHint')}
+                  </p>
+                </div>
+              </FadeIn>
+            )}
 
             {/* Cancelled Warning */}
             {isCancelled && subscription?.current_period_end && (
@@ -561,8 +598,8 @@ export default function BillingPage() {
                   <p className="text-xs text-muted-foreground font-body mb-1">{t('planPrice')}</p>
                   <p className="text-sm font-medium font-heading text-foreground">
                     {subscription.billing_cycle === 'yearly'
-                      ? `${fmtPrice(subscription.plan.price_yearly, subscription.plan.currency)}${t('perYear')}`
-                      : `${fmtPrice(subscription.plan.price_monthly, subscription.plan.currency)}${t('perMonth')}`
+                      ? `${fmtPrice(currentPlanPrices?.price_yearly ?? subscription.plan.price_yearly, currentPlanPrices?.currency ?? subscription.plan.currency)}${t('perYear')}`
+                      : `${fmtPrice(currentPlanPrices?.price_monthly ?? subscription.plan.price_monthly, currentPlanPrices?.currency ?? subscription.plan.currency)}${t('perMonth')}`
                     }
                   </p>
                 </div>
@@ -608,6 +645,23 @@ export default function BillingPage() {
             <Badge className="bg-emerald/10 text-emerald border-emerald/20 text-xs font-body">
               {t('save20')}
             </Badge>
+            {currencies.length > 1 && (
+              <div role="radiogroup" aria-label={t('currency')} className="flex rounded-lg border border-border p-0.5">
+                {currencies.map(c => (
+                  <button
+                    key={c}
+                    role="radio"
+                    aria-checked={c === currency}
+                    onClick={() => setChosenCurrency(c)}
+                    className={`px-2 py-1 text-xs font-medium font-body rounded-md transition-colors ${
+                      c === currency ? 'bg-brand text-white' : 'text-muted-foreground hover:text-foreground'
+                    }`}
+                  >
+                    {c === 'XOF' ? 'FCFA' : c}
+                  </button>
+                ))}
+              </div>
+            )}
           </div>
         </div>
 
@@ -749,7 +803,16 @@ export default function BillingPage() {
 
                 {/* CTA button */}
                 <div className="p-6 pt-2 mt-auto">
-                  {isCurrentPlan ? (
+                  {isCurrentPlan && !isFree && !isEnterprise ? (
+                    <Button
+                      variant="outline"
+                      className="w-full rounded-lg font-body"
+                      onClick={() => handleUpgrade(plan.id, plan.display_name)}
+                      disabled={upgrading !== null}
+                    >
+                      {upgrading === plan.id ? <Loader2 className="w-4 h-4 animate-spin" /> : t('renewAddTime', { cycle: isYearly ? t('yearShort') : t('monthShort') })}
+                    </Button>
+                  ) : isCurrentPlan ? (
                     <Button
                       variant="outline"
                       className="w-full rounded-lg font-body"

@@ -650,7 +650,13 @@
       "fwdConfirmTitle": "Confirm Gmail forwarding",
       "fwdConfirmBody": "Gmail needs you to confirm forwarding to CareerForge. Code: {code}. Click to open the confirmation link.",
       "fwdSkippedTitle": "Forwarded email not processed",
-      "fwdSkippedBody": "\"{subject}\" arrived, but your AI limit is reached. Paste it in the job tracker later, or upgrade."
+      "fwdSkippedBody": "\"{subject}\" arrived, but your AI limit is reached. Paste it in the job tracker later, or upgrade.",
+      "paymentTitle": "Payment received",
+      "paymentBody": "{plan}: {amount} paid. Active until {until}.",
+      "planEndingTitle": "Your plan ends soon",
+      "planEndingBody": "{plan} ends on {when}. Renew to keep your Pro features.",
+      "planExpiredTitle": "Your plan has ended",
+      "planExpiredBody": "{plan} has ended and you are back on Free. Your Pro documents are kept: renew to get them back."
     },
     "userMenu": {
       "profile": "My Profile",
@@ -1358,7 +1364,15 @@
       "planName_enterprise": "Enterprise",
       "planDesc_free": "Get started with basic resume building tools",
       "planDesc_pro": "Unlock AI-powered tools and unlimited documents",
-      "planDesc_enterprise": "Team management, analytics, and custom branding"
+      "planDesc_enterprise": "Team management, analytics, and custom branding",
+      "activeUntil": "Active until {date}. No automatic charges: renew any time and the time is added on.",
+      "renew": "Renew",
+      "renewAddTime": "Renew (+1 {cycle})",
+      "monthShort": "month",
+      "yearShort": "year",
+      "endsSoon": "{days, plural, =0 {Your plan ends today} one {Your plan ends in # day} other {Your plan ends in # days}}",
+      "renewHint": "Renew now to keep your Pro features. The new period starts when the current one ends, so you lose nothing.",
+      "currency": "Currency"
     },
     "settings": {
       "title": "Settings",

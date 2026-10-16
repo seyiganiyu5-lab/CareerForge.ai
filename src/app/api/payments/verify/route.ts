@@ -1,10 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getAuthUser } from '@/lib/subscription/auth-helpers';
-import { applySuccessfulPayment, fetchTransaction, isPaymentsConfigured } from '@/lib/billing/flutterwave';
+import { applySuccessfulPayment, isPaymentsConfigured, paymentMetadata, verifyPayment } from '@/lib/billing/paystack';
 
 /**
- * POST /api/payments/verify
- * Called by the billing page when the user returns from Flutterwave checkout.
+ * POST /api/payments/verify  { reference }
+ * Called by the billing page when the user comes back from Paystack checkout.
  */
 export async function POST(request: NextRequest) {
   try {
@@ -17,17 +17,21 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ success: false, error: 'Payments are not set up yet' }, { status: 503 });
     }
 
-    const { tx_ref, transaction_id } = await request.json();
-    if (!tx_ref && !transaction_id) {
+    const { reference } = await request.json().catch(() => ({}));
+    if (typeof reference !== 'string' || !reference) {
       return NextResponse.json({ success: false, error: 'Transaction reference is required' }, { status: 400 });
     }
 
-    const tx = await fetchTransaction(transaction_id ? { id: transaction_id } : { txRef: tx_ref });
-    if (!tx || (tx_ref && tx.tx_ref !== tx_ref)) {
+    const tx = await verifyPayment(reference);
+    if (!tx || tx.reference !== reference) {
       return NextResponse.json({ success: false, error: 'Payment not found' }, { status: 404 });
     }
-    if (tx.meta?.user_id !== auth.userId) {
+    if (paymentMetadata(tx).user_id !== auth.userId) {
       return NextResponse.json({ success: false, error: 'This payment belongs to another account' }, { status: 403 });
+    }
+    if (tx.status !== 'success') {
+      // abandoned / failed: the customer left or the payment was declined
+      return NextResponse.json({ success: false, error: 'payment_not_completed', status: tx.status }, { status: 400 });
     }
 
     const result = await applySuccessfulPayment(tx);

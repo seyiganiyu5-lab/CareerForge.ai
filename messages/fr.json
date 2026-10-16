@@ -650,7 +650,13 @@
       "fwdConfirmTitle": "Confirmez le transfert Gmail",
       "fwdConfirmBody": "Gmail vous demande de confirmer le transfert vers CareerForge. Code : {code}. Cliquez pour ouvrir le lien de confirmation.",
       "fwdSkippedTitle": "E-mail transféré non traité",
-      "fwdSkippedBody": "« {subject} » est arrivé, mais votre limite IA est atteinte. Collez-le plus tard dans le suivi, ou passez à une offre supérieure."
+      "fwdSkippedBody": "« {subject} » est arrivé, mais votre limite IA est atteinte. Collez-le plus tard dans le suivi, ou passez à une offre supérieure.",
+      "paymentTitle": "Paiement reçu",
+      "paymentBody": "{plan} : {amount} payé. Actif jusqu'au {until}.",
+      "planEndingTitle": "Votre offre se termine bientôt",
+      "planEndingBody": "{plan} se termine le {when}. Renouvelez pour garder vos fonctionnalités Pro.",
+      "planExpiredTitle": "Votre offre est terminée",
+      "planExpiredBody": "{plan} est terminé et vous êtes repassé à l'offre Gratuite. Vos documents Pro sont conservés : renouvelez pour les retrouver."
     },
     "userMenu": {
       "profile": "Mon Profil",
@@ -1358,7 +1364,15 @@
       "planName_enterprise": "Entreprise",
       "planDesc_free": "Commencez avec les outils de base pour créer un CV",
       "planDesc_pro": "Débloquez les outils IA et des documents illimités",
-      "planDesc_enterprise": "Gestion d'équipe, statistiques et image de marque personnalisée"
+      "planDesc_enterprise": "Gestion d'équipe, statistiques et image de marque personnalisée",
+      "activeUntil": "Actif jusqu'au {date}. Aucun prélèvement automatique : renouvelez quand vous voulez, la durée s'ajoute.",
+      "renew": "Renouveler",
+      "renewAddTime": "Renouveler (+1 {cycle})",
+      "monthShort": "mois",
+      "yearShort": "an",
+      "endsSoon": "{days, plural, =0 {Votre offre se termine aujourd'hui} one {Votre offre se termine dans # jour} other {Votre offre se termine dans # jours}}",
+      "renewHint": "Renouvelez maintenant pour garder vos fonctionnalités Pro. La nouvelle période commence à la fin de l'actuelle : vous ne perdez rien.",
+      "currency": "Devise"
     },
     "settings": {
       "title": "Paramètres",

@@ -120,6 +120,22 @@ export async function generateDueNotifications(userId: string, now = new Date())
     }
   }
 
+  // Paid plan ending soon (there is no automatic charge, so remind to renew)
+  const sub = await db.subscription.findUnique({
+    where: { user_id: userId },
+    select: { current_period_end: true, plan: { select: { name: true, display_name: true } } },
+  });
+  const end = sub?.current_period_end;
+  if (sub && sub.plan.name !== 'free' && end) {
+    const left = end.getTime() - t;
+    const data = { plan: sub.plan.display_name, date: end.toISOString() };
+    if (left > 0 && left <= DAY) {
+      items.push({ type: 'plan_ending', key: `planend1:${end.toISOString()}`, data, link: '/billing' });
+    } else if (left > 0 && left <= 3 * DAY) {
+      items.push({ type: 'plan_ending', key: `planend3:${end.toISOString()}`, data, link: '/billing' });
+    }
+  }
+
   await createOnce(userId, items);
 }
 

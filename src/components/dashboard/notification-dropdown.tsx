@@ -2,7 +2,7 @@
 
 import React, { useCallback, useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { Bell, Briefcase, Mail, CalendarClock, MessageSquareReply, Hourglass, Gift, AlarmClock, Gauge, type LucideIcon } from 'lucide-react';
+import { Bell, Briefcase, Mail, CalendarClock, MessageSquareReply, Hourglass, Gift, AlarmClock, Gauge, CreditCard, type LucideIcon } from 'lucide-react';
 import { useLocale, useTranslations } from '@/i18n/provider';
 import { useRelativeTime } from '@/i18n/use-relative-time';
 import { Button } from '@/components/ui/button';
@@ -35,6 +35,9 @@ const ICONS: Record<string, LucideIcon> = {
   usage_limit: Gauge,
   forwarding_confirm: Mail,
   forward_skipped_limit: Gauge,
+  payment_success: CreditCard,
+  plan_ending: CreditCard,
+  plan_expired: CreditCard,
 };
 
 // Usage counter → feature name (app.features.*)
@@ -137,6 +140,17 @@ export default function NotificationDropdown() {
         return { title: t('fwdConfirmTitle'), body: t('fwdConfirmBody', { code: d.code || '—' }) };
       case 'forward_skipped_limit':
         return { title: t('fwdSkippedTitle'), body: t('fwdSkippedBody', { subject: d.subject || '—' }) };
+      case 'payment_success': {
+        const p = n.data as { plan?: string; amount?: number; currency?: string; until?: string | null };
+        const amount = typeof p.amount === 'number' && p.currency
+          ? new Intl.NumberFormat(locale === 'fr' ? 'fr-FR' : 'en-US', { style: 'currency', currency: p.currency, maximumFractionDigits: p.amount % 100 ? 2 : 0 }).format(p.amount / 100)
+          : '';
+        return { title: t('paymentTitle'), body: t('paymentBody', { plan: p.plan || 'Pro', amount, until: p.until ? when(p.until) : '—' }) };
+      }
+      case 'plan_ending':
+        return { title: t('planEndingTitle'), body: t('planEndingBody', { plan: d.plan || 'Pro', when: when(d.date) }) };
+      case 'plan_expired':
+        return { title: t('planExpiredTitle'), body: t('planExpiredBody', { plan: d.plan || 'Pro' }) };
       case 'usage_warning':
       case 'usage_limit': {
         const u = n.data as { field?: string; used?: number; limit?: number };

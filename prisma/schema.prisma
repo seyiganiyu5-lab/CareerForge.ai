@@ -55,6 +55,22 @@ model Plan {
 
   subscriptions Subscription[]
   plan_features PlanFeature[]
+  prices        PlanPrice[]
+}
+
+// Price of a paid plan in one currency, in the currency's subunit (x100)
+model PlanPrice {
+  id            String   @id @default(cuid())
+  plan_id       String
+  currency      String                         // NGN, USD, XOF
+  price_monthly Int
+  price_yearly  Int
+  created_at    DateTime @default(now())
+  updated_at    DateTime @updatedAt
+
+  plan Plan @relation(fields: [plan_id], references: [id], onDelete: Cascade)
+
+  @@unique([plan_id, currency])
 }
 
 model PlanFeature {
@@ -79,7 +95,7 @@ model Subscription {
   expires_at                DateTime?
   cancelled_at              DateTime?
   billing_cycle             String    @default("monthly")
-  flutterwave_subscription_id String?
+  provider_subscription_id  String?
   current_period_start      DateTime  @default(now())
   current_period_end        DateTime?
   created_at                DateTime  @default(now())
@@ -114,7 +130,10 @@ model Payment {
   currency                String    @default("USD")
   status                  String    @default("pending")  // pending, successful, failed, refunded
   transaction_reference   String?
-  flutterwave_transaction_id String?  @unique
+  provider                String    @default("paystack")  // paystack (flutterwave for old payments)
+  provider_transaction_id String?   @unique               // Paystack reference
+  plan_id                 String?                         // plan and period that were bought
+  billing_cycle           String?
   payment_method          String?
   paid_at                 DateTime?
   created_at              DateTime  @default(now())
