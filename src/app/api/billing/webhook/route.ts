@@ -1,47 +1,45 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { timingSafeEqual } from 'crypto';
-import { applySuccessfulPayment, fetchTransaction } from '@/lib/billing/flutterwave';
-
-function isValidSignature(signature: string | null, secret: string): boolean {
-  if (!signature) return false;
-  const a = Buffer.from(signature);
-  const b = Buffer.from(secret);
-  return a.length === b.length && timingSafeEqual(a, b);
-}
+import { applySuccessfulPayment, isValidWebhookSignature, verifyPayment } from '@/lib/billing/paystack';
 
 /**
  * POST /api/billing/webhook
- * Flutterwave calls this when a payment completes.
+ * Paystack calls this when a payment completes (Paystack dashboard →
+ * Settings → API Keys & Webhooks → Webhook URL: https://<your site>/api/billing/webhook).
+ * It makes sure the plan is given even if the customer closes the page
+ * before coming back to the site.
  */
 export async function POST(request: NextRequest) {
-  const secretHash = process.env.FLUTTERWAVE_WEBHOOK_SECRET;
-  if (!secretHash) {
-    console.error('[billing] Webhook received but FLUTTERWAVE_WEBHOOK_SECRET is not set');
+  if (!process.env.PAYSTACK_SECRET_KEY) {
+    console.error('[billing] Webhook received but PAYSTACK_SECRET_KEY is not set');
     return NextResponse.json({ error: 'Webhook not configured' }, { status: 503 });
   }
-  if (!isValidSignature(request.headers.get('verif-hash'), secretHash)) {
+
+  const raw = await request.text();
+  if (!isValidWebhookSignature(raw, request.headers.get('x-paystack-signature'))) {
     return NextResponse.json({ error: 'Invalid signature' }, { status: 401 });
   }
 
   try {
-    const body = await request.json();
-    if (body?.event !== 'charge.completed' || !body.data?.id) {
+    const body = JSON.parse(raw);
+    const reference = body?.data?.reference;
+    if (body?.event !== 'charge.success' || typeof reference !== 'string') {
       return NextResponse.json({ received: true });
     }
 
-    // Look the payment up with Flutterwave rather than trusting the webhook body
-    const tx = await fetchTransaction({ id: body.data.id });
+    // Look the payment up with Paystack rather than trusting the webhook body
+    const tx = await verifyPayment(reference);
     if (!tx) {
       return NextResponse.json({ error: 'Could not verify transaction' }, { status: 502 });
     }
 
     const result = await applySuccessfulPayment(tx);
     if (!result.ok) {
-      console.error(`[billing] Webhook payment ${tx.id} not applied: ${result.reason}`);
+      console.error(`[billing] Webhook payment ${tx.reference} not applied: ${result.reason}`);
     }
     return NextResponse.json({ received: true });
   } catch (error) {
     console.error('Webhook error:', error);
+    // A 5xx makes Paystack retry later
     return NextResponse.json({ error: 'Webhook processing failed' }, { status: 500 });
   }
 }

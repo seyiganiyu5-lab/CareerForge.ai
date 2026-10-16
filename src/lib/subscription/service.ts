@@ -1,5 +1,5 @@
 import { db } from '@/lib/db';
-import { notifyUsage } from '@/lib/notifications';
+import { createNotification, notifyUsage } from '@/lib/notifications';
 import { FEATURE_USAGE_MAP, type FeatureKey } from './features';
 import { canSeeDoc } from './doc-visibility';
 
@@ -10,7 +10,7 @@ let planCache: { at: number; plans: ReturnType<typeof fetchPlans> } | null = nul
 
 function fetchPlans() {
   return db.plan.findMany({
-    include: { plan_features: true },
+    include: { plan_features: true, prices: true },
     orderBy: { sort_order: 'asc' },
   });
 }
@@ -69,6 +69,12 @@ export async function loadAccount(userId: string) {
     subscriptionRow.current_period_end < new Date()
   ) {
     await downgradeToFree(userId);
+    await createNotification(userId, {
+      type: 'plan_expired',
+      key: `planexpired:${subscriptionRow.current_period_end.toISOString()}`,
+      data: { plan: plan.display_name },
+      link: '/billing',
+    }).catch((err) => console.error('Plan expiry notification failed:', err));
     return loadAccount(userId);
   }
 
@@ -275,7 +281,9 @@ export async function getPlans() {
 }
 
 /**
- * Upgrade a user's subscription to a new plan.
+ * Give a user a paid plan for one billing period. Paying again for the same
+ * plan before the current period ends adds the new period on top, so no paid
+ * time is lost.
  */
 export async function upgradeSubscription(
   userId: string,
@@ -285,46 +293,47 @@ export async function upgradeSubscription(
   const newPlan = await db.plan.findUnique({ where: { id: newPlanId } });
   if (!newPlan) throw new Error('Plan not found');
 
-  const price = billingCycle === 'yearly' ? newPlan.price_yearly : newPlan.price_monthly;
   const now = new Date();
-  const periodEnd = new Date(now);
-  if (billingCycle === 'yearly') {
-    periodEnd.setFullYear(periodEnd.getFullYear() + 1);
-  } else {
-    periodEnd.setMonth(periodEnd.getMonth() + 1);
-  }
-
   const existing = await db.subscription.findUnique({ where: { user_id: userId } });
+
+  const renewing =
+    !!existing &&
+    existing.plan_id === newPlanId &&
+    !!existing.current_period_end &&
+    existing.current_period_end > now;
+  const periodStart = renewing ? existing!.current_period_start : now;
+  const periodEnd = addPeriod(renewing ? existing!.current_period_end! : now, billingCycle);
+
+  const data = {
+    plan_id: newPlanId,
+    status: 'active',
+    billing_cycle: billingCycle,
+    current_period_start: periodStart,
+    current_period_end: periodEnd,
+    expires_at: periodEnd,
+    cancelled_at: null,
+  };
 
   if (existing) {
     return db.subscription.update({
       where: { user_id: userId },
-      data: {
-        plan_id: newPlanId,
-        status: 'active',
-        billing_cycle: billingCycle,
-        current_period_start: now,
-        current_period_end: periodEnd,
-        expires_at: periodEnd,
-        cancelled_at: null,
-        updated_at: now,
-      },
+      data: { ...data, updated_at: now },
       include: { plan: true },
     });
   }
 
   return db.subscription.create({
-    data: {
-      user_id: userId,
-      plan_id: newPlanId,
-      status: 'active',
-      billing_cycle: billingCycle,
-      current_period_start: now,
-      current_period_end: periodEnd,
-      expires_at: periodEnd,
-    },
+    data: { user_id: userId, ...data },
     include: { plan: true },
   });
+}
+
+/** The same day one month (or year) later. */
+export function addPeriod(from: Date, billingCycle: 'monthly' | 'yearly'): Date {
+  const end = new Date(from);
+  if (billingCycle === 'yearly') end.setFullYear(end.getFullYear() + 1);
+  else end.setMonth(end.getMonth() + 1);
+  return end;
 }
 
 /**
