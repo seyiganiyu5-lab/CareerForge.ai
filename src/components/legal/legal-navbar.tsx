@@ -5,17 +5,15 @@ import { motion } from 'framer-motion';
 import { useTranslations } from '@/i18n/provider';
 import { useLocale, type Locale } from '@/i18n/provider';
 import { useTheme } from 'next-themes';
-import { FileText, Sparkles, Sun, Moon, Globe } from 'lucide-react';
+import { Sun, Moon, Globe } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
+import { LogoMark } from '@/components/brand/logo-mark';
 
 function Logo() {
   return (
     <div className="flex items-center gap-2">
-      <div className="relative flex items-center justify-center w-9 h-9 rounded-xl bg-brand/10">
-        <FileText className="w-5 h-5 text-brand" strokeWidth={2} />
-        <Sparkles className="absolute -top-1 -right-1 w-3 h-3 text-violet" fill="currentColor" />
-      </div>
+      <LogoMark className="w-9 h-9 shrink-0" />
       <span className="font-heading text-lg font-bold text-foreground">
         CareerForge <span className="text-brand">AI</span>
       </span>

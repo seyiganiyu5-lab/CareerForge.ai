@@ -1,17 +1,14 @@
 'use client';
 
 import { useTranslations } from '@/i18n/provider';
-import { FileText, Sparkles } from 'lucide-react';
+import { LogoMark } from '@/components/brand/logo-mark';
 import Link from 'next/link';
 import { Separator } from '@/components/ui/separator';
 
 function Logo() {
   return (
     <div className="flex items-center gap-2">
-      <div className="relative flex items-center justify-center w-8 h-8 rounded-lg bg-brand/10">
-        <FileText className="w-4 h-4 text-brand" strokeWidth={2} />
-        <Sparkles className="absolute -top-0.5 -right-0.5 w-2.5 h-2.5 text-violet" fill="currentColor" />
-      </div>
+      <LogoMark className="w-8 h-8 shrink-0" />
       <span className="font-heading text-base font-bold text-foreground">
         CareerForge <span className="text-brand">AI</span>
       </span>
