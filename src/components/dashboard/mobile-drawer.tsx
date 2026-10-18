@@ -14,6 +14,7 @@ import { Sheet, SheetContent, SheetHeader, SheetTitle } from '@/components/ui/sh
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { cn } from '@/lib/utils';
 import { ProBadge, useFeatureLocked } from '@/components/billing/pro-badge';
+import { LogoMark } from '@/components/brand/logo-mark';
 
 function DrawerProBadge({ featureKey }: { featureKey: string }) {
   return useFeatureLocked(featureKey) ? <ProBadge className="ml-auto" /> : null;
@@ -50,10 +51,7 @@ export default function MobileDrawer({ open, onClose, pathname }: MobileDrawerPr
       <SheetContent side="left" className="w-[280px] p-0">
         <SheetHeader className="px-4 pt-4 pb-2">
           <SheetTitle className="flex items-center gap-2.5">
-            <div className="relative flex items-center justify-center w-9 h-9 rounded-xl bg-brand/10 shrink-0">
-              <FileText className="w-5 h-5 text-brand" strokeWidth={2} />
-              <Sparkles className="absolute -top-1 -right-1 w-3 h-3 text-violet" fill="currentColor" />
-            </div>
+            <LogoMark className="w-9 h-9 shrink-0" />
             <span className="font-heading text-lg font-bold text-foreground">
               CareerForge <span className="text-brand">AI</span>
             </span>

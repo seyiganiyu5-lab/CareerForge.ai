@@ -31,6 +31,7 @@ import {
 } from '@/components/ui/tooltip';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { cn } from '@/lib/utils';
+import { LogoMark } from '@/components/brand/logo-mark';
 
 interface NavItem {
   key: string;
@@ -170,10 +171,7 @@ export default function Sidebar({ collapsed, onToggle, pathname }: SidebarProps)
       {/* Logo */}
       <div className="flex items-center gap-3 px-4 h-16 shrink-0">
         <Link href="/home" className="flex items-center gap-2.5 shrink-0">
-          <div className="relative flex items-center justify-center w-9 h-9 rounded-xl bg-brand/10 shrink-0">
-            <FileText className="w-5 h-5 text-brand" strokeWidth={2} />
-            <Sparkles className="absolute -top-1 -right-1 w-3 h-3 text-violet" fill="currentColor" />
-          </div>
+          <LogoMark className="w-9 h-9 shrink-0" />
           {!collapsed && (
             <span className="font-heading text-lg font-bold text-foreground whitespace-nowrap overflow-hidden">
               CareerForge <span className="text-brand">AI</span>

@@ -5,8 +5,9 @@ import { useTheme } from 'next-themes';
 import { useTranslations, useLocale } from '@/i18n/provider';
 import { useSyncExternalStore } from 'react';
 import { useRouter } from 'next/navigation';
-import { Sun, Moon, Globe, FileText, Sparkles, ArrowLeft } from 'lucide-react';
+import { Sun, Moon, Globe, ArrowLeft } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { LogoMark } from '@/components/brand/logo-mark';
 
 export default function AuthLayout({ children }: { children: React.ReactNode }) {
   const tAuth = useTranslations('auth.common');
@@ -44,10 +45,7 @@ export default function AuthLayout({ children }: { children: React.ReactNode }) 
               className="flex items-center gap-2 cursor-pointer"
               onClick={() => router.push('/')}
             >
-            <div className="relative flex items-center justify-center w-9 h-9 rounded-xl bg-brand/10">
-              <FileText className="w-5 h-5 text-brand" strokeWidth={2} />
-              <Sparkles className="absolute -top-1 -right-1 w-3 h-3 text-violet" fill="currentColor" />
-            </div>
+            <LogoMark className="w-9 h-9 shrink-0" />
             <span className="font-heading text-lg font-bold text-foreground">
               CareerForge <span className="text-brand">AI</span>
             </span>
