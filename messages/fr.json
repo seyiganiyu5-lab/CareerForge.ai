@@ -663,7 +663,8 @@
       "profile": "Mon Profil",
       "settings": "Paramètres",
       "billing": "Facturation",
-      "logout": "Déconnexion"
+      "logout": "Déconnexion",
+      "dashboard": "Tableau de bord"
     },
     "welcome": {
       "goodMorning": "Bonjour",
