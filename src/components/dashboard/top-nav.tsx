@@ -56,10 +56,8 @@ export default function TopNav({ isMobile, onMenuClick }: TopNavProps) {
       {/* Search (in a pop-up on phones, where the bar has no room for it) */}
       <DashboardSearch inputId="dashboard-search" className="hidden sm:block flex-1 max-w-md" />
 
-      <div className="flex-1 sm:hidden" />
-
-      {/* Right Actions */}
-      <div className="flex items-center gap-1">
+      {/* Right Actions: pushed to the right edge on every screen size */}
+      <div className="ml-auto flex items-center gap-1">
         <Button
           variant="ghost"
           size="icon"

@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createServerClient } from '@supabase/ssr';
+import { SESSION_HINT_HEADER, encodeHint, hintFromClaims } from '@/lib/auth/session-hint';
 
 // Every page in the (dashboard) route group, plus onboarding
 const PROTECTED_ROUTES = [
@@ -67,7 +68,13 @@ export async function proxy(request: NextRequest) {
     return redirectTo('/home');
   }
 
-  return response;
+  // Tell the page render who is signed in (always overwritten, so a browser
+  // can't set it), keeping any refreshed session cookies
+  const headers = new Headers(request.headers);
+  headers.set(SESSION_HINT_HEADER, encodeHint(hintFromClaims(data?.claims as Parameters<typeof hintFromClaims>[0])));
+  const next = NextResponse.next({ request: { headers } });
+  response.cookies.getAll().forEach((cookie) => next.cookies.set(cookie));
+  return next;
 }
 
 export const config = {

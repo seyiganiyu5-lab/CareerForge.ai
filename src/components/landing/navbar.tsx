@@ -6,7 +6,7 @@ import { useTranslations } from '@/i18n/provider';
 import { useTheme } from 'next-themes';
 import { Menu, Sun, Moon, Globe, LogIn, LogOut, ArrowRight, LayoutDashboard } from 'lucide-react';
 import UserMenu from '@/components/dashboard/user-menu';
-import { useAuth } from '@/lib/auth/context';
+import { useAuth, useSignedInDisplay } from '@/lib/auth/context';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { Sheet, SheetContent, SheetTrigger, SheetTitle } from '@/components/ui/sheet';
@@ -38,7 +38,8 @@ function Logo() {
 export default function Navbar() {
   const t = useTranslations('nav');
   const tA = useTranslations('a11y');
-  const { isAuthenticated, isLoading: authLoading, user, logout } = useAuth();
+  const { logout } = useAuth();
+  const { ready: authReady, signedIn: isAuthenticated, user } = useSignedInDisplay();
   const tu = useTranslations('dashboard.userMenu');
   const initials = `${(user?.first_name?.[0] || '').toUpperCase()}${(user?.last_name?.[0] || '').toUpperCase()}` || (user?.email?.[0] || 'U').toUpperCase();
   const { locale, setLocale } = useLocale();
@@ -154,7 +155,7 @@ export default function Navbar() {
             </Button>
 
             {/* Signed in: straight back to the dashboard; otherwise log in / sign up */}
-            {authLoading ? null : isAuthenticated ? (
+            {!authReady ? null : isAuthenticated ? (
               <UserMenu showDashboard />
             ) : (
               <>
@@ -249,7 +250,7 @@ export default function Navbar() {
 
                 {/* Mobile CTA Buttons */}
                 <div className="mt-8 flex flex-col gap-3">
-                  {authLoading ? null : isAuthenticated ? (
+                  {!authReady ? null : isAuthenticated ? (
                     <>
                       {/* Who is signed in */}
                       <div className="flex items-center gap-3 rounded-lg border border-border p-3">

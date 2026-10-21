@@ -8,7 +8,7 @@ import { useTheme } from 'next-themes';
 import { Sun, Moon, Globe } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
-import { useAuth } from '@/lib/auth/context';
+import { useSignedInDisplay } from '@/lib/auth/context';
 import UserMenu from '@/components/dashboard/user-menu';
 import { LogoMark } from '@/components/brand/logo-mark';
 
@@ -27,7 +27,7 @@ export default function LegalNavbar() {
   const t = useTranslations('legal.navbar');
   const tA = useTranslations('a11y');
   // Signed-in users go back to their dashboard, not the public landing page
-  const { isAuthenticated } = useAuth();
+  const { signedIn: isAuthenticated } = useSignedInDisplay();
   const { locale, setLocale } = useLocale();
   const { theme, setTheme } = useTheme();
   const mounted = useSyncExternalStore(
