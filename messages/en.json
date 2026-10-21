@@ -11,7 +11,8 @@
     "about": "About",
     "faq": "FAQ",
     "login": "Log In",
-    "getStarted": "Get Started"
+    "getStarted": "Get Started",
+    "dashboard": "Dashboard"
   },
   "hero": {
     "badge": "AI-Powered Career Platform",
@@ -935,7 +936,8 @@
   "legal": {
     "navbar": {
       "privacy": "Privacy Policy",
-      "terms": "Terms of Service"
+      "terms": "Terms of Service",
+      "dashboard": "Back to dashboard"
     },
     "footer": {
       "privacy": "Privacy Policy",
@@ -1092,7 +1094,8 @@
   "content": {
     "navbar": {
       "helpCenter": "Help Center",
-      "blog": "Blog"
+      "blog": "Blog",
+      "dashboard": "Back to dashboard"
     },
     "footer": {
       "helpCenter": "Help Center",

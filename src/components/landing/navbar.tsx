@@ -4,7 +4,8 @@ import { useState, useEffect, useSyncExternalStore } from 'react';
 import { motion } from 'framer-motion';
 import { useTranslations } from '@/i18n/provider';
 import { useTheme } from 'next-themes';
-import { Menu, Sun, Moon, Globe, LogIn, ArrowRight } from 'lucide-react';
+import { Menu, Sun, Moon, Globe, LogIn, ArrowRight, LayoutDashboard } from 'lucide-react';
+import { useAuth } from '@/lib/auth/context';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { Sheet, SheetContent, SheetTrigger, SheetTitle } from '@/components/ui/sheet';
@@ -36,6 +37,7 @@ function Logo() {
 export default function Navbar() {
   const t = useTranslations('nav');
   const tA = useTranslations('a11y');
+  const { isAuthenticated, isLoading: authLoading } = useAuth();
   const { locale, setLocale } = useLocale();
   const { theme, setTheme } = useTheme();
   const { activeSection, scrollToSection } = useHashNavigation();
@@ -148,30 +150,39 @@ export default function Navbar() {
               )}
             </Button>
 
-            {/* Login */}
-            <Button
-              variant="ghost"
-              size="sm"
-              className="text-muted-foreground hover:text-foreground font-body"
-              asChild
-            >
-              <Link href="/login">
-                <LogIn className="w-4 h-4 mr-1.5" />
-                {t('login')}
-              </Link>
-            </Button>
-
-            {/* Get Started */}
-            <Button
-              size="sm"
-              className="gap-1.5 bg-brand hover:bg-brand/90 text-white font-body"
-              asChild
-            >
-              <Link href="/signup">
-                {t('getStarted')}
-                <ArrowRight className="w-3.5 h-3.5" />
-              </Link>
-            </Button>
+            {/* Signed in: straight back to the dashboard; otherwise log in / sign up */}
+            {authLoading ? null : isAuthenticated ? (
+              <Button size="sm" className="gap-1.5 bg-brand hover:bg-brand/90 text-white font-body" asChild>
+                <Link href="/home">
+                  <LayoutDashboard className="w-4 h-4" />
+                  {t('dashboard')}
+                </Link>
+              </Button>
+            ) : (
+              <>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="text-muted-foreground hover:text-foreground font-body"
+                  asChild
+                >
+                  <Link href="/login">
+                    <LogIn className="w-4 h-4 mr-1.5" />
+                    {t('login')}
+                  </Link>
+                </Button>
+                <Button
+                  size="sm"
+                  className="gap-1.5 bg-brand hover:bg-brand/90 text-white font-body"
+                  asChild
+                >
+                  <Link href="/signup">
+                    {t('getStarted')}
+                    <ArrowRight className="w-3.5 h-3.5" />
+                  </Link>
+                </Button>
+              </>
+            )}
           </div>
 
           {/* Mobile Menu */}
@@ -240,25 +251,36 @@ export default function Navbar() {
 
                 {/* Mobile CTA Buttons */}
                 <div className="mt-8 flex flex-col gap-3">
-                  <Button
-                    variant="ghost"
-                    className="w-full justify-center gap-2 text-muted-foreground font-body"
-                    asChild
-                  >
-                    <Link href="/login">
-                      <LogIn className="w-4 h-4" />
-                      {t('login')}
-                    </Link>
-                  </Button>
-                  <Button
-                    className="w-full justify-center gap-2 bg-brand hover:bg-brand/90 text-white font-body"
-                    asChild
-                  >
-                    <Link href="/signup">
-                      {t('getStarted')}
-                      <ArrowRight className="w-4 h-4" />
-                    </Link>
-                  </Button>
+                  {authLoading ? null : isAuthenticated ? (
+                    <Button className="w-full justify-center gap-2 bg-brand hover:bg-brand/90 text-white font-body" asChild>
+                      <Link href="/home">
+                        <LayoutDashboard className="w-4 h-4" />
+                        {t('dashboard')}
+                      </Link>
+                    </Button>
+                  ) : (
+                    <>
+                      <Button
+                        variant="ghost"
+                        className="w-full justify-center gap-2 text-muted-foreground font-body"
+                        asChild
+                      >
+                        <Link href="/login">
+                          <LogIn className="w-4 h-4" />
+                          {t('login')}
+                        </Link>
+                      </Button>
+                      <Button
+                        className="w-full justify-center gap-2 bg-brand hover:bg-brand/90 text-white font-body"
+                        asChild
+                      >
+                        <Link href="/signup">
+                          {t('getStarted')}
+                          <ArrowRight className="w-4 h-4" />
+                        </Link>
+                      </Button>
+                    </>
+                  )}
                 </div>
               </SheetContent>
             </Sheet>

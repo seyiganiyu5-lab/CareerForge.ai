@@ -8,6 +8,7 @@ import { useTheme } from 'next-themes';
 import { Sun, Moon, Globe } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
+import { useAuth } from '@/lib/auth/context';
 import { LogoMark } from '@/components/brand/logo-mark';
 
 function Logo() {
@@ -24,6 +25,8 @@ function Logo() {
 export default function LegalNavbar() {
   const t = useTranslations('legal.navbar');
   const tA = useTranslations('a11y');
+  // Signed-in users go back to their dashboard, not the public landing page
+  const { isAuthenticated } = useAuth();
   const { locale, setLocale } = useLocale();
   const { theme, setTheme } = useTheme();
   const mounted = useSyncExternalStore(
@@ -54,7 +57,7 @@ export default function LegalNavbar() {
             whileHover={{ scale: 1.02 }}
             whileTap={{ scale: 0.98 }}
           >
-            <Link href="/" aria-label={tA('backToHome')}>
+            <Link href={isAuthenticated ? '/home' : '/'} aria-label={isAuthenticated ? t('dashboard') : tA('backToHome')}>
               <Logo />
             </Link>
           </motion.div>

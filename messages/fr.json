@@ -11,7 +11,8 @@
     "about": "À propos",
     "faq": "FAQ",
     "login": "Connexion",
-    "getStarted": "Commencer"
+    "getStarted": "Commencer",
+    "dashboard": "Tableau de bord"
   },
   "hero": {
     "badge": "Plateforme de Carrière Propulsée par l'IA",
@@ -935,7 +936,8 @@
   "legal": {
     "navbar": {
       "privacy": "Politique de Confidentialité",
-      "terms": "Conditions d'Utilisation"
+      "terms": "Conditions d'Utilisation",
+      "dashboard": "Retour au tableau de bord"
     },
     "footer": {
       "privacy": "Politique de Confidentialité",
@@ -1092,7 +1094,8 @@
   "content": {
     "navbar": {
       "helpCenter": "Centre d'Aide",
-      "blog": "Blog"
+      "blog": "Blog",
+      "dashboard": "Retour au tableau de bord"
     },
     "footer": {
       "helpCenter": "Centre d'Aide",
