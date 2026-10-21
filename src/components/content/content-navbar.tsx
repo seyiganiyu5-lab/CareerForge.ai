@@ -8,6 +8,7 @@ import { useTheme } from 'next-themes';
 import { Sun, Moon, Globe, Search, BookOpen } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
+import { useAuth } from '@/lib/auth/context';
 import { LogoMark } from '@/components/brand/logo-mark';
 
 function Logo() {
@@ -28,6 +29,8 @@ interface ContentNavbarProps {
 export default function ContentNavbar({ activeSection }: ContentNavbarProps) {
   const t = useTranslations('content.navbar');
   const tA = useTranslations('a11y');
+  // Signed-in users go back to their dashboard, not the public landing page
+  const { isAuthenticated } = useAuth();
   const { locale, setLocale } = useLocale();
   const { theme, setTheme } = useTheme();
   const mounted = useSyncExternalStore(
@@ -50,7 +53,7 @@ export default function ContentNavbar({ activeSection }: ContentNavbarProps) {
         <div className="flex items-center justify-between h-16">
           <div className="flex items-center gap-6">
             <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
-              <Link href="/" aria-label={tA('backToHome')}>
+              <Link href={isAuthenticated ? '/home' : '/'} aria-label={isAuthenticated ? t('dashboard') : tA('backToHome')}>
                 <Logo />
               </Link>
             </motion.div>
