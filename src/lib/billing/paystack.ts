@@ -33,8 +33,13 @@ export interface PaystackTransaction {
 }
 
 async function paystack<T>(path: string, init?: RequestInit): Promise<T | null> {
+  const result = await paystackCall<T>(path, init);
+  return result.data;
+}
+
+async function paystackCall<T>(path: string, init?: RequestInit): Promise<{ data: T | null; message?: string }> {
   const secretKey = process.env.PAYSTACK_SECRET_KEY;
-  if (!secretKey) return null;
+  if (!secretKey) return { data: null };
   const response = await fetch(`${PAYSTACK_API}${path}`, {
     ...init,
     headers: { Authorization: `Bearer ${secretKey}`, 'Content-Type': 'application/json', ...init?.headers },
@@ -42,9 +47,9 @@ async function paystack<T>(path: string, init?: RequestInit): Promise<T | null> 
   const body = await response.json().catch(() => null);
   if (!response.ok || body?.status !== true || !body.data) {
     if (body?.message) console.error(`[billing] Paystack ${path}: ${body.message}`);
-    return null;
+    return { data: null, message: body?.message };
   }
-  return body.data as T;
+  return { data: body.data as T };
 }
 
 /** Start a payment; returns the Paystack checkout page to send the customer to. */
@@ -56,7 +61,7 @@ export async function initializePayment(input: {
   callbackUrl: string;
   metadata: PaymentMetadata & { plan_name: string };
 }) {
-  return paystack<{ authorization_url: string; reference: string }>('/transaction/initialize', {
+  const result = await paystackCall<{ authorization_url: string; reference: string }>('/transaction/initialize', {
     method: 'POST',
     body: JSON.stringify({
       email: input.email,
@@ -67,6 +72,11 @@ export async function initializePayment(input: {
       metadata: input.metadata,
     }),
   });
+  if (!result.data && /currency/i.test(result.message ?? '')) {
+    console.error(`[billing] Your Paystack account does not accept ${input.currency}. Set PAYMENT_CURRENCIES in .env to the currencies it accepts (e.g. "NGN") and restart.`);
+    return { error: 'currency_unavailable' as const };
+  }
+  return result.data ? { payment: result.data } : { error: 'payment_failed' as const };
 }
 
 /**

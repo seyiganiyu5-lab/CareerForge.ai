@@ -8,7 +8,9 @@
 export const SUPPORTED_CURRENCIES = ['NGN', 'USD', 'XOF'] as const;
 export type Currency = (typeof SUPPORTED_CURRENCIES)[number];
 
-const DEFAULT_CURRENCIES = 'NGN,USD';
+// Safe default: a new Paystack account (Nigeria) only accepts NGN until
+// Paystack approves international payments
+const DEFAULT_CURRENCIES = 'NGN';
 
 // West African CFA franc (UEMOA) countries
 const XOF_COUNTRIES = new Set(['BJ', 'BF', 'CI', 'GW', 'ML', 'NE', 'SN', 'TG']);
@@ -38,11 +40,14 @@ export function currencyForCountry(country: string | null): Currency {
 
 /**
  * The currency to charge in: the one the customer picked if it is offered,
- * otherwise their country's currency, otherwise USD, otherwise the first offered.
+ * otherwise their country's currency, otherwise USD, otherwise the first offered
+ * (also used when the country is unknown).
  */
 export function pickCurrency(requested: unknown, country: string | null): Currency {
   const enabled = enabledCurrencies();
   if (isCurrency(requested) && enabled.includes(requested)) return requested;
+  // Country unknown (e.g. localhost): the first currency in PAYMENT_CURRENCIES
+  if (!country) return enabled[0];
   const local = currencyForCountry(country);
   if (enabled.includes(local)) return local;
   return enabled.includes('USD') ? 'USD' : enabled[0];

@@ -19,7 +19,7 @@ renewing early adds the new period on top of the time they have left.
 
    ```
    PAYSTACK_SECRET_KEY="sk_test_..."
-   PAYMENT_CURRENCIES="NGN,USD"
+   PAYMENT_CURRENCIES="NGN"
    ```
 
 4. Restart the app (`npm start`, or `npm run dev`).

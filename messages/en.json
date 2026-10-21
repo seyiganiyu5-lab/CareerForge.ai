@@ -1376,7 +1376,8 @@
       "yearShort": "year",
       "endsSoon": "{days, plural, =0 {Your plan ends today} one {Your plan ends in # day} other {Your plan ends in # days}}",
       "renewHint": "Renew now to keep your Pro features. The new period starts when the current one ends, so you lose nothing.",
-      "currency": "Currency"
+      "currency": "Currency",
+      "currencyUnavailable": "Payments in {currency} aren't available yet. Please choose another currency."
     },
     "settings": {
       "title": "Settings",

@@ -1376,7 +1376,8 @@
       "yearShort": "an",
       "endsSoon": "{days, plural, =0 {Votre offre se termine aujourd'hui} one {Votre offre se termine dans # jour} other {Votre offre se termine dans # jours}}",
       "renewHint": "Renouvelez maintenant pour garder vos fonctionnalités Pro. La nouvelle période commence à la fin de l'actuelle : vous ne perdez rien.",
-      "currency": "Devise"
+      "currency": "Devise",
+      "currencyUnavailable": "Les paiements en {currency} ne sont pas encore disponibles. Veuillez choisir une autre devise."
     },
     "settings": {
       "title": "Paramètres",
