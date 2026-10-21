@@ -663,7 +663,8 @@
       "profile": "My Profile",
       "settings": "Settings",
       "billing": "Billing",
-      "logout": "Log Out"
+      "logout": "Log Out",
+      "dashboard": "Dashboard"
     },
     "welcome": {
       "goodMorning": "Good Morning",

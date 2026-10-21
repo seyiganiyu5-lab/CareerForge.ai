@@ -4,7 +4,8 @@ import { useState, useEffect, useSyncExternalStore } from 'react';
 import { motion } from 'framer-motion';
 import { useTranslations } from '@/i18n/provider';
 import { useTheme } from 'next-themes';
-import { Menu, Sun, Moon, Globe, LogIn, ArrowRight, LayoutDashboard } from 'lucide-react';
+import { Menu, Sun, Moon, Globe, LogIn, LogOut, ArrowRight, LayoutDashboard } from 'lucide-react';
+import UserMenu from '@/components/dashboard/user-menu';
 import { useAuth } from '@/lib/auth/context';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
@@ -37,7 +38,9 @@ function Logo() {
 export default function Navbar() {
   const t = useTranslations('nav');
   const tA = useTranslations('a11y');
-  const { isAuthenticated, isLoading: authLoading } = useAuth();
+  const { isAuthenticated, isLoading: authLoading, user, logout } = useAuth();
+  const tu = useTranslations('dashboard.userMenu');
+  const initials = `${(user?.first_name?.[0] || '').toUpperCase()}${(user?.last_name?.[0] || '').toUpperCase()}` || (user?.email?.[0] || 'U').toUpperCase();
   const { locale, setLocale } = useLocale();
   const { theme, setTheme } = useTheme();
   const { activeSection, scrollToSection } = useHashNavigation();
@@ -152,12 +155,7 @@ export default function Navbar() {
 
             {/* Signed in: straight back to the dashboard; otherwise log in / sign up */}
             {authLoading ? null : isAuthenticated ? (
-              <Button size="sm" className="gap-1.5 bg-brand hover:bg-brand/90 text-white font-body" asChild>
-                <Link href="/home">
-                  <LayoutDashboard className="w-4 h-4" />
-                  {t('dashboard')}
-                </Link>
-              </Button>
+              <UserMenu showDashboard />
             ) : (
               <>
                 <Button
@@ -252,12 +250,32 @@ export default function Navbar() {
                 {/* Mobile CTA Buttons */}
                 <div className="mt-8 flex flex-col gap-3">
                   {authLoading ? null : isAuthenticated ? (
-                    <Button className="w-full justify-center gap-2 bg-brand hover:bg-brand/90 text-white font-body" asChild>
-                      <Link href="/home">
-                        <LayoutDashboard className="w-4 h-4" />
-                        {t('dashboard')}
-                      </Link>
-                    </Button>
+                    <>
+                      {/* Who is signed in */}
+                      <div className="flex items-center gap-3 rounded-lg border border-border p-3">
+                        <div className="flex size-9 shrink-0 items-center justify-center rounded-full bg-brand/10 text-xs font-semibold text-brand font-body">
+                          {initials}
+                        </div>
+                        <div className="min-w-0">
+                          <p className="truncate text-sm font-medium font-body">{[user?.first_name, user?.last_name].filter(Boolean).join(' ') || user?.email}</p>
+                          <p className="truncate text-xs text-muted-foreground font-body">{user?.email}</p>
+                        </div>
+                      </div>
+                      <Button className="w-full justify-center gap-2 bg-brand hover:bg-brand/90 text-white font-body" asChild>
+                        <Link href="/home">
+                          <LayoutDashboard className="w-4 h-4" />
+                          {t('dashboard')}
+                        </Link>
+                      </Button>
+                      <Button
+                        variant="outline"
+                        className="w-full justify-center gap-2 font-body text-red-600 dark:text-red-400"
+                        onClick={async () => { await logout(); window.location.href = '/'; }}
+                      >
+                        <LogOut className="w-4 h-4" />
+                        {tu('logout')}
+                      </Button>
+                    </>
                   ) : (
                     <>
                       <Button

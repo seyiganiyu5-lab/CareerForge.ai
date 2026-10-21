@@ -4,7 +4,7 @@ import React from 'react';
 import { useRouter } from 'next/navigation';
 import { useTranslations } from '@/i18n/provider';
 import { useAuth } from '@/lib/auth/context';
-import { LogOut, User, Settings, CreditCard, ChevronDown } from 'lucide-react';
+import { LogOut, User, Settings, CreditCard, ChevronDown, LayoutDashboard } from 'lucide-react';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import {
   DropdownMenu,
@@ -16,7 +16,8 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { cn } from '@/lib/utils';
 
-export default function UserMenu() {
+/** Account menu (initials, name, email, links, log out). `showDashboard` adds a Dashboard link, for pages outside the app. */
+export default function UserMenu({ showDashboard = false }: { showDashboard?: boolean } = {}) {
   const t = useTranslations('dashboard.userMenu');
   const tm = useTranslations('app.misc');
   const router = useRouter();
@@ -28,7 +29,7 @@ export default function UserMenu() {
   };
 
   const initials = user
-    ? `${(user.first_name?.[0] || '').toUpperCase()}${(user.last_name?.[0] || '').toUpperCase()}`
+    ? `${(user.first_name?.[0] || '').toUpperCase()}${(user.last_name?.[0] || '').toUpperCase()}` || (user.email?.[0] || 'U').toUpperCase()
     : 'U';
 
   return (
@@ -64,6 +65,12 @@ export default function UserMenu() {
           </div>
         </DropdownMenuLabel>
         <DropdownMenuSeparator />
+        {showDashboard && (
+          <DropdownMenuItem onClick={() => router.push('/home')}>
+            <LayoutDashboard className="mr-2 h-4 w-4" />
+            {t('dashboard')}
+          </DropdownMenuItem>
+        )}
         <DropdownMenuItem onClick={() => router.push('/profile')}>
           <User className="mr-2 h-4 w-4" />
           {t('profile')}

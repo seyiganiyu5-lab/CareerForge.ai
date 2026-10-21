@@ -9,6 +9,7 @@ import { Sun, Moon, Globe } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
 import { useAuth } from '@/lib/auth/context';
+import UserMenu from '@/components/dashboard/user-menu';
 import { LogoMark } from '@/components/brand/logo-mark';
 
 function Logo() {
@@ -89,6 +90,7 @@ export default function LegalNavbar() {
                 <Moon className="w-4 h-4" />
               )}
             </Button>
+            {isAuthenticated && <UserMenu showDashboard />}
           </div>
         </div>
       </nav>
