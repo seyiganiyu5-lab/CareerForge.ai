@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
-import { cookies } from "next/headers";
+import { cookies, headers } from "next/headers";
+import { SESSION_HINT_HEADER, decodeHint } from "@/lib/auth/session-hint";
 import { Poppins, Inter } from "next/font/google";
 import { ThemeProvider } from "next-themes";
 import { LocaleProvider } from "@/i18n/provider";
@@ -59,6 +60,8 @@ export default async function RootLayout({
   // matches what the browser shows (no English flash, no hydration errors)
   const saved = (await cookies()).get("cf-locale")?.value;
   const locale: Locale = locales.includes(saved as Locale) ? (saved as Locale) : defaultLocale;
+  // Who is signed in (from the proxy), so the header shows the account menu at once
+  const sessionHint = decodeHint((await headers()).get(SESSION_HINT_HEADER));
 
   return (
     <html lang={locale} suppressHydrationWarning>
@@ -72,7 +75,7 @@ export default async function RootLayout({
           disableTransitionOnChange={true}
         >
           <LocaleProvider initialLocale={locale}>
-            <AuthProvider>
+            <AuthProvider sessionHint={sessionHint}>
               <UsageProvider>
                 {children}
                 <Toaster />

@@ -2,6 +2,7 @@
 
 import React, { createContext, useContext, useState, useCallback, useEffect, useRef } from 'react';
 import type { AuthState, AuthResponse, LoginCredentials, SignupData, OnboardingData, PasswordResetResponse } from './types';
+import type { SessionHint } from './session-hint';
 
 interface AuthContextType extends AuthState {
   login: (credentials: LoginCredentials) => Promise<AuthResponse>;
@@ -13,6 +14,8 @@ interface AuthContextType extends AuthState {
   completeOnboarding: (data: OnboardingData) => Promise<AuthResponse>;
   googleSignIn: () => void;
   refreshSession: () => Promise<void>;
+  /** Server's hint about who is signed in, until the full session has loaded (display only) */
+  sessionHint: SessionHint | null;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -39,7 +42,7 @@ async function fetchAPI<T>(url: string, options?: RequestInit): Promise<T> {
 // Cache session for 5 minutes to avoid refetching on every navigation
 const SESSION_CACHE_TTL = 5 * 60 * 1000;
 
-export function AuthProvider({ children }: { children: React.ReactNode }) {
+export function AuthProvider({ children, sessionHint = null }: { children: React.ReactNode; sessionHint?: SessionHint | null }) {
   const [state, setState] = useState<AuthState>({
     user: null,
     isLoading: true,
@@ -163,9 +166,30 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         completeOnboarding,
         googleSignIn,
         refreshSession,
+        // Once the real session is known, the hint no longer matters
+        sessionHint: state.isLoading ? sessionHint : null,
       }}
     >
       {children}
     </AuthContext.Provider>
   );
+}
+/**
+ * Who to show as signed in, for headers and account menus: the real session
+ * once loaded, the server's hint before that (so nothing pops in late).
+ * `ready` is false only when neither is known yet.
+ */
+export function useSignedInDisplay() {
+  const { user, isLoading, isAuthenticated, sessionHint } = useAuth();
+  if (!isLoading) return { ready: true, signedIn: isAuthenticated, user };
+  if (sessionHint) {
+    return {
+      ready: true,
+      signedIn: sessionHint.signedIn,
+      user: sessionHint.signedIn
+        ? { email: sessionHint.email ?? '', first_name: sessionHint.first_name ?? null, last_name: sessionHint.last_name ?? null }
+        : null,
+    };
+  }
+  return { ready: false, signedIn: false, user: null };
 }

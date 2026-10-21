@@ -3,7 +3,7 @@
 import React from 'react';
 import { useRouter } from 'next/navigation';
 import { useTranslations } from '@/i18n/provider';
-import { useAuth } from '@/lib/auth/context';
+import { useAuth, useSignedInDisplay } from '@/lib/auth/context';
 import { LogOut, User, Settings, CreditCard, ChevronDown, LayoutDashboard } from 'lucide-react';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import {
@@ -21,7 +21,8 @@ export default function UserMenu({ showDashboard = false }: { showDashboard?: bo
   const t = useTranslations('dashboard.userMenu');
   const tm = useTranslations('app.misc');
   const router = useRouter();
-  const { user, logout } = useAuth();
+  const { logout } = useAuth();
+  const { user } = useSignedInDisplay();
 
   const handleLogout = async () => {
     await logout();
