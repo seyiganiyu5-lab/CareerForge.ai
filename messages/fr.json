@@ -667,10 +667,11 @@
     },
     "welcome": {
       "goodMorning": "Bonjour",
-      "goodAfternoon": "Bon Après-midi",
+      "goodAfternoon": "Bon après-midi",
       "goodEvening": "Bonsoir",
       "greeting": "Bon retour, {name}",
-      "message": "Construisons quelque chose qui vous fera embaucher."
+      "message": "Construisons quelque chose qui vous fera embaucher.",
+      "hello": "Bonjour"
     },
     "quickActions": {
       "title": "Actions Rapides",

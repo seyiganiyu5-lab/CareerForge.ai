@@ -670,7 +670,8 @@
       "goodAfternoon": "Good Afternoon",
       "goodEvening": "Good Evening",
       "greeting": "Welcome back, {name}",
-      "message": "Let's build something that gets you hired."
+      "message": "Let's build something that gets you hired.",
+      "hello": "Hello"
     },
     "quickActions": {
       "title": "Quick Actions",
