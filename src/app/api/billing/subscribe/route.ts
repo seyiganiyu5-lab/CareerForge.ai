@@ -83,7 +83,7 @@ export async function POST(request: NextRequest) {
     }
 
     // ── Paystack checkout ──
-    const payment = await initializePayment({
+    const result = await initializePayment({
       email: auth.email,
       amount,
       currency,
@@ -93,10 +93,13 @@ export async function POST(request: NextRequest) {
       metadata: { user_id: auth.userId, plan_id: planId, billing_cycle: billingCycle, plan_name: plan.display_name },
     });
 
-    if (!payment) {
-      return NextResponse.json({ success: false, error: 'Failed to create payment' }, { status: 502 });
+    if ('error' in result) {
+      return NextResponse.json(
+        { success: false, error: result.error === 'currency_unavailable' ? 'currency_unavailable' : 'Failed to create payment', currency },
+        { status: 502 }
+      );
     }
-    return NextResponse.json({ success: true, payment_link: payment.authorization_url, reference: payment.reference });
+    return NextResponse.json({ success: true, payment_link: result.payment.authorization_url, reference: result.payment.reference });
   } catch (error) {
     console.error('Subscribe error:', error);
     return NextResponse.json({ success: false, error: 'Failed to process subscription' }, { status: 500 });

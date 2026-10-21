@@ -336,7 +336,7 @@ export default function BillingPage() {
           await fetchAllData();
         }
       } else {
-        toast.error(data.error || t('upgradeFailed'));
+        toast.error(data.error === 'currency_unavailable' ? t('currencyUnavailable', { currency: data.currency || currency }) : data.error || t('upgradeFailed'));
       }
     } catch {
       toast.error(tc('somethingWrong'));
