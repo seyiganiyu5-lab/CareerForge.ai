@@ -14,6 +14,8 @@ export interface User {
   theme: string;
   email_verified: boolean;
   onboarding_completed: boolean;
+  /** Site admin (ADMIN_EMAILS): sees the Enterprise requests page */
+  is_admin?: boolean;
   created_at: string;
   updated_at: string;
 }

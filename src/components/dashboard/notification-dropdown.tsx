@@ -2,7 +2,7 @@
 
 import React, { useCallback, useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { Bell, Briefcase, Mail, CalendarClock, MessageSquareReply, Hourglass, Gift, AlarmClock, Gauge, CreditCard, type LucideIcon } from 'lucide-react';
+import { Bell, Briefcase, Mail, CalendarClock, MessageSquareReply, Hourglass, Gift, AlarmClock, Gauge, CreditCard, Building2, type LucideIcon } from 'lucide-react';
 import { useLocale, useTranslations } from '@/i18n/provider';
 import { useRelativeTime } from '@/i18n/use-relative-time';
 import { Button } from '@/components/ui/button';
@@ -38,6 +38,7 @@ const ICONS: Record<string, LucideIcon> = {
   payment_success: CreditCard,
   plan_ending: CreditCard,
   plan_expired: CreditCard,
+  enterprise_lead: Building2,
 };
 
 // Usage counter → feature name (app.features.*)
@@ -151,6 +152,8 @@ export default function NotificationDropdown() {
         return { title: t('planEndingTitle'), body: t('planEndingBody', { plan: d.plan || 'Pro', when: when(d.date) }) };
       case 'plan_expired':
         return { title: t('planExpiredTitle'), body: t('planExpiredBody', { plan: d.plan || 'Pro' }) };
+      case 'enterprise_lead':
+        return { title: t('leadTitle'), body: t('leadBody', { organization: d.organization || '—', teamSize: d.teamSize || '—', name: d.name || '—' }) };
       case 'usage_warning':
       case 'usage_limit': {
         const u = n.data as { field?: string; used?: number; limit?: number };

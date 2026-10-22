@@ -249,7 +249,8 @@
       "title": "Produit",
       "resumeBuilder": "Constructeur de CV",
       "coverLetterGenerator": "Générateur de Lettres de Motivation",
-      "templates": "Modèles"
+      "templates": "Modèles",
+      "enterprise": "Entreprise"
     },
     "company": {
       "title": "Entreprise",
@@ -575,7 +576,8 @@
       "helpCenter": "Centre d'Aide",
       "logout": "Déconnexion",
       "collapse": "Réduire",
-      "expand": "Développer"
+      "expand": "Développer",
+      "adminLeads": "Demandes Entreprise"
     },
     "topNav": {
       "searchPlaceholder": "Rechercher pages, CV, lettres, candidatures...",
@@ -619,7 +621,9 @@
       "planEndingTitle": "Votre offre se termine bientôt",
       "planEndingBody": "{plan} se termine le {when}. Renouvelez pour garder vos fonctionnalités Pro.",
       "planExpiredTitle": "Votre offre est terminée",
-      "planExpiredBody": "{plan} est terminé et vous êtes repassé à l'offre Gratuite. Vos documents Pro sont conservés : renouvelez pour les retrouver."
+      "planExpiredBody": "{plan} est terminé et vous êtes repassé à l'offre Gratuite. Vos documents Pro sont conservés : renouvelez pour les retrouver.",
+      "leadTitle": "Nouvelle demande Entreprise",
+      "leadBody": "{organization} ({teamSize} personnes) — {name}"
     },
     "userMenu": {
       "profile": "Mon Profil",
@@ -2113,6 +2117,23 @@
       "addressCity": "Adresse / Ville",
       "addressPlaceholder": "Paris, France",
       "linkedIn": "LinkedIn"
+    },
+    "adminLeads": {
+      "title": "Demandes Entreprise",
+      "subtitle": "Organisations ayant rempli le formulaire de contact commercial.",
+      "empty": "Aucune demande pour le moment.",
+      "all": "Toutes",
+      "status": {
+        "new": "Nouvelle",
+        "contacted": "Contactée",
+        "won": "Gagnée",
+        "lost": "Perdue"
+      },
+      "people": "{size} personnes",
+      "reply": "Répondre par e-mail",
+      "received": "Reçue le {date}",
+      "notAdmin": "Cette page est réservée aux administrateurs du site.",
+      "loadFailed": "Impossible de charger les demandes."
     }
   },
   "a11y": {
@@ -2125,5 +2146,120 @@
     "helpful": "Utile",
     "notHelpful": "Pas utile",
     "loadingTemplate": "Chargement du modèle…"
+  },
+  "enterprise": {
+    "badge": "CareerForge pour les organisations",
+    "title": "Aidez chaque personne que vous accompagnez à décrocher un emploi",
+    "subtitle": "Offrez à vos étudiants, stagiaires, candidats ou employés tout CareerForge Pro, et suivez leurs progrès depuis un seul endroit.",
+    "ctaPrimary": "Nous contacter",
+    "ctaSecondary": "Voir ce qui est inclus",
+    "rollout": "L'offre Entreprise s'ouvre à ses premières organisations. Parlez-nous de la vôtre et nous la mettrons en place.",
+    "whoTitle": "Conçu pour les organisations qui aident à trouver un emploi",
+    "who": {
+      "university": {
+        "title": "Universités et écoles",
+        "body": "Les services carrière offrent Pro à chaque étudiant et voient qui est prêt pour le marché du travail."
+      },
+      "training": {
+        "title": "Centres de formation et bootcamps",
+        "body": "Préparez vos diplômés avec des CV et lettres compatibles ATS avant qu'ils postulent."
+      },
+      "agency": {
+        "title": "Cabinets de recrutement et RH",
+        "body": "Préparez les CV des candidats dans un format professionnel et homogène."
+      },
+      "ngo": {
+        "title": "ONG et programmes publics",
+        "body": "Menez des programmes d'emploi des jeunes et d'employabilité à grande échelle."
+      },
+      "company": {
+        "title": "Entreprises",
+        "body": "Accompagnez les employés qui changent de poste ou quittent l'entreprise (outplacement)."
+      }
+    },
+    "includedTitle": "Ce qui est inclus",
+    "included": {
+      "seats": {
+        "title": "Pro pour chaque membre",
+        "body": "Chaque personne invitée obtient toutes les fonctionnalités Pro : CV et lettres illimités, outils IA, vérificateur ATS et suivi des candidatures."
+      },
+      "invites": {
+        "title": "Invitations faciles",
+        "body": "Invitez par e-mail ou partagez un seul lien d'invitation. Ajoutez, retirez ou remplacez des membres à tout moment."
+      },
+      "dashboard": {
+        "title": "Tableau de bord administrateur",
+        "body": "Suivez les progrès : CV terminés, score ATS moyen, candidatures, entretiens et offres."
+      },
+      "privacy": {
+        "title": "Confidentiel par défaut",
+        "body": "Les administrateurs ne voient que des chiffres de progression, jamais le contenu des CV, sauf si un membre choisit de le partager."
+      },
+      "branding": {
+        "title": "Votre image de marque",
+        "body": "Votre logo et vos couleurs pour vos membres, et vos propres modèles de CV."
+      },
+      "billing": {
+        "title": "Tarif simple par membre",
+        "body": "Payez par membre, au mois ou à l'année, par carte ou mobile money. Facture ou virement pour les grandes organisations."
+      }
+    },
+    "howTitle": "Comment ça marche",
+    "how": {
+      "1": {
+        "title": "Parlez-nous de votre organisation",
+        "body": "Remplissez le formulaire ci-dessous. Nous répondons sous 2 jours ouvrés."
+      },
+      "2": {
+        "title": "Choisissez votre offre",
+        "body": "Choisissez le nombre de places et le mode de paiement."
+      },
+      "3": {
+        "title": "Invitez vos membres",
+        "body": "Les membres rejoignent avec un seul lien et obtiennent Pro immédiatement."
+      }
+    },
+    "formTitle": "Contacter l'équipe commerciale",
+    "formSubtitle": "Parlez-nous un peu de votre organisation et de vos besoins.",
+    "fields": {
+      "name": "Votre nom",
+      "email": "E-mail professionnel",
+      "organization": "Nom de l'organisation",
+      "orgType": "Type d'organisation",
+      "teamSize": "Combien de personnes ?",
+      "country": "Pays",
+      "phone": "Téléphone (facultatif)",
+      "message": "Quel est votre objectif ? (facultatif)",
+      "messagePlaceholder": "ex. nous voulons que tous nos étudiants de dernière année aient un bon CV avant le salon de l'emploi"
+    },
+    "orgTypes": {
+      "university": "Université",
+      "school": "École",
+      "training": "Centre de formation / bootcamp",
+      "agency": "Cabinet de recrutement / RH",
+      "ngo": "ONG",
+      "government": "Programme public",
+      "company": "Entreprise",
+      "other": "Autre"
+    },
+    "teamSizes": {
+      "1-25": "1–25",
+      "26-100": "26–100",
+      "101-500": "101–500",
+      "500+": "Plus de 500"
+    },
+    "select": "Choisir…",
+    "submit": "Envoyer la demande",
+    "sending": "Envoi…",
+    "successTitle": "Merci ! Nous avons bien reçu votre demande.",
+    "successBody": "Nous vous répondrons à {email} sous 2 jours ouvrés.",
+    "sendAnother": "Envoyer une autre demande",
+    "errors": {
+      "required": "Veuillez remplir les champs obligatoires.",
+      "email": "Veuillez saisir une adresse e-mail valide.",
+      "rateLimited": "Trop de demandes. Réessayez dans quelques minutes.",
+      "failed": "Une erreur s'est produite. Veuillez réessayer."
+    },
+    "privacyNote": "Nous utilisons ces informations uniquement pour répondre à votre demande."
   }
 }

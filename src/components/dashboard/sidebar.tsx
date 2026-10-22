@@ -20,6 +20,7 @@ import {
   LogOut,
   ChevronLeft,
   ChevronRight,
+  Inbox,
 } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
@@ -54,6 +55,9 @@ const NAV_ITEMS: NavItem[] = [
   { key: 'settings', icon: Settings, href: '/settings', section: 'account' },
   { key: 'helpCenter', icon: HelpCircle, href: '/help', section: 'account' },
 ];
+
+// Only shown to the accounts listed in ADMIN_EMAILS
+const ADMIN_ITEM: NavItem = { key: 'adminLeads', icon: Inbox, href: '/admin/leads', section: 'account' };
 
 interface SidebarProps {
   collapsed: boolean;
@@ -157,7 +161,7 @@ export default function Sidebar({ collapsed, onToggle, pathname }: SidebarProps)
   const t = useTranslations('dashboard.sidebar');
   const tc = useTranslations('app.common');
   const tm = useTranslations('app.misc');
-  const { logout } = useAuth();
+  const { user, logout } = useAuth();
   const { data: usageData, isLoading: usageLoading } = useUsage();
 
   // Use shared usage context — no separate API call needed
@@ -188,7 +192,7 @@ export default function Sidebar({ collapsed, onToggle, pathname }: SidebarProps)
           {SECTIONS.map((section, si) => (
             <React.Fragment key={section.key}>
               {si > 0 && <Separator className="my-2" />}
-              {section.items.map(item => (
+              {(section.key === 'account' && user?.is_admin ? [...section.items, ADMIN_ITEM] : section.items).map(item => (
                 <NavItemComponent
                   key={item.key}
                   item={item}
