@@ -191,55 +191,19 @@
     "plans": {
       "free": {
         "name": "Free",
-        "price": "0",
-        "period": "forever",
-        "description": "Get started with essential tools",
-        "features": [
-          "1 Resume & 3 Cover Letters",
-          "3 Resume Templates",
-          "AI Suggestions (5/day)",
-          "PDF Export",
-          "Basic ATS Check"
-        ],
         "cta": "Get Started Free"
       },
       "pro": {
         "name": "Pro",
-        "period": "/month",
-        "periodYearly": "/year",
-        "description": "For serious job seekers",
-        "features": [
-          "Unlimited Resumes & Cover Letters",
-          "All Templates",
-          "Unlimited AI Suggestions",
-          "Job Description Analysis",
-          "Advanced ATS Checker",
-          "Job Application Tracker",
-          "Priority Support"
-        ],
-        "cta": "Start Pro Trial",
+        "cta": "Get Pro",
         "popular": "Most Popular"
       },
       "enterprise": {
         "name": "Enterprise",
-        "price": "",
-        "priceYearly": "",
-        "period": "",
-        "periodYearly": "",
-        "description": "For teams and organizations",
-        "features": [
-          "Everything in Pro",
-          "Team Collaboration",
-          "Custom Branding",
-          "API Access",
-          "Bulk Resume Generation",
-          "Dedicated Support",
-          "SSO Integration"
-        ],
         "cta": "Contact Sales"
       }
     },
-    "customPricing": "Custom pricing based on your needs"
+    "unavailable": "Prices couldn't be loaded right now. Please refresh the page."
   },
   "faq": {
     "badge": "FAQ",

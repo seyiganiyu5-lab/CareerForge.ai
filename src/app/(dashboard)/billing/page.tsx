@@ -16,6 +16,7 @@ import {
   CardFooter,
 } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
+import { PlanPrice, PlanFeatureList } from '@/components/billing/plan-card-parts';
 import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
 import { Progress } from '@/components/ui/progress';
@@ -730,83 +731,11 @@ export default function BillingPage() {
                     {planDesc(plan.name, plan.description)}
                   </p>
 
-                  {/* Price */}
-                  <div className="mt-4 flex flex-wrap items-baseline gap-x-1">
-                    {isFreePlan ? (
-                      <span className="text-4xl font-bold font-heading text-foreground">
-                        {t('free')}
-                      </span>
-                    ) : isEnterprise ? (
-                      <span className="text-4xl font-bold font-heading text-foreground">
-                        {t('custom')}
-                      </span>
-                    ) : (
-                      <>
-                        <span
-                          key={isYearly ? 'yearly-price' : 'monthly-price'}
-                          className={`${fmtPrice(price, plan.currency).length > 9 ? 'text-3xl' : 'text-4xl'} whitespace-nowrap font-bold font-heading text-foreground transition-all duration-200`}
-                        >
-                          {fmtPrice(price, plan.currency)}
-                        </span>
-                        <span
-                          key={isYearly ? 'yearly-period' : 'monthly-period'}
-                          className="text-muted-foreground text-sm font-body transition-all duration-200"
-                        >
-                          {isYearly ? t('perYear') : t('perMonth')}
-                        </span>
-                      </>
-                    )}
-                  </div>
-
-                  {/* Yearly savings note */}
-                  {!isFreePlan && !isEnterprise && (
-                    <p
-                      key={isYearly ? 'savings-on' : 'savings-off'}
-                      className="text-xs text-muted-foreground font-body mt-1 transition-opacity duration-200"
-                    >
-                      {isYearly
-                        ? t('billedAnnually', { price: fmtPrice(Math.round(price / 12), plan.currency) })
-                        : t('orYearly', { price: fmtPrice(plan.price_yearly, plan.currency), savings: fmtPrice(plan.price_monthly * 12 - plan.price_yearly, plan.currency) })
-                      }
-                    </p>
-                  )}
+                  <PlanPrice plan={plan} isYearly={isYearly} />
 
                   <Separator className="my-5" />
 
-                  {/* Feature list */}
-                  <ul className="space-y-3">
-                    {plan.features
-                      .filter(f => FEATURE_DISPLAY_INFO[f.key])
-                      .map(feature => {
-                        const label = getFeatureLabel(feature.key);
-                        const limitText = getFeatureLimitText(feature);
-
-                        return (
-                          <li key={feature.key} className="flex items-start gap-2.5">
-                            {feature.enabled ? (
-                              <CheckCircle2 className="w-4 h-4 text-emerald mt-0.5 shrink-0" />
-                            ) : (
-                              <XCircle className="w-4 h-4 text-muted-foreground/40 mt-0.5 shrink-0" />
-                            )}
-                            <span
-                              className={`text-sm font-body ${
-                                feature.enabled
-                                  ? 'text-foreground/90'
-                                  : 'text-muted-foreground/50 line-through'
-                              }`}
-                            >
-                              {label}
-                              {feature.enabled && limitText && limitText !== 'Unlimited' && (
-                                <span className="text-muted-foreground ml-1">({limitText})</span>
-                              )}
-                              {feature.enabled && limitText === 'Unlimited' && (
-                                <span className="text-emerald ml-1 text-xs">({t('unlimited')})</span>
-                              )}
-                            </span>
-                          </li>
-                        );
-                      })}
-                  </ul>
+                  <PlanFeatureList features={plan.features} />
                 </div>
 
                 {/* CTA button */}
