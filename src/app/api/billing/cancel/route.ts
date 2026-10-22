@@ -18,6 +18,11 @@ export async function POST(request: NextRequest) {
 
     const currentSub = await getUserPlan(auth.userId);
 
+    // Enterprise from an organisation ends when the person leaves it, not here
+    if (currentSub.organization) {
+      return NextResponse.json({ success: false, error: 'org_plan' }, { status: 400 });
+    }
+
     if (currentSub.plan.name === 'free') {
       return NextResponse.json({ success: false, error: 'You are already on the free plan' }, { status: 400 });
     }

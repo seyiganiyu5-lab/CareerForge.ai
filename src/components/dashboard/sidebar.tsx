@@ -21,6 +21,7 @@ import {
   ChevronLeft,
   ChevronRight,
   Inbox,
+  Building2,
 } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
@@ -57,7 +58,12 @@ const NAV_ITEMS: NavItem[] = [
 ];
 
 // Only shown to the accounts listed in ADMIN_EMAILS
-const ADMIN_ITEM: NavItem = { key: 'adminLeads', icon: Inbox, href: '/admin/leads', section: 'account' };
+const ADMIN_ITEMS: NavItem[] = [
+  { key: 'adminLeads', icon: Inbox, href: '/admin/leads', section: 'account' },
+  { key: 'adminOrgs', icon: Building2, href: '/admin/organizations', section: 'account' },
+];
+// Shown to members of an Enterprise organisation
+const ORG_ITEM: NavItem = { key: 'organization', icon: Building2, href: '/organization', section: 'account' };
 
 interface SidebarProps {
   collapsed: boolean;
@@ -192,7 +198,9 @@ export default function Sidebar({ collapsed, onToggle, pathname }: SidebarProps)
           {SECTIONS.map((section, si) => (
             <React.Fragment key={section.key}>
               {si > 0 && <Separator className="my-2" />}
-              {(section.key === 'account' && user?.is_admin ? [...section.items, ADMIN_ITEM] : section.items).map(item => (
+              {(section.key === 'account'
+                ? [...section.items, ...(user?.organization ? [ORG_ITEM] : []), ...(user?.is_admin ? ADMIN_ITEMS : [])]
+                : section.items).map(item => (
                 <NavItemComponent
                   key={item.key}
                   item={item}

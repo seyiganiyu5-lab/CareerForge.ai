@@ -2,6 +2,7 @@ import { db } from '@/lib/db';
 import { createNotification, notifyUsage } from '@/lib/notifications';
 import { FEATURE_USAGE_MAP, type FeatureKey } from './features';
 import { canSeeDoc } from './doc-visibility';
+import { isOrgActive } from '@/lib/enterprise/organizations';
 
 // Plans and their feature limits rarely change, so keep them in memory
 // briefly instead of reading them on every request.
@@ -34,14 +35,18 @@ async function findPlan(planId: string) {
  * plan features and usage counters — in a single parallel round trip.
  * Creates the Free subscription / usage row on first access and drops
  * expired paid plans back to Free.
+ *
+ * Members of an active organisation get the Enterprise plan on top of their
+ * own plan, which is kept as it is (own_plan) and comes back if they leave.
  */
 export async function loadAccount(userId: string) {
-  let [subscriptionRow, usage, plans, resumeTiers, letterTiers] = await Promise.all([
+  let [subscriptionRow, usage, plans, resumeTiers, letterTiers, membership] = await Promise.all([
     db.subscription.findUnique({ where: { user_id: userId } }),
     db.userUsage.findUnique({ where: { user_id: userId } }),
     getPlansCached(),
     db.resume.groupBy({ by: ['plan_tier'], where: { user_id: userId }, _count: { _all: true } }),
     db.coverLetter.groupBy({ by: ['plan_tier'], where: { user_id: userId }, _count: { _all: true } }),
+    db.organizationMember.findUnique({ where: { user_id: userId }, include: { organization: true } }),
   ]);
 
   if (!subscriptionRow) {
@@ -58,13 +63,13 @@ export async function loadAccount(userId: string) {
     });
   }
 
-  const plan = await findPlan(subscriptionRow.plan_id);
-  if (!plan) throw new Error('Plan not found');
+  const ownPlan = await findPlan(subscriptionRow.plan_id);
+  if (!ownPlan) throw new Error('Plan not found');
 
   // Paid plans are bought one period at a time: once the period ends,
   // the user drops back to Free until they pay again.
   if (
-    plan.name !== 'free' &&
+    ownPlan.name !== 'free' &&
     subscriptionRow.current_period_end &&
     subscriptionRow.current_period_end < new Date()
   ) {
@@ -72,7 +77,7 @@ export async function loadAccount(userId: string) {
     await createNotification(userId, {
       type: 'plan_expired',
       key: `planexpired:${subscriptionRow.current_period_end.toISOString()}`,
-      data: { plan: plan.display_name },
+      data: { plan: ownPlan.display_name },
       link: '/billing',
     }).catch((err) => console.error('Plan expiry notification failed:', err));
     return loadAccount(userId);
@@ -82,13 +87,28 @@ export async function loadAccount(userId: string) {
     usage = await db.userUsage.create({ data: { user_id: userId } });
   }
 
+  const org = membership && isOrgActive(membership.organization) ? membership.organization : null;
+  const orgPlan = org ? plans.find(p => p.name === 'enterprise') : undefined;
+  const plan = orgPlan ?? ownPlan;
+
   // Resume / cover letter limits count the documents the user can see on
   // this plan (on Free, the ones created on Pro are hidden and don't count)
   const visible = (rows: { plan_tier: string; _count: { _all: number } }[]) =>
     rows.filter(r => canSeeDoc(plan.name, r.plan_tier)).reduce((n, r) => n + r._count._all, 0);
   usage = { ...usage, resume_count: visible(resumeTiers), cover_letter_count: visible(letterTiers) };
 
-  const subscription = { ...subscriptionRow, plan };
+  const subscription = orgPlan && org
+    ? {
+      ...subscriptionRow,
+      plan,
+      status: 'active',
+      current_period_end: org.ends_at,
+      expires_at: org.ends_at,
+      cancelled_at: null,
+      own_plan: ownPlan,
+      organization: { id: org.id, name: org.name, role: membership!.role, ends_at: org.ends_at },
+    }
+    : { ...subscriptionRow, plan, own_plan: ownPlan, organization: null };
   return { subscription, features: plan.plan_features, usage };
 }
 

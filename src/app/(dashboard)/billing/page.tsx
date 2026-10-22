@@ -80,6 +80,8 @@ interface Subscription {
   expires_at: string | null;
   current_period_end: string | null;
   cancelled_at: string | null;
+  /** Set when the plan comes from an Enterprise organisation */
+  organization?: { id: string; name: string; role: string; ends_at: string | null } | null;
 }
 
 interface UsageEntry {
@@ -245,6 +247,7 @@ export default function BillingPage() {
   const currentPlanName = subscription?.plan.name.toLowerCase() as PlanName || 'free';
   const currentTier = getPlanTier(currentPlanName);
   const isCancelled = subscription?.status === 'cancelled';
+  const org = subscription?.organization ?? null;
   const isFree = currentPlanName === 'free';
   const periodEnd = subscription?.current_period_end ? new Date(subscription.current_period_end).getTime() : null;
   const daysLeft = periodEnd ? Math.max(0, Math.ceil((periodEnd - Date.now()) / 86_400_000)) : null;
@@ -445,7 +448,11 @@ export default function BillingPage() {
                     </Badge>
                   </div>
                   <p className="text-sm text-muted-foreground font-body mt-0.5">
-                    {isFree
+                    {org
+                      ? org.ends_at
+                        ? t('orgProvidedUntil', { organization: org.name, date: fmtDate(org.ends_at) })
+                        : t('orgProvided', { organization: org.name })
+                      : isFree
                       ? t('freeNote')
                       : isCancelled && subscription?.current_period_end
                         ? t('expiresOn', { date: fmtDate(subscription.current_period_end) })
@@ -455,7 +462,14 @@ export default function BillingPage() {
                 </div>
               </div>
               <div className="flex items-center gap-3">
-                {isFree ? (
+                {org ? (
+                  <Button variant="outline" className="font-body rounded-lg" asChild>
+                    <Link href="/organization">
+                      {t('viewOrganization')}
+                      <ArrowRight className="w-4 h-4 ml-1" />
+                    </Link>
+                  </Button>
+                ) : isFree ? (
                   <Button
                     className="bg-brand text-white hover:bg-brand/90 font-body rounded-lg"
                     onClick={() => {
@@ -497,7 +511,7 @@ export default function BillingPage() {
             </div>
 
             {/* Ending soon: there is no automatic charge, so remind to renew */}
-            {!isFree && !isCancelled && daysLeft !== null && daysLeft <= 7 && (
+            {!org && !isFree && !isCancelled && daysLeft !== null && daysLeft <= 7 && (
               <FadeIn className="mt-4 flex items-start gap-3 rounded-lg border border-amber-500/30 bg-amber-500/5 p-4">
                 <AlertTriangle className="w-5 h-5 text-amber-600 dark:text-amber-400 shrink-0 mt-0.5" />
                 <div>
@@ -587,7 +601,7 @@ export default function BillingPage() {
             )}
 
             {/* Paid plan info row */}
-            {!isFree && subscription && (
+            {!org && !isFree && subscription && (
               <div className="mt-6 grid grid-cols-1 sm:grid-cols-3 gap-4">
                 <div className="rounded-lg border border-border bg-background/50 p-4">
                   <p className="text-xs text-muted-foreground font-body mb-1">{t('billingCycle')}</p>
@@ -741,7 +755,7 @@ export default function BillingPage() {
 
                 {/* CTA button */}
                 <div className="p-6 pt-2 mt-auto">
-                  {isCurrentPlan && !isFree && !isEnterprise ? (
+                  {org && !isCurrentPlan ? null : isCurrentPlan && !isFree && !isEnterprise ? (
                     <Button
                       variant="outline"
                       className="w-full rounded-lg font-body"

@@ -3,6 +3,7 @@ import { createClient } from '@/lib/supabase/server';
 import { ensureProfile, toPublicUser } from '@/lib/auth/profile';
 import type { AuthResponse } from '@/lib/auth/types';
 import { isAdminEmail } from '@/lib/admin';
+import { membershipFor, notifyPendingInvites } from '@/lib/enterprise/organizations';
 
 export async function GET() {
   try {
@@ -20,7 +21,17 @@ export async function GET() {
     }
 
     const profile = await ensureProfile(user);
-    return NextResponse.json({ success: true, user: { ...toPublicUser(profile), is_admin: isAdminEmail(profile.email) } } satisfies AuthResponse);
+    const membership = await membershipFor(profile.id);
+    // Someone invited by email before they had an account sees the invite now
+    if (!membership) await notifyPendingInvites(profile.id, profile.email).catch(() => {});
+    return NextResponse.json({
+      success: true,
+      user: {
+        ...toPublicUser(profile),
+        is_admin: isAdminEmail(profile.email),
+        organization: membership ? { id: membership.organization.id, name: membership.organization.name, role: membership.role } : null,
+      },
+    } satisfies AuthResponse);
   } catch (error) {
     // Usually the database can't be reached (ensureProfile)
     console.error('Session error:', error);

@@ -36,6 +36,7 @@ model User {
   aiHistory      AiHistory[]
   jobApplications JobApplication[]
   notifications  Notification[]
+  organizationMembership OrganizationMember?
 }
 
 model Plan {
@@ -304,4 +305,54 @@ model EnterpriseLead {
   updated_at   DateTime @updatedAt
 
   @@index([status, created_at])
+}
+
+// Enterprise customer. Its members get the Enterprise plan while it is
+// active and not past ends_at, up to `seats` members.
+model Organization {
+  id                  String    @id @default(cuid())
+  name                String
+  org_type            String    @default("other")
+  seats               Int
+  status              String    @default("active") // active, suspended
+  ends_at             DateTime?
+  invite_code         String    @unique // shareable join link: /join/<invite_code>
+  invite_link_enabled Boolean   @default(true)
+  lead_id             String?   // EnterpriseLead it came from, if any
+  created_at          DateTime  @default(now())
+  updated_at          DateTime  @updatedAt
+
+  members OrganizationMember[]
+  invites OrganizationInvite[]
+}
+
+// A person can belong to one organisation at a time
+model OrganizationMember {
+  id              String   @id @default(cuid())
+  organization_id String
+  user_id         String   @unique
+  role            String   @default("member") // owner, admin, member
+  joined_at       DateTime @default(now())
+
+  organization Organization @relation(fields: [organization_id], references: [id], onDelete: Cascade)
+  user         User         @relation(fields: [user_id], references: [id], onDelete: Cascade)
+
+  @@index([organization_id])
+}
+
+// Personal invite for one email address (/join/<token>); removed once used
+model OrganizationInvite {
+  id              String   @id @default(cuid())
+  organization_id String
+  email           String
+  role            String   @default("member")
+  token           String   @unique
+  invited_by      String?
+  expires_at      DateTime
+  created_at      DateTime @default(now())
+
+  organization Organization @relation(fields: [organization_id], references: [id], onDelete: Cascade)
+
+  @@unique([organization_id, email])
+  @@index([email])
 }

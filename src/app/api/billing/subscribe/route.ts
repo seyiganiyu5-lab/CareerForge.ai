@@ -50,6 +50,12 @@ export async function POST(request: NextRequest) {
     // Also drops an ended paid period back to Free. Paying again for the
     // current plan is allowed: it adds a period on top (renewal).
     const currentSub = await getUserPlan(auth.userId);
+    if (currentSub.organization) {
+      return NextResponse.json(
+        { success: false, error: 'org_plan', message: 'Your plan is provided by your organisation.' },
+        { status: 400 }
+      );
+    }
     if (currentSub.plan.name !== 'free' && currentSub.plan_id !== planId) {
       return NextResponse.json(
         { success: false, error: 'Please wait for your current plan to end, or contact us to switch plans.' },
