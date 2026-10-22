@@ -1246,7 +1246,9 @@
       "preview": "Aperçu",
       "add": "Ajouter",
       "remove": "Retirer",
-      "updating": "Mise à jour…"
+      "updating": "Mise à jour…",
+      "connectionErrorTitle": "Impossible de joindre CareerForge pour le moment",
+      "connectionErrorBody": "Vous êtes toujours connecté, mais la connexion au serveur a échoué. Vérifiez votre connexion internet et réessayez."
     },
     "resumeBuilder": {
       "title": "Créateur de CV",

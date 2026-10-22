@@ -8,6 +8,12 @@ export async function GET() {
     const supabase = await createClient();
     const { data: { user }, error } = await supabase.auth.getUser();
 
+    // Supabase unreachable or timed out: we don't know, which is not "signed out"
+    if (error && (!error.status || error.status >= 500 || error.name === 'AuthRetryableFetchError')) {
+      console.error('Session check failed (Supabase unreachable):', error.message);
+      return NextResponse.json({ success: false, error: 'unavailable' } satisfies AuthResponse, { status: 503 });
+    }
+
     if (error || !user) {
       return NextResponse.json({ success: false, error: 'unauthorized' } satisfies AuthResponse, { status: 401 });
     }
@@ -15,7 +21,8 @@ export async function GET() {
     const profile = await ensureProfile(user);
     return NextResponse.json({ success: true, user: toPublicUser(profile) } satisfies AuthResponse);
   } catch (error) {
+    // Usually the database can't be reached (ensureProfile)
     console.error('Session error:', error);
-    return NextResponse.json({ success: false, error: 'Failed to get session' } satisfies AuthResponse, { status: 500 });
+    return NextResponse.json({ success: false, error: 'unavailable' } satisfies AuthResponse, { status: 503 });
   }
 }

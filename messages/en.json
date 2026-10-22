@@ -1246,7 +1246,9 @@
       "preview": "Preview",
       "add": "Add",
       "remove": "Remove",
-      "updating": "Updating…"
+      "updating": "Updating…",
+      "connectionErrorTitle": "Can't reach CareerForge right now",
+      "connectionErrorBody": "You're still signed in, but we couldn't connect to the server. Check your internet connection and try again."
     },
     "resumeBuilder": {
       "title": "Resume Builder",
