@@ -285,3 +285,23 @@ model Notification {
   @@unique([user_id, dedupe_key])
   @@index([user_id, created_at])
 }
+
+// Requests from organisations interested in Enterprise (Contact Sales form)
+model EnterpriseLead {
+  id           String   @id @default(cuid())
+  name         String
+  email        String
+  organization String
+  org_type     String   // university, school, training, agency, ngo, government, company, other
+  team_size    String   // 1-25, 26-100, 101-500, 500+
+  country      String?
+  phone        String?
+  message      String   @default("")
+  locale       String   @default("en")
+  status       String   @default("new") // new, contacted, won, lost
+  user_id      String?  // signed-in user who sent it, if any
+  created_at   DateTime @default(now())
+  updated_at   DateTime @updatedAt
+
+  @@index([status, created_at])
+}

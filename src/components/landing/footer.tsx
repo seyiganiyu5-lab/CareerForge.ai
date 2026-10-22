@@ -80,6 +80,11 @@ export default function Footer() {
                   {t('product.templates')}
                 </a>
               </li>
+              <li>
+                <a href="/enterprise" className="text-sm text-muted-foreground hover:text-foreground transition-colors font-body">
+                  {t('product.enterprise')}
+                </a>
+              </li>
             </ul>
           </div>
 

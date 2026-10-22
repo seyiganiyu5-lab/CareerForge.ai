@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect, useCallback } from 'react';
+import Link from 'next/link';
 import { toast } from 'sonner';
 import { FadeInUp, ScaleIn, FadeIn, StaggerItem } from '@/lib/motion';
 import { useAuth } from '@/lib/auth/context';
@@ -758,13 +759,11 @@ export default function BillingPage() {
                       {t('currentPlan')}
                     </Button>
                   ) : isEnterprise ? (
-                    <Button
-                      variant="outline"
-                      className="w-full rounded-lg font-body"
-                      onClick={() => toast.info(t('contactSalesToast'))}
-                    >
-                      {t('contactSales')}
-                      <ArrowRight className="w-4 h-4 ml-1" />
+                    <Button variant="outline" className="w-full rounded-lg font-body" asChild>
+                      <Link href="/enterprise#contact">
+                        {t('contactSales')}
+                        <ArrowRight className="w-4 h-4 ml-1" />
+                      </Link>
                     </Button>
                   ) : isHigher ? (
                     <Button

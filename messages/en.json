@@ -249,7 +249,8 @@
       "title": "Product",
       "resumeBuilder": "Resume Builder",
       "coverLetterGenerator": "Cover Letter Generator",
-      "templates": "Templates"
+      "templates": "Templates",
+      "enterprise": "Enterprise"
     },
     "company": {
       "title": "Company",
@@ -575,7 +576,8 @@
       "helpCenter": "Help Center",
       "logout": "Log Out",
       "collapse": "Collapse",
-      "expand": "Expand"
+      "expand": "Expand",
+      "adminLeads": "Enterprise requests"
     },
     "topNav": {
       "searchPlaceholder": "Search pages, resumes, cover letters, jobs...",
@@ -619,7 +621,9 @@
       "planEndingTitle": "Your plan ends soon",
       "planEndingBody": "{plan} ends on {when}. Renew to keep your Pro features.",
       "planExpiredTitle": "Your plan has ended",
-      "planExpiredBody": "{plan} has ended and you are back on Free. Your Pro documents are kept: renew to get them back."
+      "planExpiredBody": "{plan} has ended and you are back on Free. Your Pro documents are kept: renew to get them back.",
+      "leadTitle": "New Enterprise request",
+      "leadBody": "{organization} ({teamSize} people) — {name}"
     },
     "userMenu": {
       "profile": "My Profile",
@@ -2113,6 +2117,23 @@
       "addressCity": "Address / City",
       "addressPlaceholder": "New York, NY",
       "linkedIn": "LinkedIn"
+    },
+    "adminLeads": {
+      "title": "Enterprise requests",
+      "subtitle": "Organisations that filled in the Contact Sales form.",
+      "empty": "No requests yet.",
+      "all": "All",
+      "status": {
+        "new": "New",
+        "contacted": "Contacted",
+        "won": "Won",
+        "lost": "Lost"
+      },
+      "people": "{size} people",
+      "reply": "Reply by email",
+      "received": "Received {date}",
+      "notAdmin": "This page is only for site admins.",
+      "loadFailed": "Couldn't load requests."
     }
   },
   "a11y": {
@@ -2125,5 +2146,120 @@
     "helpful": "Helpful",
     "notHelpful": "Not helpful",
     "loadingTemplate": "Loading template…"
+  },
+  "enterprise": {
+    "badge": "CareerForge for organisations",
+    "title": "Help everyone you support land a job",
+    "subtitle": "Give your students, trainees, candidates or employees all of CareerForge Pro, and follow their progress from one place.",
+    "ctaPrimary": "Talk to us",
+    "ctaSecondary": "See what's included",
+    "rollout": "Enterprise is opening to its first organisations. Tell us about yours and we'll set you up.",
+    "whoTitle": "Built for organisations that help people get hired",
+    "who": {
+      "university": {
+        "title": "Universities & schools",
+        "body": "Career centres give every student Pro and see who is ready for the job market."
+      },
+      "training": {
+        "title": "Training centres & bootcamps",
+        "body": "Prepare graduates with ATS-ready CVs and cover letters before they apply."
+      },
+      "agency": {
+        "title": "Recruitment & HR agencies",
+        "body": "Prepare candidates' CVs in a consistent, professional format."
+      },
+      "ngo": {
+        "title": "NGOs & government programmes",
+        "body": "Run youth employment and job-readiness programmes at scale."
+      },
+      "company": {
+        "title": "Companies",
+        "body": "Support employees changing roles or leaving (outplacement)."
+      }
+    },
+    "includedTitle": "What's included",
+    "included": {
+      "seats": {
+        "title": "Pro for every member",
+        "body": "Each person you invite gets every Pro feature: unlimited CVs and cover letters, AI tools, ATS checker and job tracker."
+      },
+      "invites": {
+        "title": "Easy invitations",
+        "body": "Invite people by email or share one invite link. Add, remove or replace members any time."
+      },
+      "dashboard": {
+        "title": "Admin dashboard",
+        "body": "Follow progress: CVs completed, average ATS score, applications, interviews and offers."
+      },
+      "privacy": {
+        "title": "Private by default",
+        "body": "Admins see progress numbers only, never the content of members' CVs, unless a member chooses to share."
+      },
+      "branding": {
+        "title": "Your branding",
+        "body": "Your logo and colours for your members, and your own CV templates."
+      },
+      "billing": {
+        "title": "Simple per-seat pricing",
+        "body": "Pay per member, monthly or yearly, by card or mobile money. Invoice or bank transfer for larger organisations."
+      }
+    },
+    "howTitle": "How it works",
+    "how": {
+      "1": {
+        "title": "Tell us about your organisation",
+        "body": "Fill in the form below. We reply within 2 working days."
+      },
+      "2": {
+        "title": "Agree your plan",
+        "body": "Choose the number of seats and how you'd like to pay."
+      },
+      "3": {
+        "title": "Invite your people",
+        "body": "Members join with one link and get Pro right away."
+      }
+    },
+    "formTitle": "Contact sales",
+    "formSubtitle": "Tell us a little about your organisation and what you need.",
+    "fields": {
+      "name": "Your name",
+      "email": "Work email",
+      "organization": "Organisation name",
+      "orgType": "Type of organisation",
+      "teamSize": "How many people?",
+      "country": "Country",
+      "phone": "Phone (optional)",
+      "message": "What would you like to achieve? (optional)",
+      "messagePlaceholder": "e.g. we want all our final-year students to have a strong CV before the job fair"
+    },
+    "orgTypes": {
+      "university": "University",
+      "school": "School",
+      "training": "Training centre / bootcamp",
+      "agency": "Recruitment / HR agency",
+      "ngo": "NGO",
+      "government": "Government programme",
+      "company": "Company",
+      "other": "Other"
+    },
+    "teamSizes": {
+      "1-25": "1–25",
+      "26-100": "26–100",
+      "101-500": "101–500",
+      "500+": "More than 500"
+    },
+    "select": "Select…",
+    "submit": "Send request",
+    "sending": "Sending…",
+    "successTitle": "Thank you! We've received your request.",
+    "successBody": "We'll get back to you at {email} within 2 working days.",
+    "sendAnother": "Send another request",
+    "errors": {
+      "required": "Please fill in the required fields.",
+      "email": "Please enter a valid email address.",
+      "rateLimited": "Too many requests. Please try again in a few minutes.",
+      "failed": "Something went wrong. Please try again."
+    },
+    "privacyNote": "We only use these details to reply to your request."
   }
 }

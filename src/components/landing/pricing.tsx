@@ -153,7 +153,7 @@ export default function Pricing() {
                     }`}
                     asChild
                   >
-                    <Link href={isEnterprise ? '/help' : '/signup'}>
+                    <Link href={isEnterprise ? '/enterprise#contact' : '/signup'}>
                       {t(`plans.${ctaKey(name)}.cta`)}
                       {!isEnterprise && <ArrowRight className="w-4 h-4 ml-2" />}
                     </Link>

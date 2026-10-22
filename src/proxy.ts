@@ -8,6 +8,7 @@ const SESSION_CHECK_TIMEOUT_MS = 4_500;
 
 // Every page in the (dashboard) route group, plus onboarding
 const PROTECTED_ROUTES = [
+  '/admin',
   '/ats-checker',
   '/billing',
   '/cover-letters',

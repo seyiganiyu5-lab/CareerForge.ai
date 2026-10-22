@@ -7,7 +7,7 @@ import { useAuth } from '@/lib/auth/context';
 import {
   LayoutDashboard, FileText, FolderOpen, Mail, Sparkles,
   ShieldCheck, Briefcase, LayoutTemplate, User, CreditCard,
-  Settings, HelpCircle, LogOut,
+  Settings, HelpCircle, LogOut, Inbox,
 } from 'lucide-react';
 import { Separator } from '@/components/ui/separator';
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from '@/components/ui/sheet';
@@ -20,7 +20,14 @@ function DrawerProBadge({ featureKey }: { featureKey: string }) {
   return useFeatureLocked(featureKey) ? <ProBadge className="ml-auto" /> : null;
 }
 
-const DRAWER_ITEMS = [
+interface DrawerItem {
+  key: string;
+  icon: React.ElementType;
+  href: string;
+  proFeature?: string;
+}
+
+const DRAWER_ITEMS: DrawerItem[] = [
   { key: 'dashboard', icon: LayoutDashboard, href: '/home' },
   { key: 'resumeBuilder', icon: FileText, href: '/resume-builder' },
   { key: 'myResumes', icon: FolderOpen, href: '/my-resumes' },
@@ -35,6 +42,9 @@ const DRAWER_ITEMS = [
   { key: 'helpCenter', icon: HelpCircle, href: '/help' },
 ];
 
+// Only shown to the accounts listed in ADMIN_EMAILS
+const ADMIN_ITEM: DrawerItem = { key: 'adminLeads', icon: Inbox, href: '/admin/leads' };
+
 interface MobileDrawerProps {
   open: boolean;
   onClose: () => void;
@@ -44,7 +54,7 @@ interface MobileDrawerProps {
 export default function MobileDrawer({ open, onClose, pathname }: MobileDrawerProps) {
   const t = useTranslations('dashboard.sidebar');
   const tm = useTranslations('app.misc');
-  const { logout } = useAuth();
+  const { user, logout } = useAuth();
 
   return (
     <Sheet open={open} onOpenChange={onClose}>
@@ -62,7 +72,7 @@ export default function MobileDrawer({ open, onClose, pathname }: MobileDrawerPr
 
         <ScrollArea className="flex-1 px-3 py-3">
           <nav className="flex flex-col gap-1" aria-label={tm('mobileNavigation')}>
-            {DRAWER_ITEMS.map(item => {
+            {(user?.is_admin ? [...DRAWER_ITEMS, ADMIN_ITEM] : DRAWER_ITEMS).map(item => {
               const Icon = item.icon;
               const isActive = pathname === item.href || pathname.startsWith(item.href + '/');
               return (
@@ -79,7 +89,7 @@ export default function MobileDrawer({ open, onClose, pathname }: MobileDrawerPr
                 >
                   <Icon className={cn('w-5 h-5 shrink-0', isActive && 'text-brand')} />
                   <span className="font-body">{t(item.key)}</span>
-                  {'proFeature' in item && item.proFeature && <DrawerProBadge featureKey={item.proFeature} />}
+                  {item.proFeature && <DrawerProBadge featureKey={item.proFeature} />}
                 </Link>
               );
             })}
