@@ -25,6 +25,8 @@ export interface AuthState {
   user: User | null;
   isLoading: boolean;
   isAuthenticated: boolean;
+  /** The session couldn't be checked (network / Supabase / database down). Not the same as signed out. */
+  connectionError?: boolean;
 }
 
 export interface LoginCredentials {

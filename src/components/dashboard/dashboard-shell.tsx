@@ -6,6 +6,9 @@ import { useAuth } from '@/lib/auth/context';
 import Sidebar from './sidebar';
 import TopNav from './top-nav';
 import MobileDrawer from './mobile-drawer';
+import { WifiOff } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { useTranslations } from '@/i18n/provider';
 
 const SIDEBAR_EXPANDED = 260;
 const SIDEBAR_COLLAPSED = 72;
@@ -17,7 +20,8 @@ function getIsMobile(): boolean {
 }
 
 export default function DashboardShell({ children }: { children: React.ReactNode }) {
-  const { isAuthenticated, isLoading, refreshSession } = useAuth();
+  const { isAuthenticated, isLoading, connectionError, refreshSession } = useAuth();
+  const tc = useTranslations('app.common');
   const pathname = usePathname();
   const router = useRouter();
   const [isMobile, setIsMobile] = useState(() => getIsMobile());
@@ -63,20 +67,38 @@ export default function DashboardShell({ children }: { children: React.ReactNode
   // Client-side redirect to login when session loaded and not authenticated
   // Use a ref guard to prevent rapid redirect loops
   // Delay 500ms to give session checks time to complete (important after signup)
+  // Only when the server says "signed out", never because of a connection problem
   useEffect(() => {
-    if (!isLoading && !isAuthenticated && !hasRedirectedRef.current) {
+    if (!isLoading && !isAuthenticated && !connectionError && !hasRedirectedRef.current) {
       hasRedirectedRef.current = true;
-      const timer = setTimeout(() => {
-        window.location.href = '/';
+      const timer = setTimeout(async () => {
+        // Clear any stale session cookie first, so the login page doesn't
+        // send us straight back here
+        await fetch('/api/auth/logout', { method: 'POST', credentials: 'include' }).catch(() => {});
+        window.location.href = `/login?redirect=${encodeURIComponent(window.location.pathname)}`;
       }, 500);
       return () => clearTimeout(timer);
     }
-  }, [isLoading, isAuthenticated]);
+  }, [isLoading, isAuthenticated, connectionError]);
 
   // Not authenticated — redirect triggered by useEffect above
   // Show nothing while still loading initially
   if (isLoading) {
     return null;
+  }
+  if (!isAuthenticated && connectionError) {
+    return (
+      <div className="flex min-h-screen items-center justify-center bg-background p-6">
+        <div className="max-w-sm text-center space-y-3">
+          <WifiOff className="mx-auto size-10 text-muted-foreground" aria-hidden="true" />
+          <h1 className="font-heading text-lg font-semibold">{tc('connectionErrorTitle')}</h1>
+          <p className="text-sm text-muted-foreground font-body">{tc('connectionErrorBody')}</p>
+          <Button onClick={() => refreshSession(true)} className="bg-brand text-white hover:bg-brand/90 font-body">
+            {tc('tryAgain')}
+          </Button>
+        </div>
+      </div>
+    );
   }
   if (!isAuthenticated) {
     return null;

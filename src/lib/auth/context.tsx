@@ -13,7 +13,7 @@ interface AuthContextType extends AuthState {
   resendVerification: (email: string) => Promise<{ success: boolean; message?: string; error?: string }>;
   completeOnboarding: (data: OnboardingData) => Promise<AuthResponse>;
   googleSignIn: () => void;
-  refreshSession: () => Promise<void>;
+  refreshSession: (force?: boolean) => Promise<void>;
   /** Server's hint about who is signed in, until the full session has loaded (display only) */
   sessionHint: SessionHint | null;
 }
@@ -66,14 +66,20 @@ export function AuthProvider({ children, sessionHint = null }: { children: React
       }
       lastFetchRef.current = now;
       hasFetchedRef.current = true;
-      const data = await fetchAPI<{ user: AuthState['user'] } | { error: string }>('/api/auth/session');
-      if ('user' in data && data.user) {
+      const response = await fetch('/api/auth/session', { credentials: 'include' });
+      const data = await response.json().catch(() => ({})) as { user?: AuthState['user'] };
+      if (response.ok && data.user) {
         setState({ user: data.user, isLoading: false, isAuthenticated: true });
-      } else {
+      } else if (response.status === 401) {
         setState({ user: null, isLoading: false, isAuthenticated: false });
+      } else {
+        // Server or Supabase unreachable: keep what we knew, don't treat as signed out
+        setState(prev => ({ ...prev, isLoading: false, connectionError: true }));
+        hasFetchedRef.current = false; // try again on the next check
       }
     } catch {
-      setState(prev => ({ ...prev, isLoading: false }));
+      setState(prev => ({ ...prev, isLoading: false, connectionError: true }));
+      hasFetchedRef.current = false;
     }
   }, []);
 
@@ -167,7 +173,7 @@ export function AuthProvider({ children, sessionHint = null }: { children: React
         googleSignIn,
         refreshSession,
         // Once the real session is known, the hint no longer matters
-        sessionHint: state.isLoading ? sessionHint : null,
+        sessionHint: state.isLoading || state.connectionError ? sessionHint : null,
       }}
     >
       {children}
@@ -180,8 +186,8 @@ export function AuthProvider({ children, sessionHint = null }: { children: React
  * `ready` is false only when neither is known yet.
  */
 export function useSignedInDisplay() {
-  const { user, isLoading, isAuthenticated, sessionHint } = useAuth();
-  if (!isLoading) return { ready: true, signedIn: isAuthenticated, user };
+  const { user, isLoading, isAuthenticated, sessionHint, connectionError } = useAuth();
+  if (!isLoading && !connectionError) return { ready: true, signedIn: isAuthenticated, user };
   if (sessionHint) {
     return {
       ready: true,
