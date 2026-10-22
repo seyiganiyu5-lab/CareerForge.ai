@@ -143,7 +143,7 @@ export default function NotificationDropdown() {
       case 'payment_success': {
         const p = n.data as { plan?: string; amount?: number; currency?: string; until?: string | null };
         const amount = typeof p.amount === 'number' && p.currency
-          ? new Intl.NumberFormat(locale === 'fr' ? 'fr-FR' : 'en-US', { style: 'currency', currency: p.currency, maximumFractionDigits: p.amount % 100 ? 2 : 0 }).format(p.amount / 100)
+          ? new Intl.NumberFormat(locale === 'fr' ? 'fr-FR' : 'en-US', { style: 'currency', currency: p.currency, currencyDisplay: 'narrowSymbol', maximumFractionDigits: p.amount % 100 ? 2 : 0 }).format(p.amount / 100)
           : '';
         return { title: t('paymentTitle'), body: t('paymentBody', { plan: p.plan || 'Pro', amount, until: p.until ? when(p.until) : '—' }) };
       }

@@ -39,26 +39,40 @@ export default function Pricing() {
   const [isYearly, setIsYearly] = useState(false);
   const { locale } = useLocale();
   // Real Pro price in the visitor's currency (falls back to the text prices)
+  // Real prices from the server, in the currency payments are set up for.
+  // No hard-coded fallback, so the page never shows a different currency.
   const [livePro, setLivePro] = useState<{ monthly: number; yearly: number; currency: string } | null>(null);
+  const [priceStatus, setPriceStatus] = useState<'loading' | 'ok' | 'error'>('loading');
   useEffect(() => {
     fetch('/api/billing/plans')
       .then(r => r.json())
       .then(data => {
         const pro = data?.plans?.find((p: { name: string }) => p.name === 'pro');
-        if (pro?.price_monthly > 0) setLivePro({ monthly: pro.price_monthly, yearly: pro.price_yearly, currency: pro.currency });
+        if (pro?.price_monthly > 0) {
+          setLivePro({ monthly: pro.price_monthly, yearly: pro.price_yearly, currency: pro.currency });
+          setPriceStatus('ok');
+        } else setPriceStatus('error');
       })
-      .catch(() => {});
+      .catch(() => setPriceStatus('error'));
   }, []);
+  const yearlySavingPct = livePro && livePro.yearly > 0
+    ? Math.round((1 - livePro.yearly / (livePro.monthly * 12)) * 100)
+    : null;
   const money = (subunits: number, currency: string) => {
     const amount = subunits / 100;
     const digits = Number.isInteger(amount) ? 0 : 2;
     return new Intl.NumberFormat(locale === 'fr' ? 'fr-FR' : 'en-US', {
-      style: 'currency', currency, minimumFractionDigits: digits, maximumFractionDigits: digits,
+      style: 'currency', currency, currencyDisplay: 'narrowSymbol', minimumFractionDigits: digits, maximumFractionDigits: digits,
     }).format(amount);
   };
+  // Long amounts (49 000 F CFA, ₦79,000) get a smaller size so they fit the card
+  const priceSize = (text: unknown) =>
+    typeof text === 'string' && text.length > 9 ? 'text-3xl md:text-4xl' : 'text-4xl md:text-5xl';
   const priceText = (planKey: string, yearly: boolean) => {
-    if (planKey === 'pro' && livePro) return money(yearly ? livePro.yearly : livePro.monthly, livePro.currency);
-    return yearly ? t(`plans.${planKey}.priceYearly`) : t(`plans.${planKey}.price`);
+    if (planKey === 'free') return livePro ? money(0, livePro.currency) : '0';
+    if (livePro) return money(yearly ? livePro.yearly : livePro.monthly, livePro.currency);
+    if (priceStatus === 'loading') return <span className="inline-block h-10 w-32 rounded-lg bg-muted animate-pulse align-middle" aria-hidden="true" />;
+    return '—';
   };
 
   return (
@@ -102,9 +116,11 @@ export default function Pricing() {
             <span className={`text-sm font-medium font-body transition-colors ${isYearly ? 'text-foreground' : 'text-muted-foreground'}`}>
               {t('yearly')}
             </span>
-            <span className="inline-flex items-center rounded-full bg-emerald/10 px-2.5 py-0.5 text-xs font-medium text-emerald font-body">
-              {t('yearlyDiscount')}
-            </span>
+            {yearlySavingPct !== null && yearlySavingPct > 0 && (
+              <span className="inline-flex items-center rounded-full bg-emerald/10 px-2.5 py-0.5 text-xs font-medium text-emerald font-body">
+                {t('yearlyDiscount', { pct: yearlySavingPct })}
+              </span>
+            )}
           </div>
         </motion.div>
 
@@ -142,7 +158,7 @@ export default function Pricing() {
                 </h3>
 
                 {hasPrice ? (
-                <div className="mt-4 flex items-baseline gap-1">
+                <div className="mt-4 flex flex-wrap items-baseline gap-x-1">
                   <AnimatePresence mode="wait">
                     <motion.span
                       key={isYearly && planKey !== 'free' ? 'yearly' : 'monthly'}
@@ -150,7 +166,7 @@ export default function Pricing() {
                       animate={{ opacity: 1, y: 0 }}
                       exit={{ opacity: 0, y: 10 }}
                       transition={{ duration: 0.2 }}
-                      className="text-4xl md:text-5xl font-bold font-heading text-foreground"
+                      className={`${priceSize(priceText(planKey, planKey !== 'free' && isYearly))} whitespace-nowrap font-bold font-heading text-foreground`}
                     >
                       {priceText(planKey, planKey !== 'free' && isYearly)}
                     </motion.span>

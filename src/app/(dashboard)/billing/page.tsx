@@ -114,6 +114,7 @@ function formatPrice(cents: number, currency: string = 'USD', locale = 'en-US'):
   const digits = Number.isInteger(amount) ? 0 : 2;
   return new Intl.NumberFormat(locale, {
     style: 'currency',
+    currencyDisplay: 'narrowSymbol',
     currency,
     minimumFractionDigits: digits,
     maximumFractionDigits: digits,
@@ -246,6 +247,11 @@ export default function BillingPage() {
   const periodEnd = subscription?.current_period_end ? new Date(subscription.current_period_end).getTime() : null;
   const daysLeft = periodEnd ? Math.max(0, Math.ceil((periodEnd - Date.now()) / 86_400_000)) : null;
   const currentPlanPrices = plans.find(p => p.id === subscription?.plan.id);
+  // Real yearly saving of the Pro plan in the shown currency (not a fixed "20%")
+  const proPlan = plans.find(p => p.name === 'pro');
+  const yearlySavingPct = proPlan && proPlan.price_monthly > 0 && proPlan.price_yearly > 0
+    ? Math.round((1 - proPlan.price_yearly / (proPlan.price_monthly * 12)) * 100)
+    : null;
 
   const { refetch: refetchPlan } = useUsage();
 
@@ -598,8 +604,8 @@ export default function BillingPage() {
                   <p className="text-xs text-muted-foreground font-body mb-1">{t('planPrice')}</p>
                   <p className="text-sm font-medium font-heading text-foreground">
                     {subscription.billing_cycle === 'yearly'
-                      ? `${fmtPrice(currentPlanPrices?.price_yearly ?? subscription.plan.price_yearly, currentPlanPrices?.currency ?? subscription.plan.currency)}${t('perYear')}`
-                      : `${fmtPrice(currentPlanPrices?.price_monthly ?? subscription.plan.price_monthly, currentPlanPrices?.currency ?? subscription.plan.currency)}${t('perMonth')}`
+                      ? `${fmtPrice(currentPlanPrices?.price_yearly ?? 0, currentPlanPrices?.currency ?? currency)}${t('perYear')}`
+                      : `${fmtPrice(currentPlanPrices?.price_monthly ?? 0, currentPlanPrices?.currency ?? currency)}${t('perMonth')}`
                     }
                   </p>
                 </div>
@@ -642,9 +648,11 @@ export default function BillingPage() {
             >
               {t('yearly')}
             </span>
-            <Badge className="bg-emerald/10 text-emerald border-emerald/20 text-xs font-body">
-              {t('save20')}
-            </Badge>
+            {yearlySavingPct !== null && yearlySavingPct > 0 && (
+              <Badge className="bg-emerald/10 text-emerald border-emerald/20 text-xs font-body">
+                {t('save20', { pct: yearlySavingPct })}
+              </Badge>
+            )}
             {currencies.length > 1 && (
               <div role="radiogroup" aria-label={t('currency')} className="flex rounded-lg border border-border p-0.5">
                 {currencies.map(c => (
@@ -723,7 +731,7 @@ export default function BillingPage() {
                   </p>
 
                   {/* Price */}
-                  <div className="mt-4 flex items-baseline gap-1">
+                  <div className="mt-4 flex flex-wrap items-baseline gap-x-1">
                     {isFreePlan ? (
                       <span className="text-4xl font-bold font-heading text-foreground">
                         {t('free')}
@@ -736,7 +744,7 @@ export default function BillingPage() {
                       <>
                         <span
                           key={isYearly ? 'yearly-price' : 'monthly-price'}
-                          className="text-4xl font-bold font-heading text-foreground transition-all duration-200"
+                          className={`${fmtPrice(price, plan.currency).length > 9 ? 'text-3xl' : 'text-4xl'} whitespace-nowrap font-bold font-heading text-foreground transition-all duration-200`}
                         >
                           {fmtPrice(price, plan.currency)}
                         </span>
