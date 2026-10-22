@@ -65,9 +65,12 @@ export default function Pricing() {
       style: 'currency', currency, currencyDisplay: 'narrowSymbol', minimumFractionDigits: digits, maximumFractionDigits: digits,
     }).format(amount);
   };
-  // Long amounts (49 000 F CFA, ₦79,000) get a smaller size so they fit the card
-  const priceSize = (text: unknown) =>
-    typeof text === 'string' && text.length > 9 ? 'text-3xl md:text-4xl' : 'text-4xl md:text-5xl';
+  // Same size for every plan, chosen from the longest price (49 000 F CFA,
+  // ₦79,000) so it fits the card with "/month" beside it where there's room
+  const longestPrice = livePro
+    ? Math.max(money(livePro.monthly, livePro.currency).length, money(livePro.yearly, livePro.currency).length)
+    : 0;
+  const priceSize = () => (longestPrice > 9 ? 'text-3xl xl:text-4xl' : 'text-4xl md:text-5xl');
   const priceText = (planKey: string, yearly: boolean) => {
     if (planKey === 'free') return livePro ? money(0, livePro.currency) : '0';
     if (livePro) return money(yearly ? livePro.yearly : livePro.monthly, livePro.currency);
@@ -166,7 +169,7 @@ export default function Pricing() {
                       animate={{ opacity: 1, y: 0 }}
                       exit={{ opacity: 0, y: 10 }}
                       transition={{ duration: 0.2 }}
-                      className={`${priceSize(priceText(planKey, planKey !== 'free' && isYearly))} whitespace-nowrap font-bold font-heading text-foreground`}
+                      className={`${priceSize()} whitespace-nowrap font-bold font-heading text-foreground`}
                     >
                       {priceText(planKey, planKey !== 'free' && isYearly)}
                     </motion.span>
