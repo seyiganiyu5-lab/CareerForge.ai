@@ -2,7 +2,7 @@
 
 import React, { useCallback, useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { Bell, Briefcase, Mail, CalendarClock, MessageSquareReply, Hourglass, Gift, AlarmClock, Gauge, CreditCard, Building2, type LucideIcon } from 'lucide-react';
+import { Bell, Briefcase, Mail, CalendarClock, MessageSquareReply, Hourglass, Gift, AlarmClock, Gauge, CreditCard, Building2, UserPlus, UserMinus, Users, type LucideIcon } from 'lucide-react';
 import { useLocale, useTranslations } from '@/i18n/provider';
 import { useRelativeTime } from '@/i18n/use-relative-time';
 import { Button } from '@/components/ui/button';
@@ -39,6 +39,9 @@ const ICONS: Record<string, LucideIcon> = {
   plan_ending: CreditCard,
   plan_expired: CreditCard,
   enterprise_lead: Building2,
+  org_invite: UserPlus,
+  org_joined: Users,
+  org_removed: UserMinus,
 };
 
 // Usage counter → feature name (app.features.*)
@@ -154,6 +157,12 @@ export default function NotificationDropdown() {
         return { title: t('planExpiredTitle'), body: t('planExpiredBody', { plan: d.plan || 'Pro' }) };
       case 'enterprise_lead':
         return { title: t('leadTitle'), body: t('leadBody', { organization: d.organization || '—', teamSize: d.teamSize || '—', name: d.name || '—' }) };
+      case 'org_invite':
+        return { title: t('orgInviteTitle'), body: t('orgInviteBody', { organization: d.organization || '—' }) };
+      case 'org_joined':
+        return { title: t('orgJoinedTitle'), body: t('orgJoinedBody', { name: d.name || '—', organization: d.organization || '—' }) };
+      case 'org_removed':
+        return { title: t('orgRemovedTitle'), body: t('orgRemovedBody', { organization: d.organization || '—' }) };
       case 'usage_warning':
       case 'usage_limit': {
         const u = n.data as { field?: string; used?: number; limit?: number };

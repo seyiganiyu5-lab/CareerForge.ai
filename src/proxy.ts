@@ -17,6 +17,7 @@ const PROTECTED_ROUTES = [
   '/job-tracker',
   '/my-resumes',
   '/onboarding',
+  '/organization',
   '/profile',
   '/resume-builder',
   '/resume-review',

@@ -37,6 +37,8 @@ export async function GET(request: NextRequest) {
         expires_at: subscription.expires_at,
         current_period_end: subscription.current_period_end,
         cancelled_at: subscription.cancelled_at,
+        // Set when the plan comes from an Enterprise organisation
+        organization: subscription.organization,
       },
     });
   } catch (error) {

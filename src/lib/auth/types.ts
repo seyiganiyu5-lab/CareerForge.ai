@@ -16,6 +16,8 @@ export interface User {
   onboarding_completed: boolean;
   /** Site admin (ADMIN_EMAILS): sees the Enterprise requests page */
   is_admin?: boolean;
+  /** Enterprise organisation the user belongs to */
+  organization?: { id: string; name: string; role: 'owner' | 'admin' | 'member' | string } | null;
   created_at: string;
   updated_at: string;
 }

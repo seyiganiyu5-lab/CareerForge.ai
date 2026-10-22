@@ -1,6 +1,7 @@
 'use client';
 
 import { useCallback, useEffect, useState } from 'react';
+import Link from 'next/link';
 import { toast } from 'sonner';
 import { Building2, Mail, Phone, MapPin, Inbox, ShieldAlert } from 'lucide-react';
 import { useAuth } from '@/lib/auth/context';
@@ -164,6 +165,11 @@ export default function AdminLeadsPage() {
                       {LEAD_STATUSES.map((s) => <SelectItem key={s} value={s}>{t(`status.${s}`)}</SelectItem>)}
                     </SelectContent>
                   </Select>
+                  <Button asChild variant="outline" className="w-full font-body">
+                    <Link href={`/admin/organizations?${new URLSearchParams({ lead: lead.id, name: lead.organization, type: lead.org_type, email: lead.email })}`}>
+                      {t('createOrg')}
+                    </Link>
+                  </Button>
                   <Button asChild variant="outline" className="w-full font-body">
                     <a href={`mailto:${lead.email}?subject=${encodeURIComponent(`CareerForge AI Enterprise — ${lead.organization}`)}`}>{t('reply')}</a>
                   </Button>

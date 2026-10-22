@@ -7,7 +7,7 @@ import { useAuth } from '@/lib/auth/context';
 import {
   LayoutDashboard, FileText, FolderOpen, Mail, Sparkles,
   ShieldCheck, Briefcase, LayoutTemplate, User, CreditCard,
-  Settings, HelpCircle, LogOut, Inbox,
+  Settings, HelpCircle, LogOut, Inbox, Building2,
 } from 'lucide-react';
 import { Separator } from '@/components/ui/separator';
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from '@/components/ui/sheet';
@@ -43,7 +43,12 @@ const DRAWER_ITEMS: DrawerItem[] = [
 ];
 
 // Only shown to the accounts listed in ADMIN_EMAILS
-const ADMIN_ITEM: DrawerItem = { key: 'adminLeads', icon: Inbox, href: '/admin/leads' };
+const ADMIN_ITEMS: DrawerItem[] = [
+  { key: 'adminLeads', icon: Inbox, href: '/admin/leads' },
+  { key: 'adminOrgs', icon: Building2, href: '/admin/organizations' },
+];
+// Shown to members of an Enterprise organisation
+const ORG_ITEM: DrawerItem = { key: 'organization', icon: Building2, href: '/organization' };
 
 interface MobileDrawerProps {
   open: boolean;
@@ -72,7 +77,7 @@ export default function MobileDrawer({ open, onClose, pathname }: MobileDrawerPr
 
         <ScrollArea className="flex-1 px-3 py-3">
           <nav className="flex flex-col gap-1" aria-label={tm('mobileNavigation')}>
-            {(user?.is_admin ? [...DRAWER_ITEMS, ADMIN_ITEM] : DRAWER_ITEMS).map(item => {
+            {[...DRAWER_ITEMS, ...(user?.organization ? [ORG_ITEM] : []), ...(user?.is_admin ? ADMIN_ITEMS : [])].map(item => {
               const Icon = item.icon;
               const isActive = pathname === item.href || pathname.startsWith(item.href + '/');
               return (
