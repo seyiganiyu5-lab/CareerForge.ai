@@ -187,7 +187,7 @@
     "description": "Choisissez le forfait qui correspond à vos besoins. Commencez gratuitement et évoluez à votre rythme.",
     "monthly": "Mensuel",
     "yearly": "Annuel",
-    "yearlyDiscount": "Économisez 20%",
+    "yearlyDiscount": "Économisez {pct} %",
     "plans": {
       "free": {
         "name": "Gratuit",
@@ -205,8 +205,6 @@
       },
       "pro": {
         "name": "Pro",
-        "price": "7,99 $",
-        "priceYearly": "79,99 $",
         "period": "/mois",
         "periodYearly": "/an",
         "description": "Pour les chercheurs d'emploi sérieux",
@@ -1334,7 +1332,7 @@
       "comparePlans": "Comparer les offres",
       "comparePlansSub": "Trouvez l'offre qui vous convient le mieux.",
       "toggleBilling": "Changer de période de facturation",
-      "save20": "Économisez 20 %",
+      "save20": "Économisez {pct} %",
       "mostPopular": "Le plus populaire",
       "currentPlan": "Offre actuelle",
       "free": "Gratuit",

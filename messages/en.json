@@ -187,7 +187,7 @@
     "description": "Choose the plan that fits your needs. Start free and upgrade as you grow.",
     "monthly": "Monthly",
     "yearly": "Yearly",
-    "yearlyDiscount": "Save 20%",
+    "yearlyDiscount": "Save {pct}%",
     "plans": {
       "free": {
         "name": "Free",
@@ -205,8 +205,6 @@
       },
       "pro": {
         "name": "Pro",
-        "price": "$7.99",
-        "priceYearly": "$79.99",
         "period": "/month",
         "periodYearly": "/year",
         "description": "For serious job seekers",
@@ -1334,7 +1332,7 @@
       "comparePlans": "Compare Plans",
       "comparePlansSub": "Find the plan that works best for you.",
       "toggleBilling": "Toggle billing period",
-      "save20": "Save 20%",
+      "save20": "Save {pct}%",
       "mostPopular": "Most Popular",
       "currentPlan": "Current Plan",
       "free": "Free",

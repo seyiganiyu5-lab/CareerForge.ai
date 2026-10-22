@@ -1,12 +1,14 @@
-import { NextResponse } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
 import { getAuthUser } from '@/lib/subscription/auth-helpers';
 import { getUserPlan } from '@/lib/subscription/service';
+import { pickCurrency, requestCountry } from '@/lib/billing/currency';
+import { priceFor } from '@/lib/billing/prices';
 
 /**
  * GET /api/subscriptions/me
  * Get the current user's subscription info.
  */
-export async function GET() {
+export async function GET(request: NextRequest) {
   try {
     const auth = await getAuthUser();
     if (!auth) {
@@ -14,6 +16,8 @@ export async function GET() {
     }
 
     const subscription = await getUserPlan(auth.userId);
+    // Prices in the same currency as the rest of the site
+    const currency = pickCurrency(request.nextUrl.searchParams.get('currency'), requestCountry(request.headers));
 
     return NextResponse.json({
       success: true,
@@ -23,9 +27,9 @@ export async function GET() {
           id: subscription.plan.id,
           name: subscription.plan.name,
           display_name: subscription.plan.display_name,
-          price_monthly: subscription.plan.price_monthly,
-          price_yearly: subscription.plan.price_yearly,
-          currency: subscription.plan.currency,
+          price_monthly: priceFor(subscription.plan, currency, 'monthly') ?? 0,
+          price_yearly: priceFor(subscription.plan, currency, 'yearly') ?? 0,
+          currency,
         },
         status: subscription.status,
         billing_cycle: subscription.billing_cycle,
