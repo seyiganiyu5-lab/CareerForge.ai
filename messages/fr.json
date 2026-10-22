@@ -191,55 +191,19 @@
     "plans": {
       "free": {
         "name": "Gratuit",
-        "price": "0",
-        "period": "pour toujours",
-        "description": "Commencez avec les outils essentiels",
-        "features": [
-          "1 CV et 3 Lettres de Motivation",
-          "3 Modèles de CV",
-          "Suggestions IA (5/jour)",
-          "Export PDF",
-          "Vérification ATS de Base"
-        ],
         "cta": "Commencer Gratuitement"
       },
       "pro": {
         "name": "Pro",
-        "period": "/mois",
-        "periodYearly": "/an",
-        "description": "Pour les chercheurs d'emploi sérieux",
-        "features": [
-          "CV et Lettres de Motivation Illimités",
-          "Tous les Modèles",
-          "Suggestions IA Illimitées",
-          "Analyse d'Offres d'Emploi",
-          "Vérificateur ATS Avancé",
-          "Suivi des Candidatures",
-          "Support Prioritaire"
-        ],
-        "cta": "Essai Pro Gratuit",
+        "cta": "Passer à Pro",
         "popular": "Le Plus Populaire"
       },
       "enterprise": {
         "name": "Entreprise",
-        "price": "",
-        "priceYearly": "",
-        "period": "",
-        "periodYearly": "",
-        "description": "Pour les équipes et organisations",
-        "features": [
-          "Tout dans Pro",
-          "Collaboration d'Équipe",
-          "Marque Personnalisée",
-          "Accès API",
-          "Génération de CV en Lot",
-          "Support Dédié",
-          "Intégration SSO"
-        ],
         "cta": "Contacter les Ventes"
       }
     },
-    "customPricing": "Tarif personnalisé selon vos besoins"
+    "unavailable": "Les tarifs n'ont pas pu être chargés. Veuillez actualiser la page."
   },
   "faq": {
     "badge": "FAQ",
