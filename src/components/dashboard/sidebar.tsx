@@ -34,6 +34,7 @@ import {
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { cn } from '@/lib/utils';
 import { LogoMark } from '@/components/brand/logo-mark';
+import OrgBadge from '@/components/enterprise/org-badge';
 
 interface NavItem {
   key: string;
@@ -191,6 +192,12 @@ export default function Sidebar({ collapsed, onToggle, pathname }: SidebarProps)
       </div>
 
       <Separator className="mx-3" />
+
+      {user?.organization && (
+        <div className="px-3 pt-3">
+          <OrgBadge collapsed={collapsed} />
+        </div>
+      )}
 
       {/* Navigation */}
       <ScrollArea className="flex-1 px-3 py-3">

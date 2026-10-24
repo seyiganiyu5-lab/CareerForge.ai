@@ -2,7 +2,7 @@
 
 import { useState, lazy, Suspense } from 'react';
 import { motion } from 'framer-motion';
-import { Eye, Check, Lock, Star, X, Zap } from 'lucide-react';
+import { Eye, Check, Lock, Star, X, Zap, Building2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import {
@@ -16,6 +16,7 @@ import { createDefaultCustomization } from '@/lib/templates/defaults';
 import { THUMBNAIL_RESUME_DATA } from '@/lib/templates/sample-data';
 import type { TemplateId, TemplateCustomization } from '@/types/template';
 import { useTranslations } from '@/i18n/provider';
+import { useAuth } from '@/lib/auth/context';
 
 // Lazy thumbnail renderer
 const TemplateThumbnail = lazy(() =>
@@ -69,7 +70,9 @@ function TemplateCard({
   onSelect,
   onPreview,
   onUpgradeRequest,
+  recommendedBy,
 }: {
+  recommendedBy?: string;
   templateId: TemplateId;
   name: string;
   description: string;
@@ -173,6 +176,11 @@ function TemplateCard({
           </h3>
           <AtsStars rating={atsRating} />
         </div>
+        {recommendedBy && (
+          <p className="flex items-center gap-1 text-[11px] font-medium text-brand font-body">
+            <Building2 className="size-3 shrink-0" /> {t('recommendedBy', { organization: recommendedBy })}
+          </p>
+        )}
         <p className="text-[11px] text-muted-foreground font-body leading-relaxed line-clamp-2">
           {description}
         </p>
@@ -196,7 +204,12 @@ export function TemplateGallery({
     return t.has(key) ? t(key) : original;
   };
   const [previewTemplateId, setPreviewTemplateId] = useState<TemplateId | null>(null);
-  const templates = getAllTemplates();
+  const { user } = useAuth();
+  // Templates the member's organisation recommends come first
+  const org = user?.organization;
+  const recommended = org?.recommended_templates ?? [];
+  const rank = (id: string) => (recommended.includes(id) ? recommended.indexOf(id) : recommended.length);
+  const templates = [...getAllTemplates()].sort((a, b) => rank(a.id) - rank(b.id));
   const previewTemplate = templates.find(t => t.id === previewTemplateId);
   const previewCustomization = previewTemplateId ? createDefaultCustomization(previewTemplateId) : null;
 
@@ -238,6 +251,7 @@ export function TemplateGallery({
                   atsRating={template.atsRating}
                   tier={template.tier}
                   isCurrent={template.id === currentTemplateId}
+                  recommendedBy={org && recommended.includes(template.id) ? org.name : undefined}
                   isProUser={isProUser}
                   onSelect={() => {
                     onSelect(template.id);

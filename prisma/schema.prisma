@@ -319,6 +319,12 @@ model Organization {
   invite_code         String    @unique // shareable join link: /join/<invite_code>
   invite_link_enabled Boolean   @default(true)
   lead_id             String?   // EnterpriseLead it came from, if any
+  // Branding shown to members
+  brand_color           String?   // #RRGGBB, replaces the CareerForge blue
+  logo                  Bytes?    // PNG / JPEG / WebP, at most 300 KB
+  logo_mime             String?
+  logo_updated_at       DateTime?
+  recommended_templates String    @default("[]") // JSON array of up to 3 template ids
   created_at          DateTime  @default(now())
   updated_at          DateTime  @updatedAt
 
