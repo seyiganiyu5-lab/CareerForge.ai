@@ -2163,7 +2163,7 @@
       "memberAccess": "You have every Pro feature through your organisation.",
       "accessUntil": "Access until {date}",
       "inactive": "Your organisation's access has ended or is paused. Contact your organisation's admin.",
-      "privacyMember": "Your organisation sees your name and email. Your CVs and cover letters stay private.",
+      "privacyMember": "Your organisation sees your name, email and progress in numbers (how many CVs, your ATS score, applications, interviews and offers). Never the content of your CVs, cover letters or applications.",
       "leave": "Leave organisation",
       "leaveTitle": "Leave {organization}?",
       "leaveBody": "You'll go back to your own plan. Documents you created here stay in your account; on the Free plan the ones made with Pro are hidden until you upgrade.",
@@ -2209,7 +2209,9 @@
         "admin": "Admin",
         "member": "Member"
       },
-      "privacyNote": "You see names and emails only. Members' CVs and cover letters stay private."
+      "privacyNote": "Members' progress is shown in numbers only. Their CVs, cover letters and applications stay private.",
+      "tabProgress": "Progress",
+      "tabMembers": "Members & invites"
     },
     "join": {
       "loading": "Checking your invite…",
@@ -2235,7 +2237,8 @@
         "already_member": "You're already a member of {organization}.",
         "rate_limited": "Too many tries. Wait a minute and try again.",
         "failed": "Something went wrong. Please try again."
-      }
+      },
+      "sharing": "Your organisation will see your progress in numbers (CVs, ATS score, applications, interviews, offers), never the content of your CVs or letters."
     },
     "adminOrgs": {
       "title": "Organisations",
@@ -2278,6 +2281,71 @@
       "ownerInOtherOrg": "This person is already in another organisation.",
       "invalid": "Please check the fields.",
       "failed": "Something went wrong. Please try again."
+    },
+    "orgProgress": {
+      "loadFailed": "Couldn't load progress. Please try again.",
+      "privacy": "Numbers only: how many CVs, the ATS score, applications, interviews and offers. You never see the content of members' CVs, letters or applications.",
+      "activeWeek": "Active this week: {count}",
+      "ofMembers": "{pct}% of members",
+      "avgAtsHint": "Out of 100",
+      "applicationsHint": "Sent, in total",
+      "hiredCount": "Hired: {count}",
+      "stats": {
+        "members": "Members",
+        "withCv": "Have a CV",
+        "avgAts": "Average ATS score",
+        "applications": "Applications",
+        "interviewing": "Got interviews",
+        "offers": "Got offers"
+      },
+      "stagesTitle": "Where your members are",
+      "stagesBody": "The furthest step each member has reached. Click a step to see who is there.",
+      "stages": {
+        "not_started": "Not started",
+        "cv_ready": "CV ready",
+        "applying": "Applying",
+        "interviewing": "Interviewing",
+        "offer": "Offer",
+        "hired": "Hired"
+      },
+      "membersTitle": "Members",
+      "search": "Search by name or email",
+      "filterStage": "Filter by step",
+      "allStages": "All steps",
+      "sortBy": "Sort by",
+      "sort": {
+        "last_active": "Last active",
+        "stage": "Furthest step",
+        "ats": "ATS score",
+        "applications": "Applications",
+        "name": "Name"
+      },
+      "csvButton": "Download CSV",
+      "noMatch": "No members match.",
+      "cols": {
+        "member": "Member",
+        "stage": "Step",
+        "cvs": "CVs",
+        "ats": "ATS",
+        "applications": "Applications",
+        "interviews": "Interviews",
+        "offers": "Offers",
+        "lastActive": "Last active",
+        "letters": "Letters"
+      },
+      "csv": {
+        "name": "Name",
+        "email": "Email",
+        "stage": "Step",
+        "cvs": "CVs",
+        "letters": "Cover letters",
+        "ats": "ATS score",
+        "applications": "Applications",
+        "interviews": "Interviews",
+        "offers": "Offers",
+        "lastActive": "Last active"
+      },
+      "atsNote": "The ATS score is for each member's most recently edited CV, checked without a job description. A member's own check against a specific job can differ."
     }
   },
   "a11y": {

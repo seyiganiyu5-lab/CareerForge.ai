@@ -2163,7 +2163,7 @@
       "memberAccess": "Vous avez toutes les fonctionnalités Pro grâce à votre organisation.",
       "accessUntil": "Accès jusqu'au {date}",
       "inactive": "L'accès de votre organisation a pris fin ou est en pause. Contactez l'administrateur de votre organisation.",
-      "privacyMember": "Votre organisation voit votre nom et votre e-mail. Vos CV et lettres de motivation restent privés.",
+      "privacyMember": "Votre organisation voit votre nom, votre e-mail et votre progression en chiffres (nombre de CV, score ATS, candidatures, entretiens et offres). Jamais le contenu de vos CV, lettres ou candidatures.",
       "leave": "Quitter l'organisation",
       "leaveTitle": "Quitter {organization} ?",
       "leaveBody": "Vous retrouverez votre propre offre. Les documents créés ici restent dans votre compte ; avec l'offre Gratuite, ceux créés avec Pro sont masqués jusqu'à votre passage à Pro.",
@@ -2209,7 +2209,9 @@
         "admin": "Administrateur",
         "member": "Membre"
       },
-      "privacyNote": "Vous voyez uniquement les noms et e-mails. Les CV et lettres des membres restent privés."
+      "privacyNote": "La progression des membres est affichée uniquement en chiffres. Leurs CV, lettres et candidatures restent privés.",
+      "tabProgress": "Progression",
+      "tabMembers": "Membres et invitations"
     },
     "join": {
       "loading": "Vérification de votre invitation…",
@@ -2235,7 +2237,8 @@
         "already_member": "Vous êtes déjà membre de {organization}.",
         "rate_limited": "Trop de tentatives. Patientez une minute et réessayez.",
         "failed": "Une erreur s'est produite. Veuillez réessayer."
-      }
+      },
+      "sharing": "Votre organisation verra votre progression en chiffres (CV, score ATS, candidatures, entretiens, offres), jamais le contenu de vos CV ou lettres."
     },
     "adminOrgs": {
       "title": "Organisations",
@@ -2278,6 +2281,71 @@
       "ownerInOtherOrg": "Cette personne fait déjà partie d'une autre organisation.",
       "invalid": "Veuillez vérifier les champs.",
       "failed": "Une erreur s'est produite. Veuillez réessayer."
+    },
+    "orgProgress": {
+      "loadFailed": "Impossible de charger la progression. Veuillez réessayer.",
+      "privacy": "Uniquement des chiffres : nombre de CV, score ATS, candidatures, entretiens et offres. Vous ne voyez jamais le contenu des CV, lettres ou candidatures des membres.",
+      "activeWeek": "Actifs cette semaine : {count}",
+      "ofMembers": "{pct} % des membres",
+      "avgAtsHint": "Sur 100",
+      "applicationsHint": "Envoyées, au total",
+      "hiredCount": "Embauchés : {count}",
+      "stats": {
+        "members": "Membres",
+        "withCv": "Ont un CV",
+        "avgAts": "Score ATS moyen",
+        "applications": "Candidatures",
+        "interviewing": "Ont eu des entretiens",
+        "offers": "Ont eu des offres"
+      },
+      "stagesTitle": "Où en sont vos membres",
+      "stagesBody": "L'étape la plus avancée atteinte par chaque membre. Cliquez sur une étape pour voir qui s'y trouve.",
+      "stages": {
+        "not_started": "Pas commencé",
+        "cv_ready": "CV prêt",
+        "applying": "Candidate",
+        "interviewing": "En entretiens",
+        "offer": "Offre",
+        "hired": "Embauché"
+      },
+      "membersTitle": "Membres",
+      "search": "Rechercher par nom ou e-mail",
+      "filterStage": "Filtrer par étape",
+      "allStages": "Toutes les étapes",
+      "sortBy": "Trier par",
+      "sort": {
+        "last_active": "Dernière activité",
+        "stage": "Étape la plus avancée",
+        "ats": "Score ATS",
+        "applications": "Candidatures",
+        "name": "Nom"
+      },
+      "csvButton": "Télécharger en CSV",
+      "noMatch": "Aucun membre ne correspond.",
+      "cols": {
+        "member": "Membre",
+        "stage": "Étape",
+        "cvs": "CV",
+        "ats": "ATS",
+        "applications": "Candidatures",
+        "interviews": "Entretiens",
+        "offers": "Offres",
+        "lastActive": "Dernière activité",
+        "letters": "Lettres"
+      },
+      "csv": {
+        "name": "Nom",
+        "email": "E-mail",
+        "stage": "Étape",
+        "cvs": "CV",
+        "letters": "Lettres de motivation",
+        "ats": "Score ATS",
+        "applications": "Candidatures",
+        "interviews": "Entretiens",
+        "offers": "Offres",
+        "lastActive": "Dernière activité"
+      },
+      "atsNote": "Le score ATS porte sur le CV modifié le plus récemment par chaque membre, vérifié sans offre d'emploi. La vérification d'un membre pour une offre précise peut donner un autre score."
     }
   },
   "a11y": {
