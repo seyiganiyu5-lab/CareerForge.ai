@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase/server';
+import { SUPABASE_SIGN_IN_TIMEOUT_MS } from '@/lib/supabase/fetch-with-timeout';
 import { getSiteUrl } from '@/lib/auth/profile';
 import { validateEmail } from '@/lib/auth/utils';
 
@@ -16,7 +17,7 @@ export async function PUT(request: NextRequest) {
       return NextResponse.json({ success: false, error: 'Invalid email format' }, { status: 400 });
     }
 
-    const supabase = await createClient();
+    const supabase = await createClient({ timeoutMs: SUPABASE_SIGN_IN_TIMEOUT_MS });
     const { error } = await supabase.auth.resend({
       type: 'signup',
       email: normalizedEmail,

@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase/server';
+import { SUPABASE_SIGN_IN_TIMEOUT_MS } from '@/lib/supabase/fetch-with-timeout';
 import { getSiteUrl } from '@/lib/auth/profile';
 import { validateEmail } from '@/lib/auth/utils';
 import type { PasswordResetResponse } from '@/lib/auth/types';
@@ -17,7 +18,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ success: false, error: 'Invalid email format' } satisfies PasswordResetResponse, { status: 400 });
     }
 
-    const supabase = await createClient();
+    const supabase = await createClient({ timeoutMs: SUPABASE_SIGN_IN_TIMEOUT_MS });
     const { error } = await supabase.auth.resetPasswordForEmail(normalizedEmail, {
       redirectTo: `${getSiteUrl(request)}/auth/confirm?next=/reset-password`,
     });
