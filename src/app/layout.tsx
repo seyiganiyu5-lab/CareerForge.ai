@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { cookies, headers } from "next/headers";
 import { SESSION_HINT_HEADER, decodeHint } from "@/lib/auth/session-hint";
-import { Poppins, Inter } from "next/font/google";
+import localFont from "next/font/local";
 import { ThemeProvider } from "next-themes";
 import { LocaleProvider } from "@/i18n/provider";
 import { locales, defaultLocale, type Locale } from "@/i18n/config";
@@ -10,17 +10,24 @@ import { UsageProvider } from "@/lib/usage/context";
 import "./globals.css";
 import { Toaster } from "@/components/ui/toaster";
 
-const poppins = Poppins({
+// Fonts are in the project (src/app/fonts) so building never needs Google Fonts
+const poppins = localFont({
   variable: "--font-poppins",
-  subsets: ["latin"],
-  weight: ["300", "400", "500", "600", "700", "800"],
+  src: [
+    { path: "./fonts/poppins-latin-300-normal.woff2", weight: "300", style: "normal" },
+    { path: "./fonts/poppins-latin-400-normal.woff2", weight: "400", style: "normal" },
+    { path: "./fonts/poppins-latin-500-normal.woff2", weight: "500", style: "normal" },
+    { path: "./fonts/poppins-latin-600-normal.woff2", weight: "600", style: "normal" },
+    { path: "./fonts/poppins-latin-700-normal.woff2", weight: "700", style: "normal" },
+    { path: "./fonts/poppins-latin-800-normal.woff2", weight: "800", style: "normal" },
+  ],
   display: "swap",
 });
 
-const inter = Inter({
+const inter = localFont({
   variable: "--font-inter",
-  subsets: ["latin"],
-  weight: ["300", "400", "500", "600", "700"],
+  src: "./fonts/inter-latin-variable.woff2",
+  weight: "300 700",
   display: "swap",
 });
 
