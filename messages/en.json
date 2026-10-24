@@ -1943,7 +1943,8 @@
       "tpl_combination_desc": "Balanced mix of skills and experience sections for versatile professionals.",
       "tpl_tech-professional_desc": "Designed for software engineers, developers, and IT professionals.",
       "cvLanguage": "CV language",
-      "cvLanguageHint": "Section headings, dates and labels on your CV (PDF and Word)."
+      "cvLanguageHint": "Section headings, dates and labels on your CV (PDF and Word).",
+      "recommendedBy": "Recommended by {organization}"
     },
     "templatesPage": {
       "title": "Templates Gallery",
@@ -1962,7 +1963,8 @@
       "creativeName": "Creative",
       "creativeDesc": "Eye-catching layout with a modern edge for creative industries.",
       "atsFriendlyName": "ATS-Friendly",
-      "atsFriendlyDesc": "Optimized for applicant tracking systems with maximum keyword visibility."
+      "atsFriendlyDesc": "Optimized for applicant tracking systems with maximum keyword visibility.",
+      "recommendedBy": "Recommended by {organization}"
     },
     "coverLetterEditor": {
       "sectionUpdated": "Section updated successfully",
@@ -2211,7 +2213,8 @@
       },
       "privacyNote": "Members' progress is shown in numbers only. Their CVs, cover letters and applications stay private.",
       "tabProgress": "Progress",
-      "tabMembers": "Members & invites"
+      "tabMembers": "Members & invites",
+      "tabBranding": "Branding"
     },
     "join": {
       "loading": "Checking your invite…",
@@ -2346,6 +2349,32 @@
         "lastActive": "Last active"
       },
       "atsNote": "The ATS score is for each member's most recently edited CV, checked without a job description. A member's own check against a specific job can differ."
+    },
+    "orgBranding": {
+      "intro": "Your members see your logo at the top of their menu, your colour across CareerForge, and your recommended CV templates first.",
+      "logoTitle": "Logo",
+      "logoBody": "Shown to your members and on your join link.",
+      "logoAlt": "{organization} logo",
+      "uploadLogo": "Upload logo",
+      "replaceLogo": "Replace",
+      "removeLogo": "Remove",
+      "logoHint": "PNG, JPG or WebP, up to 300 KB. A square logo works best.",
+      "logoSaved": "Logo saved",
+      "logoRemoved": "Logo removed",
+      "tooBig": "This image is larger than 300 KB.",
+      "badType": "Please use a PNG, JPG or WebP image.",
+      "colorTitle": "Colour",
+      "colorBody": "Replaces the CareerForge blue for your members (buttons, links, highlights).",
+      "hex": "Colour code",
+      "preview": "Preview",
+      "useDefault": "Use CareerForge blue",
+      "lowContrast": "This colour is too light: white text on it would be hard to read. Choose a darker shade.",
+      "invalidColor": "Enter a colour code like #1d4ed8.",
+      "templatesTitle": "Recommended CV templates",
+      "templatesBody": "Pick up to {max}. They are shown first, with your name, when members choose a template.",
+      "save": "Save branding",
+      "saved": "Branding saved",
+      "failed": "Something went wrong. Please try again."
     }
   },
   "a11y": {
@@ -2409,7 +2438,7 @@
       },
       "branding": {
         "title": "Your branding",
-        "body": "Your logo and colours for your members, and your own CV templates."
+        "body": "Your logo and colours for your members, and the CV templates you recommend shown first."
       },
       "billing": {
         "title": "Simple per-seat pricing",

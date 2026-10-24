@@ -3,8 +3,9 @@
 import { useRouter } from 'next/navigation';
 import { FadeInUp, FadeIn, StaggerItem } from '@/lib/motion';
 import {
-  FileText, Crown, Lock, Eye, ArrowRight, LayoutTemplate,
+  FileText, Crown, Lock, Eye, ArrowRight, LayoutTemplate, Building2,
 } from 'lucide-react';
+import { useAuth } from '@/lib/auth/context';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -147,6 +148,12 @@ export default function TemplatesPage() {
   const router = useRouter();
   const t = useTranslations('app.templatesPage');
   const tc = useTranslations('app.common');
+  const { user } = useAuth();
+
+  // Templates the member's organisation recommends come first
+  const recommended = user?.organization?.recommended_templates ?? [];
+  const rank = (id: string) => (recommended.includes(id) ? recommended.indexOf(id) : recommended.length);
+  const templates = [...TEMPLATES].sort((a, b) => rank(a.id) - rank(b.id));
 
   const handleUseTemplate = (templateId: string) => {
     router.push(`/resume-builder?template=${templateId}`);
@@ -169,7 +176,7 @@ export default function TemplatesPage() {
 
       {/* Grid */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-        {TEMPLATES.map((template, idx) => (
+        {templates.map((template, idx) => (
           <StaggerItem
             key={template.name}
             delay={0.08 * idx}
@@ -211,6 +218,11 @@ export default function TemplatesPage() {
                     </Badge>
                   </div>
 
+                  {recommended.includes(template.id) && user?.organization && (
+                    <p className="mb-1.5 flex items-center gap-1 text-[11px] font-medium text-brand font-body">
+                      <Building2 className="w-3 h-3 shrink-0" /> {t('recommendedBy', { organization: user.organization.name })}
+                    </p>
+                  )}
                   <p className="text-xs text-muted-foreground font-body leading-relaxed mb-3 flex-1">
                     {t(`${template.i18nKey}Desc`)}
                   </p>

@@ -1943,7 +1943,8 @@
       "tpl_combination_desc": "Équilibre entre compétences et expérience pour les profils polyvalents.",
       "tpl_tech-professional_desc": "Conçu pour les ingénieurs logiciels, développeurs et professionnels de l'informatique.",
       "cvLanguage": "Langue du CV",
-      "cvLanguageHint": "Titres des sections, dates et libellés de votre CV (PDF et Word)."
+      "cvLanguageHint": "Titres des sections, dates et libellés de votre CV (PDF et Word).",
+      "recommendedBy": "Recommandé par {organization}"
     },
     "templatesPage": {
       "title": "Galerie de modèles",
@@ -1962,7 +1963,8 @@
       "creativeName": "Créatif",
       "creativeDesc": "Mise en page accrocheuse et moderne pour les métiers créatifs.",
       "atsFriendlyName": "Compatible ATS",
-      "atsFriendlyDesc": "Optimisé pour les logiciels de recrutement (ATS) avec une visibilité maximale des mots-clés."
+      "atsFriendlyDesc": "Optimisé pour les logiciels de recrutement (ATS) avec une visibilité maximale des mots-clés.",
+      "recommendedBy": "Recommandé par {organization}"
     },
     "coverLetterEditor": {
       "sectionUpdated": "Section mise à jour avec succès",
@@ -2211,7 +2213,8 @@
       },
       "privacyNote": "La progression des membres est affichée uniquement en chiffres. Leurs CV, lettres et candidatures restent privés.",
       "tabProgress": "Progression",
-      "tabMembers": "Membres et invitations"
+      "tabMembers": "Membres et invitations",
+      "tabBranding": "Image de marque"
     },
     "join": {
       "loading": "Vérification de votre invitation…",
@@ -2346,6 +2349,32 @@
         "lastActive": "Dernière activité"
       },
       "atsNote": "Le score ATS porte sur le CV modifié le plus récemment par chaque membre, vérifié sans offre d'emploi. La vérification d'un membre pour une offre précise peut donner un autre score."
+    },
+    "orgBranding": {
+      "intro": "Vos membres voient votre logo en haut de leur menu, votre couleur dans CareerForge et vos modèles de CV recommandés en premier.",
+      "logoTitle": "Logo",
+      "logoBody": "Affiché à vos membres et sur votre lien d'invitation.",
+      "logoAlt": "Logo de {organization}",
+      "uploadLogo": "Importer un logo",
+      "replaceLogo": "Remplacer",
+      "removeLogo": "Supprimer",
+      "logoHint": "PNG, JPG ou WebP, 300 Ko maximum. Un logo carré rend le mieux.",
+      "logoSaved": "Logo enregistré",
+      "logoRemoved": "Logo supprimé",
+      "tooBig": "Cette image dépasse 300 Ko.",
+      "badType": "Veuillez utiliser une image PNG, JPG ou WebP.",
+      "colorTitle": "Couleur",
+      "colorBody": "Remplace le bleu CareerForge pour vos membres (boutons, liens, éléments mis en avant).",
+      "hex": "Code couleur",
+      "preview": "Aperçu",
+      "useDefault": "Utiliser le bleu CareerForge",
+      "lowContrast": "Cette couleur est trop claire : un texte blanc serait difficile à lire. Choisissez une teinte plus foncée.",
+      "invalidColor": "Saisissez un code couleur comme #1d4ed8.",
+      "templatesTitle": "Modèles de CV recommandés",
+      "templatesBody": "Choisissez-en jusqu'à {max}. Ils apparaissent en premier, avec votre nom, quand les membres choisissent un modèle.",
+      "save": "Enregistrer",
+      "saved": "Image de marque enregistrée",
+      "failed": "Une erreur s'est produite. Veuillez réessayer."
     }
   },
   "a11y": {
@@ -2409,7 +2438,7 @@
       },
       "branding": {
         "title": "Votre image de marque",
-        "body": "Votre logo et vos couleurs pour vos membres, et vos propres modèles de CV."
+        "body": "Votre logo et vos couleurs pour vos membres, et les modèles de CV que vous recommandez affichés en premier."
       },
       "billing": {
         "title": "Tarif simple par membre",

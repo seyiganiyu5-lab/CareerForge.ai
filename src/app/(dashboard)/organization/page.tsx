@@ -22,6 +22,7 @@ import {
 } from '@/components/ui/alert-dialog';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import ProgressView from '@/components/enterprise/progress-view';
+import BrandingSettings from '@/components/enterprise/branding-settings';
 
 interface Member {
   id: string;
@@ -46,6 +47,9 @@ interface Org {
   ends_at: string | null;
   active: boolean;
   role: string;
+  brand_color: string | null;
+  logo_url: string | null;
+  recommended_templates: string[];
   // Owners and admins only
   seats?: number;
   seats_used?: number;
@@ -180,12 +184,16 @@ export default function OrganizationPage() {
           <TabsList>
             <TabsTrigger value="progress" className="font-body">{t('tabProgress')}</TabsTrigger>
             <TabsTrigger value="members" className="font-body">{t('tabMembers')}</TabsTrigger>
+            <TabsTrigger value="branding" className="font-body">{t('tabBranding')}</TabsTrigger>
           </TabsList>
           <TabsContent value="progress">
             <ProgressView organizationName={org.name} />
           </TabsContent>
           <TabsContent value="members" className="space-y-6">
             <ManagerView org={org} reload={load} date={date} />
+          </TabsContent>
+          <TabsContent value="branding">
+            <BrandingSettings org={org} reload={load} />
           </TabsContent>
         </Tabs>
       ) : (

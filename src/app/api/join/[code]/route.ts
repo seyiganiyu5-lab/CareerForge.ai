@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import { getAuthUser } from '@/lib/subscription/auth-helpers';
 import { rateLimit, getClientIp } from '@/lib/rate-limit';
+import { logoUrl } from '@/lib/enterprise/branding';
 import { joinProblem, joinWithCode, resolveJoinCode } from '@/lib/enterprise/organizations';
 
 type Params = { params: Promise<{ code: string }> };
@@ -19,6 +20,7 @@ export async function GET(request: Request, { params }: Params) {
   return NextResponse.json({
     success: true,
     organization: target.organization.name,
+    logo_url: logoUrl(target.organization),
     kind: target.kind,
     // Lets the page say which address the invite is for
     invite_email: target.invite?.email ?? null,

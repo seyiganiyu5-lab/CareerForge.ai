@@ -10,6 +10,7 @@ import { PENDING_JOIN_KEY } from '@/components/enterprise/pending-join';
 
 interface JoinInfo {
   organization: string;
+  logo_url: string | null;
   kind: 'invite' | 'link';
   invite_email: string | null;
   signed_in: boolean;
@@ -78,9 +79,13 @@ export default function JoinPage() {
           </>
         ) : (
           <>
-            <div className="w-14 h-14 rounded-xl bg-brand/10 flex items-center justify-center mx-auto">
-              <Building2 className="w-7 h-7 text-brand" />
-            </div>
+            {info?.logo_url ? (
+              <img src={info.logo_url} alt={info.organization} className="w-16 h-16 mx-auto rounded-xl object-contain bg-white border border-border" />
+            ) : (
+              <div className="w-14 h-14 rounded-xl bg-brand/10 flex items-center justify-center mx-auto">
+                <Building2 className="w-7 h-7 text-brand" />
+              </div>
+            )}
             {info && (
               <>
                 <h1 className="mt-4 font-heading text-xl font-bold text-foreground">{t('title', { organization: info.organization })}</h1>

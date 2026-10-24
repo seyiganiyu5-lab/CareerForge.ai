@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/lib/db';
 import { getAuthUser } from '@/lib/subscription/auth-helpers';
+import { brandingOf } from '@/lib/enterprise/branding';
 import { MANAGER_ROLES, isOrgActive, membershipFor, newInviteCode, requireOrgManager, seatUsage } from '@/lib/enterprise/organizations';
 
 /**
@@ -35,6 +36,7 @@ export async function GET() {
     active: isOrgActive(org),
     role: membership.role,
     joined_at: membership.joined_at,
+    ...brandingOf(org),
   };
   if (!MANAGER_ROLES.includes(membership.role)) {
     return NextResponse.json({ success: true, organization: base });

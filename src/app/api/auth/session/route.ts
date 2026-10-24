@@ -4,6 +4,7 @@ import { ensureProfile, toPublicUser } from '@/lib/auth/profile';
 import type { AuthResponse } from '@/lib/auth/types';
 import { isAdminEmail } from '@/lib/admin';
 import { membershipFor, notifyPendingInvites } from '@/lib/enterprise/organizations';
+import { brandingOf } from '@/lib/enterprise/branding';
 
 export async function GET() {
   try {
@@ -29,7 +30,9 @@ export async function GET() {
       user: {
         ...toPublicUser(profile),
         is_admin: isAdminEmail(profile.email),
-        organization: membership ? { id: membership.organization.id, name: membership.organization.name, role: membership.role } : null,
+        organization: membership
+          ? { id: membership.organization.id, name: membership.organization.name, role: membership.role, ...brandingOf(membership.organization) }
+          : null,
       },
     } satisfies AuthResponse);
   } catch (error) {

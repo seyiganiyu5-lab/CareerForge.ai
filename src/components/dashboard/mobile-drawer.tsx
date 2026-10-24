@@ -15,6 +15,7 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 import { cn } from '@/lib/utils';
 import { ProBadge, useFeatureLocked } from '@/components/billing/pro-badge';
 import { LogoMark } from '@/components/brand/logo-mark';
+import OrgBadge from '@/components/enterprise/org-badge';
 
 function DrawerProBadge({ featureKey }: { featureKey: string }) {
   return useFeatureLocked(featureKey) ? <ProBadge className="ml-auto" /> : null;
@@ -74,6 +75,12 @@ export default function MobileDrawer({ open, onClose, pathname }: MobileDrawerPr
         </SheetHeader>
 
         <Separator />
+
+        {user?.organization && (
+          <div className="px-3 pt-3">
+            <OrgBadge onClick={onClose} />
+          </div>
+        )}
 
         <ScrollArea className="flex-1 px-3 py-3">
           <nav className="flex flex-col gap-1" aria-label={tm('mobileNavigation')}>
