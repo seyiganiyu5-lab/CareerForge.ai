@@ -86,6 +86,7 @@ export default function JoinPage() {
                 <h1 className="mt-4 font-heading text-xl font-bold text-foreground">{t('title', { organization: info.organization })}</h1>
                 <p className="mt-2 text-sm text-muted-foreground font-body">{t('body', { organization: info.organization })}</p>
                 {info.invite_email && <p className="mt-2 text-sm font-body text-foreground">{t('forEmail', { email: info.invite_email })}</p>}
+                <p className="mt-3 text-xs text-muted-foreground font-body">{t('sharing')}</p>
               </>
             )}
 

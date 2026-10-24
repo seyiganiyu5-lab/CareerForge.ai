@@ -20,6 +20,8 @@ import {
   AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription,
   AlertDialogFooter, AlertDialogHeader, AlertDialogTitle,
 } from '@/components/ui/alert-dialog';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import ProgressView from '@/components/enterprise/progress-view';
 
 interface Member {
   id: string;
@@ -174,7 +176,18 @@ export default function OrganizationPage() {
       )}
 
       {isManager ? (
-        <ManagerView org={org} reload={load} date={date} />
+        <Tabs defaultValue="progress" className="space-y-4">
+          <TabsList>
+            <TabsTrigger value="progress" className="font-body">{t('tabProgress')}</TabsTrigger>
+            <TabsTrigger value="members" className="font-body">{t('tabMembers')}</TabsTrigger>
+          </TabsList>
+          <TabsContent value="progress">
+            <ProgressView organizationName={org.name} />
+          </TabsContent>
+          <TabsContent value="members" className="space-y-6">
+            <ManagerView org={org} reload={load} date={date} />
+          </TabsContent>
+        </Tabs>
       ) : (
         <Card>
           <CardContent className="flex items-start gap-3">
