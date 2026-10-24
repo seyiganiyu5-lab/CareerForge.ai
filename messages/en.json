@@ -2283,7 +2283,14 @@
       "edit": "Edit",
       "ownerInOtherOrg": "This person is already in another organisation.",
       "invalid": "Please check the fields.",
-      "failed": "Something went wrong. Please try again."
+      "failed": "Something went wrong. Please try again.",
+      "delete": "Delete",
+      "deleteNamed": "Delete {name}",
+      "deleteTitle": "Delete {name}?",
+      "deleteBody": "This can't be undone. Its {count} member(s) lose access right away and go back to their own plan, and its pending invites stop working. Members keep their CVs, letters and applications.",
+      "deleteConfirm": "Type {name} to confirm",
+      "deleted": "{name} deleted",
+      "cancel": "Cancel"
     },
     "orgProgress": {
       "loadFailed": "Couldn't load progress. Please try again.",

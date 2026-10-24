@@ -3,6 +3,7 @@ import { z } from 'zod';
 import { db } from '@/lib/db';
 import { requireAdmin } from '@/lib/admin-auth';
 import { ORG_STATUSES } from '@/lib/enterprise/organizations';
+import { createNotification } from '@/lib/notifications';
 
 const updateSchema = z.object({
   name: z.string().trim().min(2).max(160).optional(),
@@ -30,4 +31,34 @@ export async function PATCH(request: NextRequest, { params }: { params: Promise<
   }).catch(() => null);
   if (!organization) return NextResponse.json({ success: false, error: 'not_found' }, { status: 404 });
   return NextResponse.json({ success: true, organization });
+}
+
+/**
+ * DELETE /api/admin/organizations/:id — remove an organisation for good
+ * (site admins only). Its members and pending invites go with it; members
+ * go back to their own plan and keep their CVs, letters and applications.
+ */
+export async function DELETE(_request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
+  const { error } = await requireAdmin();
+  if (error) return error;
+
+  const { id } = await params;
+  const org = await db.organization.findUnique({
+    where: { id },
+    select: { id: true, name: true, members: { select: { id: true, user_id: true } } },
+  });
+  if (!org) return NextResponse.json({ success: false, error: 'not_found' }, { status: 404 });
+
+  // Members and invites are deleted with it (ON DELETE CASCADE)
+  await db.organization.delete({ where: { id }, select: { id: true } });
+
+  await Promise.all(org.members.map((m) =>
+    createNotification(m.user_id, {
+      type: 'org_removed',
+      key: `orgremoved:${m.id}`,
+      data: { organization: org.name },
+      link: '/billing',
+    }).catch(() => {})));
+
+  return NextResponse.json({ success: true, removed_members: org.members.length });
 }

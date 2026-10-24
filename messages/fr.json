@@ -2283,7 +2283,14 @@
       "edit": "Modifier",
       "ownerInOtherOrg": "Cette personne fait déjà partie d'une autre organisation.",
       "invalid": "Veuillez vérifier les champs.",
-      "failed": "Une erreur s'est produite. Veuillez réessayer."
+      "failed": "Une erreur s'est produite. Veuillez réessayer.",
+      "delete": "Supprimer",
+      "deleteNamed": "Supprimer {name}",
+      "deleteTitle": "Supprimer {name} ?",
+      "deleteBody": "Cette action est définitive. Ses membres ({count}) perdent l'accès immédiatement et retrouvent leur propre offre, et ses invitations en attente ne fonctionnent plus. Les membres gardent leurs CV, lettres et candidatures.",
+      "deleteConfirm": "Saisissez {name} pour confirmer",
+      "deleted": "{name} supprimée",
+      "cancel": "Annuler"
     },
     "orgProgress": {
       "loadFailed": "Impossible de charger la progression. Veuillez réessayer.",

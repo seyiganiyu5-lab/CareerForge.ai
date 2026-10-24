@@ -3,7 +3,7 @@
 import { Suspense, useCallback, useEffect, useState } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { toast } from 'sonner';
-import { Building2, Copy, Loader2, Plus, ShieldAlert } from 'lucide-react';
+import { Building2, Copy, Loader2, Plus, ShieldAlert, Trash2 } from 'lucide-react';
 import { useAuth } from '@/lib/auth/context';
 import { useLocale, useTranslations } from '@/i18n/provider';
 import { Button } from '@/components/ui/button';
@@ -53,12 +53,15 @@ function AdminOrganizations() {
   const tl = useTranslations('app.adminLeads');
   const te = useTranslations('enterprise');
   const { locale } = useLocale();
-  const { user, isLoading } = useAuth();
+  const { user, isLoading, refreshSession } = useAuth();
   const searchParams = useSearchParams();
   const [orgs, setOrgs] = useState<AdminOrg[] | null>(null);
   const [form, setForm] = useState<FormState | null>(null);
   const [saving, setSaving] = useState(false);
   const [ownerLink, setOwnerLink] = useState<{ email: string; path: string } | null>(null);
+  const [deleting, setDeleting] = useState<AdminOrg | null>(null);
+  const [confirmName, setConfirmName] = useState('');
+  const [deleteBusy, setDeleteBusy] = useState(false);
 
   const load = useCallback(async () => {
     try {
@@ -134,6 +137,22 @@ function AdminOrganizations() {
     load();
   };
 
+  const remove = async () => {
+    if (!deleting) return;
+    setDeleteBusy(true);
+    const res = await fetch(`/api/admin/organizations/${deleting.id}`, { method: 'DELETE', credentials: 'include' }).catch(() => null);
+    setDeleteBusy(false);
+    if (res?.ok) {
+      toast.success(t('deleted', { name: deleting.name }));
+      // Your own membership may have gone with it
+      if (user?.organization?.id === deleting.id) refreshSession(true);
+      setDeleting(null);
+      load();
+    } else {
+      toast.error(t('failed'));
+    }
+  };
+
   const copy = async (path: string) => {
     try {
       await navigator.clipboard.writeText(`${window.location.origin}${path}`);
@@ -207,6 +226,15 @@ function AdminOrganizations() {
                   <Button variant="outline" size="sm" className="font-body" onClick={() => toggleStatus(o)}>
                     {o.status === 'active' ? t('pause') : t('resume')}
                   </Button>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    className="font-body text-rose-600 hover:text-rose-700 border-rose-500/30 hover:bg-rose-500/5"
+                    onClick={() => { setConfirmName(''); setDeleting(o); }}
+                    aria-label={t('deleteNamed', { name: o.name })}
+                  >
+                    <Trash2 className="w-4 h-4" />
+                  </Button>
                 </div>
               </li>
             );
@@ -258,6 +286,32 @@ function AdminOrganizations() {
             <DialogFooter>
               <Button type="submit" disabled={saving} className="bg-brand hover:bg-brand/90 text-white font-body gap-2">
                 {saving ? <><Loader2 className="w-4 h-4 animate-spin" /> {t('saving')}</> : t('save')}
+              </Button>
+            </DialogFooter>
+          </form>
+        </DialogContent>
+      </Dialog>
+
+      {/* Delete: type the name to confirm, it can't be undone */}
+      <Dialog open={!!deleting} onOpenChange={(o) => !o && setDeleting(null)}>
+        <DialogContent>
+          <form onSubmit={(e) => { e.preventDefault(); if (confirmName.trim() === deleting?.name.trim()) remove(); }} className="space-y-4">
+            <DialogHeader>
+              <DialogTitle>{deleting && t('deleteTitle', { name: deleting.name })}</DialogTitle>
+              <DialogDescription>{deleting && t('deleteBody', { count: deleting.members_count })}</DialogDescription>
+            </DialogHeader>
+            <div className="space-y-1.5">
+              <Label htmlFor="confirm-name">{deleting && t('deleteConfirm', { name: deleting.name })}</Label>
+              <Input id="confirm-name" value={confirmName} onChange={(e) => setConfirmName(e.target.value)} autoComplete="off" />
+            </div>
+            <DialogFooter>
+              <Button type="button" variant="outline" className="font-body" onClick={() => setDeleting(null)}>{t('cancel')}</Button>
+              <Button
+                type="submit"
+                disabled={deleteBusy || confirmName.trim() !== deleting?.name.trim()}
+                className="bg-destructive text-white hover:bg-destructive/90 font-body gap-2"
+              >
+                {deleteBusy ? <Loader2 className="w-4 h-4 animate-spin" /> : <Trash2 className="w-4 h-4" />} {t('delete')}
               </Button>
             </DialogFooter>
           </form>
