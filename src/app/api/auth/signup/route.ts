@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase/server';
+import { SUPABASE_SIGN_IN_TIMEOUT_MS } from '@/lib/supabase/fetch-with-timeout';
 import { ensureProfile, toPublicUser, getSiteUrl } from '@/lib/auth/profile';
 import { sanitizeInput, validateEmail, validatePasswordStrength } from '@/lib/auth/utils';
 import type { AuthResponse, SignupData } from '@/lib/auth/types';
@@ -43,7 +44,7 @@ export async function POST(request: NextRequest) {
       return fail('Passwords do not match', 400);
     }
 
-    const supabase = await createClient();
+    const supabase = await createClient({ timeoutMs: SUPABASE_SIGN_IN_TIMEOUT_MS });
     const { data, error } = await supabase.auth.signUp({
       email: normalizedEmail,
       password,

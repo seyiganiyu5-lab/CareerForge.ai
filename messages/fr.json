@@ -551,7 +551,8 @@
       "accessDenied": "La connexion Google a été annulée. Vous pouvez réessayer ou utiliser votre email et mot de passe.",
       "noEmail": "Impossible de récupérer votre email depuis Google. Veuillez réessayer ou vous inscrire par email.",
       "authFailed": "La connexion Google a échoué. Veuillez réessayer ou utiliser votre email et mot de passe.",
-      "accountLinked": "Votre compte Google a été lié avec succès."
+      "accountLinked": "Votre compte Google a été lié avec succès.",
+      "timeout": "La connexion avec Google a pris trop de temps, car le réseau est lent. Vérifiez votre connexion Internet et réessayez."
     },
     "errors": {
       "unknown": "Une erreur inattendue s'est produite. Veuillez réessayer.",

@@ -551,7 +551,8 @@
       "accessDenied": "Google sign-in was cancelled. You can try again or use your email and password.",
       "noEmail": "Could not retrieve your email from Google. Please try again or sign up with email.",
       "authFailed": "Google sign-in failed. Please try again or use your email and password.",
-      "accountLinked": "Your Google account has been linked successfully."
+      "accountLinked": "Your Google account has been linked successfully.",
+      "timeout": "Google sign-in took too long because the connection is slow. Check your internet connection and try again."
     },
     "errors": {
       "unknown": "An unexpected error occurred. Please try again.",

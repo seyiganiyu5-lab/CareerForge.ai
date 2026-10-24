@@ -60,6 +60,7 @@ export default function LoginPage() {
         google_access_denied: tGoogle('accessDenied'),
         google_no_email: tGoogle('noEmail'),
         google_auth_failed: tGoogle('authFailed'),
+        google_timeout: tGoogle('timeout'),
       };
       setFormError(errorMap[error] || tErrors('unknown'));
     }

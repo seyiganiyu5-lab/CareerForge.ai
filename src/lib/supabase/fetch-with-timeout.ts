@@ -5,8 +5,18 @@
  */
 export const SUPABASE_FETCH_TIMEOUT_MS = 4_000;
 
-export const fetchWithTimeout: typeof fetch = (input, init) => {
-  const timeout = AbortSignal.timeout(SUPABASE_FETCH_TIMEOUT_MS);
-  const signal = init?.signal ? AbortSignal.any([init.signal, timeout]) : timeout;
-  return fetch(input, { ...init, signal });
-};
+/**
+ * Signing in, signing up and finishing Google sign-in happen once, while
+ * the person waits on purpose, so they get longer on a slow connection.
+ */
+export const SUPABASE_SIGN_IN_TIMEOUT_MS = 15_000;
+
+export function fetchWithTimeoutOf(ms: number): typeof fetch {
+  return (input, init) => {
+    const timeout = AbortSignal.timeout(ms);
+    const signal = init?.signal ? AbortSignal.any([init.signal, timeout]) : timeout;
+    return fetch(input, { ...init, signal });
+  };
+}
+
+export const fetchWithTimeout = fetchWithTimeoutOf(SUPABASE_FETCH_TIMEOUT_MS);

@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase/server';
+import { SUPABASE_SIGN_IN_TIMEOUT_MS } from '@/lib/supabase/fetch-with-timeout';
 import { validatePasswordStrength } from '@/lib/auth/utils';
 import type { PasswordResetResponse } from '@/lib/auth/types';
 
@@ -24,7 +25,7 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const supabase = await createClient();
+    const supabase = await createClient({ timeoutMs: SUPABASE_SIGN_IN_TIMEOUT_MS });
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) {
       return NextResponse.json(
