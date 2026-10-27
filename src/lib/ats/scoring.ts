@@ -1,7 +1,7 @@
 import type { ResumeData } from '@/types/resume';
 
 /**
- * Rule-based ATS checks. They work the same on a resume built in CareerForge
+ * Rule-based ATS checks. They work the same on a resume built in Hassify
  * (structured data) and on pasted text, and understand English and French.
  * Messages are English here; the route translates them (see ./localize).
  */

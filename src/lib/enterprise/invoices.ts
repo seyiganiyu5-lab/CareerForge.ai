@@ -119,7 +119,7 @@ export async function applyInvoicePayment(tx: PaystackTransaction): Promise<Appl
     return { ok: false, reason: 'Invoice is paid' };
   }
 
-  // Organisation owners/admins and the CareerForge admins hear about it
+  // Organisation owners/admins and the Hassify admins hear about it
   const people = new Set([...(invoice.organization_id ? await managerIds(invoice.organization_id) : []), ...(await siteAdminIds())]);
   await Promise.all([...people].map((id) =>
     createNotification(id, {

@@ -320,7 +320,7 @@ model Organization {
   invite_link_enabled Boolean   @default(true)
   lead_id             String?   // EnterpriseLead it came from, if any
   // Branding shown to members
-  brand_color           String?   // #RRGGBB, replaces the CareerForge blue
+  brand_color           String?   // #RRGGBB, replaces the Hassify blue
   logo                  Bytes?    // PNG / JPEG / WebP, at most 300 KB
   logo_mime             String?
   logo_updated_at       DateTime?

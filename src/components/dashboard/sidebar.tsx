@@ -185,7 +185,7 @@ export default function Sidebar({ collapsed, onToggle, pathname }: SidebarProps)
           <LogoMark className="w-9 h-9 shrink-0" />
           {!collapsed && (
             <span className="font-heading text-lg font-bold text-foreground whitespace-nowrap overflow-hidden">
-              CareerForge <span className="text-brand">AI</span>
+              Hass<span className="text-brand">ify</span>
             </span>
           )}
         </Link>

@@ -1,7 +1,7 @@
 # Job-tracker email forwarding (Cloudflare, free)
 
 Each user gets a personal address like `track-k3m9x2p7q4rt@inbox.YOUR-DOMAIN`.
-When they forward job emails to it, CareerForge updates their job tracker by itself.
+When they forward job emails to it, Hassify updates their job tracker by itself.
 
 Cost: a domain name (about $10 a year). Cloudflare Email Routing and Workers are free.
 
@@ -24,7 +24,7 @@ Redeploy after adding them.
 
 ## 3. The worker
 
-1. **Workers & Pages** → **Create** → **Create Worker** → name it `careerforge-inbound` → Deploy.
+1. **Workers & Pages** → **Create** → **Create Worker** → name it `hassify-inbound` → Deploy.
 2. **Edit code**: replace everything with the contents of `worker.js` → **Deploy**.
 3. **Settings → Variables and Secrets** → add:
    - `WEBHOOK_URL` = `https://YOUR-SITE/api/inbound-email`
@@ -33,11 +33,11 @@ Redeploy after adding them.
 ## 4. Route the emails to the worker
 
 Email Routing → **Routing rules** → **Catch-all address** → Action: **Send to a Worker** →
-`careerforge-inbound` → Save, and make sure the catch-all is **enabled**.
+`hassify-inbound` → Save, and make sure the catch-all is **enabled**.
 
 ## 5. Test
 
-In CareerForge → Job Tracker → **Paste an email** → **Automatic forwarding** tab,
+In Hassify → Job Tracker → **Paste an email** → **Automatic forwarding** tab,
 copy your address and send it a test email such as:
 
 > Subject: Your application to Acme

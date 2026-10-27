@@ -12,13 +12,13 @@ interface HelpHeroProps {
 const heroContent = {
   en: {
     title: 'Help Center',
-    subtitle: 'Find answers to common questions, guides, and tips to get the most out of CareerForge AI.',
+    subtitle: 'Find answers to common questions, guides, and tips to get the most out of Hassify.',
     searchPlaceholder: 'Search for help articles...',
     popular: 'Popular:',
   },
   fr: {
     title: 'Centre d\'Aide',
-    subtitle: 'Trouvez des réponses aux questions fréquentes, des guides et des conseils pour tirer le meilleur parti de CareerForge AI.',
+    subtitle: 'Trouvez des réponses aux questions fréquentes, des guides et des conseils pour tirer le meilleur parti de Hassify.',
     searchPlaceholder: 'Rechercher des articles d\'aide...',
     popular: 'Populaire :',
   },

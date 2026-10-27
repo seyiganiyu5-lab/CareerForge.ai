@@ -24,7 +24,7 @@ export const blogAuthors: Record<string, BlogAuthor> = {
     name: 'Marc Dubois',
     role: 'AI Product Manager',
     avatar: '/blog/authors/marc.jpg',
-    bio: 'Marc leads the AI team at CareerForge, building intelligent tools that simplify the job search process. He writes about AI trends, product features, and the future of work.',
+    bio: 'Marc leads the AI team at Hassify, building intelligent tools that simplify the job search process. He writes about AI trends, product features, and the future of work.',
   },
 };
 
@@ -65,7 +65,7 @@ export const blogPosts: BlogPost[] = [
           {
             id: 'testing-your-resume',
             heading: 'Testing Your Resume Before Submitting',
-            body: 'Before sending your resume, run it through an ATS scanner. CareerForge AI includes a built-in ATS compatibility checker that analyzes your document against common parsing rules and highlights potential issues.\n\nPay attention to the score and the specific recommendations provided. Common fixes include adjusting section headers, reformatting dates, and adding missing keywords. After making changes, rescan to confirm improvements. Keep a clean, ATS-optimized master resume and create tailored versions for each application by adjusting keywords and highlighting the most relevant experience.',
+            body: 'Before sending your resume, run it through an ATS scanner. Hassify includes a built-in ATS compatibility checker that analyzes your document against common parsing rules and highlights potential issues.\n\nPay attention to the score and the specific recommendations provided. Common fixes include adjusting section headers, reformatting dates, and adding missing keywords. After making changes, rescan to confirm improvements. Keep a clean, ATS-optimized master resume and create tailored versions for each application by adjusting keywords and highlighting the most relevant experience.',
           },
         ],
         conclusion: 'Building an ATS-friendly resume does not mean sacrificing visual appeal or personal branding. By following these formatting guidelines, strategically incorporating keywords, and testing your document before submission, you can create a resume that works with technology rather than against it. The goal is to get past the gatekeeper so your qualifications can shine in front of the decision-maker.',
@@ -102,7 +102,7 @@ export const blogPosts: BlogPost[] = [
           {
             id: 'testing-your-resume',
             heading: 'Tester Votre CV Avant de le Soumettre',
-            body: 'Avant d\'envoyer votre CV, faites-le passer par un scanner ATS. CareerForge AI inclut un vérificateur de compatibilité ATS intégré qui analyse votre document par rapport aux règles d\'analyse courantes et met en évidence les problèmes potentiels.\n\nPrêtez attention au score et aux recommandations spécifiques fournies. Les corrections courantes incluent l\'ajustement des en-têtes de section, le reformatage des dates et l\'ajout de mots-clés manquants. Après avoir apporté des modifications, relancez l\'analyse pour confirmer les améliorations. Gardez un CV maître optimisé pour l\'ATS et créez des versions personnalisées pour chaque candidature.',
+            body: 'Avant d\'envoyer votre CV, faites-le passer par un scanner ATS. Hassify inclut un vérificateur de compatibilité ATS intégré qui analyse votre document par rapport aux règles d\'analyse courantes et met en évidence les problèmes potentiels.\n\nPrêtez attention au score et aux recommandations spécifiques fournies. Les corrections courantes incluent l\'ajustement des en-têtes de section, le reformatage des dates et l\'ajout de mots-clés manquants. Après avoir apporté des modifications, relancez l\'analyse pour confirmer les améliorations. Gardez un CV maître optimisé pour l\'ATS et créez des versions personnalisées pour chaque candidature.',
           },
         ],
         conclusion: 'Créer un CV compatible ATS ne signifie pas sacrifier l\'attrait visuel ou la marque personnelle. En suivant ces directives de formatage, en intégrant stratégiquement des mots-clés et en testant votre document avant soumission, vous pouvez créer un CV qui fonctionne avec la technologie plutôt que contre elle. L\'objectif est de passer le gardien pour que vos qualifications puissent briller devant le décideur.',
@@ -595,12 +595,12 @@ export const blogPosts: BlogPost[] = [
     featuredImage: '/blog/product-update-jan.svg',
     author: blogAuthors['marc-dubois'],
     en: {
-      title: 'What\'s New in CareerForge AI: January 2025',
+      title: 'What\'s New in Hassify: January 2025',
       description: 'A roundup of the latest features and improvements we shipped this month, including enhanced AI analysis and new resume templates.',
       publishedDate: '2025-01-20',
       readingTime: '4 min read',
       content: {
-        intro: 'Happy New Year from the CareerForge AI team! January has been an exciting month of development, and we are thrilled to share the latest features and improvements that are now available to all users. Here is everything that is new in CareerForge AI this month.',
+        intro: 'Happy New Year from the Hassify team! January has been an exciting month of development, and we are thrilled to share the latest features and improvements that are now available to all users. Here is everything that is new in Hassify this month.',
         sections: [
           {
             id: 'enhanced-ai-analysis',
@@ -623,16 +623,16 @@ export const blogPosts: BlogPost[] = [
             body: 'Behind the scenes, we have made significant infrastructure improvements. Page load times are now 40% faster across the platform, and we have reduced AI generation times by an average of 3 seconds per request. We have also improved our error handling and added auto-save functionality to prevent data loss during resume editing.\n\nThese improvements are the result of a complete migration to a more efficient server architecture and optimized API calls. You should notice a snappier, more responsive experience throughout the application.',
           },
         ],
-        conclusion: 'We are just getting started in 2025. Next month, we will be rolling out a brand new interview preparation feature, additional language support, and an improved job tracking dashboard. As always, we love hearing from our users — if you have feature requests or feedback, please reach out through our help center. Thank you for choosing CareerForge AI for your career journey.',
+        conclusion: 'We are just getting started in 2025. Next month, we will be rolling out a brand new interview preparation feature, additional language support, and an improved job tracking dashboard. As always, we love hearing from our users — if you have feature requests or feedback, please reach out through our help center. Thank you for choosing Hassify for your career journey.',
       },
     },
     fr: {
-      title: 'Nouveautés chez CareerForge AI : Janvier 2025',
+      title: 'Nouveautés chez Hassify : Janvier 2025',
       description: 'Un tour d\'horizon des dernières fonctionnalités et améliorations que nous avons livrées ce mois-ci, incluant l\'analyse IA améliorée et de nouveaux modèles de CV.',
       publishedDate: '2025-01-20',
       readingTime: '4 min de lecture',
       content: {
-        intro: 'Bonne Année de la part de l\'équipe CareerForge AI ! Janvier a été un mois de développement passionnant, et nous sommes ravis de partager les dernières fonctionnalités et améliorations désormais disponibles pour tous les utilisateurs. Voici tout ce qui est nouveau chez CareerForge AI ce mois-ci.',
+        intro: 'Bonne Année de la part de l\'équipe Hassify ! Janvier a été un mois de développement passionnant, et nous sommes ravis de partager les dernières fonctionnalités et améliorations désormais disponibles pour tous les utilisateurs. Voici tout ce qui est nouveau chez Hassify ce mois-ci.',
         sections: [
           {
             id: 'enhanced-ai-analysis',
@@ -655,7 +655,7 @@ export const blogPosts: BlogPost[] = [
             body: 'En coulisses, nous avons apporté des améliorations significatives à l\'infrastructure. Les temps de chargement de page sont maintenant 40 % plus rapides sur toute la plateforme, et nous avons réduit les temps de génération IA de 3 secondes en moyenne par requête.\n\nCes améliorations sont le résultat d\'une migration complète vers une architecture de serveur plus efficace et des appels API optimisés. Vous devriez remarquer une expérience plus rapide et plus réactive dans toute l\'application.',
           },
         ],
-        conclusion: 'Nous ne faisons que commencer en 2025. Le mois prochain, nous déploierons une toute nouvelle fonctionnalité de préparation aux entretiens, un support linguistique supplémentaire et un tableau de bord de suivi des candidatures amélioré. Comme toujours, nous adorons recevoir les retours de nos utilisateurs. Merci de choisir CareerForge AI pour votre parcours professionnel.',
+        conclusion: 'Nous ne faisons que commencer en 2025. Le mois prochain, nous déploierons une toute nouvelle fonctionnalité de préparation aux entretiens, un support linguistique supplémentaire et un tableau de bord de suivi des candidatures amélioré. Comme toujours, nous adorons recevoir les retours de nos utilisateurs. Merci de choisir Hassify pour votre parcours professionnel.',
       },
     },
   },

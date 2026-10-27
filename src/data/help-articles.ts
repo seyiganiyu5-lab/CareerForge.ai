@@ -7,11 +7,11 @@ export const helpCategories: HelpCategory[] = [
     articleCount: 2,
     en: {
       title: 'Getting Started',
-      description: 'Learn the basics and set up your CareerForge AI account in minutes.',
+      description: 'Learn the basics and set up your Hassify account in minutes.',
     },
     fr: {
       title: 'Prise en Main',
-      description: "Apprenez les bases et configurez votre compte CareerForge AI en quelques minutes.",
+      description: "Apprenez les bases et configurez votre compte Hassify en quelques minutes.",
     },
   },
   {
@@ -164,19 +164,19 @@ export const helpArticles: HelpArticle[] = [
   {
     slug: 'how-to-create-first-resume',
     category: 'getting-started',
-    author: 'CareerForge AI Team',
+    author: 'Hassify Team',
     en: {
       title: 'How to Create Your First Resume',
-      description: 'A step-by-step guide to building a professional resume from scratch using CareerForge AI.',
+      description: 'A step-by-step guide to building a professional resume from scratch using Hassify.',
       readingTime: '4 min read',
       lastUpdated: '2025-01-15',
       content: {
-        intro: 'Creating your first resume can feel overwhelming, but CareerForge AI makes the process simple and intuitive. In this guide, we will walk you through every step to help you build a polished, professional resume that stands out to hiring managers.',
+        intro: 'Creating your first resume can feel overwhelming, but Hassify makes the process simple and intuitive. In this guide, we will walk you through every step to help you build a polished, professional resume that stands out to hiring managers.',
         sections: [
           {
             id: 'step-1-sign-up',
             heading: 'Step 1: Sign Up and Log In',
-            body: 'Start by creating your CareerForge AI account. You can sign up using your email address, Google account, or Apple ID. Once registered, log in to access your personal dashboard where all your resumes and tools are organized in one place. The onboarding wizard will ask a few quick questions about your career level and goals to personalize your experience.',
+            body: 'Start by creating your Hassify account. You can sign up using your email address, Google account, or Apple ID. Once registered, log in to access your personal dashboard where all your resumes and tools are organized in one place. The onboarding wizard will ask a few quick questions about your career level and goals to personalize your experience.',
           },
           {
             id: 'step-2-choose-template',
@@ -186,7 +186,7 @@ export const helpArticles: HelpArticle[] = [
           {
             id: 'step-3-fill-sections',
             heading: 'Step 3: Fill in Your Information',
-            body: 'CareerForge AI breaks your resume into clear sections: personal details, professional summary, work experience, education, and skills. Fill in each section using our guided input fields. As you type, our AI will offer smart suggestions to help you write compelling descriptions of your experience and achievements.',
+            body: 'Hassify breaks your resume into clear sections: personal details, professional summary, work experience, education, and skills. Fill in each section using our guided input fields. As you type, our AI will offer smart suggestions to help you write compelling descriptions of your experience and achievements.',
           },
           {
             id: 'step-4-review-export',
@@ -194,21 +194,21 @@ export const helpArticles: HelpArticle[] = [
             body: 'Once all sections are complete, use our built-in resume reviewer to check for common issues. The AI will analyze your resume for completeness, action verbs, quantifiable achievements, and ATS compatibility. After making any suggested improvements, export your resume as a PDF in one click. Your resume is now ready to send to employers.',
           },
         ],
-        conclusion: 'That is it — your first professional resume is ready in just four simple steps. Remember, you can always come back to edit and update your resume as your career progresses. CareerForge AI saves all your work automatically, so your data is always safe and accessible.',
+        conclusion: 'That is it — your first professional resume is ready in just four simple steps. Remember, you can always come back to edit and update your resume as your career progresses. Hassify saves all your work automatically, so your data is always safe and accessible.',
       },
     },
     fr: {
       title: 'Comment Créer Votre Premier CV',
-      description: 'Un guide étape par étape pour créer un CV professionnel à partir de zéro avec CareerForge AI.',
+      description: 'Un guide étape par étape pour créer un CV professionnel à partir de zéro avec Hassify.',
       readingTime: '4 min de lecture',
       lastUpdated: '2025-01-15',
       content: {
-        intro: "Créer votre premier CV peut sembler intimidant, mais CareerForge AI simplifie le processus. Dans ce guide, nous vous accompagnerons à chaque étape pour vous aider à construire un CV poli et professionnel qui se démarque auprès des recruteurs.",
+        intro: "Créer votre premier CV peut sembler intimidant, mais Hassify simplifie le processus. Dans ce guide, nous vous accompagnerons à chaque étape pour vous aider à construire un CV poli et professionnel qui se démarque auprès des recruteurs.",
         sections: [
           {
             id: 'step-1-sign-up',
             heading: 'Étape 1 : Inscrivez-vous et Connectez-vous',
-            body: "Commencez par créer votre compte CareerForge AI. Vous pouvez vous inscrire avec votre adresse e-mail, votre compte Google ou votre identifiant Apple. Une fois inscrit, connectez-vous pour accéder à votre tableau de bord personnel où tous vos CV et outils sont organisés. L'assistant de démarrage posera quelques questions rapides sur votre niveau de carrière et vos objectifs pour personnaliser votre expérience.",
+            body: "Commencez par créer votre compte Hassify. Vous pouvez vous inscrire avec votre adresse e-mail, votre compte Google ou votre identifiant Apple. Une fois inscrit, connectez-vous pour accéder à votre tableau de bord personnel où tous vos CV et outils sont organisés. L'assistant de démarrage posera quelques questions rapides sur votre niveau de carrière et vos objectifs pour personnaliser votre expérience.",
           },
           {
             id: 'step-2-choose-template',
@@ -218,7 +218,7 @@ export const helpArticles: HelpArticle[] = [
           {
             id: 'step-3-fill-sections',
             heading: 'Étape 3 : Remplissez Vos Informations',
-            body: "CareerForge AI divise votre CV en sections claires : coordonnées personnelles, résumé professionnel, expérience de travail, formation et compétences. Remplissez chaque section avec nos champs de saisie guidés. Pendant que vous tapez, notre IA vous proposera des suggestions intelligentes pour vous aider à rédiger des descriptions convaincantes de votre expérience et de vos réalisations.",
+            body: "Hassify divise votre CV en sections claires : coordonnées personnelles, résumé professionnel, expérience de travail, formation et compétences. Remplissez chaque section avec nos champs de saisie guidés. Pendant que vous tapez, notre IA vous proposera des suggestions intelligentes pour vous aider à rédiger des descriptions convaincantes de votre expérience et de vos réalisations.",
           },
           {
             id: 'step-4-review-export',
@@ -226,21 +226,21 @@ export const helpArticles: HelpArticle[] = [
             body: "Une fois toutes les sections remplies, utilisez notre réviseur de CV intégré pour vérifier les problèmes courants. L'IA analysera votre CV pour sa complétude, l'utilisation de verbes d'action, les réalisations quantifiables et la compatibilité ATS. Après avoir apporté les améliorations suggérées, exportez votre CV en PDF en un clic. Votre CV est prêt à être envoyé aux employeurs.",
           },
         ],
-        conclusion: "C'est tout — votre premier CV professionnel est prêt en quatre étapes simples. N'oubliez pas que vous pouvez toujours revenir modifier et mettre à jour votre CV au fil de votre évolution professionnelle. CareerForge AI sauvegarde automatiquement tout votre travail.",
+        conclusion: "C'est tout — votre premier CV professionnel est prêt en quatre étapes simples. N'oubliez pas que vous pouvez toujours revenir modifier et mettre à jour votre CV au fil de votre évolution professionnelle. Hassify sauvegarde automatiquement tout votre travail.",
       },
     },
   },
   {
     slug: 'getting-started-guide',
     category: 'getting-started',
-    author: 'CareerForge AI Team',
+    author: 'Hassify Team',
     en: {
       title: 'Getting Started Guide',
-      description: 'Everything you need to know to get the most out of CareerForge AI from day one.',
+      description: 'Everything you need to know to get the most out of Hassify from day one.',
       readingTime: '5 min read',
       lastUpdated: '2025-01-15',
       content: {
-        intro: 'Welcome to CareerForge AI! This comprehensive guide covers everything you need to know to hit the ground running. Whether you are a recent graduate, a seasoned professional, or someone switching careers, our platform has the tools to help you land your dream job.',
+        intro: 'Welcome to Hassify! This comprehensive guide covers everything you need to know to hit the ground running. Whether you are a recent graduate, a seasoned professional, or someone switching careers, our platform has the tools to help you land your dream job.',
         sections: [
           {
             id: 'explore-dashboard',
@@ -250,12 +250,12 @@ export const helpArticles: HelpArticle[] = [
           {
             id: 'ai-features',
             heading: 'Understand AI-Powered Features',
-            body: 'CareerForge AI uses advanced artificial intelligence to enhance every part of your job search. Our AI can write professional summaries, suggest action verbs for your experience descriptions, generate tailored cover letters, score your resume for ATS compatibility, and provide personalized improvement tips. These features work together to ensure your application materials are as strong as possible.',
+            body: 'Hassify uses advanced artificial intelligence to enhance every part of your job search. Our AI can write professional summaries, suggest action verbs for your experience descriptions, generate tailored cover letters, score your resume for ATS compatibility, and provide personalized improvement tips. These features work together to ensure your application materials are as strong as possible.',
           },
           {
             id: 'language-support',
             heading: 'Language Support',
-            body: 'CareerForge AI supports both English and French. You can switch languages at any time using the language toggle in the navigation bar. All help articles, interface text, and AI-generated content are available in both languages. This makes it easy to create bilingual resumes or work in the language that is most comfortable for you.',
+            body: 'Hassify supports both English and French. You can switch languages at any time using the language toggle in the navigation bar. All help articles, interface text, and AI-generated content are available in both languages. This makes it easy to create bilingual resumes or work in the language that is most comfortable for you.',
           },
           {
             id: 'free-vs-premium',
@@ -268,16 +268,16 @@ export const helpArticles: HelpArticle[] = [
             body: 'We suggest starting by creating your first resume using the AI Resume Builder. Then, generate a matching cover letter for a specific job posting. Use the Resume Review tool to check your work, and set up the Job Tracker to monitor your applications. These four steps will give you a complete, professional job application toolkit.',
           },
         ],
-        conclusion: 'You are now ready to make the most of CareerForge AI. If you have any questions along the way, our Help Center is always available with detailed guides for every feature. Happy job hunting!',
+        conclusion: 'You are now ready to make the most of Hassify. If you have any questions along the way, our Help Center is always available with detailed guides for every feature. Happy job hunting!',
       },
     },
     fr: {
       title: 'Guide de Prise en Main',
-      description: 'Tout ce que vous devez savoir pour tirer le meilleur parti de CareerForge AI dès le premier jour.',
+      description: 'Tout ce que vous devez savoir pour tirer le meilleur parti de Hassify dès le premier jour.',
       readingTime: '5 min de lecture',
       lastUpdated: '2025-01-15',
       content: {
-        intro: "Bienvenue sur CareerForge AI ! Ce guide complet couvre tout ce que vous devez savoir pour bien démarrer. Que vous soyez un jeune diplômé, un professionnel expérimenté ou en reconversion, notre plateforme possède les outils pour vous aider à décrocher l'emploi de vos rêves.",
+        intro: "Bienvenue sur Hassify ! Ce guide complet couvre tout ce que vous devez savoir pour bien démarrer. Que vous soyez un jeune diplômé, un professionnel expérimenté ou en reconversion, notre plateforme possède les outils pour vous aider à décrocher l'emploi de vos rêves.",
         sections: [
           {
             id: 'explore-dashboard',
@@ -287,12 +287,12 @@ export const helpArticles: HelpArticle[] = [
           {
             id: 'ai-features',
             heading: 'Comprenez les Fonctionnalités Alimentées par l\'IA',
-            body: "CareerForge AI utilise une intelligence artificielle avancée pour améliorer chaque étape de votre recherche d'emploi. Notre IA peut rédiger des résumés professionnels, suggérer des verbes d'action pour vos descriptions d'expérience, générer des lettres de motivation personnalisées, évaluer votre CV pour la compatibilité ATS et fournir des conseils d'amélioration personnalisés.",
+            body: "Hassify utilise une intelligence artificielle avancée pour améliorer chaque étape de votre recherche d'emploi. Notre IA peut rédiger des résumés professionnels, suggérer des verbes d'action pour vos descriptions d'expérience, générer des lettres de motivation personnalisées, évaluer votre CV pour la compatibilité ATS et fournir des conseils d'amélioration personnalisés.",
           },
           {
             id: 'language-support',
             heading: 'Support Multilingue',
-            body: "CareerForge AI prend en charge l'anglais et le français. Vous pouvez changer de langue à tout moment en utilisant le sélecteur dans la barre de navigation. Tous les articles d'aide, les textes de l'interface et le contenu généré par l'IA sont disponibles dans les deux langues.",
+            body: "Hassify prend en charge l'anglais et le français. Vous pouvez changer de langue à tout moment en utilisant le sélecteur dans la barre de navigation. Tous les articles d'aide, les textes de l'interface et le contenu généré par l'IA sont disponibles dans les deux langues.",
           },
           {
             id: 'free-vs-premium',
@@ -305,7 +305,7 @@ export const helpArticles: HelpArticle[] = [
             body: "Nous vous suggérons de commencer par créer votre premier CV avec le Créateur de CV IA. Ensuite, générez une lettre de motivation correspondante pour une annonce spécifique. Utilisez l'outil de Revue de CV pour vérifier votre travail, et configurez le Suivi de Candidatures pour surveiller vos applications.",
           },
         ],
-        conclusion: "Vous êtes maintenant prêt à tirer le meilleur parti de CareerForge AI. Si vous avez des questions en cours de route, notre Centre d'Aide est toujours disponible avec des guides détaillés pour chaque fonctionnalité. Bonne recherche d'emploi !",
+        conclusion: "Vous êtes maintenant prêt à tirer le meilleur parti de Hassify. Si vous avez des questions en cours de route, notre Centre d'Aide est toujours disponible avec des guides détaillés pour chaque fonctionnalité. Bonne recherche d'emploi !",
       },
     },
   },
@@ -314,14 +314,14 @@ export const helpArticles: HelpArticle[] = [
   {
     slug: 'edit-your-profile',
     category: 'account-profile',
-    author: 'CareerForge AI Team',
+    author: 'Hassify Team',
     en: {
       title: 'Edit Your Profile',
       description: 'Learn how to update your personal information, profile picture, and account preferences.',
       readingTime: '3 min read',
       lastUpdated: '2025-01-15',
       content: {
-        intro: 'Keeping your profile information up to date ensures that CareerForge AI can personalize your experience and generate the most relevant resume content. This guide explains how to edit every aspect of your profile.',
+        intro: 'Keeping your profile information up to date ensures that Hassify can personalize your experience and generate the most relevant resume content. This guide explains how to edit every aspect of your profile.',
         sections: [
           {
             id: 'access-profile',
@@ -341,7 +341,7 @@ export const helpArticles: HelpArticle[] = [
           {
             id: 'save-changes',
             heading: 'Saving Your Changes',
-            body: 'After making edits to any section, click the "Save Changes" button at the bottom of the page. Your updates will be applied immediately across all CareerForge AI tools. If you navigate away without saving, a confirmation prompt will remind you to save your unsaved changes to prevent accidental data loss.',
+            body: 'After making edits to any section, click the "Save Changes" button at the bottom of the page. Your updates will be applied immediately across all Hassify tools. If you navigate away without saving, a confirmation prompt will remind you to save your unsaved changes to prevent accidental data loss.',
           },
         ],
         conclusion: 'A well-maintained profile helps our AI generate more accurate and personalized content for your resumes and cover letters. We recommend reviewing your profile at least once a quarter to keep your information current.',
@@ -353,7 +353,7 @@ export const helpArticles: HelpArticle[] = [
       readingTime: '3 min de lecture',
       lastUpdated: '2025-01-15',
       content: {
-        intro: "Maintenir vos informations de profil à jour garantit que CareerForge AI peut personnaliser votre expérience et générer le contenu de CV le plus pertinent. Ce guide explique comment modifier chaque aspect de votre profil.",
+        intro: "Maintenir vos informations de profil à jour garantit que Hassify peut personnaliser votre expérience et générer le contenu de CV le plus pertinent. Ce guide explique comment modifier chaque aspect de votre profil.",
         sections: [
           {
             id: 'access-profile',
@@ -373,7 +373,7 @@ export const helpArticles: HelpArticle[] = [
           {
             id: 'save-changes',
             heading: 'Sauvegarder Vos Modifications',
-            body: "Après avoir modifié une section, cliquez sur le bouton « Sauvegarder les Modifications » en bas de la page. Vos mises à jour seront appliquées immédiatement sur tous les outils CareerForge AI. Si vous naviguez sans sauvegarder, une invite de confirmation vous rappellera de sauvegarder.",
+            body: "Après avoir modifié une section, cliquez sur le bouton « Sauvegarder les Modifications » en bas de la page. Vos mises à jour seront appliquées immédiatement sur tous les outils Hassify. Si vous naviguez sans sauvegarder, une invite de confirmation vous rappellera de sauvegarder.",
           },
         ],
         conclusion: "Un profil bien entretenu aide notre IA à générer du contenu plus précis et personnalisé pour vos CV et lettres de motivation. Nous recommandons de vérifier votre profil au moins une fois par trimestre.",
@@ -383,14 +383,14 @@ export const helpArticles: HelpArticle[] = [
   {
     slug: 'delete-your-account',
     category: 'account-profile',
-    author: 'CareerForge AI Team',
+    author: 'Hassify Team',
     en: {
       title: 'Delete Your Account',
       description: 'Understand the account deletion process and what happens to your data when you leave.',
       readingTime: '3 min read',
       lastUpdated: '2025-01-15',
       content: {
-        intro: 'We understand that you may decide to close your CareerForge AI account. This guide explains the account deletion process, what data is affected, and how to download your information before leaving.',
+        intro: 'We understand that you may decide to close your Hassify account. This guide explains the account deletion process, what data is affected, and how to download your information before leaving.',
         sections: [
           {
             id: 'before-deleting',
@@ -408,7 +408,7 @@ export const helpArticles: HelpArticle[] = [
             body: 'Upon account deletion, we permanently erase all personal data, resumes, cover letters, and application tracking records from our active databases. Anonymous, aggregated usage statistics that cannot be linked back to you may be retained for analytical purposes. Payment records are kept for a minimum of 12 months as required by financial regulations, but these records do not contain your resume content.',
           },
         ],
-        conclusion: 'If you are experiencing issues that are prompting you to consider deletion, please contact our support team first. We may be able to resolve your concerns and keep you as a valued member of the CareerForge AI community.',
+        conclusion: 'If you are experiencing issues that are prompting you to consider deletion, please contact our support team first. We may be able to resolve your concerns and keep you as a valued member of the Hassify community.',
       },
     },
     fr: {
@@ -417,7 +417,7 @@ export const helpArticles: HelpArticle[] = [
       readingTime: '3 min de lecture',
       lastUpdated: '2025-01-15',
       content: {
-        intro: "Nous comprenons que vous pouvez décider de fermer votre compte CareerForge AI. Ce guide explique le processus de suppression de compte, les données concernées et comment télécharger vos informations avant de partir.",
+        intro: "Nous comprenons que vous pouvez décider de fermer votre compte Hassify. Ce guide explique le processus de suppression de compte, les données concernées et comment télécharger vos informations avant de partir.",
         sections: [
           {
             id: 'before-deleting',
@@ -435,7 +435,7 @@ export const helpArticles: HelpArticle[] = [
             body: "Lors de la suppression du compte, nous effaçons définitivement toutes les données personnelles, CV, lettres de motivation et enregistrements de suivi de candidatures de nos bases de données actives. Des statistiques d'utilisation anonymisées et agrégées peuvent être conservées à des fins analytiques. Les enregistrements de paiement sont conservés pendant un minimum de 12 mois conformément aux réglementations financières.",
           },
         ],
-        conclusion: "Si vous rencontrez des problèmes qui vous poussent à envisager la suppression, veuillez d'abord contacter notre équipe de support. Nous pourrons peut-être résoudre vos préoccupations et vous garder comme membre précieux de la communauté CareerForge AI.",
+        conclusion: "Si vous rencontrez des problèmes qui vous poussent à envisager la suppression, veuillez d'abord contacter notre équipe de support. Nous pourrons peut-être résoudre vos préoccupations et vous garder comme membre précieux de la communauté Hassify.",
       },
     },
   },
@@ -444,14 +444,14 @@ export const helpArticles: HelpArticle[] = [
   {
     slug: 'ai-resume-builder-guide',
     category: 'resume-builder',
-    author: 'CareerForge AI Team',
+    author: 'Hassify Team',
     en: {
       title: 'AI Resume Builder Guide',
       description: 'Master the AI-powered resume builder to create compelling, job-winning resumes.',
       readingTime: '5 min read',
       lastUpdated: '2025-01-15',
       content: {
-        intro: 'The AI Resume Builder is the heart of CareerForge AI. It combines intelligent writing assistance with a drag-and-drop editor to help you create professional resumes in a fraction of the time it would take manually. This guide covers all the features and best practices for getting the best results.',
+        intro: 'The AI Resume Builder is the heart of Hassify. It combines intelligent writing assistance with a drag-and-drop editor to help you create professional resumes in a fraction of the time it would take manually. This guide covers all the features and best practices for getting the best results.',
         sections: [
           {
             id: 'ai-assistant',
@@ -483,7 +483,7 @@ export const helpArticles: HelpArticle[] = [
       readingTime: '5 min de lecture',
       lastUpdated: '2025-01-15',
       content: {
-        intro: "Le Créateur de CV IA est le cœur de CareerForge AI. Il combine une assistance rédactionnelle intelligente avec un éditor glisser-déposer pour vous aider à créer des CV professionnels en une fraction du temps nécessaire manuellement. Ce guide couvre toutes les fonctionnalités et les meilleures pratiques pour obtenir les meilleurs résultats.",
+        intro: "Le Créateur de CV IA est le cœur de Hassify. Il combine une assistance rédactionnelle intelligente avec un éditor glisser-déposer pour vous aider à créer des CV professionnels en une fraction du temps nécessaire manuellement. Ce guide couvre toutes les fonctionnalités et les meilleures pratiques pour obtenir les meilleurs résultats.",
         sections: [
           {
             id: 'ai-assistant',
@@ -513,14 +513,14 @@ export const helpArticles: HelpArticle[] = [
   {
     slug: 'customize-resume-sections',
     category: 'resume-builder',
-    author: 'CareerForge AI Team',
+    author: 'Hassify Team',
     en: {
       title: 'Customize Resume Sections',
       description: 'Learn how to add, remove, reorder, and fine-tune every section of your resume.',
       readingTime: '4 min read',
       lastUpdated: '2025-01-15',
       content: {
-        intro: 'Every career is unique, and your resume should reflect that. CareerForge AI gives you full control over every section of your resume, from the standard work experience block to custom sections for certifications, publications, or volunteer work.',
+        intro: 'Every career is unique, and your resume should reflect that. Hassify gives you full control over every section of your resume, from the standard work experience block to custom sections for certifications, publications, or volunteer work.',
         sections: [
           {
             id: 'reorder-sections',
@@ -547,7 +547,7 @@ export const helpArticles: HelpArticle[] = [
       readingTime: '4 min de lecture',
       lastUpdated: '2025-01-15',
       content: {
-        intro: "Chaque carrière est unique, et votre CV devrait le refléter. CareerForge AI vous donne un contrôle total sur chaque section de votre CV, de la section d'expérience standard aux sections personnalisées pour les certifications ou le travail bénévole.",
+        intro: "Chaque carrière est unique, et votre CV devrait le refléter. Hassify vous donne un contrôle total sur chaque section de votre CV, de la section d'expérience standard aux sections personnalisées pour les certifications ou le travail bénévole.",
         sections: [
           {
             id: 'reorder-sections',
@@ -572,7 +572,7 @@ export const helpArticles: HelpArticle[] = [
   {
     slug: 'export-resume-pdf',
     category: 'resume-builder',
-    author: 'CareerForge AI Team',
+    author: 'Hassify Team',
     en: {
       title: 'Export Your Resume as PDF',
       description: 'How to download your finished resume in PDF format for job applications.',
@@ -589,7 +589,7 @@ export const helpArticles: HelpArticle[] = [
           {
             id: 'format-options',
             heading: 'Format Options',
-            body: 'CareerForge AI currently supports PDF export. We chose PDF as the primary format because it is the industry standard for job applications. PDF files maintain consistent formatting regardless of the software or device used to view them, ensuring your resume looks exactly as you designed it. We are working on adding additional format options in future updates.',
+            body: 'Hassify currently supports PDF export. We chose PDF as the primary format because it is the industry standard for job applications. PDF files maintain consistent formatting regardless of the software or device used to view them, ensuring your resume looks exactly as you designed it. We are working on adding additional format options in future updates.',
           },
           {
             id: 'quality-check',
@@ -616,7 +616,7 @@ export const helpArticles: HelpArticle[] = [
           {
             id: 'format-options',
             heading: 'Options de Format',
-            body: "CareerForge AI prend actuellement en charge l'exportation PDF. Nous avons choisi le PDF comme format principal car c'est la norme de l'industrie pour les candidatures. Les fichiers PDF maintiennent une mise en forme cohérente quel que soit le logiciel ou l'appareil utilisé pour les afficher.",
+            body: "Hassify prend actuellement en charge l'exportation PDF. Nous avons choisi le PDF comme format principal car c'est la norme de l'industrie pour les candidatures. Les fichiers PDF maintiennent une mise en forme cohérente quel que soit le logiciel ou l'appareil utilisé pour les afficher.",
           },
           {
             id: 'quality-check',
@@ -633,14 +633,14 @@ export const helpArticles: HelpArticle[] = [
   {
     slug: 'generate-cover-letter',
     category: 'ai-cover-letter',
-    author: 'CareerForge AI Team',
+    author: 'Hassify Team',
     en: {
       title: 'Generate a Cover Letter with AI',
       description: 'Create a personalized, job-specific cover letter in seconds using our AI generator.',
       readingTime: '4 min read',
       lastUpdated: '2025-01-15',
       content: {
-        intro: 'A well-crafted cover letter can be the difference between getting an interview and being overlooked. CareerForge AI generates tailored cover letters that complement your resume and target specific job openings, saving you time while maintaining a professional, personalized touch.',
+        intro: 'A well-crafted cover letter can be the difference between getting an interview and being overlooked. Hassify generates tailored cover letters that complement your resume and target specific job openings, saving you time while maintaining a professional, personalized touch.',
         sections: [
           {
             id: 'how-generation-works',
@@ -667,7 +667,7 @@ export const helpArticles: HelpArticle[] = [
       readingTime: '4 min de lecture',
       lastUpdated: '2025-01-15',
       content: {
-        intro: "Une lettre de motivation bien rédigée peut faire la différence entre obtenir un entretien et être ignoré. CareerForge AI génère des lettres de motivation sur mesure qui complètent votre CV et ciblent des offres d'emploi spécifiques, vous faisant gagner du temps tout en conservant un ton professionnel et personnalisé.",
+        intro: "Une lettre de motivation bien rédigée peut faire la différence entre obtenir un entretien et être ignoré. Hassify génère des lettres de motivation sur mesure qui complètent votre CV et ciblent des offres d'emploi spécifiques, vous faisant gagner du temps tout en conservant un ton professionnel et personnalisé.",
         sections: [
           {
             id: 'how-generation-works',
@@ -692,7 +692,7 @@ export const helpArticles: HelpArticle[] = [
   {
     slug: 'customize-cover-letter',
     category: 'ai-cover-letter',
-    author: 'CareerForge AI Team',
+    author: 'Hassify Team',
     en: {
       title: 'Customize Your Cover Letter',
       description: 'Edit and personalize your AI-generated cover letter to make it truly your own.',
@@ -753,7 +753,7 @@ export const helpArticles: HelpArticle[] = [
   {
     slug: 'ai-resume-review',
     category: 'resume-review',
-    author: 'CareerForge AI Team',
+    author: 'Hassify Team',
     en: {
       title: 'AI Resume Review',
       description: 'Get detailed AI-powered feedback on your resume with actionable improvement suggestions.',
@@ -812,7 +812,7 @@ export const helpArticles: HelpArticle[] = [
   {
     slug: 'improve-resume-score',
     category: 'resume-review',
-    author: 'CareerForge AI Team',
+    author: 'Hassify Team',
     en: {
       title: 'Improve Your Resume Score',
       description: 'Proven strategies to boost your resume review score and stand out to employers.',
@@ -883,7 +883,7 @@ export const helpArticles: HelpArticle[] = [
   {
     slug: 'what-is-ats',
     category: 'ats-optimization',
-    author: 'CareerForge AI Team',
+    author: 'Hassify Team',
     en: {
       title: 'What Is ATS?',
       description: 'Understand Applicant Tracking Systems and why ATS-friendly resumes get more interviews.',
@@ -903,9 +903,9 @@ export const helpArticles: HelpArticle[] = [
             body: 'Many well-designed resumes fail ATS screening due to avoidable issues. Common problems include: using graphics, tables, or text boxes that the ATS cannot read; using non-standard section headings like "My Journey" instead of "Work Experience"; including headers and footers with important information; using unusual file formats; and having multiple columns. These elements can scramble the parsing process and cause your resume to be ranked lower or rejected entirely.',
           },
           {
-            id: 'careerforge-advantage',
-            heading: 'How CareerForge AI Helps',
-            body: 'Every template in CareerForge AI is designed to be ATS-friendly. We avoid graphics, tables, and complex layouts that confuse parsing software. Our AI also analyzes job descriptions and suggests relevant keywords to include in your resume, increasing your match rate. The ATS score in our review tool shows exactly how well your resume will perform when processed by an Applicant Tracking System, so you can optimize before applying.',
+            id: 'hassify-advantage',
+            heading: 'How Hassify Helps',
+            body: 'Every template in Hassify is designed to be ATS-friendly. We avoid graphics, tables, and complex layouts that confuse parsing software. Our AI also analyzes job descriptions and suggests relevant keywords to include in your resume, increasing your match rate. The ATS score in our review tool shows exactly how well your resume will perform when processed by an Applicant Tracking System, so you can optimize before applying.',
           },
         ],
         conclusion: 'Do not let your resume be rejected by a robot before a human reads it. By using ATS-optimized templates and including the right keywords, you can dramatically increase your chances of passing automated screening and reaching the hiring manager.',
@@ -930,9 +930,9 @@ export const helpArticles: HelpArticle[] = [
             body: "Beaucoup de CV bien conçus échouent au filtrage ATS en raison de problèmes évitables. Les problèmes courants incluent : l'utilisation de graphiques, tableaux ou zones de texte que l'ATS ne peut pas lire ; l'utilisation d'en-têtes de section non standard ; l'inclusion d'en-têtes et de pieds de page avec des informations importantes ; et l'utilisation de formats de fichier inhabituels.",
           },
           {
-            id: 'careerforge-advantage',
-            heading: 'Comment CareerForge AI Aide',
-            body: "Chaque modèle dans CareerForge AI est conçu pour être compatible ATS. Nous évitons les graphiques, tableaux et mises en page complexes qui confondent le logiciel d'analyse. Notre IA analyse également les descriptions de poste et suggère des mots-clés pertinents à inclure dans votre CV. Le score ATS dans notre outil de revue montre exactement comment votre CV performera lorsqu'il sera traité par un ATS.",
+            id: 'hassify-advantage',
+            heading: 'Comment Hassify Aide',
+            body: "Chaque modèle dans Hassify est conçu pour être compatible ATS. Nous évitons les graphiques, tableaux et mises en page complexes qui confondent le logiciel d'analyse. Notre IA analyse également les descriptions de poste et suggère des mots-clés pertinents à inclure dans votre CV. Le score ATS dans notre outil de revue montre exactement comment votre CV performera lorsqu'il sera traité par un ATS.",
           },
         ],
         conclusion: "Ne laissez pas votre CV être rejeté par un robot avant qu'un humain ne le lise. En utilisant des modèles optimisés ATS et en incluant les bons mots-clés, vous pouvez augmenter considérablement vos chances de passer le filtrage automatisé et d'atteindre le responsable du recrutement.",
@@ -942,14 +942,14 @@ export const helpArticles: HelpArticle[] = [
   {
     slug: 'optimize-resume-ats',
     category: 'ats-optimization',
-    author: 'CareerForge AI Team',
+    author: 'Hassify Team',
     en: {
       title: 'Optimize Your Resume for ATS',
       description: 'Step-by-step instructions to make your resume ATS-friendly and increase your match rate.',
       readingTime: '4 min read',
       lastUpdated: '2025-01-15',
       content: {
-        intro: 'Optimizing your resume for Applicant Tracking Systems does not mean sacrificing visual appeal. With CareerForge AI, you can have a resume that looks great to human readers while also scoring high in ATS screening. Here is how.',
+        intro: 'Optimizing your resume for Applicant Tracking Systems does not mean sacrificing visual appeal. With Hassify, you can have a resume that looks great to human readers while also scoring high in ATS screening. Here is how.',
         sections: [
           {
             id: 'keyword-strategy',
@@ -964,10 +964,10 @@ export const helpArticles: HelpArticle[] = [
           {
             id: 'using-ats-checker',
             heading: 'Using the ATS Checker',
-            body: 'CareerForge AI includes a built-in ATS checker that simulates how major ATS systems will parse and score your resume. Paste the job description into the ATS checker tool, and it will compare your resume against the job requirements. You will receive an ATS match percentage, a list of missing keywords, and specific suggestions to improve your score. Run this check for every job application to maximize your chances.',
+            body: 'Hassify includes a built-in ATS checker that simulates how major ATS systems will parse and score your resume. Paste the job description into the ATS checker tool, and it will compare your resume against the job requirements. You will receive an ATS match percentage, a list of missing keywords, and specific suggestions to improve your score. Run this check for every job application to maximize your chances.',
           },
         ],
-        conclusion: 'ATS optimization is not a one-time task — it should be done for each job application. The effort is worth it: ATS-optimized resumes are up to 3 times more likely to be seen by a hiring manager. Let CareerForge AI handle the technical side while you focus on crafting great content.',
+        conclusion: 'ATS optimization is not a one-time task — it should be done for each job application. The effort is worth it: ATS-optimized resumes are up to 3 times more likely to be seen by a hiring manager. Let Hassify handle the technical side while you focus on crafting great content.',
       },
     },
     fr: {
@@ -976,7 +976,7 @@ export const helpArticles: HelpArticle[] = [
       readingTime: '4 min de lecture',
       lastUpdated: '2025-01-15',
       content: {
-        intro: "Optimiser votre CV pour les Systèmes de Suivi des Candidats ne signifie pas sacrifier l'attrait visuel. Avec CareerForge AI, vous pouvez avoir un CV qui est à la fois beau pour les lecteurs humains et bien classé dans le filtrage ATS. Voici comment.",
+        intro: "Optimiser votre CV pour les Systèmes de Suivi des Candidats ne signifie pas sacrifier l'attrait visuel. Avec Hassify, vous pouvez avoir un CV qui est à la fois beau pour les lecteurs humains et bien classé dans le filtrage ATS. Voici comment.",
         sections: [
           {
             id: 'keyword-strategy',
@@ -991,10 +991,10 @@ export const helpArticles: HelpArticle[] = [
           {
             id: 'using-ats-checker',
             heading: 'Utilisation du Vérificateur ATS',
-            body: "CareerForge AI inclut un vérificateur ATS intégré qui simule la façon dont les principaux systèmes ATS analyseront et noteront votre CV. Collez la description de poste dans l'outil de vérification ATS, et il comparera votre CV aux exigences du poste. Vous recevrez un pourcentage de correspondance ATS, une liste des mots-clés manquants et des suggestions spécifiques pour améliorer votre score.",
+            body: "Hassify inclut un vérificateur ATS intégré qui simule la façon dont les principaux systèmes ATS analyseront et noteront votre CV. Collez la description de poste dans l'outil de vérification ATS, et il comparera votre CV aux exigences du poste. Vous recevrez un pourcentage de correspondance ATS, une liste des mots-clés manquants et des suggestions spécifiques pour améliorer votre score.",
           },
         ],
-        conclusion: "L'optimisation ATS n'est pas une tâche ponctuelle — elle doit être effectuée pour chaque candidature. L'effort en vaut la peine : les CV optimisés pour l'ATS ont jusqu'à 3 fois plus de chances d'être vus par un responsable du recrutement. Laissez CareerForge AI gérer le côté technique pendant que vous vous concentrez sur la création d'un excellent contenu.",
+        conclusion: "L'optimisation ATS n'est pas une tâche ponctuelle — elle doit être effectuée pour chaque candidature. L'effort en vaut la peine : les CV optimisés pour l'ATS ont jusqu'à 3 fois plus de chances d'être vus par un responsable du recrutement. Laissez Hassify gérer le côté technique pendant que vous vous concentrez sur la création d'un excellent contenu.",
       },
     },
   },
@@ -1003,14 +1003,14 @@ export const helpArticles: HelpArticle[] = [
   {
     slug: 'choose-right-template',
     category: 'templates',
-    author: 'CareerForge AI Team',
+    author: 'Hassify Team',
     en: {
       title: 'Choose the Right Template',
       description: 'Find the perfect resume template for your industry, experience level, and career goals.',
       readingTime: '3 min read',
       lastUpdated: '2025-01-15',
       content: {
-        intro: 'Your resume template sets the first visual impression for recruiters. Choosing the right one can make a significant difference in how your qualifications are perceived. CareerForge AI offers a curated selection of templates, each designed for specific career situations.',
+        intro: 'Your resume template sets the first visual impression for recruiters. Choosing the right one can make a significant difference in how your qualifications are perceived. Hassify offers a curated selection of templates, each designed for specific career situations.',
         sections: [
           {
             id: 'template-categories',
@@ -1020,7 +1020,7 @@ export const helpArticles: HelpArticle[] = [
           {
             id: 'experience-considerations',
             heading: 'Consider Your Experience Level',
-            body: 'If you are a recent graduate or entry-level candidate, choose a template that places education near the top. For mid-career professionals, templates that emphasize work experience are ideal. Senior executives should opt for templates that provide ample space for leadership accomplishments and strategic initiatives. CareerForge AI automatically suggests templates based on the career level you select during onboarding.',
+            body: 'If you are a recent graduate or entry-level candidate, choose a template that places education near the top. For mid-career professionals, templates that emphasize work experience are ideal. Senior executives should opt for templates that provide ample space for leadership accomplishments and strategic initiatives. Hassify automatically suggests templates based on the career level you select during onboarding.',
           },
           {
             id: 'switch-templates',
@@ -1037,7 +1037,7 @@ export const helpArticles: HelpArticle[] = [
       readingTime: '3 min de lecture',
       lastUpdated: '2025-01-15',
       content: {
-        intro: "Le modèle de votre CV donne la première impression visuelle aux recruteurs. Choisir le bon peut faire une différence significative dans la façon dont vos qualifications sont perçues. CareerForge AI propose une sélection soignée de modèles, chacun conçu pour des situations de carrière spécifiques.",
+        intro: "Le modèle de votre CV donne la première impression visuelle aux recruteurs. Choisir le bon peut faire une différence significative dans la façon dont vos qualifications sont perçues. Hassify propose une sélection soignée de modèles, chacun conçu pour des situations de carrière spécifiques.",
         sections: [
           {
             id: 'template-categories',
@@ -1062,14 +1062,14 @@ export const helpArticles: HelpArticle[] = [
   {
     slug: 'customize-template',
     category: 'templates',
-    author: 'CareerForge AI Team',
+    author: 'Hassify Team',
     en: {
       title: 'Customize Your Template',
       description: 'Personalize colors, fonts, and layout options to make your resume uniquely yours.',
       readingTime: '3 min read',
       lastUpdated: '2025-01-15',
       content: {
-        intro: 'While CareerForge AI templates look great out of the box, customizing them to reflect your personal brand can help you stand out even more. Our template customization options give you control over colors, fonts, and layout without breaking the ATS-friendly structure.',
+        intro: 'While Hassify templates look great out of the box, customizing them to reflect your personal brand can help you stand out even more. Our template customization options give you control over colors, fonts, and layout without breaking the ATS-friendly structure.',
         sections: [
           {
             id: 'color-customization',
@@ -1096,7 +1096,7 @@ export const helpArticles: HelpArticle[] = [
       readingTime: '3 min de lecture',
       lastUpdated: '2025-01-15',
       content: {
-        intro: "Bien que les modèles CareerForge AI soient beaux tels quels, les personnaliser pour refléter votre marque personnelle peut vous aider à vous démarquer davantage. Nos options de personnalisation vous donnent le contrôle sur les couleurs, les polices et la mise en page sans compromettre la structure compatible ATS.",
+        intro: "Bien que les modèles Hassify soient beaux tels quels, les personnaliser pour refléter votre marque personnelle peut vous aider à vous démarquer davantage. Nos options de personnalisation vous donnent le contrôle sur les couleurs, les polices et la mise en page sans compromettre la structure compatible ATS.",
         sections: [
           {
             id: 'color-customization',
@@ -1123,14 +1123,14 @@ export const helpArticles: HelpArticle[] = [
   {
     slug: 'track-applications',
     category: 'job-tracker',
-    author: 'CareerForge AI Team',
+    author: 'Hassify Team',
     en: {
       title: 'Track Your Job Applications',
       description: 'Use the Job Tracker to organize and monitor all your job applications in one place.',
       readingTime: '3 min read',
       lastUpdated: '2025-01-15',
       content: {
-        intro: 'Keeping track of multiple job applications can quickly become overwhelming. The CareerForge AI Job Tracker simplifies this process by giving you a centralized dashboard to manage every application from initial submission to final decision.',
+        intro: 'Keeping track of multiple job applications can quickly become overwhelming. The Hassify Job Tracker simplifies this process by giving you a centralized dashboard to manage every application from initial submission to final decision.',
         sections: [
           {
             id: 'adding-applications',
@@ -1157,7 +1157,7 @@ export const helpArticles: HelpArticle[] = [
       readingTime: '3 min de lecture',
       lastUpdated: '2025-01-15',
       content: {
-        intro: "Suivre plusieurs candidatures peut rapidement devenir écrasant. Le Suivi de Candidatures de CareerForge AI simplifie ce processus en vous donnant un tableau de bord centralisé pour gérer chaque candidature de la soumission initiale à la décision finale.",
+        intro: "Suivre plusieurs candidatures peut rapidement devenir écrasant. Le Suivi de Candidatures de Hassify simplifie ce processus en vous donnant un tableau de bord centralisé pour gérer chaque candidature de la soumission initiale à la décision finale.",
         sections: [
           {
             id: 'adding-applications',
@@ -1184,24 +1184,24 @@ export const helpArticles: HelpArticle[] = [
   {
     slug: 'subscription-plans',
     category: 'billing-subscription',
-    author: 'CareerForge AI Team',
+    author: 'Hassify Team',
     en: {
       title: 'Subscription Plans',
       description: 'Compare our Free and Premium plans to find the best fit for your job search needs.',
       readingTime: '3 min read',
       lastUpdated: '2025-01-15',
       content: {
-        intro: 'CareerForge AI offers two subscription tiers designed to support job seekers at every stage. Whether you are just starting out or actively applying to multiple positions, we have a plan that fits your needs and budget.',
+        intro: 'Hassify offers two subscription tiers designed to support job seekers at every stage. Whether you are just starting out or actively applying to multiple positions, we have a plan that fits your needs and budget.',
         sections: [
           {
             id: 'free-plan',
             heading: 'Free Plan',
-            body: 'The Free plan is perfect for exploring CareerForge AI and creating your first documents. It includes 1 resume creation, 3 cover letter generations, access to 3 basic templates, and basic ATS checking. The free plan does not expire and has no credit card requirement. It is a great way to experience the platform before committing.',
+            body: 'The Free plan is perfect for exploring Hassify and creating your first documents. It includes 1 resume creation, 3 cover letter generations, access to 3 basic templates, and basic ATS checking. The free plan does not expire and has no credit card requirement. It is a great way to experience the platform before committing.',
           },
           {
             id: 'premium-plan',
             heading: 'Premium Plan',
-            body: 'The Premium plan unlocks the full power of CareerForge AI. It includes unlimited resume creations, unlimited AI cover letter generations, access to all templates including premium designs, unlimited AI reviews and ATS checks, priority customer support, and the ability to export without watermarks. Premium plans are available as monthly or annual subscriptions, with the annual option offering significant savings.',
+            body: 'The Premium plan unlocks the full power of Hassify. It includes unlimited resume creations, unlimited AI cover letter generations, access to all templates including premium designs, unlimited AI reviews and ATS checks, priority customer support, and the ability to export without watermarks. Premium plans are available as monthly or annual subscriptions, with the annual option offering significant savings.',
           },
           {
             id: 'managing-subscription',
@@ -1218,17 +1218,17 @@ export const helpArticles: HelpArticle[] = [
       readingTime: '3 min de lecture',
       lastUpdated: '2025-01-15',
       content: {
-        intro: "CareerForge AI propose deux niveaux d'abonnement conçus pour accompagner les chercheurs d'emploi à chaque étape. Que vous commenciez tout juste ou que vous postuliez activement à plusieurs postes, nous avons un plan qui correspond à vos besoins et à votre budget.",
+        intro: "Hassify propose deux niveaux d'abonnement conçus pour accompagner les chercheurs d'emploi à chaque étape. Que vous commenciez tout juste ou que vous postuliez activement à plusieurs postes, nous avons un plan qui correspond à vos besoins et à votre budget.",
         sections: [
           {
             id: 'free-plan',
             heading: 'Plan Gratuit',
-            body: "Le plan Gratuit est parfait pour explorer CareerForge AI et créer vos premiers documents. Il inclut 1 création de CV, 3 générations de lettres de motivation, l'accès à 3 modèles de base et la vérification ATS de base. Le plan gratuit n'expire pas et ne nécessite pas de carte de crédit.",
+            body: "Le plan Gratuit est parfait pour explorer Hassify et créer vos premiers documents. Il inclut 1 création de CV, 3 générations de lettres de motivation, l'accès à 3 modèles de base et la vérification ATS de base. Le plan gratuit n'expire pas et ne nécessite pas de carte de crédit.",
           },
           {
             id: 'premium-plan',
             heading: 'Plan Premium',
-            body: "Le plan Premium débloque toute la puissance de CareerForge AI. Il inclut des créations de CV illimitées, des générations de lettres de motivation IA illimitées, l'accès à tous les modèles y compris les designs premium, des revues IA et des vérifications ATS illimitées, le support client prioritaire et la possibilité d'exporter sans filigrane. Les plans premium sont disponibles en abonnements mensuels ou annuels.",
+            body: "Le plan Premium débloque toute la puissance de Hassify. Il inclut des créations de CV illimitées, des générations de lettres de motivation IA illimitées, l'accès à tous les modèles y compris les designs premium, des revues IA et des vérifications ATS illimitées, le support client prioritaire et la possibilité d'exporter sans filigrane. Les plans premium sont disponibles en abonnements mensuels ou annuels.",
           },
           {
             id: 'managing-subscription',
@@ -1243,7 +1243,7 @@ export const helpArticles: HelpArticle[] = [
   {
     slug: 'cancel-subscription',
     category: 'billing-subscription',
-    author: 'CareerForge AI Team',
+    author: 'Hassify Team',
     en: {
       title: 'Cancel Your Subscription',
       description: 'How to cancel your Premium plan and what happens to your data and access.',
@@ -1294,14 +1294,14 @@ export const helpArticles: HelpArticle[] = [
   {
     slug: 'account-security',
     category: 'security',
-    author: 'CareerForge AI Team',
+    author: 'Hassify Team',
     en: {
       title: 'Account Security',
-      description: 'Learn about the security measures that protect your CareerForge AI account and data.',
+      description: 'Learn about the security measures that protect your Hassify account and data.',
       readingTime: '3 min read',
       lastUpdated: '2025-01-15',
       content: {
-        intro: 'At CareerForge AI, we take the security of your account and personal data seriously. This article explains the security measures we have in place and what you can do to further protect your account.',
+        intro: 'At Hassify, we take the security of your account and personal data seriously. This article explains the security measures we have in place and what you can do to further protect your account.',
         sections: [
           {
             id: 'encryption',
@@ -1311,7 +1311,7 @@ export const helpArticles: HelpArticle[] = [
           {
             id: 'password-security',
             heading: 'Password Security',
-            body: 'We enforce strong password requirements: a minimum of 8 characters with a mix of uppercase, lowercase, numbers, and special characters. Passwords are hashed using bcrypt with a high work factor, so even if our database were compromised, your original password would not be recoverable. We recommend using a unique password for CareerForge AI that you do not use on any other website.',
+            body: 'We enforce strong password requirements: a minimum of 8 characters with a mix of uppercase, lowercase, numbers, and special characters. Passwords are hashed using bcrypt with a high work factor, so even if our database were compromised, your original password would not be recoverable. We recommend using a unique password for Hassify that you do not use on any other website.',
           },
           {
             id: 'session-management',
@@ -1324,11 +1324,11 @@ export const helpArticles: HelpArticle[] = [
     },
     fr: {
       title: 'Sécurité du Compte',
-      description: 'Découvrez les mesures de sécurité qui protègent votre compte et vos données CareerForge AI.',
+      description: 'Découvrez les mesures de sécurité qui protègent votre compte et vos données Hassify.',
       readingTime: '3 min de lecture',
       lastUpdated: '2025-01-15',
       content: {
-        intro: "Chez CareerForge AI, nous prenons la sécurité de votre compte et de vos données personnelles au sérieux. Cet article explique les mesures de sécurité en place et ce que vous pouvez faire pour protéger davantage votre compte.",
+        intro: "Chez Hassify, nous prenons la sécurité de votre compte et de vos données personnelles au sérieux. Cet article explique les mesures de sécurité en place et ce que vous pouvez faire pour protéger davantage votre compte.",
         sections: [
           {
             id: 'encryption',
@@ -1338,7 +1338,7 @@ export const helpArticles: HelpArticle[] = [
           {
             id: 'password-security',
             heading: 'Sécurité des Mots de Passe',
-            body: "Nous imposons des exigences de mot de passe strictes : un minimum de 8 caractères avec un mélange de majuscules, minuscules, chiffres et caractères spéciaux. Les mots de passe sont hachés using bcrypt avec un facteur de travail élevé. Nous recommandons d'utiliser un mot de passe unique pour CareerForge AI que vous n'utilisez sur aucun autre site web.",
+            body: "Nous imposons des exigences de mot de passe strictes : un minimum de 8 caractères avec un mélange de majuscules, minuscules, chiffres et caractères spéciaux. Les mots de passe sont hachés using bcrypt avec un facteur de travail élevé. Nous recommandons d'utiliser un mot de passe unique pour Hassify que vous n'utilisez sur aucun autre site web.",
           },
           {
             id: 'session-management',
@@ -1353,7 +1353,7 @@ export const helpArticles: HelpArticle[] = [
   {
     slug: 'two-factor-authentication',
     category: 'security',
-    author: 'CareerForge AI Team',
+    author: 'Hassify Team',
     en: {
       title: 'Two-Factor Authentication',
       description: 'Add an extra layer of security to your account with two-factor authentication (2FA).',
@@ -1370,7 +1370,7 @@ export const helpArticles: HelpArticle[] = [
           {
             id: 'using-2fa',
             heading: 'Using 2FA',
-            body: 'After enabling 2FA, every login will require both your password and a 6-digit code from your authenticator app. Open your authenticator app and enter the code for CareerForge AI. The code changes every 30 seconds, so make sure to enter it promptly. If you do not have access to your authenticator, use one of your backup codes. Each backup code can only be used once, so be sure to generate new ones if you use several.',
+            body: 'After enabling 2FA, every login will require both your password and a 6-digit code from your authenticator app. Open your authenticator app and enter the code for Hassify. The code changes every 30 seconds, so make sure to enter it promptly. If you do not have access to your authenticator, use one of your backup codes. Each backup code can only be used once, so be sure to generate new ones if you use several.',
           },
           {
             id: 'disable-2fa',
@@ -1397,7 +1397,7 @@ export const helpArticles: HelpArticle[] = [
           {
             id: 'using-2fa',
             heading: 'Utiliser la 2FA',
-            body: "Après avoir activé la 2FA, chaque connexion nécessitera votre mot de passe et un code à 6 chiffres de votre application d'authentification. Ouvrez votre application et entrez le code pour CareerForge AI. Le code change toutes les 30 secondes. Si vous n'avez pas accès à votre application d'authentification, utilisez un de vos codes de secours. Chaque code de secours ne peut être utilisé qu'une seule fois.",
+            body: "Après avoir activé la 2FA, chaque connexion nécessitera votre mot de passe et un code à 6 chiffres de votre application d'authentification. Ouvrez votre application et entrez le code pour Hassify. Le code change toutes les 30 secondes. Si vous n'avez pas accès à votre application d'authentification, utilisez un de vos codes de secours. Chaque code de secours ne peut être utilisé qu'une seule fois.",
           },
           {
             id: 'disable-2fa',
@@ -1414,14 +1414,14 @@ export const helpArticles: HelpArticle[] = [
   {
     slug: 'data-privacy',
     category: 'privacy',
-    author: 'CareerForge AI Team',
+    author: 'Hassify Team',
     en: {
       title: 'Data Privacy',
-      description: 'How we collect, use, store, and protect your personal information on CareerForge AI.',
+      description: 'How we collect, use, store, and protect your personal information on Hassify.',
       readingTime: '4 min read',
       lastUpdated: '2025-01-15',
       content: {
-        intro: 'Your privacy is fundamental to us. This article provides a clear overview of our data practices so you can make informed decisions about using CareerForge AI.',
+        intro: 'Your privacy is fundamental to us. This article provides a clear overview of our data practices so you can make informed decisions about using Hassify.',
         sections: [
           {
             id: 'data-collection',
@@ -1441,7 +1441,7 @@ export const helpArticles: HelpArticle[] = [
           {
             id: 'your-rights',
             heading: 'Your Privacy Rights',
-            body: 'Under GDPR and PIPEDA regulations, you have the right to access your data, request corrections, request data portability, and request deletion. To exercise any of these rights, contact us at privacy@careerforge.ai or through the support ticket system. We will respond to all data requests within 30 days. You can also export all your data at any time from your account settings.',
+            body: 'Under GDPR and PIPEDA regulations, you have the right to access your data, request corrections, request data portability, and request deletion. To exercise any of these rights, contact us at privacy@hassify.com or through the support ticket system. We will respond to all data requests within 30 days. You can also export all your data at any time from your account settings.',
           },
         ],
         conclusion: 'We are committed to transparency and giving you control over your information. Our full Privacy Policy provides additional details, and our support team is always available to answer any privacy-related questions.',
@@ -1449,11 +1449,11 @@ export const helpArticles: HelpArticle[] = [
     },
     fr: {
       title: 'Confidentialité des Données',
-      description: 'Comment nous collectons, utilisons, stockons et protégeons vos informations personnelles sur CareerForge AI.',
+      description: 'Comment nous collectons, utilisons, stockons et protégeons vos informations personnelles sur Hassify.',
       readingTime: '4 min de lecture',
       lastUpdated: '2025-01-15',
       content: {
-        intro: "Votre vie privée est fondamentale pour nous. Cet article fournit un aperçu clair de nos pratiques en matière de données afin que vous puissiez prendre des décisions éclairées sur l'utilisation de CareerForge AI.",
+        intro: "Votre vie privée est fondamentale pour nous. Cet article fournit un aperçu clair de nos pratiques en matière de données afin que vous puissiez prendre des décisions éclairées sur l'utilisation de Hassify.",
         sections: [
           {
             id: 'data-collection',
@@ -1473,7 +1473,7 @@ export const helpArticles: HelpArticle[] = [
           {
             id: 'your-rights',
             heading: 'Vos Droits en Matière de Confidentialité',
-            body: "En vertu des réglementations RGPD et LPRPDE, vous avez le droit d'accéder à vos données, de demander des corrections, de demander la portabilité des données et de demander la suppression. Pour exercer ces droits, contactez-nous à privacy@careerforge.ai ou via le système de tickets de support. Nous répondrons à toutes les demandes de données dans les 30 jours.",
+            body: "En vertu des réglementations RGPD et LPRPDE, vous avez le droit d'accéder à vos données, de demander des corrections, de demander la portabilité des données et de demander la suppression. Pour exercer ces droits, contactez-nous à privacy@hassify.com ou via le système de tickets de support. Nous répondrons à toutes les demandes de données dans les 30 jours.",
           },
         ],
         conclusion: "Nous nous engageons à la transparence et à vous donner le contrôle sur vos informations. Notre Politique de Confidentialité complète fournit des détails supplémentaires, et notre équipe de support est toujours disponible pour répondre à toute question relative à la confidentialité.",
@@ -1485,14 +1485,14 @@ export const helpArticles: HelpArticle[] = [
   {
     slug: 'change-language',
     category: 'technical-issues',
-    author: 'CareerForge AI Team',
+    author: 'Hassify Team',
     en: {
       title: 'Change the Interface Language',
-      description: 'How to switch between English and French on CareerForge AI.',
+      description: 'How to switch between English and French on Hassify.',
       readingTime: '2 min read',
       lastUpdated: '2025-01-15',
       content: {
-        intro: 'CareerForge AI is fully bilingual, supporting both English and French. You can switch the interface language at any time, and your preference will be remembered across sessions.',
+        intro: 'Hassify is fully bilingual, supporting both English and French. You can switch the interface language at any time, and your preference will be remembered across sessions.',
         sections: [
           {
             id: 'switching-language',
@@ -1510,16 +1510,16 @@ export const helpArticles: HelpArticle[] = [
             body: 'Your language preference is stored in your browser\'s local storage and persists between sessions. This means you will not need to switch languages every time you visit. However, if you clear your browser data or use a different device, the default language (English) will be used until you switch again. We are working on saving language preferences to your account in a future update.',
           },
         ],
-        conclusion: 'The bilingual support is one of CareerForge AI\'s key features, especially for job seekers in bilingual markets like Canada. Feel free to switch between languages as needed — your work is always saved and accessible in both languages.',
+        conclusion: 'The bilingual support is one of Hassify\'s key features, especially for job seekers in bilingual markets like Canada. Feel free to switch between languages as needed — your work is always saved and accessible in both languages.',
       },
     },
     fr: {
       title: 'Changer la Langue de l\'Interface',
-      description: 'Comment basculer entre l\'anglais et le français sur CareerForge AI.',
+      description: 'Comment basculer entre l\'anglais et le français sur Hassify.',
       readingTime: '2 min de lecture',
       lastUpdated: '2025-01-15',
       content: {
-        intro: "CareerForge AI est entièrement bilingue, prenant en charge l'anglais et le français. Vous pouvez changer la langue de l'interface à tout moment, et votre préférence sera mémorisée d'une session à l'autre.",
+        intro: "Hassify est entièrement bilingue, prenant en charge l'anglais et le français. Vous pouvez changer la langue de l'interface à tout moment, et votre préférence sera mémorisée d'une session à l'autre.",
         sections: [
           {
             id: 'switching-language',
@@ -1537,21 +1537,21 @@ export const helpArticles: HelpArticle[] = [
             body: "Votre préférence de langue est stockée dans le stockage local de votre navigateur et persiste entre les sessions. Cela signifie que vous n'aurez pas besoin de changer de langue à chaque visite. Cependant, si vous effacez les données de votre navigateur ou utilisez un autre appareil, la langue par défaut (anglais) sera utilisée.",
           },
         ],
-        conclusion: "Le support bilingue est l'une des caractéristiques clés de CareerForge AI, surtout pour les chercheurs d'emploi sur les marchés bilingues comme le Canada. N'hésitez pas à basculer entre les langues au besoin — votre travail est toujours sauvegardé et accessible dans les deux langues.",
+        conclusion: "Le support bilingue est l'une des caractéristiques clés de Hassify, surtout pour les chercheurs d'emploi sur les marchés bilingues comme le Canada. N'hésitez pas à basculer entre les langues au besoin — votre travail est toujours sauvegardé et accessible dans les deux langues.",
       },
     },
   },
   {
     slug: 'browser-compatibility',
     category: 'technical-issues',
-    author: 'CareerForge AI Team',
+    author: 'Hassify Team',
     en: {
       title: 'Browser Compatibility',
-      description: 'Which browsers and devices are supported by CareerForge AI for the best experience.',
+      description: 'Which browsers and devices are supported by Hassify for the best experience.',
       readingTime: '2 min read',
       lastUpdated: '2025-01-15',
       content: {
-        intro: 'CareerForge AI is a modern web application built with the latest web technologies. To ensure the best experience, we recommend using a supported browser. Here is our full compatibility information.',
+        intro: 'Hassify is a modern web application built with the latest web technologies. To ensure the best experience, we recommend using a supported browser. Here is our full compatibility information.',
         sections: [
           {
             id: 'supported-browsers',
@@ -1561,7 +1561,7 @@ export const helpArticles: HelpArticle[] = [
           {
             id: 'mobile-support',
             heading: 'Mobile and Tablet Support',
-            body: 'CareerForge AI is fully responsive and works on mobile devices and tablets. However, for the best resume editing experience, we recommend using a desktop or laptop computer with a screen size of at least 13 inches. The resume editor and preview work best on larger screens. On mobile, you can view resumes, track applications, and use most features, but creating new resumes is optimized for desktop.',
+            body: 'Hassify is fully responsive and works on mobile devices and tablets. However, for the best resume editing experience, we recommend using a desktop or laptop computer with a screen size of at least 13 inches. The resume editor and preview work best on larger screens. On mobile, you can view resumes, track applications, and use most features, but creating new resumes is optimized for desktop.',
           },
           {
             id: 'troubleshooting',
@@ -1569,16 +1569,16 @@ export const helpArticles: HelpArticle[] = [
             body: 'If you experience issues, try these steps: clear your browser cache and cookies, disable browser extensions (especially ad blockers), ensure JavaScript is enabled, update your browser to the latest version, and try an incognito/private browsing window. If problems persist, try a different supported browser. Our support team can also help diagnose browser-specific issues if you contact us with details about your browser version and operating system.',
           },
         ],
-        conclusion: 'Using a supported and up-to-date browser ensures you get the full CareerForge AI experience with all features working correctly. We continuously test against new browser versions to maintain compatibility.',
+        conclusion: 'Using a supported and up-to-date browser ensures you get the full Hassify experience with all features working correctly. We continuously test against new browser versions to maintain compatibility.',
       },
     },
     fr: {
       title: 'Compatibilité des Navigateurs',
-      description: 'Quels navigateurs et appareils sont pris en charge par CareerForge AI pour la meilleure expérience.',
+      description: 'Quels navigateurs et appareils sont pris en charge par Hassify pour la meilleure expérience.',
       readingTime: '2 min de lecture',
       lastUpdated: '2025-01-15',
       content: {
-        intro: "CareerForge AI est une application web moderne construite avec les dernières technologies web. Pour garantir la meilleure expérience, nous recommandons d'utiliser un navigateur pris en charge. Voici nos informations complètes de compatibilité.",
+        intro: "Hassify est une application web moderne construite avec les dernières technologies web. Pour garantir la meilleure expérience, nous recommandons d'utiliser un navigateur pris en charge. Voici nos informations complètes de compatibilité.",
         sections: [
           {
             id: 'supported-browsers',
@@ -1588,7 +1588,7 @@ export const helpArticles: HelpArticle[] = [
           {
             id: 'mobile-support',
             heading: 'Support Mobile et Tablette',
-            body: "CareerForge AI est entièrement responsive et fonctionne sur les appareils mobiles et tablettes. Cependant, pour la meilleure expérience d'édition de CV, nous recommandons d'utiliser un ordinateur de bureau ou portable avec un écran d'au moins 13 pouces. Sur mobile, vous pouvez consulter les CV, suivre les candidatures et utiliser la plupart des fonctionnalités.",
+            body: "Hassify est entièrement responsive et fonctionne sur les appareils mobiles et tablettes. Cependant, pour la meilleure expérience d'édition de CV, nous recommandons d'utiliser un ordinateur de bureau ou portable avec un écran d'au moins 13 pouces. Sur mobile, vous pouvez consulter les CV, suivre les candidatures et utiliser la plupart des fonctionnalités.",
           },
           {
             id: 'troubleshooting',
@@ -1596,7 +1596,7 @@ export const helpArticles: HelpArticle[] = [
             body: "Si vous rencontrez des problèmes, essayez ces étapes : effacez le cache et les cookies de votre navigateur, désactivez les extensions de navigateur (surtout les bloqueurs de publicités), assurez-vous que JavaScript est activé, mettez à jour votre navigateur et essayez une fenêtre de navigation privée. Si les problèmes persistent, essayez un autre navigateur pris en charge.",
           },
         ],
-        conclusion: "L'utilisation d'un navigateur pris en charge et à jour garantit que vous obtenez l'expérience complète de CareerForge AI avec toutes les fonctionnalités fonctionnant correctement. Nous testons continuellement contre les nouvelles versions de navigateurs pour maintenir la compatibilité.",
+        conclusion: "L'utilisation d'un navigateur pris en charge et à jour garantit que vous obtenez l'expérience complète de Hassify avec toutes les fonctionnalités fonctionnant correctement. Nous testons continuellement contre les nouvelles versions de navigateurs pour maintenir la compatibilité.",
       },
     },
   },

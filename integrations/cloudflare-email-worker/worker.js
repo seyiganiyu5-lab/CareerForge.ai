@@ -1,9 +1,9 @@
 /**
- * Cloudflare Email Worker for CareerForge job-tracker forwarding.
+ * Cloudflare Email Worker for Hassify job-tracker forwarding.
  *
  * Cloudflare Email Routing sends every email for the inbox domain
  * (e.g. track-abc123@inbox.example.com) to this worker, which passes the raw
- * email to the CareerForge webhook. The app finds the user from the address,
+ * email to the Hassify webhook. The app finds the user from the address,
  * reads the email with AI and updates their job tracker.
  *
  * Settings (Cloudflare dashboard → Workers → this worker → Settings → Variables):

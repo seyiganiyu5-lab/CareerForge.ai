@@ -32,28 +32,28 @@ const inter = localFont({
 });
 
 export const metadata: Metadata = {
-  title: "CareerForge AI — AI-Powered Career Platform",
-  description: "Create ATS-standard resumes, AI-powered cover letters, analyze job listings, and optimize your entire job application with CareerForge AI.",
+  title: "Hassify — AI-Powered Career Platform",
+  description: "Create ATS-standard resumes, AI-powered cover letters, analyze job listings, and optimize your entire job application with Hassify.",
   keywords: ["resume builder", "AI resume", "cover letter", "ATS optimization", "ATS standards", "job analysis", "job application", "career platform"],
   metadataBase: new URL(process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000"),
   icons: {
     icon: [
       { url: "/logo.svg", type: "image/svg+xml" },
-      { url: "/brand/careerforge-icon-192.png", type: "image/png", sizes: "192x192" },
+      { url: "/brand/hassify-icon-192.png", type: "image/png", sizes: "192x192" },
     ],
     apple: "/apple-touch-icon.png",
   },
   // Picture shown when a link to the site is shared (WhatsApp, LinkedIn, X...)
   openGraph: {
     type: "website",
-    siteName: "CareerForge AI",
-    title: "CareerForge AI — Forge your career with AI",
+    siteName: "Hassify",
+    title: "Hassify — Forge your career with AI",
     description: "ATS-ready resumes, AI cover letters and job tracking in one place.",
-    images: [{ url: "/brand/og-image.png", width: 1200, height: 630, alt: "CareerForge AI" }],
+    images: [{ url: "/brand/og-image.png", width: 1200, height: 630, alt: "Hassify" }],
   },
   twitter: {
     card: "summary_large_image",
-    title: "CareerForge AI — Forge your career with AI",
+    title: "Hassify — Forge your career with AI",
     images: ["/brand/og-image.png"],
   },
 };
