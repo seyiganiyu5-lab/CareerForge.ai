@@ -1,7 +1,7 @@
 {
   "meta": {
-    "title": "CareerForge AI — Plateforme de Carrière Propulsée par l'IA",
-    "description": "Créez des CV aux normes ATS, des lettres de motivation alimentées par l'IA, analysez les offres d'emploi et optimisez vos candidatures avec CareerForge AI."
+    "title": "Hassify — Plateforme de Carrière Propulsée par l'IA",
+    "description": "Créez des CV aux normes ATS, des lettres de motivation alimentées par l'IA, analysez les offres d'emploi et optimisez vos candidatures avec Hassify."
   },
   "nav": {
     "home": "Accueil",
@@ -35,7 +35,7 @@
   "features": {
     "badge": "Fonctionnalités Puissantes",
     "title": "Tout ce Dont Vous Avez Besoin pour une Recherche d'Emploi Réussie",
-    "description": "De la création de CV aux normes ATS et la génération de lettres de motivation à l'analyse d'offres d'emploi et au suivi des candidatures — CareerForge AI est votre boîte à outils complète.",
+    "description": "De la création de CV aux normes ATS et la génération de lettres de motivation à l'analyse d'offres d'emploi et au suivi des candidatures — Hassify est votre boîte à outils complète.",
     "items": {
       "aiResumeBuilder": {
         "title": "Créateur de CV IA",
@@ -66,7 +66,7 @@
   "about": {
     "badge": "À Propos",
     "title": "Conçu pour Donner Force à Votre Parcours Professionnel",
-    "description": "CareerForge AI est une plateforme de carrière complète propulsée par l'IA, conçue pour aider les chercheurs d'emploi à créer des documents de candidature professionnels aux normes ATS et à naviguer le marché du travail moderne en toute confiance.",
+    "description": "Hassify est une plateforme de carrière complète propulsée par l'IA, conçue pour aider les chercheurs d'emploi à créer des documents de candidature professionnels aux normes ATS et à naviguer le marché du travail moderne en toute confiance.",
     "mission": {
       "title": "Notre Mission",
       "description": "Démocratiser la réussite professionnelle en donnant à chaque chercheur d'emploi accès à des outils propulsés par l'IA qui créent des CV aux normes ATS, des lettres de motivation convaincantes et des analyses d'emploi actionnables — mettant tous sur un pied d'égalité."
@@ -208,14 +208,14 @@
   "faq": {
     "badge": "FAQ",
     "title": "Questions Fréquemment Posées",
-    "description": "Tout ce que vous devez savoir sur CareerForge AI.",
+    "description": "Tout ce que vous devez savoir sur Hassify.",
     "items": {
       "q1": {
-        "question": "Qu'est-ce que CareerForge AI ?",
-        "answer": "CareerForge AI est une plateforme de carrière propulsée par l'IA qui vous aide à créer des CV aux normes ATS, à générer des lettres de motivation, à analyser les offres d'emploi, à optimiser pour les systèmes ATS et à suivre vos candidatures — le tout en un seul endroit."
+        "question": "Qu'est-ce que Hassify ?",
+        "answer": "Hassify est une plateforme de carrière propulsée par l'IA qui vous aide à créer des CV aux normes ATS, à générer des lettres de motivation, à analyser les offres d'emploi, à optimiser pour les systèmes ATS et à suivre vos candidatures — le tout en un seul endroit."
       },
       "q2": {
-        "question": "CareerForge AI est-il gratuit ?",
+        "question": "Hassify est-il gratuit ?",
         "answer": "Oui ! Nous proposons un forfait gratuit généreux qui inclut 1 CV et 3 lettres de motivation avec des modèles de base, des suggestions IA limitées et l'export PDF. Passez à Pro pour un accès illimité à toutes les fonctionnalités."
       },
       "q3": {
@@ -238,7 +238,7 @@
   },
   "cta": {
     "title": "Prêt à Construire Votre Carrière de Rêve ?",
-    "description": "Rejoignez des milliers de chercheurs d'emploi qui ont déjà transformé leur recherche avec CareerForge AI. Commencez à créer des CV aux normes ATS, des lettres de motivation et plus — entièrement gratuitement.",
+    "description": "Rejoignez des milliers de chercheurs d'emploi qui ont déjà transformé leur recherche avec Hassify. Commencez à créer des CV aux normes ATS, des lettres de motivation et plus — entièrement gratuitement.",
     "button": "Commencer Gratuitement",
     "note": "Aucune carte de crédit requise. Commencez en quelques secondes.",
     "newsletterTitle": "Recevez des Conseils de Carrière",
@@ -274,7 +274,7 @@
       "button": "S'abonner",
       "success": "Merci pour votre abonnement !"
     },
-    "copyright": "© 2025 CareerForge AI. Tous droits réservés.",
+    "copyright": "© 2025 Hassify. Tous droits réservés.",
     "tagline": "Des outils de carrière propulsés par l'IA pour les chercheurs d'emploi d'aujourd'hui."
   },
   "language": {
@@ -301,7 +301,7 @@
     },
     "login": {
       "title": "Bon Retour",
-      "subtitle": "Connectez-vous à votre compte CareerForge AI",
+      "subtitle": "Connectez-vous à votre compte Hassify",
       "emailPlaceholder": "Entrez votre adresse email",
       "passwordPlaceholder": "Entrez votre mot de passe",
       "rememberMe": "Se souvenir de moi",
@@ -437,7 +437,7 @@
         "step": "Étape"
       },
       "welcome": {
-        "title": "Bienvenue sur CareerForge AI !",
+        "title": "Bienvenue sur Hassify !",
         "subtitle": "Personnalisons votre expérience pour vous aider à atteindre vos objectifs professionnels.",
         "getStarted": "Commencer"
       },
@@ -600,7 +600,7 @@
       "noNotifications": "Aucune nouvelle notification",
       "resumeDownloaded": "CV téléchargé avec succès.",
       "atsImproved": "Votre score ATS s'est amélioré de 12% !",
-      "welcome": "Bienvenue sur CareerForge AI ! Commencez par créer votre premier CV.",
+      "welcome": "Bienvenue sur Hassify ! Commencez par créer votre premier CV.",
       "profileComplete": "Complétez votre profil pour de meilleures suggestions IA.",
       "coverLetterGenerated": "Votre lettre de motivation a été générée.",
       "jobMoved": "Passée de {from} à {to}",
@@ -616,7 +616,7 @@
       "usageLimitTitle": "Limite atteinte",
       "usageLimit": "{feature} : vous avez utilisé les {limit}. Passez à une offre supérieure pour continuer.",
       "fwdConfirmTitle": "Confirmez le transfert Gmail",
-      "fwdConfirmBody": "Gmail vous demande de confirmer le transfert vers CareerForge. Code : {code}. Cliquez pour ouvrir le lien de confirmation.",
+      "fwdConfirmBody": "Gmail vous demande de confirmer le transfert vers Hassify. Code : {code}. Cliquez pour ouvrir le lien de confirmation.",
       "fwdSkippedTitle": "E-mail transféré non traité",
       "fwdSkippedBody": "« {subject} » est arrivé, mais votre limite IA est atteinte. Collez-le plus tard dans le suivi, ou passez à une offre supérieure.",
       "paymentTitle": "Paiement reçu",
@@ -628,17 +628,17 @@
       "leadTitle": "Nouvelle demande Entreprise",
       "leadBody": "{organization} ({teamSize} personnes) — {name}",
       "orgInviteTitle": "Vous êtes invité",
-      "orgInviteBody": "{organization} vous invite à la rejoindre sur CareerForge AI.",
+      "orgInviteBody": "{organization} vous invite à la rejoindre sur Hassify.",
       "orgJoinedTitle": "Nouveau membre",
       "orgJoinedBody": "{name} a rejoint {organization}.",
       "orgRemovedTitle": "Retiré de l'organisation",
       "orgRemovedBody": "Vous n'êtes plus membre de {organization}. Vous retrouvez votre propre offre.",
       "orgInvoiceTitle": "Demande de paiement",
-      "orgInvoiceBody": "CareerForge demande {amount} pour {seats} places. Ouvrez pour payer.",
+      "orgInvoiceBody": "Hassify demande {amount} pour {seats} places. Ouvrez pour payer.",
       "orgPaidTitle": "Paiement reçu",
       "orgPaidBody": "{organization} a payé {amount}. Accès jusqu'au {until}.",
       "orgEndingTitle": "Renouvellement à venir",
-      "orgEndingBody": "L'accès de {organization} se termine {when}. Contactez CareerForge pour renouveler."
+      "orgEndingBody": "L'accès de {organization} se termine {when}. Contactez Hassify pour renouveler."
     },
     "userMenu": {
       "profile": "Mon Profil",
@@ -925,13 +925,13 @@
     "footer": {
       "privacy": "Politique de Confidentialité",
       "terms": "Conditions d'Utilisation",
-      "copyright": "© 2025 CareerForge AI. Tous droits réservés."
+      "copyright": "© 2025 Hassify. Tous droits réservés."
     },
     "backToHome": "← Retour à l'Accueil",
     "privacyPolicy": {
       "title": "Politique de Confidentialité",
       "lastUpdated": "Dernière mise à jour : 15 juin 2025",
-      "intro": "CareerForge AI (« nous », « notre » ou « nos ») s'engage à protéger votre vie privée. Cette Politique de Confidentialité explique comment nous collectons, utilisons, divulgons et protégeons vos informations lorsque vous utilisez notre plateforme. Veuillez lire cette politique attentivement. En utilisant CareerForge AI, vous acceptez les pratiques décrites dans cette Politique de Confidentialité.",
+      "intro": "Hassify (« nous », « notre » ou « nos ») s'engage à protéger votre vie privée. Cette Politique de Confidentialité explique comment nous collectons, utilisons, divulgons et protégeons vos informations lorsque vous utilisez notre plateforme. Veuillez lire cette politique attentivement. En utilisant Hassify, vous acceptez les pratiques décrites dans cette Politique de Confidentialité.",
       "sections": {
         "infoWeCollect": {
           "title": "1. Informations que Nous Collectons",
@@ -966,14 +966,14 @@
         },
         "yourRights": {
           "title": "6. Vos Droits (RGPD et Législations Applicables)",
-          "content": "Selon votre localisation, vous pouvez bénéficier des droits suivants concernant vos données personnelles : (a) Droit d'Accès — Vous pouvez demander une copie des données personnelles que nous détenons sur vous. (b) Droit de Rectification — Vous pouvez demander la correction de données inexactes ou incomplètes. (c) Droit à l'Effacement — Vous pouvez demander la suppression de vos données personnelles (« droit à l'oubli »). (d) Droit à la Limitation du Traitement — Vous pouvez demander que nous limitions l'utilisation de vos données. (e) Droit à la Portabilité des Données — Vous pouvez demander vos données dans un format lisible par machine. (f) Droit d'Opposition — Vous pouvez vous opposer à notre traitement de vos données à certaines fins. (g) Droit de Retirer votre Consentement — Vous pouvez retirer votre consentement à tout moment lorsque nous nous appuyons sur le consentement pour traiter vos données. Pour exercer l'un de ces droits, veuillez nous contacter à privacy@careerforge.ai."
+          "content": "Selon votre localisation, vous pouvez bénéficier des droits suivants concernant vos données personnelles : (a) Droit d'Accès — Vous pouvez demander une copie des données personnelles que nous détenons sur vous. (b) Droit de Rectification — Vous pouvez demander la correction de données inexactes ou incomplètes. (c) Droit à l'Effacement — Vous pouvez demander la suppression de vos données personnelles (« droit à l'oubli »). (d) Droit à la Limitation du Traitement — Vous pouvez demander que nous limitions l'utilisation de vos données. (e) Droit à la Portabilité des Données — Vous pouvez demander vos données dans un format lisible par machine. (f) Droit d'Opposition — Vous pouvez vous opposer à notre traitement de vos données à certaines fins. (g) Droit de Retirer votre Consentement — Vous pouvez retirer votre consentement à tout moment lorsque nous nous appuyons sur le consentement pour traiter vos données. Pour exercer l'un de ces droits, veuillez nous contacter à privacy@hassify.com."
         },
         "cookies": {
           "title": "7. Cookies et Technologies de Suivi",
           "content": "Nous utilisons des cookies et des technologies de suivi similaires pour améliorer votre expérience. Les cookies essentiels sont nécessaires au fonctionnement de la plateforme (authentification, gestion de session, sécurité). Les cookies analytiques nous aident à comprendre comment vous utilisez notre plateforme (données d'utilisation anonymisées). Les cookies de préférence mémorisent vos paramètres (langue, thème, préférences de mise en page). Vous pouvez gérer vos préférences de cookies via les paramètres de votre navigateur ou notre bannière de consentement aux cookies. Veuillez noter que la désactivation de certains cookies peut affecter la fonctionnalité de notre plateforme.",
           "consent": {
             "title": "Mécanisme de Consentement aux Cookies",
-            "content": "Lors de votre première visite sur CareerForge AI, nous présentons une bannière de consentement aux cookies qui vous permet de : (a) Accepter tous les cookies ; (b) Accepter uniquement les cookies essentiels ; (c) Personnaliser vos préférences de cookies par catégorie. Votre choix est enregistré et peut être modifié à tout moment via les paramètres de votre compte. Nous respectons vos préférences et ne définissons pas de cookies non essentiels sans votre consentement explicite. La bannière de consentement réapparaîtra si nous introduisons de nouvelles catégories de cookies ou si vos préférences de consentement datent de plus de 12 mois."
+            "content": "Lors de votre première visite sur Hassify, nous présentons une bannière de consentement aux cookies qui vous permet de : (a) Accepter tous les cookies ; (b) Accepter uniquement les cookies essentiels ; (c) Personnaliser vos préférences de cookies par catégorie. Votre choix est enregistré et peut être modifié à tout moment via les paramètres de votre compte. Nous respectons vos préférences et ne définissons pas de cookies non essentiels sans votre consentement explicite. La bannière de consentement réapparaîtra si nous introduisons de nouvelles catégories de cookies ou si vos préférences de consentement datent de plus de 12 mois."
           }
         },
         "thirdParty": {
@@ -982,7 +982,7 @@
         },
         "children": {
           "title": "9. Confidentialité des Enfants",
-          "content": "CareerForge AI n'est pas destiné aux personnes de moins de 16 ans. Nous ne collectons pas sciemment d'informations personnelles auprès d'enfants. Si nous apprenons que nous avons collecté des informations personnelles d'un enfant de moins de 16 ans, nous prendrons des mesures pour supprimer ces informations dans les plus brefs délais."
+          "content": "Hassify n'est pas destiné aux personnes de moins de 16 ans. Nous ne collectons pas sciemment d'informations personnelles auprès d'enfants. Si nous apprenons que nous avons collecté des informations personnelles d'un enfant de moins de 16 ans, nous prendrons des mesures pour supprimer ces informations dans les plus brefs délais."
         },
         "international": {
           "title": "10. Transferts Internationaux de Données",
@@ -998,22 +998,22 @@
         },
         "contact": {
           "title": "13. Nous Contacter",
-          "content": "Si vous avez des questions, des préoccupations ou des demandes concernant cette Politique de Confidentialité ou nos pratiques en matière de données, veuillez nous contacter à : CareerForge AI, Équipe Confidentialité, Email : privacy@careerforge.ai"
+          "content": "Si vous avez des questions, des préoccupations ou des demandes concernant cette Politique de Confidentialité ou nos pratiques en matière de données, veuillez nous contacter à : Hassify, Équipe Confidentialité, Email : privacy@hassify.com"
         }
       }
     },
     "termsOfService": {
       "title": "Conditions d'Utilisation",
       "lastUpdated": "Dernière mise à jour : 15 juin 2025",
-      "intro": "Ces Conditions d'Utilisation (« Conditions ») régissent votre accès à et votre utilisation de CareerForge AI (« Service »), exploité par CareerForge AI (« nous », « notre » ou « nos »). En accédant au Service ou en l'utilisant, vous acceptez d'être lié par ces Conditions. Si vous n'acceptez pas ces Conditions, veuillez ne pas utiliser notre Service.",
+      "intro": "Ces Conditions d'Utilisation (« Conditions ») régissent votre accès à et votre utilisation de Hassify (« Service »), exploité par Hassify (« nous », « notre » ou « nos »). En accédant au Service ou en l'utilisant, vous acceptez d'être lié par ces Conditions. Si vous n'acceptez pas ces Conditions, veuillez ne pas utiliser notre Service.",
       "sections": {
         "acceptance": {
           "title": "1. Acceptation des Conditions",
-          "content": "En créant un compte, en accédant ou en utilisant CareerForge AI, vous confirmez que vous avez au moins 16 ans et que vous acceptez de vous conformer à ces Conditions d'Utilisation et d'y être lié. Si vous utilisez le Service au nom d'une organisation, vous représentez et garantissez que vous avez l'autorité de lier cette organisation à ces Conditions."
+          "content": "En créant un compte, en accédant ou en utilisant Hassify, vous confirmez que vous avez au moins 16 ans et que vous acceptez de vous conformer à ces Conditions d'Utilisation et d'y être lié. Si vous utilisez le Service au nom d'une organisation, vous représentez et garantissez que vous avez l'autorité de lier cette organisation à ces Conditions."
         },
         "description": {
           "title": "2. Description du Service",
-          "content": "CareerForge AI est une plateforme de carrière propulsée par l'IA qui fournit des outils pour créer des CV, des lettres de motivation, analyser des offres d'emploi, optimiser des documents pour les Systèmes de Suivi des Candidats (ATS) et suivre les candidatures. Nous nous réservons le droit de modifier, suspendre ou interrompre toute partie du Service à tout moment, avec un préavis raisonnable lorsque cela est possible."
+          "content": "Hassify est une plateforme de carrière propulsée par l'IA qui fournit des outils pour créer des CV, des lettres de motivation, analyser des offres d'emploi, optimiser des documents pour les Systèmes de Suivi des Candidats (ATS) et suivre les candidatures. Nous nous réservons le droit de modifier, suspendre ou interrompre toute partie du Service à tout moment, avec un préavis raisonnable lorsque cela est possible."
         },
         "registration": {
           "title": "3. Inscription et Comptes Utilisateur",
@@ -1025,7 +1025,7 @@
         },
         "intellectualProperty": {
           "title": "5. Propriété Intellectuelle",
-          "content": "Le Service et son contenu original, ses fonctionnalités et son fonctionnement (à l'exclusion du contenu généré par l'utilisateur) sont la propriété de CareerForge AI et sont protégés par les lois internationales sur le droit d'auteur, les marques commerciales et autres lois sur la propriété intellectuelle. Vous conservez la propriété du contenu que vous créez en utilisant nos outils. En utilisant notre Service, vous nous accordez une licence limitée, non exclusive pour traiter votre contenu aux fins de fournir le Service."
+          "content": "Le Service et son contenu original, ses fonctionnalités et son fonctionnement (à l'exclusion du contenu généré par l'utilisateur) sont la propriété de Hassify et sont protégés par les lois internationales sur le droit d'auteur, les marques commerciales et autres lois sur la propriété intellectuelle. Vous conservez la propriété du contenu que vous créez en utilisant nos outils. En utilisant notre Service, vous nous accordez une licence limitée, non exclusive pour traiter votre contenu aux fins de fournir le Service."
         },
         "subscriptions": {
           "title": "6. Abonnements et Paiements",
@@ -1041,15 +1041,15 @@
         },
         "liabilityLimitation": {
           "title": "9. Limitation de Responsabilité",
-          "content": "Dans la mesure maximale permise par la loi applicable, CareerForge AI ne sera pas responsable des dommages indirects, accessoires, spéciaux, consécutifs ou punitifs, y compris mais sans s'y limiter la perte de profits, de données ou d'opportunités, découlant de ou en relation avec votre utilisation du Service. Notre responsabilité totale ne dépassera pas le montant que vous nous avez payé au cours des douze (12) mois précédant la réclamation."
+          "content": "Dans la mesure maximale permise par la loi applicable, Hassify ne sera pas responsable des dommages indirects, accessoires, spéciaux, consécutifs ou punitifs, y compris mais sans s'y limiter la perte de profits, de données ou d'opportunités, découlant de ou en relation avec votre utilisation du Service. Notre responsabilité totale ne dépassera pas le montant que vous nous avez payé au cours des douze (12) mois précédant la réclamation."
         },
         "indemnification": {
           "title": "10. Indemnisation",
-          "content": "Vous acceptez d'indemniser, de défendre et de dégager de toute responsabilité CareerForge AI, ses dirigeants, administrateurs, employés, agents et affiliés contre toutes réclamations, responsabilités, dommages, pertes, coûts ou dépenses (y compris les honoraires raisonnables d'avocats) découlant de ou en relation avec : (a) votre utilisation du Service ; (b) votre violation de ces Conditions ; (c) votre violation de tout droit d'un tiers ; (d) tout contenu que vous créez ou soumettez via le Service."
+          "content": "Vous acceptez d'indemniser, de défendre et de dégager de toute responsabilité Hassify, ses dirigeants, administrateurs, employés, agents et affiliés contre toutes réclamations, responsabilités, dommages, pertes, coûts ou dépenses (y compris les honoraires raisonnables d'avocats) découlant de ou en relation avec : (a) votre utilisation du Service ; (b) votre violation de ces Conditions ; (c) votre violation de tout droit d'un tiers ; (d) tout contenu que vous créez ou soumettez via le Service."
         },
         "appleSignIn": {
           "title": "11. Connexion avec Apple",
-          "content": "CareerForge AI propose l'authentification via Connexion avec Apple. En utilisant Se Connecter avec Apple, vous acceptez les Conditions d'Utilisation d'Apple et reconnaissez que : (a) Apple n'est pas responsable du fonctionnement de notre Service ; (b) Apple n'est pas responsable des réclamations découlant de votre utilisation de notre Service ; (c) votre utilisation de Se Connecter avec Apple est également régie par la Politique de Confidentialité d'Apple ; (d) vous pouvez être amené à vous authentifier via Face ID, Touch ID ou le code de verrouillage de votre appareil Apple ; (e) nous collectons et traitons les données qu'Apple partage avec nous (nom et email) conformément à cette Politique de Confidentialité."
+          "content": "Hassify propose l'authentification via Connexion avec Apple. En utilisant Se Connecter avec Apple, vous acceptez les Conditions d'Utilisation d'Apple et reconnaissez que : (a) Apple n'est pas responsable du fonctionnement de notre Service ; (b) Apple n'est pas responsable des réclamations découlant de votre utilisation de notre Service ; (c) votre utilisation de Se Connecter avec Apple est également régie par la Politique de Confidentialité d'Apple ; (d) vous pouvez être amené à vous authentifier via Face ID, Touch ID ou le code de verrouillage de votre appareil Apple ; (e) nous collectons et traitons les données qu'Apple partage avec nous (nom et email) conformément à cette Politique de Confidentialité."
         },
         "disputeResolution": {
           "title": "12. Résolution des Litiges",
@@ -1057,7 +1057,7 @@
         },
         "governingLaw": {
           "title": "13. Droit Applicable",
-          "content": "Ces Conditions seront régies et interprétées conformément aux lois de la juridiction dans laquelle CareerForge AI est enregistré, sans égard à ses dispositions en matière de conflit de lois. Toute action ou procédure légale non soumise à l'arbitrage sera exclusivement portée devant les tribunaux de cette juridiction, et vous consentez à la compétence personnelle de ces tribunaux."
+          "content": "Ces Conditions seront régies et interprétées conformément aux lois de la juridiction dans laquelle Hassify est enregistré, sans égard à ses dispositions en matière de conflit de lois. Toute action ou procédure légale non soumise à l'arbitrage sera exclusivement portée devant les tribunaux de cette juridiction, et vous consentez à la compétence personnelle de ces tribunaux."
         },
         "changes": {
           "title": "14. Modifications des Conditions",
@@ -1069,7 +1069,7 @@
         },
         "contact": {
           "title": "16. Nous Contacter",
-          "content": "Si vous avez des questions concernant ces Conditions d'Utilisation, veuillez nous contacter à : CareerForge AI, Équipe Juridique, Email : legal@careerforge.ai"
+          "content": "Si vous avez des questions concernant ces Conditions d'Utilisation, veuillez nous contacter à : Hassify, Équipe Juridique, Email : legal@hassify.com"
         }
       }
     }
@@ -1085,7 +1085,7 @@
       "blog": "Blog",
       "privacy": "Politique de Confidentialité",
       "terms": "Conditions d'Utilisation",
-      "copyright": "© 2025 CareerForge AI. Tous droits réservés."
+      "copyright": "© 2025 Hassify. Tous droits réservés."
     },
     "search": {
       "placeholder": "Rechercher des articles...",
@@ -1134,7 +1134,7 @@
     "ariaButton": "S'abonner à la newsletter",
     "success": {
       "title": "Merci pour votre abonnement !",
-      "description": "Vous recevrez des conseils de carrière, des astuces pour votre CV et des mises à jour CareerForge AI."
+      "description": "Vous recevrez des conseils de carrière, des astuces pour votre CV et des mises à jour Hassify."
     },
     "alreadySubscribed": {
       "title": "Vous êtes déjà abonné",
@@ -1228,7 +1228,7 @@
       "add": "Ajouter",
       "remove": "Retirer",
       "updating": "Mise à jour…",
-      "connectionErrorTitle": "Impossible de joindre CareerForge pour le moment",
+      "connectionErrorTitle": "Impossible de joindre Hassify pour le moment",
       "connectionErrorBody": "Vous êtes toujours connecté, mais la connexion au serveur a échoué. Vérifiez votre connexion internet et réessayez."
     },
     "resumeBuilder": {
@@ -1323,7 +1323,7 @@
       "billedAnnually": "Soit {price}/mois — facturé annuellement",
       "orYearly": "Ou {price}/an — économisez {savings}",
       "unlimited": "Illimité",
-      "contactSalesToast": "Contactez notre équipe commerciale à sales@careerforge.ai",
+      "contactSalesToast": "Contactez notre équipe commerciale à sales@hassify.com",
       "contactSales": "Contacter le service commercial",
       "upgradeTo": "Passer à {plan}",
       "downgrade": "Rétrograder",
@@ -1741,11 +1741,11 @@
       "fwdYourAddress": "Votre adresse personnelle",
       "fwdKeepPrivate": "Gardez-la privée : toute personne qui la connaît peut ajouter des e-mails à votre suivi.",
       "fwdGmail1": "Dans Gmail, ouvrez Paramètres (⚙) → Voir tous les paramètres → Transfert et POP/IMAP → Ajouter une adresse de transfert, et collez votre adresse.",
-      "fwdGmail2": "Gmail envoie une confirmation : elle apparaît dans vos notifications CareerForge (🔔) avec le lien et le code. Ouvrez-la pour confirmer.",
+      "fwdGmail2": "Gmail envoie une confirmation : elle apparaît dans vos notifications Hassify (🔔) avec le lien et le code. Ouvrez-la pour confirmer.",
       "fwdGmail3": "Créez un filtre (barre de recherche → options), par exemple : Objet contient application OR interview OR candidature OR entretien.",
-      "fwdGmail4": "Choisissez « Transférer à » votre adresse CareerForge, puis Créer le filtre.",
+      "fwdGmail4": "Choisissez « Transférer à » votre adresse Hassify, puis Créer le filtre.",
       "fwdOutlook1": "Dans Outlook, ouvrez Paramètres → Courrier → Règles → Ajouter une règle.",
-      "fwdOutlook2": "Condition : l'objet contient « application », « interview », « candidature »… Action : Transférer à votre adresse CareerForge. Enregistrez.",
+      "fwdOutlook2": "Condition : l'objet contient « application », « interview », « candidature »… Action : Transférer à votre adresse Hassify. Enregistrez.",
       "fwdManual": "Vous pouvez aussi transférer n'importe quel e-mail à la main. Les e-mails sans rapport avec une candidature sont ignorés.",
       "fwdReset": "Créer une nouvelle adresse (l'ancienne ne fonctionnera plus)",
       "fwdResetConfirm": "Créer une nouvelle adresse ? Les e-mails envoyés à l'ancienne n'arriveront plus dans votre suivi : pensez à mettre à jour vos règles de transfert.",
@@ -2162,7 +2162,7 @@
       "loadFailed": "Impossible de charger votre organisation.",
       "actionFailed": "Une erreur s'est produite. Veuillez réessayer.",
       "notMemberTitle": "Vous ne faites partie d'aucune organisation",
-      "notMemberBody": "Universités, centres de formation, cabinets et entreprises peuvent offrir CareerForge Pro à leurs membres grâce à l'offre Entreprise.",
+      "notMemberBody": "Universités, centres de formation, cabinets et entreprises peuvent offrir Hassify Pro à leurs membres grâce à l'offre Entreprise.",
       "learnEnterprise": "Découvrir l'offre Entreprise",
       "invitesForYou": "Invitations pour vous",
       "joinOrg": "Rejoindre {organization}",
@@ -2226,7 +2226,7 @@
     "join": {
       "loading": "Vérification de votre invitation…",
       "title": "Rejoindre {organization}",
-      "body": "{organization} vous invite sur CareerForge AI. Tant que vous êtes membre, vous avez toutes les fonctionnalités Pro sans frais pour vous.",
+      "body": "{organization} vous invite sur Hassify. Tant que vous êtes membre, vous avez toutes les fonctionnalités Pro sans frais pour vous.",
       "forEmail": "Cette invitation est pour {email}.",
       "join": "Rejoindre {organization}",
       "joining": "Connexion…",
@@ -2366,7 +2366,7 @@
       "atsNote": "Le score ATS porte sur le CV modifié le plus récemment par chaque membre, vérifié sans offre d'emploi. La vérification d'un membre pour une offre précise peut donner un autre score."
     },
     "orgBranding": {
-      "intro": "Vos membres voient votre logo en haut de leur menu, votre couleur dans CareerForge et vos modèles de CV recommandés en premier.",
+      "intro": "Vos membres voient votre logo en haut de leur menu, votre couleur dans Hassify et vos modèles de CV recommandés en premier.",
       "logoTitle": "Logo",
       "logoBody": "Affiché à vos membres et sur votre lien d'invitation.",
       "logoAlt": "Logo de {organization}",
@@ -2379,10 +2379,10 @@
       "tooBig": "Cette image dépasse 300 Ko.",
       "badType": "Veuillez utiliser une image PNG, JPG ou WebP.",
       "colorTitle": "Couleur",
-      "colorBody": "Remplace le bleu CareerForge pour vos membres (boutons, liens, éléments mis en avant).",
+      "colorBody": "Remplace le bleu Hassify pour vos membres (boutons, liens, éléments mis en avant).",
       "hex": "Code couleur",
       "preview": "Aperçu",
-      "useDefault": "Utiliser le bleu CareerForge",
+      "useDefault": "Utiliser le bleu Hassify",
       "lowContrast": "Cette couleur est trop claire : un texte blanc serait difficile à lire. Choisissez une teinte plus foncée.",
       "invalidColor": "Saisissez un code couleur comme #1d4ed8.",
       "templatesTitle": "Modèles de CV recommandés",
@@ -2430,7 +2430,7 @@
       "accessUntil": "Accès jusqu'au",
       "noEnd": "Sans date de fin",
       "toPay": "À payer",
-      "toPayBody": "Demandes de paiement de CareerForge. Le paiement fixe vos places et prolonge votre accès.",
+      "toPayBody": "Demandes de paiement de Hassify. Le paiement fixe vos places et prolonge votre accès.",
       "nothingToPay": "Rien à payer pour le moment.",
       "payNow": "Payer maintenant",
       "shareHint": "Quelqu'un d'autre paie (ex. votre service financier) ? Ouvrez la demande et partagez son lien. Aucun compte n'est nécessaire."
@@ -2438,7 +2438,7 @@
     "pay": {
       "loading": "Chargement…",
       "checking": "Confirmation de votre paiement…",
-      "for": "CareerForge AI Entreprise pour {organization}",
+      "for": "Hassify Entreprise pour {organization}",
       "periods": {
         "1": "1 mois",
         "3": "3 mois",
@@ -2453,11 +2453,11 @@
       "paidTitle": "Paiement reçu. Merci !",
       "paidBody": "L'accès de votre organisation est actif jusqu'au {date}.",
       "openOrganization": "Ouvrir mon organisation",
-      "cancelled": "Cette demande de paiement n'est plus valable. Veuillez contacter CareerForge pour en obtenir une nouvelle.",
+      "cancelled": "Cette demande de paiement n'est plus valable. Veuillez contacter Hassify pour en obtenir une nouvelle.",
       "errors": {
-        "not_found": "Ce lien de paiement n'est pas valide. Veuillez contacter CareerForge.",
+        "not_found": "Ce lien de paiement n'est pas valide. Veuillez contacter Hassify.",
         "invalid_email": "Veuillez saisir une adresse e-mail valide.",
-        "currency_unavailable": "Les paiements dans cette devise ne sont pas disponibles. Veuillez contacter CareerForge.",
+        "currency_unavailable": "Les paiements dans cette devise ne sont pas disponibles. Veuillez contacter Hassify.",
         "rate_limited": "Trop de tentatives. Patientez une minute et réessayez.",
         "not_completed": "Le paiement n'a pas abouti. Vous pouvez réessayer.",
         "not_confirmed": "Nous n'avons pas encore pu confirmer le paiement. Si vous avez été débité, il sera pris en compte dans quelques minutes ; sinon, réessayez.",
@@ -2477,9 +2477,9 @@
     "loadingTemplate": "Chargement du modèle…"
   },
   "enterprise": {
-    "badge": "CareerForge pour les organisations",
+    "badge": "Hassify pour les organisations",
     "title": "Aidez chaque personne que vous accompagnez à décrocher un emploi",
-    "subtitle": "Offrez à vos étudiants, stagiaires, candidats ou employés tout CareerForge Pro, et suivez leurs progrès depuis un seul endroit.",
+    "subtitle": "Offrez à vos étudiants, stagiaires, candidats ou employés tout Hassify Pro, et suivez leurs progrès depuis un seul endroit.",
     "ctaPrimary": "Nous contacter",
     "ctaSecondary": "Voir ce qui est inclus",
     "rollout": "L'offre Entreprise s'ouvre à ses premières organisations. Parlez-nous de la vôtre et nous la mettrons en place.",

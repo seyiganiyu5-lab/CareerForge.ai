@@ -41,7 +41,7 @@ export async function sendEmail(_payload: EmailPayload): Promise<EmailResult> {
   // import { Resend } from 'resend';
   // const resend = new Resend(process.env.RESEND_API_KEY);
   // const result = await resend.emails.send({
-  //   from: 'CareerForge AI <noreply@careerforge.ai>',
+  //   from: 'Hassify <noreply@hassify.com>',
   //   to: payload.to,
   //   subject: payload.subject,
   //   html: payload.html,
@@ -54,7 +54,7 @@ export async function sendEmail(_payload: EmailPayload): Promise<EmailResult> {
   // const apiInstance = SibApiV3Sdk.ApiClient.instance;
   // apiInstance.authenticate(process.env.BREVO_API_KEY!);
   // await new SibApiV3Sdk.TransactionalEmailsApi().sendTransacEmail({
-  //   sender: { name: 'CareerForge AI', email: 'noreply@careerforge.ai' },
+  //   sender: { name: 'Hassify', email: 'noreply@hassify.com' },
   //   to: [{ email: payload.to }],
   //   subject: payload.subject,
   //   htmlContent: payload.html,
@@ -74,14 +74,14 @@ export async function sendWelcomeEmail(
 ): Promise<EmailResult> {
   const subject =
     language === 'fr'
-      ? 'Bienvenue sur CareerForge AI 🎉'
-      : 'Welcome to CareerForge AI 🎉';
+      ? 'Bienvenue sur Hassify 🎉'
+      : 'Welcome to Hassify 🎉';
 
   const html =
     language === 'fr'
       ? `<div style="font-family:sans-serif;max-width:600px;margin:0 auto;padding:20px">
           <h1 style="color:#6C3CE1">Bienvenue !</h1>
-          <p>Merci de vous être abonné à la newsletter CareerForge AI.</p>
+          <p>Merci de vous être abonné à la newsletter Hassify.</p>
           <p>Vous recevrez bientôt des conseils de carrière, des astuces pour votre CV et des mises à jour produit.</p>
           <a href="/" style="display:inline-block;background:#6C3CE1;color:#fff;padding:12px 24px;border-radius:8px;text-decoration:none;margin-top:16px">
             Commencer maintenant
@@ -89,7 +89,7 @@ export async function sendWelcomeEmail(
         </div>`
       : `<div style="font-family:sans-serif;max-width:600px;margin:0 auto;padding:20px">
           <h1 style="color:#6C3CE1">Welcome!</h1>
-          <p>Thank you for subscribing to the CareerForge AI newsletter.</p>
+          <p>Thank you for subscribing to the Hassify newsletter.</p>
           <p>You'll soon receive career tips, resume advice, and product updates.</p>
           <a href="/" style="display:inline-block;background:#6C3CE1;color:#fff;padding:12px 24px;border-radius:8px;text-decoration:none;margin-top:16px">
             Get started

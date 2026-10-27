@@ -5,7 +5,7 @@ import { useAuth } from '@/lib/auth/context';
 const HEX = /^#[0-9a-f]{6}$/i;
 
 /**
- * Members of an organisation see its colour instead of the CareerForge blue
+ * Members of an organisation see its colour instead of the Hassify blue
  * across the dashboard. The colour is checked on the server (readable with
  * white text); in dark mode it is lightened so it stays visible.
  */

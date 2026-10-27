@@ -171,7 +171,7 @@ export default function AdminLeadsPage() {
                     </Link>
                   </Button>
                   <Button asChild variant="outline" className="w-full font-body">
-                    <a href={`mailto:${lead.email}?subject=${encodeURIComponent(`CareerForge AI Enterprise — ${lead.organization}`)}`}>{t('reply')}</a>
+                    <a href={`mailto:${lead.email}?subject=${encodeURIComponent(`Hassify Enterprise — ${lead.organization}`)}`}>{t('reply')}</a>
                   </Button>
                 </div>
               </div>

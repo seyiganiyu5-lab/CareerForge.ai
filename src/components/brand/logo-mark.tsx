@@ -2,13 +2,13 @@ import { useId } from 'react';
 import { cn } from '@/lib/utils';
 
 /**
- * The CareerForge mark: the C of "Career", glowing like hot metal, being
- * forged on an anvil. Same drawing as public/logo.svg.
+ * The Hassify mark: an H glowing like hot metal, being forged on an anvil.
+ * Same drawing as public/logo.svg.
  */
 export function LogoMark({ className }: { className?: string }) {
   const id = useId().replace(/:/g, '');
   return (
-    <svg viewBox="0 0 64 64" className={cn('w-9 h-9', className)} role="img" aria-label="CareerForge">
+    <svg viewBox="0 0 64 64" className={cn('w-9 h-9', className)} role="img" aria-label="Hassify">
       <defs>
         <linearGradient id={`${id}-bg`} x1="0" y1="0" x2="1" y2="1">
           <stop offset="0" stopColor="#2563EB" />
@@ -25,15 +25,16 @@ export function LogoMark({ className }: { className?: string }) {
         fill="#fff"
       />
       <path
-        d="M38.5 13.5 A11 11 0 1 0 38.5 30.5"
+        d="M21.5 11.5 V30.5 M36.5 11.5 V30.5 M21.5 21 H36.5"
         fill="none"
         stroke={`url(#${id}-hot)`}
         strokeWidth="6"
         strokeLinecap="round"
+        strokeLinejoin="round"
       />
-      <circle cx="45" cy="12" r="2" fill="#FACC15" />
-      <circle cx="47.5" cy="21" r="1.6" fill="#FACC15" />
-      <circle cx="43" cy="31" r="1.3" fill="#FACC15" opacity=".8" />
+      <circle cx="44" cy="11" r="2" fill="#FACC15" />
+      <circle cx="46.5" cy="19.5" r="1.6" fill="#FACC15" />
+      <circle cx="43.5" cy="28.5" r="1.3" fill="#FACC15" opacity=".8" />
     </svg>
   );
 }

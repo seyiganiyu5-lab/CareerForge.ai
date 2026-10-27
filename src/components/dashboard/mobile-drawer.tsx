@@ -69,7 +69,7 @@ export default function MobileDrawer({ open, onClose, pathname }: MobileDrawerPr
           <SheetTitle className="flex items-center gap-2.5">
             <LogoMark className="w-9 h-9 shrink-0" />
             <span className="font-heading text-lg font-bold text-foreground">
-              CareerForge <span className="text-brand">AI</span>
+              Hass<span className="text-brand">ify</span>
             </span>
           </SheetTitle>
         </SheetHeader>

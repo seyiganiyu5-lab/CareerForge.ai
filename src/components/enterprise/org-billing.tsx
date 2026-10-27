@@ -11,7 +11,7 @@ import { usePlanMoney } from '@/components/billing/plan-card-parts';
 import { INVOICE_STATUS_STYLE, type Invoice } from './org-payments-dialog';
 import { cn } from '@/lib/utils';
 
-/** Owners and admins: seats, end date, payment requests from CareerForge and past payments */
+/** Owners and admins: seats, end date, payment requests from Hassify and past payments */
 export default function OrgBilling() {
   const t = useTranslations('app.orgPayments');
   const { locale } = useLocale();

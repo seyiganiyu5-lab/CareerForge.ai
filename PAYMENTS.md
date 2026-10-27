@@ -1,6 +1,6 @@
 # Payments (Paystack)
 
-CareerForge AI takes payments with [Paystack](https://paystack.com). Pro is
+Hassify takes payments with [Paystack](https://paystack.com). Pro is
 bought one period at a time (a month or a year): there are no automatic
 charges. Users get reminders 3 days and 1 day before their plan ends, and
 renewing early adds the new period on top of the time they have left.
