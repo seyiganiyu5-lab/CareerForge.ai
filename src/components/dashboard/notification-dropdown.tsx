@@ -42,6 +42,9 @@ const ICONS: Record<string, LucideIcon> = {
   org_invite: UserPlus,
   org_joined: Users,
   org_removed: UserMinus,
+  org_invoice: CreditCard,
+  org_paid: CreditCard,
+  org_ending: CalendarClock,
 };
 
 // Usage counter → feature name (app.features.*)
@@ -144,6 +147,18 @@ export default function NotificationDropdown() {
         return { title: t('fwdConfirmTitle'), body: t('fwdConfirmBody', { code: d.code || '—' }) };
       case 'forward_skipped_limit':
         return { title: t('fwdSkippedTitle'), body: t('fwdSkippedBody', { subject: d.subject || '—' }) };
+      case 'org_invoice':
+      case 'org_paid': {
+        const p = n.data as { amount?: number; currency?: string; seats?: number; months?: number; organization?: string; until?: string | null };
+        const amount = typeof p.amount === 'number' && p.currency
+          ? new Intl.NumberFormat(locale === 'fr' ? 'fr-FR' : 'en-US', { style: 'currency', currency: p.currency, currencyDisplay: 'narrowSymbol', maximumFractionDigits: p.amount % 100 ? 2 : 0 }).format(p.amount / 100)
+          : '';
+        return n.type === 'org_invoice'
+          ? { title: t('orgInvoiceTitle'), body: t('orgInvoiceBody', { amount, seats: p.seats ?? 0 }) }
+          : { title: t('orgPaidTitle'), body: t('orgPaidBody', { organization: p.organization || '—', amount, until: p.until ? when(p.until) : '—' }) };
+      }
+      case 'org_ending':
+        return { title: t('orgEndingTitle'), body: t('orgEndingBody', { organization: d.organization || '—', when: when(d.date) }) };
       case 'payment_success': {
         const p = n.data as { plan?: string; amount?: number; currency?: string; until?: string | null };
         const amount = typeof p.amount === 'number' && p.currency

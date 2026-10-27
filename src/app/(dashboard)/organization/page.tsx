@@ -23,6 +23,7 @@ import {
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import ProgressView from '@/components/enterprise/progress-view';
 import BrandingSettings from '@/components/enterprise/branding-settings';
+import OrgBilling from '@/components/enterprise/org-billing';
 
 interface Member {
   id: string;
@@ -181,10 +182,11 @@ export default function OrganizationPage() {
 
       {isManager ? (
         <Tabs defaultValue="progress" className="space-y-4">
-          <TabsList>
+          <TabsList className="max-w-full overflow-x-auto justify-start">
             <TabsTrigger value="progress" className="font-body">{t('tabProgress')}</TabsTrigger>
             <TabsTrigger value="members" className="font-body">{t('tabMembers')}</TabsTrigger>
             <TabsTrigger value="branding" className="font-body">{t('tabBranding')}</TabsTrigger>
+            <TabsTrigger value="billing" className="font-body">{t('tabBilling')}</TabsTrigger>
           </TabsList>
           <TabsContent value="progress">
             <ProgressView organizationName={org.name} />
@@ -194,6 +196,9 @@ export default function OrganizationPage() {
           </TabsContent>
           <TabsContent value="branding">
             <BrandingSettings org={org} reload={load} />
+          </TabsContent>
+          <TabsContent value="billing">
+            <OrgBilling />
           </TabsContent>
         </Tabs>
       ) : (

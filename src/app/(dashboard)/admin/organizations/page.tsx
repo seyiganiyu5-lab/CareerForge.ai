@@ -3,7 +3,8 @@
 import { Suspense, useCallback, useEffect, useState } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { toast } from 'sonner';
-import { Building2, Copy, Loader2, Plus, ShieldAlert, Trash2 } from 'lucide-react';
+import { Building2, Copy, CreditCard, Loader2, Plus, ShieldAlert, Trash2 } from 'lucide-react';
+import OrgPaymentsDialog from '@/components/enterprise/org-payments-dialog';
 import { useAuth } from '@/lib/auth/context';
 import { useLocale, useTranslations } from '@/i18n/provider';
 import { Button } from '@/components/ui/button';
@@ -60,6 +61,7 @@ function AdminOrganizations() {
   const [saving, setSaving] = useState(false);
   const [ownerLink, setOwnerLink] = useState<{ email: string; path: string } | null>(null);
   const [deleting, setDeleting] = useState<AdminOrg | null>(null);
+  const [payments, setPayments] = useState<AdminOrg | null>(null);
   const [confirmName, setConfirmName] = useState('');
   const [deleteBusy, setDeleteBusy] = useState(false);
 
@@ -214,7 +216,7 @@ function AdminOrganizations() {
                     {o.owners.length ? t('owners', { emails: o.owners.join(', ') }) : t('noOwner')}
                   </p>
                 </div>
-                <div className="flex gap-2 shrink-0">
+                <div className="flex flex-wrap gap-2 shrink-0">
                   <Button
                     variant="outline"
                     size="sm"
@@ -222,6 +224,9 @@ function AdminOrganizations() {
                     onClick={() => setForm({ id: o.id, name: o.name, org_type: o.org_type, seats: String(o.seats), ends_at: o.ends_at ? o.ends_at.slice(0, 10) : '', owner_email: '' })}
                   >
                     {t('edit')}
+                  </Button>
+                  <Button variant="outline" size="sm" className="font-body gap-1.5" onClick={() => setPayments(o)}>
+                    <CreditCard className="w-4 h-4" /> {t('payments')}
                   </Button>
                   <Button variant="outline" size="sm" className="font-body" onClick={() => toggleStatus(o)}>
                     {o.status === 'active' ? t('pause') : t('resume')}
@@ -291,6 +296,8 @@ function AdminOrganizations() {
           </form>
         </DialogContent>
       </Dialog>
+
+      <OrgPaymentsDialog key={payments?.id ?? 'none'} org={payments} onClose={() => setPayments(null)} onChanged={load} />
 
       {/* Delete: type the name to confirm, it can't be undone */}
       <Dialog open={!!deleting} onOpenChange={(o) => !o && setDeleting(null)}>

@@ -632,7 +632,13 @@
       "orgJoinedTitle": "Nouveau membre",
       "orgJoinedBody": "{name} a rejoint {organization}.",
       "orgRemovedTitle": "Retiré de l'organisation",
-      "orgRemovedBody": "Vous n'êtes plus membre de {organization}. Vous retrouvez votre propre offre."
+      "orgRemovedBody": "Vous n'êtes plus membre de {organization}. Vous retrouvez votre propre offre.",
+      "orgInvoiceTitle": "Demande de paiement",
+      "orgInvoiceBody": "CareerForge demande {amount} pour {seats} places. Ouvrez pour payer.",
+      "orgPaidTitle": "Paiement reçu",
+      "orgPaidBody": "{organization} a payé {amount}. Accès jusqu'au {until}.",
+      "orgEndingTitle": "Renouvellement à venir",
+      "orgEndingBody": "L'accès de {organization} se termine {when}. Contactez CareerForge pour renouveler."
     },
     "userMenu": {
       "profile": "Mon Profil",
@@ -2214,7 +2220,8 @@
       "privacyNote": "La progression des membres est affichée uniquement en chiffres. Leurs CV, lettres et candidatures restent privés.",
       "tabProgress": "Progression",
       "tabMembers": "Membres et invitations",
-      "tabBranding": "Image de marque"
+      "tabBranding": "Image de marque",
+      "tabBilling": "Facturation"
     },
     "join": {
       "loading": "Vérification de votre invitation…",
@@ -2290,7 +2297,8 @@
       "deleteBody": "Cette action est définitive. Ses membres ({count}) perdent l'accès immédiatement et retrouvent leur propre offre, et ses invitations en attente ne fonctionnent plus. Les membres gardent leurs CV, lettres et candidatures.",
       "deleteConfirm": "Saisissez {name} pour confirmer",
       "deleted": "{name} supprimée",
-      "cancel": "Annuler"
+      "cancel": "Annuler",
+      "payments": "Paiements"
     },
     "orgProgress": {
       "loadFailed": "Impossible de charger la progression. Veuillez réessayer.",
@@ -2382,6 +2390,79 @@
       "save": "Enregistrer",
       "saved": "Image de marque enregistrée",
       "failed": "Une erreur s'est produite. Veuillez réessayer."
+    },
+    "orgPayments": {
+      "title": "Paiements · {name}",
+      "body": "Demandez à l'organisation de payer ses places. Elle reçoit un lien Paystack privé ; une fois le paiement fait, les places et la date de fin sont mises à jour automatiquement.",
+      "new": "Demander un paiement",
+      "seats": "Places",
+      "period": "Durée",
+      "periods": {
+        "1": "1 mois",
+        "3": "3 mois",
+        "6": "6 mois",
+        "12": "12 mois"
+      },
+      "unitPrice": "Prix par place et par mois",
+      "currency": "Devise",
+      "note": "Note pour l'organisation (facultatif)",
+      "notePlaceholder": "ex. année universitaire 2026–2027, facture CF-012",
+      "total": "Total à payer",
+      "totalHint": "Places : {seats} × {period} × {price} par place et par mois",
+      "createLink": "Créer le lien de paiement",
+      "created": "Lien de paiement créé et copié",
+      "copied": "Lien copié",
+      "copyLink": "Copier le lien",
+      "cancel": "Annuler",
+      "cancelRequest": "Annuler cette demande",
+      "history": "Paiements",
+      "none": "Aucun paiement pour le moment.",
+      "line": "Places : {seats} · {period}",
+      "paidOn": "Payé le {date} · accès jusqu'au {until}",
+      "createdOn": "Demandé le {date}",
+      "status": {
+        "open": "En attente de paiement",
+        "paid": "Payé",
+        "cancelled": "Annulé"
+      },
+      "currencyUnavailable": "Les paiements dans cette devise ne sont pas configurés.",
+      "failed": "Une erreur s'est produite. Veuillez réessayer.",
+      "accessUntil": "Accès jusqu'au",
+      "noEnd": "Sans date de fin",
+      "toPay": "À payer",
+      "toPayBody": "Demandes de paiement de CareerForge. Le paiement fixe vos places et prolonge votre accès.",
+      "nothingToPay": "Rien à payer pour le moment.",
+      "payNow": "Payer maintenant",
+      "shareHint": "Quelqu'un d'autre paie (ex. votre service financier) ? Ouvrez la demande et partagez son lien. Aucun compte n'est nécessaire."
+    },
+    "pay": {
+      "loading": "Chargement…",
+      "checking": "Confirmation de votre paiement…",
+      "for": "CareerForge AI Entreprise pour {organization}",
+      "periods": {
+        "1": "1 mois",
+        "3": "3 mois",
+        "6": "6 mois",
+        "12": "12 mois"
+      },
+      "line": "Places : {seats} · {period} · {price} par place et par mois",
+      "email": "E-mail pour le reçu",
+      "emailHint": "Paystack envoie le reçu à cette adresse.",
+      "payButton": "Payer {amount}",
+      "secure": "Paiement sécurisé par Paystack : carte, virement ou mobile money.",
+      "paidTitle": "Paiement reçu. Merci !",
+      "paidBody": "L'accès de votre organisation est actif jusqu'au {date}.",
+      "openOrganization": "Ouvrir mon organisation",
+      "cancelled": "Cette demande de paiement n'est plus valable. Veuillez contacter CareerForge pour en obtenir une nouvelle.",
+      "errors": {
+        "not_found": "Ce lien de paiement n'est pas valide. Veuillez contacter CareerForge.",
+        "invalid_email": "Veuillez saisir une adresse e-mail valide.",
+        "currency_unavailable": "Les paiements dans cette devise ne sont pas disponibles. Veuillez contacter CareerForge.",
+        "rate_limited": "Trop de tentatives. Patientez une minute et réessayez.",
+        "not_completed": "Le paiement n'a pas abouti. Vous pouvez réessayer.",
+        "not_confirmed": "Nous n'avons pas encore pu confirmer le paiement. Si vous avez été débité, il sera pris en compte dans quelques minutes ; sinon, réessayez.",
+        "failed": "Une erreur s'est produite. Veuillez réessayer."
+      }
     }
   },
   "a11y": {

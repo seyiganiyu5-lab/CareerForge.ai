@@ -328,8 +328,9 @@ model Organization {
   created_at          DateTime  @default(now())
   updated_at          DateTime  @updatedAt
 
-  members OrganizationMember[]
-  invites OrganizationInvite[]
+  members  OrganizationMember[]
+  invites  OrganizationInvite[]
+  invoices OrganizationInvoice[]
 }
 
 // A person can belong to one organisation at a time
@@ -361,4 +362,32 @@ model OrganizationInvite {
 
   @@unique([organization_id, email])
   @@index([email])
+}
+
+// Payment request for an organisation's seats, paid through /pay/<token>.
+// Paying sets the seats and adds the months to the organisation's end date.
+model OrganizationInvoice {
+  id                String    @id @default(cuid())
+  organization_id   String?   // kept as a record (null) if the organisation is deleted
+  organization_name String
+  seats             Int
+  months            Int
+  unit_price        Int       // per seat per month, in the currency's subunit (x100)
+  amount            Int       // total: seats x months x unit_price
+  currency          String
+  note              String    @default("")
+  token             String    @unique
+  status            String    @default("open") // open, paid, cancelled
+  reference         String?   @unique // Paystack reference once paid
+  payer_email       String?
+  payment_method    String?
+  paid_at           DateTime?
+  access_until      DateTime? // organisation's end date after this payment
+  created_by        String?
+  created_at        DateTime  @default(now())
+  updated_at        DateTime  @updatedAt
+
+  organization Organization? @relation(fields: [organization_id], references: [id], onDelete: SetNull)
+
+  @@index([organization_id, created_at])
 }
