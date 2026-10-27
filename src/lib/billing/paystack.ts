@@ -29,7 +29,8 @@ export interface PaystackTransaction {
   channel?: string; // card, bank, ussd, bank_transfer, mobile_money, ...
   paid_at?: string | null;
   created_at?: string;
-  metadata?: Partial<PaymentMetadata> | string | null;
+  // Organisation payments carry kind: 'org_invoice' and invoice_id instead
+  metadata?: (Partial<PaymentMetadata> & { kind?: string; invoice_id?: string }) | string | null;
 }
 
 async function paystack<T>(path: string, init?: RequestInit): Promise<T | null> {
@@ -59,7 +60,8 @@ export async function initializePayment(input: {
   currency: string;
   reference: string;
   callbackUrl: string;
-  metadata: PaymentMetadata & { plan_name: string };
+  // What the payment is for, read back when it is confirmed
+  metadata: Record<string, unknown>;
 }) {
   const result = await paystackCall<{ authorization_url: string; reference: string }>('/transaction/initialize', {
     method: 'POST',
@@ -96,7 +98,7 @@ export function isValidWebhookSignature(rawBody: string, signature: string | nul
   return expected.length === given.length && timingSafeEqual(expected, given);
 }
 
-export function paymentMetadata(tx: PaystackTransaction): Partial<PaymentMetadata> {
+export function paymentMetadata(tx: PaystackTransaction): Partial<PaymentMetadata> & { kind?: string; invoice_id?: string } {
   if (!tx.metadata) return {};
   if (typeof tx.metadata === 'string') {
     try {

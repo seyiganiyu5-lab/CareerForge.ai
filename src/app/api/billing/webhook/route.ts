@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { applySuccessfulPayment, isValidWebhookSignature, verifyPayment } from '@/lib/billing/paystack';
+import { applyInvoicePayment, isInvoicePayment } from '@/lib/enterprise/invoices';
 
 /**
  * POST /api/billing/webhook
@@ -32,7 +33,8 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Could not verify transaction' }, { status: 502 });
     }
 
-    const result = await applySuccessfulPayment(tx);
+    // Enterprise seat payments, or a person's own plan
+    const result = isInvoicePayment(tx) ? await applyInvoicePayment(tx) : await applySuccessfulPayment(tx);
     if (!result.ok) {
       console.error(`[billing] Webhook payment ${tx.reference} not applied: ${result.reason}`);
     }

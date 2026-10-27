@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { getAuthUser } from '@/lib/subscription/auth-helpers';
 import { db } from '@/lib/db';
 import { generateDueNotifications } from '@/lib/notifications';
+import { remindOrgRenewal } from '@/lib/enterprise/invoices';
 
 // Checking due dates is cheap, but there's no need to do it on every poll
 const lastCheck = new Map<string, number>();
@@ -21,7 +22,7 @@ export async function GET(request: NextRequest) {
     if (Date.now() - last > CHECK_EVERY_MS) {
       lastCheck.set(auth.userId, Date.now());
       try {
-        await generateDueNotifications(auth.userId);
+        await Promise.all([generateDueNotifications(auth.userId), remindOrgRenewal(auth.userId)]);
       } catch (err) {
         console.error('Due notifications check failed:', err);
       }
