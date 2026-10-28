@@ -2,7 +2,7 @@
 
 import { useTranslations } from '@/i18n/provider';
 import LegalHero from '@/components/legal/legal-hero';
-import Link from 'next/link';
+import HomeLink from '@/components/home-link';
 
 const PRIVACY_SECTIONS = [
   'infoWeCollect',
@@ -30,12 +30,9 @@ export default function PrivacyPolicyContent() {
     <article className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 pb-32 sm:pb-40">
       {/* Back to Home */}
       <div className="pt-6">
-        <Link
-          href="/"
-          className="inline-flex items-center text-sm text-muted-foreground hover:text-foreground transition-colors font-body"
-        >
+        <HomeLink className="inline-flex items-center text-sm text-muted-foreground hover:text-foreground transition-colors font-body" signedInLabel={tGeneral('backToDashboard')}>
           {tGeneral('backToHome')}
-        </Link>
+        </HomeLink>
       </div>
 
       {/* Hero */}

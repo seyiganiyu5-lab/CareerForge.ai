@@ -5,6 +5,7 @@ import { useTheme } from 'next-themes';
 import { useTranslations, useLocale } from '@/i18n/provider';
 import { useSyncExternalStore } from 'react';
 import { useRouter } from 'next/navigation';
+import { useHomeHref } from '@/components/home-link';
 import { Sun, Moon, Globe, ArrowLeft } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { LogoMark } from '@/components/brand/logo-mark';
@@ -21,6 +22,8 @@ export default function AuthLayout({ children }: { children: React.ReactNode }) 
     () => false
   );
   const router = useRouter();
+  // Signed-in people (e.g. on reset password) go back to their dashboard
+  const homeHref = useHomeHref();
 
   return (
     <div className="min-h-screen flex flex-col bg-background hero-gradient">
@@ -31,7 +34,7 @@ export default function AuthLayout({ children }: { children: React.ReactNode }) 
             <Button
               variant="ghost"
               size="icon"
-              onClick={() => router.push('/')}
+              onClick={() => router.push(homeHref)}
               className="text-muted-foreground hover:text-foreground"
               aria-label={tA('backToHome')}
               title={tAuth('back')}
@@ -43,7 +46,7 @@ export default function AuthLayout({ children }: { children: React.ReactNode }) 
               animate={{ opacity: 1, x: 0 }}
               transition={{ duration: 0.5 }}
               className="flex items-center gap-2 cursor-pointer"
-              onClick={() => router.push('/')}
+              onClick={() => router.push(homeHref)}
             >
             <LogoMark className="w-9 h-9 shrink-0" />
             <span className="font-heading text-lg font-bold text-foreground">
