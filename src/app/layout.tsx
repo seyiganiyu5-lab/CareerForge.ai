@@ -37,11 +37,12 @@ export const metadata: Metadata = {
   keywords: ["resume builder", "AI resume", "cover letter", "ATS optimization", "ATS standards", "job analysis", "job application", "career platform"],
   metadataBase: new URL(process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000"),
   icons: {
+    // ?v= changes when the logo does, so browsers fetch the new one instead of a cached copy
     icon: [
-      { url: "/logo.svg", type: "image/svg+xml" },
-      { url: "/brand/hassify-icon-192.png", type: "image/png", sizes: "192x192" },
+      { url: "/logo.svg?v=ascent", type: "image/svg+xml" },
+      { url: "/brand/hassify-icon-192.png?v=ascent", type: "image/png", sizes: "192x192" },
     ],
-    apple: "/apple-touch-icon.png",
+    apple: "/apple-touch-icon.png?v=ascent",
   },
   // Picture shown when a link to the site is shared (WhatsApp, LinkedIn, X...)
   openGraph: {
