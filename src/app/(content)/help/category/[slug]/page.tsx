@@ -2,6 +2,7 @@
 
 import { useMemo } from 'react';
 import Link from 'next/link';
+import HomeLink from '@/components/home-link';
 import { useParams } from 'next/navigation';
 import { motion } from 'framer-motion';
 import { ChevronRight, ArrowLeft } from 'lucide-react';
@@ -48,9 +49,9 @@ export default function CategoryPage() {
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8 md:py-12">
         {/* Breadcrumb */}
         <nav className="flex items-center gap-1.5 text-sm text-muted-foreground mb-8 font-body">
-          <Link href="/" className="hover:text-foreground transition-colors">
+          <HomeLink className="hover:text-foreground transition-colors">
             {locale === 'fr' ? 'Accueil' : 'Home'}
-          </Link>
+          </HomeLink>
           <ChevronRight className="h-3.5 w-3.5" />
           <Link href="/help" className="hover:text-foreground transition-colors">
             {locale === 'fr' ? 'Centre d\'Aide' : 'Help Center'}
