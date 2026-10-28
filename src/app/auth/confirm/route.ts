@@ -3,6 +3,8 @@ import type { EmailOtpType } from '@supabase/supabase-js';
 import { createClient } from '@/lib/supabase/server';
 import { SUPABASE_SIGN_IN_TIMEOUT_MS } from '@/lib/supabase/fetch-with-timeout';
 import { ensureProfile, getSiteUrl } from '@/lib/auth/profile';
+import { isAdminEmail } from '@/lib/admin';
+import { notifyAdminSignIn } from '@/lib/admin-audit';
 
 /**
  * GET /auth/confirm — landing point for links from Supabase:
@@ -33,7 +35,11 @@ export async function GET(request: NextRequest) {
 
   if (!error) {
     const { data: { user } } = await supabase.auth.getUser();
-    if (user) await ensureProfile(user);
+    if (user) {
+      const profile = await ensureProfile(user);
+      // Google sign-in (code) to an admin account
+      if (code && isAdminEmail(profile.email)) await notifyAdminSignIn({ userId: profile.id, email: profile.email }, 'google');
+    }
     return NextResponse.redirect(new URL(next, siteUrl));
   }
 

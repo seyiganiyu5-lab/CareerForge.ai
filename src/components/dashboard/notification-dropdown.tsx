@@ -2,7 +2,7 @@
 
 import React, { useCallback, useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { Bell, Briefcase, Mail, CalendarClock, MessageSquareReply, Hourglass, Gift, AlarmClock, Gauge, CreditCard, Building2, UserPlus, UserMinus, Users, type LucideIcon } from 'lucide-react';
+import { Bell, Briefcase, Mail, CalendarClock, MessageSquareReply, Hourglass, Gift, AlarmClock, Gauge, CreditCard, Building2, UserPlus, UserMinus, Users, LogIn, type LucideIcon } from 'lucide-react';
 import { useLocale, useTranslations } from '@/i18n/provider';
 import { useRelativeTime } from '@/i18n/use-relative-time';
 import { Button } from '@/components/ui/button';
@@ -45,6 +45,7 @@ const ICONS: Record<string, LucideIcon> = {
   org_invoice: CreditCard,
   org_paid: CreditCard,
   org_ending: CalendarClock,
+  admin_signin: LogIn,
 };
 
 // Usage counter → feature name (app.features.*)
@@ -157,6 +158,8 @@ export default function NotificationDropdown() {
           ? { title: t('orgInvoiceTitle'), body: t('orgInvoiceBody', { amount, seats: p.seats ?? 0 }) }
           : { title: t('orgPaidTitle'), body: t('orgPaidBody', { organization: p.organization || '—', amount, until: p.until ? when(p.until) : '—' }) };
       }
+      case 'admin_signin':
+        return { title: t('adminSigninTitle'), body: t('adminSigninBody', { email: d.email || '—', device: d.device || '—', when: when(d.date) }) };
       case 'org_ending':
         return { title: t('orgEndingTitle'), body: t('orgEndingBody', { organization: d.organization || '—', when: when(d.date) }) };
       case 'payment_success': {

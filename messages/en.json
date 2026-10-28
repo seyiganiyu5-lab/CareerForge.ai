@@ -580,7 +580,8 @@
       "expand": "Expand",
       "adminLeads": "Enterprise requests",
       "organization": "Organisation",
-      "adminOrgs": "Organisations"
+      "adminOrgs": "Organisations",
+      "adminActivity": "Admin activity"
     },
     "topNav": {
       "searchPlaceholder": "Search pages, resumes, cover letters, jobs...",
@@ -638,7 +639,9 @@
       "orgPaidTitle": "Payment received",
       "orgPaidBody": "{organization} paid {amount}. Access until {until}.",
       "orgEndingTitle": "Renewal coming up",
-      "orgEndingBody": "{organization}'s access ends {when}. Contact Hassify to renew."
+      "orgEndingBody": "{organization}'s access ends {when}. Contact Hassify to renew.",
+      "adminSigninTitle": "Admin sign-in",
+      "adminSigninBody": "{email} signed in from {device}, {when}. Not you? Change the password now."
     },
     "userMenu": {
       "profile": "My Profile",
@@ -2462,6 +2465,69 @@
         "not_completed": "The payment wasn't completed. You can try again.",
         "not_confirmed": "We couldn't confirm the payment yet. If money was taken, it will be applied within a few minutes; otherwise try again.",
         "failed": "Something went wrong. Please try again."
+      }
+    },
+    "adminMfa": {
+      "title": "Two-step verification",
+      "gateBody": "Admin pages need your password and a 6-digit code from the authenticator app on your phone, so a stolen password alone can't open them.",
+      "settingsBody": "Protects the admin pages (Enterprise requests, Organisations, Admin activity) with a code from your phone.",
+      "setupIntro": "Install Google Authenticator or Microsoft Authenticator on your phone, then set it up here. It takes about a minute.",
+      "setup": "Set up authenticator app",
+      "step1": "Open your authenticator app and tap + (add an account).",
+      "step2": "Scan this QR code. \"Hassify\" appears in the app.",
+      "step3": "Type the 6-digit code the app shows below.",
+      "qrAlt": "QR code to scan with your authenticator app",
+      "cantScan": "Can't scan? Type this key in the app instead:",
+      "copyKey": "Copy key",
+      "keyCopied": "Key copied",
+      "enterCode": "Open your authenticator app and enter the 6-digit code for Hassify.",
+      "codeLabel": "6-digit code",
+      "verify": "Verify",
+      "enabled": "Two-step verification is on",
+      "verified": "Verified",
+      "lostPhone": "Lost your phone? Whoever manages the server can set ADMIN_MFA=\"off\" in .env for a moment, then you remove the old authenticator in Settings and set up a new one.",
+      "on": "On",
+      "onBody": "Admin pages ask for a code from your authenticator app in each new session.",
+      "remove": "Remove authenticator",
+      "removeTitle": "Remove your authenticator app?",
+      "removeBody": "Use this when you change phone. You'll set up the new phone straight away; until then the admin pages stay locked.",
+      "removed": "Authenticator removed. Set up the new one now.",
+      "cancel": "Cancel",
+      "offWarning": "Two-step verification is turned off on this server (ADMIN_MFA=\"off\"). Remove that line from .env and restart to protect the admin pages again.",
+      "errors": {
+        "invalid_code": "Enter the 6 digits shown in the app.",
+        "wrong_code": "That code isn't right. Check the time on your phone and try the newest code.",
+        "rate_limited": "Too many tries. Wait 5 minutes and try again.",
+        "enroll_failed": "Couldn't start the set-up. Check that two-step verification (TOTP) is enabled in Supabase → Authentication → Multi-Factor.",
+        "failed": "Something went wrong. Please try again."
+      }
+    },
+    "adminActivity": {
+      "title": "Admin activity",
+      "subtitle": "Every admin sign-in and important admin action, newest first. Nothing here can be edited or deleted from the app.",
+      "empty": "Nothing yet.",
+      "kinds": {
+        "all": "All",
+        "signin": "Sign-ins",
+        "security": "Security",
+        "org": "Organisations",
+        "invoice": "Payments",
+        "lead": "Requests"
+      },
+      "actions": {
+        "admin_signin": "Signed in",
+        "admin_verified": "Entered authenticator code",
+        "admin_mfa_enrolled": "Turned on two-step verification",
+        "admin_mfa_removed": "Removed authenticator app",
+        "admin_mfa_failed": "Wrong authenticator code",
+        "org_create": "Created organisation",
+        "org_update": "Edited organisation",
+        "org_pause": "Paused organisation",
+        "org_resume": "Resumed organisation",
+        "org_delete": "Deleted organisation",
+        "invoice_create": "Requested payment",
+        "invoice_cancel": "Cancelled payment request",
+        "lead_status": "Changed request status"
       }
     }
   },

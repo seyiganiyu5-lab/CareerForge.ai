@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
 import { db } from '@/lib/db';
 import { requireAdmin } from '@/lib/admin-auth';
+import { logAdminAction } from '@/lib/admin-audit';
 import { enabledCurrencies } from '@/lib/billing/currency';
 import { MONTH_OPTIONS, invoicePath, newInvoiceToken, notifyInvoiceCreated } from '@/lib/enterprise/invoices';
 
@@ -61,6 +62,10 @@ export async function POST(request: NextRequest, { params }: Params) {
     },
   });
   await notifyInvoiceCreated(invoice).catch(() => {});
+  await logAdminAction(auth, 'invoice.create', {
+    type: 'invoice', id: invoice.id,
+    summary: `${org.name} · ${seats} seats × ${months} months · ${(invoice.amount / 100).toLocaleString('en-US')} ${currency}`,
+  });
 
   const { token, ...rest } = invoice;
   return NextResponse.json({ success: true, invoice: { ...rest, path: invoicePath(token) } });

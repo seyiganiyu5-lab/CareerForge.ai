@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
 import { db } from '@/lib/db';
 import { requireAdmin } from '@/lib/admin-auth';
+import { logAdminAction } from '@/lib/admin-audit';
 import { ORG_TYPES } from '@/lib/enterprise/leads';
 import { createInvites, newInviteCode } from '@/lib/enterprise/organizations';
 
@@ -77,6 +78,8 @@ export async function POST(request: NextRequest) {
     const result = await createInvites(org, [email], 'owner', auth.userId);
     ownerInvite = result.created?.[0] ?? null;
   }
+
+  await logAdminAction(auth, 'org.create', { type: 'organization', id: org.id, summary: `${org.name} · ${seats} seats · owner ${email}` });
 
   if (lead_id) {
     await db.enterpriseLead.update({ where: { id: lead_id }, data: { status: 'won' } }).catch(() => {});

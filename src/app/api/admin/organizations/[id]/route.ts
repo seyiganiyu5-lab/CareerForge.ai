@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
 import { db } from '@/lib/db';
 import { requireAdmin } from '@/lib/admin-auth';
+import { logAdminAction } from '@/lib/admin-audit';
 import { ORG_STATUSES } from '@/lib/enterprise/organizations';
 import { createNotification } from '@/lib/notifications';
 
@@ -14,7 +15,7 @@ const updateSchema = z.object({
 
 /** PATCH /api/admin/organizations/:id — seats, end date, name or status (site admins only) */
 export async function PATCH(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
-  const { error } = await requireAdmin();
+  const { auth, error } = await requireAdmin();
   if (error) return error;
 
   const { id } = await params;
@@ -30,6 +31,14 @@ export async function PATCH(request: NextRequest, { params }: { params: Promise<
     },
   }).catch(() => null);
   if (!organization) return NextResponse.json({ success: false, error: 'not_found' }, { status: 404 });
+  const changes = [
+    rest.name !== undefined && `name ${rest.name}`,
+    rest.seats !== undefined && `seats ${rest.seats}`,
+    ends_at !== undefined && `ends ${ends_at ?? 'never'}`,
+    rest.status && (rest.status === 'active' ? 'resumed' : 'paused'),
+  ].filter(Boolean).join(', ');
+  await logAdminAction(auth, rest.status && Object.keys(parsed.data).length === 1 ? (rest.status === 'active' ? 'org.resume' : 'org.pause') : 'org.update',
+    { type: 'organization', id, summary: `${organization.name} · ${changes}` });
   return NextResponse.json({ success: true, organization });
 }
 
@@ -39,7 +48,7 @@ export async function PATCH(request: NextRequest, { params }: { params: Promise<
  * go back to their own plan and keep their CVs, letters and applications.
  */
 export async function DELETE(_request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
-  const { error } = await requireAdmin();
+  const { auth, error } = await requireAdmin();
   if (error) return error;
 
   const { id } = await params;
@@ -60,5 +69,6 @@ export async function DELETE(_request: NextRequest, { params }: { params: Promis
       link: '/billing',
     }).catch(() => {})));
 
+  await logAdminAction(auth, 'org.delete', { type: 'organization', id, summary: `${org.name} · ${org.members.length} members removed` });
   return NextResponse.json({ success: true, removed_members: org.members.length });
 }

@@ -4,6 +4,8 @@ import { SUPABASE_SIGN_IN_TIMEOUT_MS } from '@/lib/supabase/fetch-with-timeout';
 import { ensureProfile, toPublicUser } from '@/lib/auth/profile';
 import { validateEmail } from '@/lib/auth/utils';
 import type { AuthResponse, LoginCredentials } from '@/lib/auth/types';
+import { isAdminEmail } from '@/lib/admin';
+import { notifyAdminSignIn } from '@/lib/admin-audit';
 
 function fail(error: string, status: number, extra?: Partial<AuthResponse>) {
   return NextResponse.json({ success: false, error, ...extra } satisfies AuthResponse, { status });
@@ -42,6 +44,7 @@ export async function POST(request: NextRequest) {
     }
 
     const profile = await ensureProfile(data.user);
+    if (isAdminEmail(profile.email)) await notifyAdminSignIn({ userId: profile.id, email: profile.email }, 'password');
     return NextResponse.json({ success: true, user: toPublicUser(profile) } satisfies AuthResponse);
   } catch (error) {
     console.error('Login error:', error);

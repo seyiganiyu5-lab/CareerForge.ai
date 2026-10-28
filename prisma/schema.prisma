@@ -391,3 +391,20 @@ model OrganizationInvoice {
 
   @@index([organization_id, created_at])
 }
+
+// What site admins did (organisations, payments, requests) and admin
+// sign-ins. Written by the app only; never edited.
+model AdminAuditLog {
+  id          String   @id @default(cuid())
+  actor_id    String?
+  actor_email String
+  action      String   // e.g. org.create, org.delete, invoice.create, admin.signin
+  target_type String?  // organization, invoice, lead
+  target_id   String?
+  summary     String   @default("") // short human-readable details, e.g. the organisation's name
+  ip          String?
+  user_agent  String?
+  created_at  DateTime @default(now())
+
+  @@index([created_at])
+}

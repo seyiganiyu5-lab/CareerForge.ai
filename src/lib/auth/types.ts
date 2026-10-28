@@ -16,6 +16,8 @@ export interface User {
   onboarding_completed: boolean;
   /** Site admin (ADMIN_EMAILS): sees the Enterprise requests page */
   is_admin?: boolean;
+  /** Admins: two-step verification for the admin pages in this session */
+  admin_mfa?: 'off' | 'verified' | 'needs_code' | 'not_enrolled';
   /** Enterprise organisation the user belongs to */
   organization?: {
     id: string;

@@ -1,11 +1,12 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/lib/db';
 import { requireAdmin } from '@/lib/admin-auth';
+import { logAdminAction } from '@/lib/admin-audit';
 import { LEAD_STATUSES } from '@/lib/enterprise/leads';
 
 /** PATCH /api/admin/leads/:id { status } — follow up on a request (admins only) */
 export async function PATCH(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
-  const { error } = await requireAdmin();
+  const { auth, error } = await requireAdmin();
   if (error) return error;
 
   const { id } = await params;
@@ -15,5 +16,6 @@ export async function PATCH(request: NextRequest, { params }: { params: Promise<
   }
   const lead = await db.enterpriseLead.update({ where: { id }, data: { status } }).catch(() => null);
   if (!lead) return NextResponse.json({ success: false, error: 'not_found' }, { status: 404 });
+  await logAdminAction(auth, 'lead.status', { type: 'lead', id, summary: `${lead.organization} → ${status}` });
   return NextResponse.json({ success: true, lead });
 }
