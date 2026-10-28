@@ -66,3 +66,6 @@ auth-state.json
 /tool-results/
 /agent-ctx/
 *.bak
+
+# Written by `next dev` for coding tools; not part of the app
+AGENTS.md

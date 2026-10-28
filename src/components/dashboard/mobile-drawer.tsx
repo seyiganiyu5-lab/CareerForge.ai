@@ -7,7 +7,7 @@ import { useAuth } from '@/lib/auth/context';
 import {
   LayoutDashboard, FileText, FolderOpen, Mail, Sparkles,
   ShieldCheck, Briefcase, LayoutTemplate, User, CreditCard,
-  Settings, HelpCircle, LogOut, Inbox, Building2,
+  Settings, HelpCircle, LogOut, Inbox, Building2, History,
 } from 'lucide-react';
 import { Separator } from '@/components/ui/separator';
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from '@/components/ui/sheet';
@@ -47,6 +47,7 @@ const DRAWER_ITEMS: DrawerItem[] = [
 const ADMIN_ITEMS: DrawerItem[] = [
   { key: 'adminLeads', icon: Inbox, href: '/admin/leads' },
   { key: 'adminOrgs', icon: Building2, href: '/admin/organizations' },
+  { key: 'adminActivity', icon: History, href: '/admin/activity' },
 ];
 // Shown to members of an Enterprise organisation
 const ORG_ITEM: DrawerItem = { key: 'organization', icon: Building2, href: '/organization' };

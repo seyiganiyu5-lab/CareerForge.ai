@@ -1,10 +1,11 @@
 import { NextResponse } from 'next/server';
 import { db } from '@/lib/db';
 import { requireAdmin } from '@/lib/admin-auth';
+import { logAdminAction } from '@/lib/admin-audit';
 
 /** PATCH /api/admin/invoices/:id { status: 'cancelled' } — cancel an unpaid payment request (site admins only) */
 export async function PATCH(request: Request, { params }: { params: Promise<{ id: string }> }) {
-  const { error } = await requireAdmin();
+  const { auth, error } = await requireAdmin();
   if (error) return error;
   const { id } = await params;
   const body = await request.json().catch(() => ({}));
@@ -13,5 +14,10 @@ export async function PATCH(request: Request, { params }: { params: Promise<{ id
   // Paid ones stay as they are
   const { count } = await db.organizationInvoice.updateMany({ where: { id, status: 'open' }, data: { status: 'cancelled' } });
   if (!count) return NextResponse.json({ success: false, error: 'not_open' }, { status: 409 });
+  const invoice = await db.organizationInvoice.findUnique({ where: { id }, select: { organization_name: true, amount: true, currency: true } });
+  await logAdminAction(auth, 'invoice.cancel', {
+    type: 'invoice', id,
+    summary: invoice ? `${invoice.organization_name} · ${(invoice.amount / 100).toLocaleString('en-US')} ${invoice.currency}` : '',
+  });
   return NextResponse.json({ success: true });
 }

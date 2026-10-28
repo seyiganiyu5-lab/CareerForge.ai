@@ -580,7 +580,8 @@
       "expand": "Développer",
       "adminLeads": "Demandes Entreprise",
       "organization": "Organisation",
-      "adminOrgs": "Organisations"
+      "adminOrgs": "Organisations",
+      "adminActivity": "Activité admin"
     },
     "topNav": {
       "searchPlaceholder": "Rechercher pages, CV, lettres, candidatures...",
@@ -638,7 +639,9 @@
       "orgPaidTitle": "Paiement reçu",
       "orgPaidBody": "{organization} a payé {amount}. Accès jusqu'au {until}.",
       "orgEndingTitle": "Renouvellement à venir",
-      "orgEndingBody": "L'accès de {organization} se termine {when}. Contactez Hassify pour renouveler."
+      "orgEndingBody": "L'accès de {organization} se termine {when}. Contactez Hassify pour renouveler.",
+      "adminSigninTitle": "Connexion admin",
+      "adminSigninBody": "{email} s'est connecté depuis {device}, {when}. Ce n'est pas vous ? Changez le mot de passe maintenant."
     },
     "userMenu": {
       "profile": "Mon Profil",
@@ -2462,6 +2465,69 @@
         "not_completed": "Le paiement n'a pas abouti. Vous pouvez réessayer.",
         "not_confirmed": "Nous n'avons pas encore pu confirmer le paiement. Si vous avez été débité, il sera pris en compte dans quelques minutes ; sinon, réessayez.",
         "failed": "Une erreur s'est produite. Veuillez réessayer."
+      }
+    },
+    "adminMfa": {
+      "title": "Validation en deux étapes",
+      "gateBody": "Les pages d'administration demandent votre mot de passe et un code à 6 chiffres de l'application d'authentification de votre téléphone : un mot de passe volé ne suffit pas.",
+      "settingsBody": "Protège les pages d'administration (Demandes Entreprise, Organisations, Activité admin) avec un code de votre téléphone.",
+      "setupIntro": "Installez Google Authenticator ou Microsoft Authenticator sur votre téléphone, puis configurez-le ici. Cela prend environ une minute.",
+      "setup": "Configurer l'application",
+      "step1": "Ouvrez votre application d'authentification et touchez + (ajouter un compte).",
+      "step2": "Scannez ce QR code. « Hassify » apparaît dans l'application.",
+      "step3": "Saisissez ci-dessous le code à 6 chiffres affiché par l'application.",
+      "qrAlt": "QR code à scanner avec votre application d'authentification",
+      "cantScan": "Impossible de scanner ? Saisissez plutôt cette clé dans l'application :",
+      "copyKey": "Copier la clé",
+      "keyCopied": "Clé copiée",
+      "enterCode": "Ouvrez votre application d'authentification et saisissez le code à 6 chiffres de Hassify.",
+      "codeLabel": "Code à 6 chiffres",
+      "verify": "Vérifier",
+      "enabled": "La validation en deux étapes est activée",
+      "verified": "Vérifié",
+      "lostPhone": "Téléphone perdu ? La personne qui gère le serveur peut mettre ADMIN_MFA=\"off\" dans .env un instant ; vous supprimez alors l'ancienne application dans Paramètres et en configurez une nouvelle.",
+      "on": "Activée",
+      "onBody": "Les pages d'administration demandent un code de votre application à chaque nouvelle session.",
+      "remove": "Supprimer l'application",
+      "removeTitle": "Supprimer votre application d'authentification ?",
+      "removeBody": "À utiliser quand vous changez de téléphone. Configurez le nouveau téléphone tout de suite ; d'ici là, les pages d'administration restent verrouillées.",
+      "removed": "Application supprimée. Configurez la nouvelle maintenant.",
+      "cancel": "Annuler",
+      "offWarning": "La validation en deux étapes est désactivée sur ce serveur (ADMIN_MFA=\"off\"). Supprimez cette ligne de .env et redémarrez pour protéger à nouveau les pages d'administration.",
+      "errors": {
+        "invalid_code": "Saisissez les 6 chiffres affichés dans l'application.",
+        "wrong_code": "Ce code n'est pas bon. Vérifiez l'heure de votre téléphone et essayez le code le plus récent.",
+        "rate_limited": "Trop de tentatives. Patientez 5 minutes et réessayez.",
+        "enroll_failed": "Impossible de lancer la configuration. Vérifiez que la validation en deux étapes (TOTP) est activée dans Supabase → Authentication → Multi-Factor.",
+        "failed": "Une erreur s'est produite. Veuillez réessayer."
+      }
+    },
+    "adminActivity": {
+      "title": "Activité admin",
+      "subtitle": "Chaque connexion admin et chaque action importante, de la plus récente à la plus ancienne. Rien ici ne peut être modifié ni supprimé depuis l'application.",
+      "empty": "Rien pour le moment.",
+      "kinds": {
+        "all": "Tout",
+        "signin": "Connexions",
+        "security": "Sécurité",
+        "org": "Organisations",
+        "invoice": "Paiements",
+        "lead": "Demandes"
+      },
+      "actions": {
+        "admin_signin": "Connexion",
+        "admin_verified": "Code d'authentification saisi",
+        "admin_mfa_enrolled": "Validation en deux étapes activée",
+        "admin_mfa_removed": "Application d'authentification supprimée",
+        "admin_mfa_failed": "Code d'authentification erroné",
+        "org_create": "Organisation créée",
+        "org_update": "Organisation modifiée",
+        "org_pause": "Organisation mise en pause",
+        "org_resume": "Organisation réactivée",
+        "org_delete": "Organisation supprimée",
+        "invoice_create": "Paiement demandé",
+        "invoice_cancel": "Demande de paiement annulée",
+        "lead_status": "Statut de demande modifié"
       }
     }
   },

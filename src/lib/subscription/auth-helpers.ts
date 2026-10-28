@@ -12,5 +12,10 @@ export async function getAuthUser(_request?: Request) {
   const claims = data?.claims;
   if (error || !claims?.sub) return null;
 
-  return { userId: claims.sub, email: (claims.email as string) ?? '' };
+  return {
+    userId: claims.sub,
+    email: (claims.email as string) ?? '',
+    // 'aal2' once the person has entered a two-step verification code in this session
+    aal: (claims.aal as string) ?? 'aal1',
+  };
 }

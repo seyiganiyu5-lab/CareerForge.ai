@@ -22,6 +22,7 @@ import {
   ChevronRight,
   Inbox,
   Building2,
+  History,
 } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
@@ -62,6 +63,7 @@ const NAV_ITEMS: NavItem[] = [
 const ADMIN_ITEMS: NavItem[] = [
   { key: 'adminLeads', icon: Inbox, href: '/admin/leads', section: 'account' },
   { key: 'adminOrgs', icon: Building2, href: '/admin/organizations', section: 'account' },
+  { key: 'adminActivity', icon: History, href: '/admin/activity', section: 'account' },
 ];
 // Shown to members of an Enterprise organisation
 const ORG_ITEM: NavItem = { key: 'organization', icon: Building2, href: '/organization', section: 'account' };

@@ -17,6 +17,7 @@ import { useLocale, useTranslations } from '@/i18n/provider';
 import type { Locale } from '@/i18n/config';
 import { Label } from '@/components/ui/label';
 import PasswordInput from '@/components/auth/password-input';
+import AdminSecurityCard from '@/components/admin/admin-security-card';
 import {
   Dialog,
   DialogContent,
@@ -350,6 +351,9 @@ export default function SettingsPage() {
           </CardContent>
         </Card>
       </FadeInUp>
+
+      {/* ── Two-step verification (site admins only) ─────────────────────── */}
+      <AdminSecurityCard />
 
       {/* ── Language Card ─────────────────────────────────────────────────── */}
       <FadeInUp delay={0.08 * 2}>

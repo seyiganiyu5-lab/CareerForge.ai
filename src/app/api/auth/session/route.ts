@@ -5,6 +5,7 @@ import type { AuthResponse } from '@/lib/auth/types';
 import { isAdminEmail } from '@/lib/admin';
 import { membershipFor, notifyPendingInvites } from '@/lib/enterprise/organizations';
 import { brandingOf } from '@/lib/enterprise/branding';
+import { adminMfaState } from '@/lib/auth/mfa';
 
 export async function GET() {
   try {
@@ -22,14 +23,20 @@ export async function GET() {
     }
 
     const profile = await ensureProfile(user);
-    const membership = await membershipFor(profile.id);
+    const isAdmin = isAdminEmail(profile.email);
+    const [membership, mfa] = await Promise.all([
+      membershipFor(profile.id),
+      isAdmin ? adminMfaState(supabase).catch(() => 'needs_code' as const) : null,
+    ]);
     // Someone invited by email before they had an account sees the invite now
     if (!membership) await notifyPendingInvites(profile.id, profile.email).catch(() => {});
     return NextResponse.json({
       success: true,
       user: {
         ...toPublicUser(profile),
-        is_admin: isAdminEmail(profile.email),
+        is_admin: isAdmin,
+        // Admin pages need the authenticator code too
+        ...(isAdmin ? { admin_mfa: mfa ?? 'needs_code' } : {}),
         organization: membership
           ? { id: membership.organization.id, name: membership.organization.name, role: membership.role, ...brandingOf(membership.organization) }
           : null,
